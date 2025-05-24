@@ -1,0 +1,67 @@
+</main>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+      const sidebarMenu = document.querySelector('aside');
+      
+      if (mobileMenuToggle) {
+        mobileMenuToggle.addEventListener('click', function() {
+          sidebarMenu.classList.toggle('translate-x-0');
+          sidebarMenu.classList.toggle('-translate-x-full');
+        });
+      }
+
+      // Navigation active state handling
+      const navLinks = document.querySelectorAll('.nav-link');
+      
+      // Function to set active link
+      function setActiveLink(link) {
+        navLinks.forEach(link => {
+          link.classList.remove('bg-white', 'bg-opacity-20', 'text-white');
+          link.classList.add('text-gray-300');
+        });
+        link.classList.add('bg-white', 'bg-opacity-20', 'text-white');
+        link.classList.remove('text-gray-300');
+      }
+
+      // Add click event listeners to nav links
+      navLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+          setActiveLink(this);
+        });
+      });
+
+      // Set active link based on current URL
+      const currentPath = window.location.pathname;
+      navLinks.forEach(link => {
+        if (link.getAttribute('href') === currentPath) {
+          setActiveLink(link);
+        }
+      });
+
+      // Confirmation dialog for block/unblock actions
+      function confirmAction(message, url) {
+        const modal = document.getElementById('confirmationModal');
+        const modalMessage = document.getElementById('modalMessage');
+        const confirmBtn = document.getElementById('confirmBtn');
+        const cancelBtn = document.getElementById('cancelBtn');
+        
+        modalMessage.textContent = message;
+        confirmBtn.href = url;
+        modal.classList.remove('hidden');
+        
+        cancelBtn.onclick = function() {
+          modal.classList.add('hidden');
+        }
+        
+        // Close modal if clicking outside
+        modal.onclick = function(event) {
+          if (event.target === modal) {
+            modal.classList.add('hidden');
+          }
+        }
+      }
+    });
+  </script>
+</body>
+</html>

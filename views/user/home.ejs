@@ -1,0 +1,471 @@
+<style>
+    /* Product card styling to match the image */
+    .product-card {
+        background-color: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        height: 340px;
+        border: none;
+    }
+    
+    .product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    }
+    
+    .product-img-container {
+        position: relative;
+        padding-top: 50%;
+        overflow: hidden;
+        background-color: #f5f5f5;
+    }
+    
+    .product-img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        transition: transform 0.5s ease;
+    }
+    
+    .product-card:hover .product-img {
+        transform: scale(1.05);
+    }
+    
+    .wishlist-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background-color: white;
+        border: none;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        z-index: 1;
+        color: #999;
+        transition: all 0.3s ease;
+    }
+    
+    .wishlist-btn:hover {
+        color: #ff006e;
+        transform: scale(1.1);
+    }
+    
+    .card-body {
+        padding: 1rem;
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+    }
+    
+    .product-category {
+        font-size: 0.75rem;
+        color: #6c757d;
+        margin-bottom: 0.4rem;
+        text-transform: uppercase;
+    }
+    
+    .product-title {
+        font-size: 1rem;
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+        line-height: 1.3;
+        height: 1.3rem;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+    }
+    
+    .product-price {
+        display: flex;
+        align-items: baseline;
+        margin-top: auto;
+        margin-bottom: 0rem;
+    }
+    
+    .current-price {
+        font-size: 1.15rem;
+        font-weight: bold;
+        color: #000000;
+    }
+    
+    .original-price {
+        font-size: 0.85rem;
+        text-decoration: line-through;
+        color: #6c757d;
+        margin-left: 0.5rem;
+    }
+    
+    .discount-percentage {
+        font-size: 0.75rem;
+        background-color: #2bff0093;
+        color: #000000;
+        padding: 0.2rem 0.5rem;
+        border-radius: 20px;
+        margin-left: 0.5rem;
+        font-weight: 600;
+    }
+    
+    .card-footer {
+        background-color: transparent;
+        border-top: none;
+        padding: 0 1rem 1rem;
+    }
+    
+    .btn-add-cart {
+        display: block;
+        width: 100%;
+        background-color: #000000;
+        border: none;
+        border-radius: 5px;
+        padding: 0.5rem 0;
+        font-weight: 600;
+        color: #ffffff !important;
+        transition: all 0.3s ease;
+        text-align: center;
+    }
+    
+    .btn-add-cart:hover {
+        background-color: #444444;
+        color: #ffffff !important;
+        transform: translateY(-2px);
+    }
+    
+    .btn-add-cart i {
+        margin-right: 0.5rem;
+    }
+    
+    /* Brand container hover effects */
+    .brand-container {
+        transition: background-color 0.3s ease, transform 0.5s ease;
+        border-radius: 10px;
+        padding: 10px;
+    }
+
+    .brand-container:hover {
+        background-color: #FFEB3B;
+        transform: translateY(-8px);
+    }
+
+    .brand-container img {
+        transition: transform 0.5s ease;
+    }
+
+    .brand-container:hover img {
+        transform: scale(1.3);
+    }
+    
+    /* Featured models section */
+    .featured-model-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .featured-model-container {
+        overflow: hidden;
+    }
+    
+    /* Hero section */
+    .hero-carousel-img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        
+        
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 767.98px) {
+        .product-grid {
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 1rem;
+        }
+        
+        .product-card {
+            height: 320px;
+        }
+        
+        .card-body {
+            padding: 0.8rem;
+        }
+        
+        .product-title {
+            font-size: 0.9rem;
+            height: 2.4rem;
+        }
+        
+    .current-price {
+        font-size: 1rem;
+    }
+}
+
+.section-heading {
+        font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+        font-weight: 600;
+    }
+</style>
+<%- include("../../views/partials/user/header")%>
+<!-- Hero Section -->
+<section class="relative overflow-hidden">
+    <div id="default-carousel" class="relative w-full" data-carousel="slide">
+        <!-- Carousel wrapper -->
+        <div class="relative h-56 overflow-hidden rounded-lg md:h-[35rem] cursor-pointer" id="carousel-wrapper">
+            <!-- Item 1 -->
+            <div class="hidden duration-700 ease-in-out" data-carousel-item>
+                <img src="/css/image/Banner/voyage1.avif"
+                    class="hero-carousel-img absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2"
+                    alt="Luxury eyewear banner">
+                <div class="absolute top-1/2 left-1/4 transform -translate-x-1/2 -translate-y-1/2 z-40 text-left">
+                    <h2 class="text-4xl md:text-5xl font-bold text-white mb-2 leading-tight">Luxury <span
+                            class="text-black">Eyewear</span></h2>
+                    <p class="text-white text-lg md:text-xl mb-6 max-w-md">Discover premium designs for every occasion</p>
+                    <a href="/shop"
+                        class="px-6 py-3 bg-black text-white font-medium rounded hover:bg-gray-800 transition duration-300 shadow-lg">
+                        SHOP NOW
+                    </a>
+                </div>
+            </div>
+            <!-- Item 2 -->
+            <div class="hidden duration-700 ease-in-out" data-carousel-item>
+                <img src="/css/image/Banner/desk-mn (1).jpg"
+                    class="hero-carousel-img absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2"
+                    alt="Bold statements banner">
+                <div class="absolute top-1/2 left-1/4 transform -translate-x-1/2 -translate-y-1/2 z-40 text-left">
+                    <h2 class="text-4xl md:text-5xl font-bold text-white mb-2 leading-tight">Bold <span
+                            class="text-black">Statements</span></h2>
+                    <p class="text-white text-lg md:text-xl mb-6 max-w-md">Express yourself with our exclusive collection</p>
+                    <a href="/shop"
+                        class="px-6 py-3 bg-black text-white font-medium rounded hover:bg-gray-800 transition duration-300 shadow-lg">
+                        EXPLORE
+                    </a>
+                </div>
+            </div>
+            <!-- Item 3 -->
+            <div class="hidden duration-700 ease-in-out" data-carousel-item>
+                <img src="/css/image/Banner/rayban1.jpg"
+                    class="hero-carousel-img absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2"
+                    alt="Ray-Ban banner">
+                <div class="absolute top-1/2 left-1/4 transform -translate-x-1/2 -translate-y-1/2 z-40 text-left">
+                    <h2 class="text-4xl md:text-5xl font-bold text-white mb-2 leading-tight">Iconic <span
+                            class="text-red-600">Ray-Ban</span></h2>
+                    <p class="text-white text-lg md:text-xl mb-6 max-w-md">Timeless designs that define generations</p>
+                    <a href="/shop"
+                        class="px-6 py-3 bg-black text-white font-medium rounded hover:bg-gray-800 transition duration-300 shadow-lg">
+                        VIEW COLLECTION
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- New Arrivals Section -->
+<section class="py-12 bg-white">
+    <div class="container mx-auto px-4">
+        <h2 class="text-2xl font-medium mb-8 section-heading">New arrivals for you</h2>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <% for(let i=0; i < products.length; i++) { %>
+                <div class="product-card">
+                    <div class="product-img-container">
+                        <button class="wishlist-btn add-to-wishlist" data-product-id="<%= products[i]._id %>">
+                            <i class="far fa-heart"></i>
+                        </button>
+                        <a href="/productDetails?id=<%= products[i]._id %>">
+                            <img src="<%= products[i].productImage[0] %>"
+                                alt="<%= products[i].productName %>" class="product-img">
+                        </a>
+                    </div>
+                    <div class="card-body">
+                        <a href="/productDetails?id=<%= products[i]._id %>">
+                        <div class="product-category">
+                            <%= products[i].category ? products[i].category.name : 'Eyewear' %>
+                        </div>
+                        <h3 class="product-title"><%= products[i].productName %></h3>
+                        <div class="product-price">
+                            <span class="current-price">₹<%= products[i].salePrice.toLocaleString('en-IN') %></span>
+                            <% if (products[i].regularPrice && products[i].regularPrice > products[i].salePrice) { %>
+                                <span class="original-price">₹<%= products[i].regularPrice.toLocaleString('en-IN') %></span>
+                                <% const discount = Math.round((products[i].regularPrice - products[i].salePrice) / products[i].regularPrice * 100); %>
+                                <span class="discount-percentage"><%= discount %>% off</span>
+                            <% } %>
+                        </div>
+                        </a>
+                    </div>
+                    <div class="card-footer">
+                        <a href="/addToCart?id=<%= products[i]._id %>" class="btn btn-add-cart">
+                            <i class="fas fa-shopping-cart"></i>Add to Cart
+                        </a>
+                    </div>
+                </div>
+            <% } %>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Models Section -->
+<section class="py-12 bg-gray-50">
+    <div class="container mx-auto px-4">
+        <h2 class="text-2xl font-medium mb-8 section-heading">Featured models</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-0">
+            <div class="featured-model-container">
+                <img src="/css/image/Banner/sgh-z23-1.avif" alt="Model wearing sunglasses" class="featured-model-img">
+            </div>
+            <div class="featured-model-container">
+                <img src="/css/image/Banner/doc.avif" alt="Model wearing sunglasses" class="featured-model-img">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Best Sellers Section -->
+<section class="py-12 bg-white">
+    <div class="container mx-auto px-4">
+        <h2 class="text-2xl font-medium mb-8 section-heading">Best-sellers for every occasion</h2>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <% for(let i=0; i < products.length && i < 4; i++) { %>
+                <div class="product-card">
+                    <div class="product-img-container">
+                        <button class="wishlist-btn add-to-wishlist" data-product-id="<%= products[i]._id %>">
+                            <i class="far fa-heart"></i>
+                        </button>
+                        <a href="/productDetails?id=<%= products[i]._id %>">
+                            <img src="<%= products[i].productImage[0] %>"
+                                alt="<%= products[i].productName %>" class="product-img">
+                        </a>
+                    </div>
+                    <div class="card-body">
+                        <div class="product-category">
+                            <%= products[i].category ? products[i].category.name : 'Eyewear' %>
+                        </div>
+                        <h3 class="product-title"><%= products[i].productName %></h3>
+                        <div class="product-price">
+                            <span class="current-price">₹<%= products[i].salePrice.toLocaleString('en-IN') %></span>
+                            <% if (products[i].regularPrice && products[i].regularPrice > products[i].salePrice) { %>
+                                <span class="original-price">₹<%= products[i].regularPrice.toLocaleString('en-IN') %></span>
+                                <% const discount = Math.round((products[i].regularPrice - products[i].salePrice) / products[i].regularPrice * 100); %>
+                                <span class="discount-percentage"><%= discount %>% off</span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <a href="/addToCart?id=<%= products[i]._id %>" class="btn btn-add-cart">
+                            <i class="fas fa-shopping-cart"></i>Add to Cart
+                        </a>
+                    </div>
+                </div>
+            <% } %>
+        </div>
+    </div>
+</section>
+
+<!-- Brands Section -->
+<section class="py-12 bg-white border-t border-gray-200">
+    <div class="container mx-auto px-4">
+        <h2 class="text-2xl font-medium mb-8 section-heading">Shop with brands</h2>
+        <div class="grid grid-cols-3 md:grid-cols-6 gap-4">
+            <div class="brand-container flex items-center justify-center py-4">
+                <img src="/css/image/shop_with_Brands/Oakley_bl_18.webp" alt="Oakley logo"
+                    class="h-12 transition-transform duration-300">
+            </div>
+            <div class="brand-container flex items-center justify-center py-4">
+                <img src="/css/image/shop_with_Brands/Ray-Ban_bl_18.webp" alt="Ray-Ban logo"
+                    class="h-12 transition-transform duration-300">
+            </div>
+            <div class="brand-container flex items-center justify-center py-4">
+                <img src="/css/image/shop_with_Brands/Gucci_bl_18.webp" alt="Gucci logo"
+                    class="h-12 transition-transform duration-300">
+            </div>
+            <div class="brand-container flex items-center justify-center py-4">
+                <img src="/css/image/shop_with_Brands/costa_bl_18.avif" alt="Costa logo"
+                    class="h-12 transition-transform duration-300">
+            </div>
+            <div class="brand-container flex items-center justify-center py-4">
+                <img src="/css/image/shop_with_Brands/Dolce&Gabbana_bl_18.webp" alt="Dolce & Gabbana logo"
+                    class="h-12 transition-transform duration-300">
+            </div>
+            <div class="brand-container flex items-center justify-center py-4">
+                <img src="/css/image/shop_with_Brands/Versace_bl_18.avif" alt="Versace logo"
+                    class="h-12 transition-transform duration-300">
+            </div>
+        </div>
+    </div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize Flowbite carousel
+    const carouselElement = document.getElementById('default-carousel');
+    const carousel = new flowbite.Carousel(carouselElement, {
+        interval: 5000, // Auto-slide every 5 seconds (optional)
+        pause: 'hover'  // Pause on hover (optional)
+    });
+
+    // Click navigation for carousel
+    const carouselWrapper = document.getElementById('carousel-wrapper');
+    carouselWrapper.addEventListener('click', function(event) {
+        const rect = carouselWrapper.getBoundingClientRect();
+        const clickX = event.clientX - rect.left;
+        const halfWidth = rect.width / 2;
+
+        if (clickX < halfWidth) {
+            // Clicked on the left side, go to previous slide
+            carousel.prev();
+        } else {
+            // Clicked on the right side, go to next slide
+            carousel.next();
+        }
+    });
+
+    // Add to wishlist functionality
+    const wishlistButtons = document.querySelectorAll('.add-to-wishlist');
+    wishlistButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            const productId = this.getAttribute('data-product-id');
+            toggleWishlist(productId, this);
+        });
+    });
+
+    // Function to toggle wishlist
+    function toggleWishlist(productId, buttonElement) {
+        fetch('/addToWishlist?id=' + productId, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => {
+            if (response.ok) {
+                // Toggle wishlist button appearance
+                if (buttonElement.querySelector('i').classList.contains('far')) {
+                    buttonElement.querySelector('i').classList.remove('far');
+                    buttonElement.querySelector('i').classList.add('fas');
+                    buttonElement.classList.add('active');
+                } else {
+                    buttonElement.querySelector('i').classList.remove('fas');
+                    buttonElement.querySelector('i').classList.add('far');
+                    buttonElement.classList.remove('active');
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+});
+</script>
+
+<%- include("../../views/partials/user/footer")%>

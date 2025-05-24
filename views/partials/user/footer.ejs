@@ -1,0 +1,155 @@
+<style>
+  /* Apply Inter font globally, override Tailwind's font-sans */
+  body {
+    font-family: 'Inter', sans-serif;
+  }
+  /* Ensure Playfair Display for logo */
+  .font-playfair {
+    font-family: 'Playfair Display', serif;
+  }
+  /* Black background for bottom logo section */
+  .bg-black-logo {
+    background-color: #000000;
+  }
+  /* Gucci-style large typography for SHADES logo */
+  .gucci-style-large {
+    display: flex;
+    justify-content: center;
+    margin: 0 auto;
+    max-width: 1400px;
+  }
+  .gucci-style-large .letter {
+    font-family: 'Times New Roman', serif;
+    font-weight: 300;
+    color: #ffffff;
+    font-size: 17rem;
+    line-height: 1;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 0 0.05em;
+  }
+  /* Footer styles similar to Gucci */
+  .footer-heading {
+    color: #8C8C8C;
+    font-size: 0.875rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    margin-bottom: 1.5rem;
+    text-transform: uppercase;
+  }
+  .footer-link {
+    color: white;
+    display: block;
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+  .footer-link:hover {
+    color: #8C8C8C;
+    text-decoration: underline;
+  }
+  .input-field {
+    background-color: transparent;
+    border: none;
+    border-bottom: 1px solid #555;
+    color: white;
+    padding: 0.5rem 0;
+    width: 100%;
+  }
+  .input-field:focus {
+    border-bottom: 1px solid white;
+    outline: none;
+  }
+  .input-button {
+    background-color: transparent;
+    border: none;
+    color: white;
+    cursor: pointer;
+    position: absolute;
+    right: 0;
+    top: 0.5rem;
+  }
+</style>
+
+<!-- Footer - Gucci Style -->
+<footer class="bg-black py-16">
+  <div class="container mx-auto px-4 md:px-8">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-12 mb-16">
+      <!-- Help Section -->
+      <div>
+        <h3 class="footer-heading">MAY WE HELP YOU?</h3>
+        <a href="#" class="footer-link">Contact Us</a>
+        <a href="#" class="footer-link">My Order</a>
+        <a href="#" class="footer-link">FAQs</a>
+        <a href="#" class="footer-link">Email Unsubscribe</a>
+        <a href="#" class="footer-link">Sitemap</a>
+      </div>
+
+      
+      
+      <!-- Company Section -->
+      <div>
+        <h3 class="footer-heading">THE COMPANY</h3>
+        <a href="#" class="footer-link">About SHADES</a>
+        <a href="#" class="footer-link">SHADES Equilibrium</a>
+        <a href="#" class="footer-link">Code of Ethics</a>
+        <a href="#" class="footer-link">Careers</a>
+        <a href="#" class="footer-link">Legal</a>
+        <a href="#" class="footer-link">Privacy & Cookie Policy</a>
+        <a href="#" class="footer-link">Cookie Settings</a>
+        <a href="#" class="footer-link">Corporate Information</a>
+        <a href="#" class="footer-link">Accessibility Statement</a>
+      </div>
+      
+      <!-- Store Locator / Newsletter Section -->
+      <div>
+        <div class="mb-12">
+          <h3 class="footer-heading">STORE LOCATOR</h3>
+          <div class="relative mb-6">
+            <input type="text" placeholder="Country/Region, City" class="input-field">
+            <button class="input-button">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
+            </button>
+          </div>
+        </div>
+        
+        <div>
+          <h3 class="footer-heading">SIGN UP FOR SHADES UPDATES</h3>
+          <p class="text-white text-sm mb-4">By entering your email address below, you consent to receiving our newsletter with access to our latest collections, events and initiatives. More details on this are provided in our <a href="#" class="underline">Privacy Policy</a>.</p>
+          <div class="relative mb-12">
+            <input type="email" placeholder="Email" class="input-field">
+            <button class="input-button">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
+            </button>
+          </div>
+        </div>
+        
+        <div>
+          <h3 class="footer-heading">COUNTRY/REGION</h3>
+          <a href="#" class="footer-link">UNITED STATES</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  
+<!-- Large Gucci-style SHADES logo at bottom -->
+<div class="bg-black-logo py-24">
+  <div class="container mx-auto px-4 text-center">
+    <div class="gucci-style-large">
+      <span class="letter">S</span>
+      <span class="letter">H</span>
+      <span class="letter">A</span>
+      <span class="letter">D</span>
+      <span class="letter">E</span>
+      <span class="letter">S</span>
+    </div>
+  </div>
+</div>
+</footer>

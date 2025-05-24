@@ -1,0 +1,1399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+    <style>
+        :root {
+            --primary-color: #000000;
+            --secondary-color: #2d3748;
+            --accent-color: #000000;
+            --light-bg: #f8fafc;
+            --border-color: #e2e8f0;
+            --success-color: #38a169;
+            --text-primary: #2d3748;
+            --text-secondary: #4a5568;
+            --text-light: #718096;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --danger-color: #e53e3e;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+        
+        body {
+            background-color: var(--light-bg);
+            color: var(--text-primary);
+            line-height: 1.6;
+            font-size: 15px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+        
+        .profile-header {
+            background-color: white;
+            border-radius: 12px;
+            padding: 18px 25px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow-md);
+            text-align: center;
+            border-bottom: 3px solid var(--primary-color);
+        }
+        
+        .profile-header h1 {
+            font-size: 26px;
+            letter-spacing: 0.5px;
+            margin-bottom: 0;
+            color: var(--primary-color);
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            text-transform: none;
+        }
+        
+        .profile-content {
+            display: flex;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+        
+        .profile-sidebar {
+            flex: 1;
+            min-width: 270px;
+        }
+        
+        .profile-main {
+            flex: 3;
+            min-width: 320px;
+        }
+        
+        .profile-nav {
+            background-color: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .profile-nav-item {
+            padding: 14px 20px;
+            border-bottom: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+        
+        .profile-nav-item:last-child {
+            border-bottom: none;
+        }
+        
+        .profile-nav-item.active {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 600;
+        }
+        
+        .profile-nav-item:hover:not(.active) {
+            background-color: rgba(49, 130, 206, 0.05);
+            color: var(--primary-color);
+        }
+        
+        .profile-nav-item i {
+            margin-right: 12px;
+            font-size: 16px;
+            width: 22px;
+            text-align: center;
+        }
+        
+        .profile-section {
+            background-color: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 24px;
+            min-height: 460px;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .profile-section h2 {
+            font-size: 18px;
+            margin-bottom: 28px;
+            color: var(--secondary-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border-color);
+            font-weight: 600;
+        }
+        
+        .edit-btn {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+            font-weight: 500;
+        }
+        
+        .edit-btn:hover {
+            background-color: #6c6e70;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .profile-content-wrapper {
+            display: flex;
+            gap: 32px;
+            padding: 10px 0;
+        }
+        
+        .profile-photo-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .profile-photo {
+            width: 130px;
+            height: 130px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 3px solid white;
+            box-shadow: var(--shadow-md);
+            position: relative;
+        }
+        
+        .profile-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .profile-photo .change-photo {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: rgba(26, 75, 132, 0.8);
+            color: white;
+            padding: 6px;
+            font-size: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 500;
+        }
+        
+        .profile-photo .change-photo:hover {
+            background-color: rgba(26, 75, 132, 0.95);
+        }
+        
+        .profile-details {
+            flex: 1;
+            padding: 15px;
+            background-color: #fafafa;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .detail-item {
+            display: flex;
+            margin-bottom: 16px;
+            align-items: center;
+            padding-bottom: 8px;
+            border-bottom: 1px dashed #eaeaea;
+        }
+        
+        .detail-item:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+        
+        .detail-label {
+            flex: 1;
+            font-weight: 600;
+            color: var(--text-light);
+            font-size: 14px;
+        }
+        
+        .detail-value {
+            flex: 2;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+        
+        .verified-badge {
+            color: var(--success-color);
+            margin-left: 6px;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            background-color: rgba(56, 161, 105, 0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+        
+        .section-content {
+            border-top: 1px solid var(--border-color);
+            padding-top: 20px;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px 0;
+            color: var(--text-light);
+        }
+        
+        .empty-state i {
+            font-size: 48px;
+            margin-bottom: 12px;
+            opacity: 0.5;
+        }
+        
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background-color: white;
+            border-radius: 12px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            padding: 20px;
+            box-shadow: var(--shadow-md);
+            position: relative;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+        
+        .modal-header h3 {
+            font-size: 18px;
+            color: var(--secondary-color);
+            font-weight: 600;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            color: var(--text-light);
+        }
+        
+        .modal-close:hover {
+            color: var(--text-primary);
+        }
+        
+        .modal-body {
+            margin-bottom: 20px;
+        }
+        
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        
+        .modal-btn {
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        
+        .modal-btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+        }
+        
+        .modal-btn-primary:hover {
+            background-color: #6c6e70;
+        }
+        
+        .modal-btn-secondary {
+            background-color: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+        }
+        
+        .modal-btn-secondary:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+        
+        .modal-btn-danger {
+            background-color: var(--danger-color);
+            color: white;
+            border: none;
+        }
+        
+        .modal-btn-danger:hover {
+            background-color: #c53030;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 5px;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        
+        .form-group input.error,
+        .form-group select.error,
+        .form-group textarea.error {
+            border-color: var(--danger-color);
+        }
+        
+        .error-message {
+            color: var(--danger-color);
+            font-size: 12px;
+            margin-top: 5px;
+        }
+        
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        
+        .table th,
+        .table td {
+            padding: 10px;
+            border-bottom: 1px solid var(--border-color);
+            text-align: left;
+        }
+        
+        .table th {
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+        
+        .table td img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+        
+        .action-btn {
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            margin-right: 5px;
+        }
+        
+        .action-btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+        }
+        
+        .action-btn-primary:hover {
+            background-color: #6c6e70;
+        }
+        
+        .action-btn-danger {
+            background-color: var(--danger-color);
+            color: white;
+            border: none;
+        }
+        
+        .action-btn-danger:hover {
+            background-color: #c53030;
+        }
+        
+        /* Manage Account Section Specific Styles */
+        .manage-account-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            padding: 20px 0;
+        }
+        
+        .manage-account-btn {
+            background-color: white;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        
+        .manage-account-btn:hover {
+            background-color: var(--light-bg);
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+        
+        .manage-account-btn i {
+            font-size: 24px;
+            color: var(--primary-color);
+        }
+        
+        .manage-account-btn.danger {
+            border-color: var(--danger-color);
+            color: var(--danger-color);
+        }
+        
+        .manage-account-btn.danger:hover {
+            background-color: rgba(229, 62, 62, 0.05);
+        }
+        
+        @media (max-width: 768px) {
+            .profile-content {
+                flex-direction: column;
+            }
+            
+            .profile-sidebar {
+                min-width: 100%;
+            }
+            
+            .profile-main {
+                min-width: 100%;
+            }
+            
+            .profile-content-wrapper {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .profile-photo-container {
+                margin-bottom: 20px;
+            }
+            
+            .profile-details {
+                width: 100%;
+            }
+            
+            .detail-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 4px;
+            }
+            
+            .detail-label {
+                margin-bottom: 2px;
+            }
+            
+            .modal-content {
+                width: 95%;
+            }
+            
+            .manage-account-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <%- include("../../views/partials/user/header") %>
+    
+    <div class="container">
+        <div class="profile-header">
+            <h1>My Profile</h1>
+        </div>
+        
+        <div class="profile-content">
+            <div class="profile-sidebar">
+                <div class="profile-nav">
+                    <div class="profile-nav-item active" data-section="profile-details">
+                        <i class="fas fa-user"></i> Profile Details
+                    </div>
+                    <div class="profile-nav-item" data-section="order-history">
+                        <i class="fas fa-history"></i> Order History
+                    </div>
+                    <div class="profile-nav-item" data-section="address-book">
+                        <i class="fas fa-address-book"></i> Address Book
+                    </div>
+                    <div class="profile-nav-item" data-section="wishlist">
+                        <i class="fas fa-heart"></i> Wishlist / Favorites
+                    </div>
+                    <div class="profile-nav-item" data-section="payment-methods">
+                        <i class="fas fa-credit-card"></i> Payment Methods
+                    </div>
+                    <div class="profile-nav-item" data-section="coupons">
+                        <i class="fas fa-tags"></i> Coupons / Offers
+                    </div>
+                    <div class="profile-nav-item" data-section="manage-account">
+                        <i class="fas fa-cog"></i> Manage Account
+                    </div>
+                    <div class="profile-nav-item" data-section="help-support">
+                        <i class="fas fa-question-circle"></i> Help & Support
+                    </div>
+                    <a href="/logout">
+                        <div class="profile-nav-item">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </div>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="profile-main">
+                <!-- Other profile sections unchanged -->
+                <div class="profile-section" id="profile-details">
+                    <h2>
+                        Profile Details
+                        <button class="edit-btn">
+                            <i class="fas fa-pen"></i> Edit
+                        </button>
+                    </h2>
+                    <div class="profile-content-wrapper">
+                        <div class="profile-photo-container">
+                            <div class="profile-photo">
+                                <img src="/api/placeholder/400/400" alt="Profile Photo">
+                                <div class="change-photo">
+                                    <i class="fas fa-camera"></i> Change Photo
+                                </div>
+                            </div>
+                            <div class="user-status">
+                                <span class="verified-badge">
+                                    <i class="fas fa-check-circle"></i> Verified User
+                                </span>
+                            </div>
+                        </div>
+                        <div class="profile-details">
+                            <div class="detail-item">
+                                <div class="detail-label">Full Name</div>
+                                <div class="detail-value"><%=username%></div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Email Address</div>
+                                <div class="detail-value">
+                                    <%=user.email%>
+                                    <span class="verified-badge">
+                                        <i class="fas fa-check-circle"></i> Verified
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Mobile Number</div>
+                                <div class="detail-value"><%=user.phone%></div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Gender</div>
+                                <div class="detail-value">Male</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Date of Birth</div>
+                                <div class="detail-value">January 15, 1990</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Other sections unchanged -->
+                <div class="profile-section" id="order-history" style="display: none;">
+                    <h2>Order History</h2>
+                    <div class="section-content">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Date</th>
+                                    <th>Product</th>
+                                    <th>Quantity</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>#12345</td>
+                                    <td>2025-05-01</td>
+                                    <td>
+                                        <img src="/api/placeholder/50/50" alt="Product">
+                                        Sample Product
+                                    </td>
+                                    <td>2</td>
+                                    <td>$99.99</td>
+                                    <td><span class="verified-badge">Delivered</span></td>
+                                    <td>
+                                        <button class="action-btn action-btn-primary" onclick="openModal('track-order-modal')">Track</button>
+                                        <button class="action-btn action-btn-primary" onclick="openModal('order-details-modal')">Details</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="profile-section" id="address-book" style="display: none;">
+                    <h2>
+                        Address Book
+                        <button class="edit-btn" onclick="openModal('add-address-modal')">
+                            <i class="fas fa-plus"></i> Add Address
+                        </button>
+                    </h2>
+                    <div class="section-content">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Address</th>
+                                    <th>City, State, Pincode</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>123 Main St, Apt 4B</td>
+                                    <td>New York, NY, 10001</td>
+                                    <td>
+                                        <button class="action-btn action-btn-primary" onclick="openModal('edit-address-modal')">Edit</button>
+                                        <button class="action-btn action-btn-danger">Delete</button>
+                                        <button class="action-btn action-btn-primary">Set Default</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="profile-section" id="wishlist" style="display: none;">
+                    <h2>Wishlist / Favorites</h2>
+                    <div class="section-content">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Price</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <img src="/api/placeholder/50/50" alt="Product">
+                                        Sample Product
+                                    </td>
+                                    <td>$49.99</td>
+                                    <td>
+                                        <button class="action-btn action-btn-primary">Add to Cart</button>
+                                        <button class="action-btn action-btn-danger">Remove</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="profile-section" id="payment-methods" style="display: none;">
+                    <h2>
+                        Payment Methods
+                        <button class="edit-btn" onclick="openModal('add-card-modal')">
+                            <i class="fas fa-plus"></i> Add Card
+                        </button>
+                    </h2>
+                    <div class="section-content">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Card</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Visa ending in 1234</td>
+                                    <td>
+                                        <button class="action-btn action-btn-danger">Remove</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="form-group">
+                            <label>Cash on Delivery</label>
+                            <p>Available for eligible orders</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="profile-section" id="coupons" style="display: none;">
+                    <h2>Coupons / Offers</h2>
+                    <div class="section-content">
+                        <h3>Active Coupons</h3>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Code</th>
+                                    <th>Discount</th>
+                                    <th>Expiry</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>SAVE20</td>
+                                    <td>20% Off</td>
+                                    <td>2025-12-31</td>
+                                    <td>
+                                        <button class="action-btn action-btn-primary">Apply</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <h3>Past Coupons</h3>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Code</th>
+                                    <th>Discount</th>
+                                    <th>Used On</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>FREE10</td>
+                                    <td>10% Off</td>
+                                    <td>2025-04-01</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="profile-section" id="manage-account" style="display: none;">
+                    <h2>Manage Account</h2>
+                    <div class="section-content">
+                        <div class="manage-account-grid">
+                            <div class="manage-account-btn" onclick="openModal('edit-profile-modal')">
+                                <i class="fas fa-user-edit"></i>
+                                <span>Edit Profile</span>
+                            </div>
+                            <div class="manage-account-btn" onclick="openModal('change-password-modal')">
+                                <i class="fas fa-lock"></i>
+                                <span>Change Password</span>
+                            </div>
+                            <div class="manage-account-btn danger" onclick="openModal('delete-account-modal')">
+                                <i class="fas fa-trash-alt"></i>
+                                <span>Delete Account</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="profile-section" id="help-support" style="display: none;">
+                    <h2>
+                        Help & Support
+                        <button class="edit-btn" onclick="openModal('raise-ticket-modal')">
+                            <i class="fas fa-plus"></i> Raise Ticket
+                        </button>
+                    </h2>
+                    <div class="section-content">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Ticket ID</th>
+                                    <th>Subject</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>#67890</td>
+                                    <td>Order Issue</td>
+                                    <td>Open</td>
+                                    <td>
+                                        <button class="action-btn action-btn-primary">View</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <p>Contact Support: <a href="mailto:support@example.com">support@example.com</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modals -->
+    <div class="modal" id="track-order-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Track Order</h3>
+                <button class="modal-close">×</button>
+            </div>
+            <div class="modal-body">
+                <p>Tracking information for Order #12345</p>
+                <p>Status: Shipped</p>
+                <p>Estimated Delivery: May 25, 2025</p>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn modal-btn-secondary" onclick="closeModal('track-order-modal')">Close</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal" id="order-details-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Order Details</h3>
+                <button class="modal-close">×</button>
+            </div>
+            <div class="modal-body">
+                <p>Order ID: #12345</p>
+                <p>Date: 2025-05-01</p>
+                <p>Product: Sample Product</p>
+                <p>Quantity: 2</p>
+                <p>Amount: $99.99</p>
+                <p>Status: Delivered</p>
+                <a href="#">View Invoice</a>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn modal-btn-secondary" onclick="closeModal('order-details-modal')">Close</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal" id="add-address-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add New Address</h3>
+                <button class="modal-close">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="add-address-form">
+                    <div class="form-group">
+                        <label for="name">Full name</label>
+                        <input type="text" id="name" required>
+                    </div>
+                     <div class="form-group">
+                        <label for="phone">phone</label>
+                        <input type="text" id="phone" required>
+                    </div>
+                     <div class="form-group">
+                        <label for="pincode">Pincode</label>
+                        <input type="text" id="pincode" required pattern="\d{5,6}">
+                        <div class="error-message" id="pincode-error"></div>
+                    </div>
+                      <div class="form-group">
+                        <label for="state">State</label>
+                        <input type="text" id="state" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="city">City</label>
+                        <input type="text" id="city" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="landMark">Landmark</label>
+                        <input type="text" id="landMark" required>
+                    </div>
+                   
+                     <div class="form-group">
+                        <label for="address">Full Address</label>
+                        <input type="text" id="address" required>
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="set-default"> Set as Default
+                        </label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn modal-btn-secondary" onclick="closeModal('add-address-modal')">Cancel</button>
+                <button class="modal-btn modal-btn-primary" onclick="submitAddress()">Save</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal" id="edit-address-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Edit Address</h3>
+                <button class="modal-close">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="edit-address-form">
+                    <div class="form-group">
+                        <label for="edit-address">Full name</label>
+                        <input type="text" id="edit-name" value="sachin" required>
+                    </div>
+                     <div class="form-group">
+                        <label for="edit-city">Phone</label>
+                        <input type="text" id="edit-phone" value="389479387" required>
+                    </div>
+                        <div class="form-group">
+                        <label for="edit-pincode">Pincode</label>
+                        <input type="text" id="edit-pincode" value="10001" required pattern="\d{5,6}">
+                        <div class="error-message" id="edit-pincode-error"></div>
+                    </div>
+                      <div class="form-group">
+                        <label for="edit-state">State</label>
+                        <input type="text" id="edit-state" value="kerala" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-city">City</label>
+                        <input type="text" id="edit-city" value="thrikkalangode" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-landmark">Landmark</label>
+                        <input type="text" id="edit-landmark" value="NY" required>
+                    </div>
+                      <div class="form-group">
+                        <label for="edit-address">Address</label>
+                        <input type="text" id="edit-address" value="NY" required>
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="edit-set-default" checked> Set as Default
+                        </label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn modal-btn-secondary" onclick="closeModal('edit-address-modal')">Cancel</button>
+                <button class="modal-btn modal-btn-primary" onclick="submitAddress('edit')">Save</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal" id="add-card-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add Payment Card</h3>
+                <button class="modal-close">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="add-card-form">
+                    <div class="form-group">
+                        <label for="card-number">Card Number</label>
+                        <input type="text" id="card-number" required pattern="\d{16}">
+                        <div class="error-message" id="card-number-error"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="card-holder">Card Holder Name</label>
+                        <input type="text" id="card-holder" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="expiry-date">Expiry Date</label>
+                        <input type="text" id="expiry-date" placeholder="MM/YY" required pattern="\d{2}/\d{2}">
+                        <div class="error-message" id="expiry-date-error"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="cvv">CVV</label>
+                        <input type="text" id="cvv" required pattern="\d{3,4}">
+                        <div class="error-message" id="cvv-error"></div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn modal-btn-secondary" onclick="closeModal('add-card-modal')">Cancel</button>
+                <button class="modal-btn modal-btn-primary" onclick="submitCard()">Save</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal" id="edit-profile-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Edit Profile</h3>
+                <button class="modal-close">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="edit-profile-form">
+                    <div class="form-group">
+                        <label for="full-name">Full Name</label>
+                        <input type="text" id="full-name" value="<%=username%>" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" value="<%=user.email%>" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Mobile Number</label>
+                        <input type="tel" id="phone" value="<%=user.phone%>" required pattern="\d{10}">
+                        <div class="error-message" id="phone-error"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="gender">Gender</label>
+                        <select id="gender" required>
+                            <option value="Male" selected>Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="dob">Date of Birth</label>
+                        <input type="date" id="dob" value="1990-01-15" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn modal-btn-secondary" onclick="closeModal('edit-profile-modal')">Cancel</button>
+                <button class="modal-btn modal-btn-primary" onclick="submitProfile()">Save</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal" id="change-password-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Change Password</h3>
+                <button class="modal-close">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="change-password-form">
+                    <div class="form-group">
+                        <label for="current-password">Current Password</label>
+                        <input type="password" id="current-password" required>
+                        <div class="error-message" id="current-password-error"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="new-password">New Password</label>
+                        <input type="password" id="new-password" required>
+                        <div class="error-message" id="new-password-error"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirm-password">Confirm New Password</label>
+                        <input type="password" id="confirm-password" required>
+                        <div class="error-message" id="confirm-password-error"></div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn modal-btn-secondary" onclick="closeModal('change-password-modal')">Cancel</button>
+                <button class="modal-btn modal-btn-primary" onclick="submitPassword()">Save</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal" id="delete-account-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Delete Account</h3>
+                <button class="modal-close">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <p style="color: var(--danger-color); font-weight: 500; margin-bottom: 15px;">
+                        <i class="fas fa-exclamation-triangle" style="margin-right: 8px;"></i>
+                        Warning: This action cannot be undone.
+                    </p>
+                    <label for="delete-password">Enter Password to Confirm</label>
+                    <input type="password" id="delete-password" required>
+                    <div class="error-message" id="delete-password-error"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn modal-btn-secondary" onclick="closeModal('delete-account-modal')">Cancel</button>
+                <button class="modal-btn modal-btn-danger" onclick="deleteAccount()">Delete Account</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal" id="raise-ticket-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Raise Support Ticket</h3>
+                <button class="modal-close">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="raise-ticket-form">
+                    <div class="form-group">
+                        <label for="ticket-subject">Subject</label>
+                        <input type="text" id="ticket-subject" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="ticket-description">Description</label>
+                        <textarea id="ticket-description" rows="5" style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid var(--border-color);" required></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn modal-btn-secondary" onclick="closeModal('raise-ticket-modal')">Cancel</button>
+                <button class="modal-btn modal-btn-primary" onclick="submitTicket()">Submit</button>
+            </div>
+        </div>
+    </div>
+
+    <%- include("../../views/partials/user/footer") %>
+
+    <script>
+        // Navigation behavior
+        document.querySelectorAll('.profile-nav-item').forEach(item => {
+            item.addEventListener('click', () => {
+                document.querySelectorAll('.profile-nav-item').forEach(el => {
+                    el.classList.remove('active');
+                });
+                item.classList.add('active');
+                
+                // Show/hide sections
+                document.querySelectorAll('.profile-section').forEach(section => {
+                    section.style.display = 'none';
+                });
+                const sectionId = item.getAttribute('data-section');
+                if (sectionId) {
+                    document.getElementById(sectionId).style.display = 'block';
+                }
+            });
+        });
+        
+        // Modal functions
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'flex';
+        }
+        
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+        
+        // Close modal on clicking outside
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+        });
+        
+        // Close modal with close button
+        document.querySelectorAll('.modal-close').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const modal = btn.closest('.modal');
+                modal.style.display = 'none';
+            });
+        });
+        
+        // Form validation and submission
+        function submitAddress(isEdit = false) {
+            const formId = isEdit ? 'edit-address-form' : 'add-address-form';
+            const form = document.getElementById(formId);
+            const pincodeInput = form.querySelector(isEdit ? '#edit-pincode' : '#pincode');
+            const pincodeError = form.querySelector(isEdit ? '#edit-pincode-error' : '#pincode-error');
+            
+            if (!pincodeInput.value.match(/^\d{5,6}$/)) {
+                pincodeInput.classList.add('error');
+                pincodeError.textContent = 'Please enter a valid 5 or 6 digit pincode';
+                return;
+            }
+            
+            pincodeInput.classList.remove('error');
+            pincodeError.textContent = '';
+            alert(isEdit ? 'Address updated!' : 'Address added!');
+            closeModal(isEdit ? 'edit-address-modal' : 'add-address-modal');
+        }
+        
+        function submitCard() {
+            const form = document.getElementById('add-card-form');
+            const cardNumber = form.querySelector('#card-number');
+            const expiryDate = form.querySelector('#expiry-date');
+            const cvv = form.querySelector('#cvv');
+            const cardNumberError = form.querySelector('#card-number-error');
+            const expiryDateError = form.querySelector('#expiry-date-error');
+            const cvvError = form.querySelector('#cvv-error');
+            
+            let isValid = true;
+            
+            if (!cardNumber.value.match(/^\d{16}$/)) {
+                cardNumber.classList.add('error');
+                cardNumberError.textContent = 'Please enter a valid 16-digit card number';
+                isValid = false;
+            } else {
+                cardNumber.classList.remove('error');
+                cardNumberError.textContent = '';
+            }
+            
+            if (!expiryDate.value.match(/^\d{2}\/\d{2}$/)) {
+                expiryDate.classList.add('error');
+                expiryDateError.textContent = 'Please enter a valid expiry date (MM/YY)';
+                isValid = false;
+            } else {
+                expiryDate.classList.remove('error');
+                expiryDateError.textContent = '';
+            }
+            
+            if (!cvv.value.match(/^\d{3,4}$/)) {
+                cvv.classList.add('error');
+                cvvError.textContent = 'Please enter a valid CVV';
+                isValid = false;
+            } else {
+                cvv.classList.remove('error');
+                cvvError.textContent = '';
+            }
+            
+            if (isValid) {
+                alert('Card added!');
+                closeModal('add-card-modal');
+            }
+        }
+        
+        function submitProfile() {
+            const form = document.getElementById('edit-profile-form');
+            const phoneInput = form.querySelector('#phone');
+            const phoneError = form.querySelector('#phone-error');
+            
+            if (!phoneInput.value.match(/^\d{10}$/)) {
+                phoneInput.classList.add('error');
+                phoneError.textContent = 'Please enter a valid 10-digit phone number';
+                return;
+            }
+            
+            phoneInput.classList.remove('error');
+            phoneError.textContent = '';
+            alert('Profile updated!');
+            closeModal('edit-profile-modal');
+        }
+        
+        function submitPassword() {
+            const form = document.getElementById('change-password-form');
+            const currentPassword = form.querySelector('#current-password');
+            const newPassword = form.querySelector('#new-password');
+            const confirmPassword = form.querySelector('#confirm-password');
+            const currentPasswordError = form.querySelector('#current-password-error');
+            const newPasswordError = form.querySelector('#new-password-error');
+            const confirmPasswordError = form.querySelector('#confirm-password-error');
+            
+            let isValid = true;
+            
+            if (!currentPassword.value) {
+                currentPassword.classList.add('error');
+                currentPasswordError.textContent = 'Please enter your current password';
+                isValid = false;
+            } else {
+                currentPassword.classList.remove('error');
+                currentPasswordError.textContent = '';
+            }
+            
+            if (newPassword.value.length < 8) {
+                newPassword.classList.add('error');
+                newPasswordError.textContent = 'New password must be at least 8 characters';
+                isValid = false;
+            } else {
+                newPassword.classList.remove('error');
+                newPasswordError.textContent = '';
+            }
+            
+            if (newPassword.value !== confirmPassword.value) {
+                confirmPassword.classList.add('error');
+                confirmPasswordError.textContent = 'Passwords do not match';
+                isValid = false;
+            } else {
+                confirmPassword.classList.remove('error');
+                confirmPasswordError.textContent = '';
+            }
+            
+            if (isValid) {
+                alert('Password changed!');
+                closeModal('change-password-modal');
+            }
+        }
+        
+        function deleteAccount() {
+            const password = document.getElementById('delete-password');
+            const passwordError = document.getElementById('delete-password-error');
+            
+            if (!password.value) {
+                password.classList.add('error');
+                passwordError.textContent = 'Please enter your password to confirm';
+                return;
+            }
+            
+            password.classList.remove('error');
+            passwordError.textContent = '';
+            alert('Account deletion requested!');
+            closeModal('delete-account-modal');
+        }
+        
+        function submitTicket() {
+            const form = document.getElementById('raise-ticket-form');
+            const subject = form.querySelector('#ticket-subject');
+            const description = form.querySelector('#ticket-description');
+            
+            if (!subject.value || !description.value) {
+                if (!subject.value) subject.classList.add('error');
+                if (!description.value) description.classList.add('error');
+                return;
+            }
+            
+            subject.classList.remove('error');
+            description.classList.remove('error');
+            alert('Support ticket submitted!');
+            closeModal('raise-ticket-modal');
+        }
+        
+        // Edit button placeholder
+        document.querySelectorAll('.edit-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                if (!this.getAttribute('onclick')) {
+                    alert('Edit profile information');
+                }
+            });
+        });
+        
+        // Change photo placeholder
+        document.querySelector('.change-photo').addEventListener('click', function() {
+            alert('Upload a new profile photo');
+        });
+    </script>
+</body>
+</html>

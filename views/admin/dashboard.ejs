@@ -1,0 +1,415 @@
+
+   <%- include('../../views/partials/admin/header')%>
+   <!-- Dashboard Content -->
+    <div class="p-6">
+      <!-- Stats Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+        <div class="bg-white rounded-lg shadow-sm p-6 border-l-4 border-blue-500">
+          <div class="flex justify-between">
+            <div>
+              <p class="text-sm font-medium text-gray-500">Total Revenue</p>
+              <h3 class="text-2xl font-bold">$42,856</h3>
+              <p class="text-xs text-green-500 mt-1">
+                <i class="fas fa-arrow-up mr-1"></i> 12.5% from last month
+              </p>
+            </div>
+            <div class="h-12 w-12 rounded-full bg-blue-100 flex items-center justify-center">
+              <i class="fas fa-dollar-sign text-blue-500"></i>
+            </div>
+          </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow-sm p-6 border-l-4 border-purple-500">
+          <div class="flex justify-between">
+            <div>
+              <p class="text-sm font-medium text-gray-500">Orders</p>
+              <h3 class="text-2xl font-bold">1,285</h3>
+              <p class="text-xs text-green-500 mt-1">
+                <i class="fas fa-arrow-up mr-1"></i> 8.2% from last month
+              </p>
+            </div>
+            <div class="h-12 w-12 rounded-full bg-purple-100 flex items-center justify-center">
+              <i class="fas fa-shopping-bag text-purple-500"></i>
+            </div>
+          </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow-sm p-6 border-l-4 border-green-500">
+          <div class="flex justify-between">
+            <div>
+              <p class="text-sm font-medium text-gray-500">Customers</p>
+              <h3 class="text-2xl font-bold">3,642</h3>
+              <p class="text-xs text-green-500 mt-1">
+                <i class="fas fa-arrow-up mr-1"></i> 5.7% from last month
+              </p>
+            </div>
+            <div class="h-12 w-12 rounded-full bg-green-100 flex items-center justify-center">
+              <i class="fas fa-users text-green-500"></i>
+            </div>
+          </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow-sm p-6 border-l-4 border-yellow-500">
+          <div class="flex justify-between">
+            <div>
+              <p class="text-sm font-medium text-gray-500">Products</p>
+              <h3 class="text-2xl font-bold">598</h3>
+              <p class="text-xs text-green-500 mt-1">
+                <i class="fas fa-arrow-up mr-1"></i> 3.2% from last month
+              </p>
+            </div>
+            <div class="h-12 w-12 rounded-full bg-yellow-100 flex items-center justify-center">
+              <i class="fas fa-box text-yellow-500"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Charts Section -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <div class="bg-white rounded-lg shadow-sm p-6">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-semibold">Sales Analytics</h3>
+            <div class="flex space-x-2">
+              <button class="px-3 py-1 text-xs font-medium bg-gray-200 rounded-full hover:bg-gray-300">Weekly</button>
+              <button class="px-3 py-1 text-xs font-medium bg-black text-white rounded-full">Monthly</button>
+              <button class="px-3 py-1 text-xs font-medium bg-gray-200 rounded-full hover:bg-gray-300">Yearly</button>
+            </div>
+          </div>
+          <div class="h-64 w-full">
+            <!-- Chart would go here in a real application -->
+            <div class="w-full h-full flex items-center justify-center bg-gray-50 rounded">
+              <div class="text-center">
+                <i class="fas fa-chart-line text-4xl text-gray-300 mb-3"></i>
+                <p class="text-gray-500">Sales chart visualization</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow-sm p-6">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-semibold">Top Products</h3>
+            <button class="text-sm text-gray-500 hover:text-black">View All</button>
+          </div>
+          <div class="h-64 w-full">
+            <!-- Chart would go here in a real application -->
+            <div class="w-full h-full flex items-center justify-center bg-gray-50 rounded">
+              <div class="text-center">
+                <i class="fas fa-chart-pie text-4xl text-gray-300 mb-3"></i>
+                <p class="text-gray-500">Products distribution chart</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Recent Orders Table -->
+      <div class="bg-white rounded-lg shadow-sm overflow-hidden mb-6">
+        <div class="px-6 py-4 flex justify-between items-center border-b border-gray-200">
+          <h3 class="text-lg font-semibold">Recent Orders</h3>
+          <button class="text-sm text-gray-500 hover:text-black">View All</button>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Order ID
+                </th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Customer
+                </th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Date
+                </th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Total
+                </th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Status
+                </th>
+                <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm font-medium text-gray-900">#ORD-7652</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="flex items-center">
+                    <div class="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center">
+                      <span class="text-xs font-medium">JD</span>
+                    </div>
+                    <div class="ml-3">
+                      <div class="text-sm font-medium text-gray-900">John Doe</div>
+                      <div class="text-xs text-gray-500">john@example.com</div>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm text-gray-900">May 03, 2025</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm font-medium text-gray-900">$129.99</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                    Delivered
+                  </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                  <a href="#" class="text-black hover:underline">View</a>
+                </td>
+              </tr>
+              
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm font-medium text-gray-900">#ORD-7651</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="flex items-center">
+                    <div class="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center">
+                      <span class="text-xs font-medium">MS</span>
+                    </div>
+                    <div class="ml-3">
+                      <div class="text-sm font-medium text-gray-900">Maria Smith</div>
+                      <div class="text-xs text-gray-500">maria@example.com</div>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm text-gray-900">May 03, 2025</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm font-medium text-gray-900">$79.99</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                    Shipped
+                  </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                  <a href="#" class="text-black hover:underline">View</a>
+                </td>
+              </tr>
+              
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm font-medium text-gray-900">#ORD-7650</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="flex items-center">
+                    <div class="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center">
+                      <span class="text-xs font-medium">RJ</span>
+                    </div>
+                    <div class="ml-3">
+                      <div class="text-sm font-medium text-gray-900">Robert Johnson</div>
+                      <div class="text-xs text-gray-500">robert@example.com</div>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm text-gray-900">May 02, 2025</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm font-medium text-gray-900">$249.99</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                    Processing
+                  </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                  <a href="#" class="text-black hover:underline">View</a>
+                </td>
+              </tr>
+              
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm font-medium text-gray-900">#ORD-7649</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="flex items-center">
+                    <div class="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center">
+                      <span class="text-xs font-medium">ET</span>
+                    </div>
+                    <div class="ml-3">
+                      <div class="text-sm font-medium text-gray-900">Emma Thompson</div>
+                      <div class="text-xs text-gray-500">emma@example.com</div>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm text-gray-900">May 02, 2025</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm font-medium text-gray-900">$159.99</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                    Canceled
+                  </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                  <a href="#" class="text-black hover:underline">View</a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      
+      <!-- Activity & Popular Products -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="bg-white rounded-lg shadow-sm p-6">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-semibold">Recent Activity</h3>
+            <button class="text-sm text-gray-500 hover:text-black">View All</button>
+          </div>
+          <div class="space-y-4">
+            <div class="flex">
+              <div class="flex-shrink-0 mr-3">
+                <div class="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center">
+                  <i class="fas fa-user-plus text-blue-500 text-sm"></i>
+                </div>
+              </div>
+              <div>
+                <p class="text-sm font-medium">New customer registered</p>
+                <p class="text-xs text-gray-500">5 minutes ago</p>
+              </div>
+            </div>
+            
+            <div class="flex">
+              <div class="flex-shrink-0 mr-3">
+                <div class="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center">
+                  <i class="fas fa-dollar-sign text-green-500 text-sm"></i>
+                </div>
+              </div>
+              <div>
+                <p class="text-sm font-medium">New order #ORD-7652 received</p>
+                <p class="text-xs text-gray-500">15 minutes ago</p>
+              </div>
+            </div>
+            
+            <div class="flex">
+              <div class="flex-shrink-0 mr-3">
+                <div class="h-8 w-8 rounded-full bg-yellow-100 flex items-center justify-center">
+                  <i class="fas fa-box text-yellow-500 text-sm"></i>
+                </div>
+              </div>
+              <div>
+                <p class="text-sm font-medium">Product "Designer Sunglasses" stock low</p>
+                <p class="text-xs text-gray-500">45 minutes ago</p>
+              </div>
+            </div>
+            
+            <div class="flex">
+              <div class="flex-shrink-0 mr-3">
+                <div class="h-8 w-8 rounded-full bg-purple-100 flex items-center justify-center">
+                  <i class="fas fa-tag text-purple-500 text-sm"></i>
+                </div>
+              </div>
+              <div>
+                <p class="text-sm font-medium">New coupon "SUMMER25" created</p>
+                <p class="text-xs text-gray-500">1 hour ago</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow-sm p-6">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-semibold">Popular Products</h3>
+            <button class="text-sm text-gray-500 hover:text-black">View All</button>
+          </div>
+          <div class="space-y-4">
+            <div class="flex items-center">
+              <div class="h-12 w-12 bg-gray-100 rounded flex items-center justify-center mr-3">
+                <i class="fas fa-glasses text-gray-400"></i>
+              </div>
+              <div class="flex-1">
+                <h4 class="text-sm font-medium">Designer Sunglasses</h4>
+                <div class="flex items-center">
+                  <div class="flex items-center text-yellow-400 text-xs">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star-half-alt"></i>
+                  </div>
+                  <span class="text-xs text-gray-500 ml-1">(42 reviews)</span>
+                </div>
+              </div>
+              <div class="text-sm font-medium">$129.99</div>
+            </div>
+            
+            <div class="flex items-center">
+              <div class="h-12 w-12 bg-gray-100 rounded flex items-center justify-center mr-3">
+                <i class="fas fa-tshirt text-gray-400"></i>
+              </div>
+              <div class="flex-1">
+                <h4 class="text-sm font-medium">Premium Cotton T-Shirt</h4>
+                <div class="flex items-center">
+                  <div class="flex items-center text-yellow-400 text-xs">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                  </div>
+                  <span class="text-xs text-gray-500 ml-1">(36 reviews)</span>
+                </div>
+              </div>
+              <div class="text-sm font-medium">$24.99</div>
+            </div>
+            
+            <div class="flex items-center">
+              <div class="h-12 w-12 bg-gray-100 rounded flex items-center justify-center mr-3">
+                <i class="fas fa-shoe-prints text-gray-400"></i>
+              </div>
+              <div class="flex-1">
+                <h4 class="text-sm font-medium">Running Shoes</h4>
+                <div class="flex items-center">
+                  <div class="flex items-center text-yellow-400 text-xs">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="far fa-star"></i>
+                  </div>
+                  <span class="text-xs text-gray-500 ml-1">(28 reviews)</span>
+                </div>
+              </div>
+              <div class="text-sm font-medium">$89.99</div>
+            </div>
+            
+            <div class="flex items-center">
+              <div class="h-12 w-12 bg-gray-100 rounded flex items-center justify-center mr-3">
+                <i class="fas fa-hat-cowboy text-gray-400"></i>
+              </div>
+              <div class="flex-1">
+                <h4 class="text-sm font-medium">Bucket Hat</h4>
+                <div class="flex items-center">
+                  <div class="flex items-center text-yellow-400 text-xs">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star-half-alt"></i>
+                    <i class="far fa-star"></i>
+                  </div>
+                  <span class="text-xs text-gray-500 ml-1">(19 reviews)</span>
+                </div>
+              </div>
+              <div class="text-sm font-medium">$19.99</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  <%- include('../../views/partials/admin/footer')%>
+
+  
