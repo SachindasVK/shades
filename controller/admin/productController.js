@@ -561,7 +561,7 @@ if (data.brand) {
           fs.mkdirSync(uploadDir, { recursive: true });
         }
         
-        // Process image with sharp
+        // Process image sharp
         await sharp(file.buffer)
           .resize({
             width: 1200,
@@ -577,7 +577,7 @@ if (data.brand) {
       }
     }
     
-    // Make sure we have at least one image
+    // Make sure at least one image
     if (newProductImages.length === 0) {
       return res.status(400).json({
         success: false,

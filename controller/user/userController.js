@@ -53,7 +53,6 @@ const signup = async (req, res) => {
   try {
     const { name, email, password, cPassword } = req.body;
     
-    // Trim inputs
     const trimmedName = name.trim();
     const trimmedEmail = email.trim().toLowerCase();
     const trimmedPassword = password.trim();
@@ -97,7 +96,7 @@ const signup = async (req, res) => {
     
     const hashedPassword = await securePassword(trimmedPassword);
     
-    // IMPORTANT: Set session data BEFORE rendering
+    // Set session data BEFORE rendering
     req.session.userOtp = otp;
     req.session.userData = { 
       name: trimmedName, 
@@ -138,6 +137,8 @@ const signup = async (req, res) => {
     });
   }
 };
+
+
 // Load Homepage
 const loadHomepage = async (req, res) => {
   try {
@@ -212,6 +213,9 @@ const loadHomepage = async (req, res) => {
   }
 }
 
+
+
+
 // Verify OTP
 const verifyOtp = async (req, res) => {
   try {
@@ -263,7 +267,7 @@ const verifyOtp = async (req, res) => {
   }
 };
 
-// Enhanced Resend OTP with Session Recovery
+// Resend OTP with Session Recovery
 const resendOtp = async (req, res) => {
   console.log('Resend OTP route called');
   

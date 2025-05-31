@@ -62,7 +62,6 @@ router.get('/reset-password',profileController.getResetPassPage)
 router.post('/reset-password',profileController.postNewPassword)
 router.get('/profile',userAuth,profileController.userProfile)
 router.put('/profile/:id',userAuth,userUpload.single('image'),profileController.editUserProfile)
-//SHOP 
 
 
 

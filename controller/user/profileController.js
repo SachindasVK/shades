@@ -270,7 +270,7 @@ const postNewPassword = async (req, res) => {
         user.email = email;
         user.phone = phone;
         user.password = password;
-        user.address = address;
+        user.addresses = address;
         if (image) user.image = image;
         
         await user.save();
