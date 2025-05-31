@@ -50,6 +50,10 @@ const productSchema = new Schema({
         type: String,
         required: true
     },
+     shape: {
+        type: String,
+        trim: true,
+    },
     productImage: {
         type: [String],
         required: true

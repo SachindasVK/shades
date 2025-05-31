@@ -23,6 +23,7 @@
       display: block;
       max-width: 100%;
       max-height: 300px;
+      object-fit: cover;
     }
 
     .cropper-container {
@@ -48,7 +49,7 @@
     .cropped-image {
       max-width: 100%;
       max-height: 100%;
-      object-fit: contain;
+      object-fit: cover;
     }
 
     .image-actions {
@@ -71,7 +72,6 @@
       margin-right: 5px;
     }
 
-    /* Toast Notification */
     .toast-container {
       position: fixed;
       bottom: 20px;
@@ -131,7 +131,6 @@
       opacity: 1;
     }
 
-    /* Custom Sweet Alert Tailwind Styling */
     .swal2-popup {
       padding: 1.25rem;
       border-radius: 0.5rem;
@@ -170,19 +169,24 @@
       background-color: #dc2626 !important;
     }
 
-    /* Current image display */
     .current-image-container {
       margin-bottom: 10px;
       border: 1px solid #e2e8f0;
       border-radius: 5px;
-      padding: 10px;
       background-color: #f9fafb;
+      width: 100%;
+      max-height: 250px;
+      height: 100%;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .current-image {
-      max-width: 100%;
-      height: 150px;
-      object-fit: contain;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
     }
 
     .current-image-label {
@@ -195,10 +199,8 @@
 </head>
 
 <body class="bg-gray-100">
-  <!-- Toast container -->
   <div id="toast-container" class="toast-container"></div>
 
-  <!-- Edit Product Content -->
   <div class="p-6">
     <div class="bg-white rounded-lg shadow-sm overflow-hidden mb-6">
       <div class="px-6 py-4 border-b border-gray-200">
@@ -209,7 +211,6 @@
         <input type="hidden" name="productId" value="<%= product._id %>" />
         
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <!-- Product Name -->
           <div>
             <label for="productName" class="block text-sm font-medium text-gray-700 mb-1">Product Name</label>
             <input type="text" id="productName" name="productName" value="<%= product.productName %>" 
@@ -217,7 +218,6 @@
             <div id="productName-error" class="error-message text-red-500 text-xs mt-1"></div>
           </div>
 
-          <!-- Shape -->
           <div>
             <label for="shape" class="block text-sm font-medium text-gray-700 mb-1">Shape</label>
             <select id="shape" name="shape"
@@ -234,7 +234,6 @@
             <div id="shape-error" class="error-message text-red-500 text-xs mt-1"></div>
           </div>
 
-          <!-- Category -->
           <div>
             <label for="category" class="block text-sm font-medium text-gray-700 mb-1">Category</label>
             <select id="category" name="category"
@@ -242,7 +241,7 @@
               <option value="">Select Category</option>
               <% if (category && category.length > 0) { %> 
                 <% category.forEach(categoryItem => { %>
-                  <option value="<%= categoryItem.name %>" <%= product.category === categoryItem.name ? 'selected' : '' %>>
+                  <option value="<%= categoryItem._id %>" <%= product.category.toString() === categoryItem._id.toString() ? 'selected' : '' %>>
                     <%= categoryItem.name %>
                   </option>
                 <% }); %>
@@ -251,7 +250,6 @@
             <div id="category-error" class="error-message text-red-500 text-xs mt-1"></div>
           </div>
 
-          <!-- Brand -->
           <div>
             <label for="brand" class="block text-sm font-medium text-gray-700 mb-1">Brand</label>
             <select id="brand" name="brand"
@@ -259,7 +257,7 @@
               <option value="">Select Brand</option>
               <% if (brand && brand.length > 0) { %> 
                 <% brand.forEach(brandItem => { %>
-                  <option value="<%= brandItem.name %>" <%= product.brand === brandItem.name ? 'selected' : '' %>>
+                  <option value="<%= brandItem._id %>" <%= product.brand.toString() === brandItem._id.toString() ? 'selected' : '' %>>
                     <%= brandItem.name %>
                   </option>
                 <% }); %>
@@ -268,12 +266,11 @@
             <div id="brand-error" class="error-message text-red-500 text-xs mt-1"></div>
           </div>
 
-          <!-- Regular Price -->
           <div>
             <label for="regularPrice" class="block text-sm font-medium text-gray-700 mb-1">Regular Price</label>
             <div class="relative rounded-md shadow-sm">
               <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <span class="text-gray-500 sm:text-sm">$</span>
+                <span class="text-gray-500 sm:text-sm">$ plump</span>
               </div>
               <input type="number" id="regularPrice" name="regularPrice" value="<%= product.regularPrice %>"
                 class="w-full pl-7 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
@@ -281,7 +278,6 @@
             <div id="regularPrice-error" class="error-message text-red-500 text-xs mt-1"></div>
           </div>
 
-          <!-- Sale Price -->
           <div>
             <label for="salePrice" class="block text-sm font-medium text-gray-700 mb-1">Sale Price</label>
             <div class="relative rounded-md shadow-sm">
@@ -294,7 +290,6 @@
             <div id="salePrice-error" class="error-message text-red-500 text-xs mt-1"></div>
           </div>
 
-          <!-- Quantity -->
           <div>
             <label for="quantity" class="block text-sm font-medium text-gray-700 mb-1">Quantity</label>
             <input type="number" id="quantity" name="quantity" min="0" value="<%= product.quantity %>"
@@ -302,7 +297,6 @@
             <div id="quantity-error" class="error-message text-red-500 text-xs mt-1"></div>
           </div>
 
-          <!-- Color -->
           <div>
             <label for="color" class="block text-sm font-medium text-gray-700 mb-1">Color</label>
             <div class="flex items-center space-x-2">
@@ -314,19 +308,10 @@
           </div>
         </div>
 
-        <!-- Description -->
-        <div class="mt-6">
-          <label for="description" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
-          <textarea id="description" name="description" rows="4"
-            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"><%= product.description %></textarea>
-          <div id="description-error" class="error-message text-red-500 text-xs mt-1"></div>
-        </div>
-
-        <!-- Product Images -->
         <div class="mt-6">
           <label class="block text-sm font-medium text-gray-700 mb-3">Product Images</label>
           <p class="text-sm text-gray-500 mb-4">
-            Current product has 4 images. You can keep existing images or upload new ones.
+            Upload new images to replace existing ones. Current images will be replaced only if new images are uploaded.
           </p>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -334,39 +319,31 @@
               <div class="image-upload-container">
                 <h4 class="font-medium">Image <%= i %></h4>
                 
-                <!-- Current image display -->
-                <div class="current-image-container">
-                  <span class="current-image-label">Current image:</span>
-                
-                  <div class="mt-2">
-                    <input type="checkbox" id="keep-image-<%= i %>" name="keepImage<%= i %>" value="true" checked />
-                    <label for="keep-image-<%= i %>" class="ml-2 text-sm text-gray-700">Keep current image</label>
-                  </div>
-                  
+                <div class="current-image-container" id="current-image-container-<%= i %>">
+                  <% if (product.productImage && product.productImage[i-1]) { %>
+                    <img src="/<%= product.productImage[i-1] %>" class="current-image" id="image<%= i %>-current" alt="Current product image <%= i %>" />
+                  <% } else { %>
+                    <p class="text-sm text-gray-500">No image uploaded</p>
+                  <% } %>
                 </div>
                 
                 <input type="file" name="image<%= i %>" id="image<%= i %>" class="block w-full mt-1 mb-2"
                   accept="image/*" />
                 
-                
-                <!-- Preview container -->
                 <div id="preview-container-<%= i %>" class="preview-container" style="display: none">
                   <img id="preview-<%= i %>" class="image-preview" />
                 </div>
                 
-                <!-- Crop button -->
                 <button type="button" id="crop-button-<%= i %>"
                   class="btn-crop px-3 py-2 bg-blue-500 text-white text-sm rounded-md hover:bg-blue-600 transition-colors"
                   style="display: none">
                   <i class="fas fa-crop-alt mr-1"></i> Crop Image
                 </button>
                 
-                <!-- Cropped image preview -->
                 <div id="cropped-container-<%= i %>" class="cropped-image-container" style="display: none">
                   <img id="cropped-preview-<%= i %>" class="cropped-image" />
                 </div>
                 
-                <!-- Image actions after cropping -->
                 <div id="image-actions-<%= i %>" class="image-actions" style="display: none">
                   <button type="button" id="edit-crop-<%= i %>">
                     <i class="fas fa-edit mr-1"></i> Edit Crop
@@ -381,26 +358,26 @@
             <% } %>
           </div>
         </div>
-<div class="mt-6 flex justify-end space-x-3">
-  <a href="/admin/products" class="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600">
-    <i class="fas fa-arrow-left mr-2"></i>Cancel
-  </a>
 
-  <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
-    <i class="fas fa-save mr-2"></i>Update Product
-  </button>
-</div>
+        <div class="mt-6 flex justify-end space-x-3">
+          <a href="/admin/products" class="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600">
+            <i class="fas fa-arrow-left mr-2"></i>Cancel
+          </a>
+
+          <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
+            <i class="fas fa-save mr-2"></i>Update Product
+          </button>
+        </div>
       </form>
     </div>
   </div>
+
 <script src="https://cdn.jsdelivr.net/npm/cropperjs@1.5.12/dist/cropper.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-  // Store our croppers and file data
   const croppers = {};
   const fileData = {};
 
-  // Show toast notification
   function showToast(message, type) {
     const toastContainer = document.getElementById('toast-container');
     const toast = document.createElement('div');
@@ -415,7 +392,7 @@
     
     const closeBtn = document.createElement('button');
     closeBtn.className = 'toast-close';
-    closeBtn.innerHTML = '&times;';
+    closeBtn.innerHTML = '×';
     closeBtn.onclick = () => toast.remove();
     
     toast.appendChild(icon);
@@ -429,7 +406,6 @@
     }, 3000);
   }
 
-  // Initialize cropper function
   function initCropper(preview, index) {
     if (croppers[index]) {
       croppers[index].destroy();
@@ -438,7 +414,7 @@
     croppers[index] = new Cropper(preview, {
       viewMode: 1,
       dragMode: 'move',
-      aspectRatio: NaN, // Free crop mode
+      aspectRatio: NaN,
       autoCropArea: 0.8,
       restore: false,
       guides: true,
@@ -446,15 +422,14 @@
       highlight: true,
       cropBoxMovable: true,
       cropBoxResizable: true,
-      toggleDragModeOnDblclick: false, // Disable drag mode toggle
+      toggleDragModeOnDblclick: false,
       movable: true,
       zoomable: true,
       scalable: true,
-      rotatable: false, // Disable rotation for simplicity
+      rotatable: false,
     });
   }
 
-  // Function to get cropped blob
   function getCroppedBlob(cropper) {
     return new Promise((resolve) => {
       cropper.getCroppedCanvas({
@@ -467,7 +442,6 @@
     });
   }
 
-  // Initialize color picker
   document.addEventListener("DOMContentLoaded", function () {
     const colorPicker = document.getElementById("colorPicker");
     const colorInput = document.getElementById("color");
@@ -478,7 +452,6 @@
       });
     }
 
-    // Setup file inputs
     for (let i = 1; i <= 4; i++) {
       setupImageInput(i);
     }
@@ -486,7 +459,7 @@
 
   function setupImageInput(index) {
     const input = document.getElementById(`image${index}`);
-    const keepCheckbox = document.getElementById(`keep-image-${index}`);
+    const currentImageContainer = document.getElementById(`current-image-container-${index}`);
     const previewContainer = document.getElementById(`preview-container-${index}`);
     const preview = document.getElementById(`preview-${index}`);
     const cropButton = document.getElementById(`crop-button-${index}`);
@@ -494,52 +467,37 @@
     const croppedPreview = document.getElementById(`cropped-preview-${index}`);
     const imageActions = document.getElementById(`image-actions-${index}`);
     const editCropButton = document.getElementById(`edit-crop-${index}`);
-    const successBadge = document.getElementById(`success-badge-${index}`);
     const errorElement = document.getElementById(`image${index}-error`);
 
-    // image validation
     input.addEventListener("change", function (e) {
       if (input.files && input.files[0]) {
-        // Check if the file is an image
         const file = input.files[0];
         const fileType = file.type;
         const validImageTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/bmp', 'image/tiff'];
         
         if (!validImageTypes.includes(fileType)) {
-          // Display error message
           errorElement.textContent = "Please upload only image files (JPEG, PNG, GIF, etc.)";
-          // Reset file input
           input.value = "";
           return;
         } else {
-          // Clear any previous error
           errorElement.textContent = "";
         }
         
-        // Uncheck the "keep current image" checkbox
-        if (keepCheckbox) {
-          keepCheckbox.checked = false;
-        }
-        
-        // Reset previous state
         if (croppers[index]) {
           croppers[index].destroy();
           croppers[index] = null;
         }
 
-        // Show preview container and crop button
+        // Hide current image when a new image is selected
+        currentImageContainer.style.display = "none";
         previewContainer.style.display = "block";
         cropButton.style.display = "inline-block";
-        
-        // Hide cropped container and actions
         croppedContainer.style.display = "none";
         imageActions.style.display = "none";
 
         const reader = new FileReader();
         reader.onload = function (e) {
           preview.src = e.target.result;
-
-          // Initialize cropper after image is loaded
           preview.onload = function () {
             initCropper(preview, index);
           };
@@ -548,43 +506,29 @@
       }
     });
 
-    // Handle crop button click
     cropButton.addEventListener("click", async function () {
       if (croppers[index]) {
         try {
-          // Get cropped canvas
           const canvas = croppers[index].getCroppedCanvas({
             maxWidth: 1200,
             maxHeight: 1200,
             fillColor: '#fff',
           });
 
-          // Show cropped image in preview
           croppedPreview.src = canvas.toDataURL('image/jpeg', 0.9);
-          
-          // Show cropped container and hide original preview
           croppedContainer.style.display = "flex";
           previewContainer.style.display = "none";
           cropButton.style.display = "none";
           imageActions.style.display = "flex";
 
-          // Convert to blob
           const blob = await getCroppedBlob(croppers[index]);
-          
-          // Store the blob for form submission
           fileData[index] = {
             blob: blob,
             filename: `product-${Date.now()}-${index}.jpg`,
           };
 
-          // Disable Cropper to prevent further interaction
           croppers[index].disable();
-          
-          // Clear error if any
           errorElement.textContent = "";
-          
-          // Show toast notification
-          showToast(`Image ${index} successfully cropped and saved`, 'success');
         } catch (error) {
           console.error("Error cropping image:", error);
           showToast(`Error cropping image ${index}`, 'error');
@@ -592,59 +536,24 @@
       }
     });
 
-    // Handle edit crop button click
     editCropButton.addEventListener("click", function () {
-      // Show original preview with cropper
       previewContainer.style.display = "block";
       cropButton.style.display = "inline-block";
-      
-      // Hide cropped container and actions
       croppedContainer.style.display = "none";
       imageActions.style.display = "none";
       
-      // Re-initialize cropper
       if (croppers[index]) {
         croppers[index].destroy();
       }
       initCropper(preview, index);
     });
-
-    // Handling checkbox for keeping current image
-    if (keepCheckbox) {
-      keepCheckbox.addEventListener('change', function() {
-        const fileInput = document.getElementById(`image${index}`);
-        
-        if (this.checked) {
-          // If keeping current image, disable the file input
-          if (fileData[index]) {
-            delete fileData[index];
-          }
-          
-          // Reset and hide all cropping elements
-          if (croppers[index]) {
-            croppers[index].destroy();
-            croppers[index] = null;
-          }
-          
-          previewContainer.style.display = "none";
-          cropButton.style.display = "none";
-          croppedContainer.style.display = "none";
-          imageActions.style.display = "none";
-          
-          // Clear any error messages
-          errorElement.textContent = "";
-        }
-      });
-    }
   }
 
-  // Form submission handler - Corrected version
   document.getElementById("productForm").addEventListener("submit", async function (e) {
     e.preventDefault();
 
     let isValid = true;
 
-    // Validate required fields
     const requiredFields = [
       "productName",
       "brand",
@@ -669,14 +578,12 @@
       }
     });
 
-    // Validate that we have at least one image
     let hasAtLeastOneImage = false;
     for (let i = 1; i <= 4; i++) {
-      const keepCheckbox = document.getElementById(`keep-image-${i}`);
       const hasNewImage = fileData[i] !== undefined;
-      const keepingCurrentImage = keepCheckbox && keepCheckbox.checked;
+      const currentImageExists = document.querySelector(`#image${i}-current`) !== null;
       
-      if (keepingCurrentImage || hasNewImage) {
+      if (hasNewImage || currentImageExists) {
         hasAtLeastOneImage = true;
         document.getElementById(`image${i}-error`).textContent = "";
       }
@@ -689,31 +596,19 @@
 
     if (isValid) {
       try {
-        // Create FormData object
         const formData = new FormData(this);
 
-        // Handle images - add cropped images
         for (let i = 1; i <= 4; i++) {
-          const keepCheckbox = document.getElementById(`keep-image-${i}`);
-          const keepingCurrentImage = keepCheckbox && keepCheckbox.checked;
-          
-          // Add keep image flag to form data
-          formData.set(`keepImage${i}`, keepingCurrentImage ? 'true' : 'false');
-          
-          // If we're not keeping the current image, remove the file input and add our cropped blob
-          if (!keepingCurrentImage) {
-            formData.delete(`image${i}`); // Remove the file input
-            if (fileData[i]) {
-              formData.append(
-                `image${i}`,
-                fileData[i].blob,
-                fileData[i].filename
-              );
-            }
+          formData.delete(`image${i}`);
+          if (fileData[i]) {
+            formData.append(
+              `image${i}`,
+              fileData[i].blob,
+              fileData[i].filename
+            );
           }
         }
 
-        // Show loading
         Swal.fire({
           title: "Updating Product",
           text: "Please wait...",
@@ -731,7 +626,6 @@
           }
         });
 
-        // Submit form - fixed URL
         const productId = formData.get('productId');
         const response = await fetch(`/admin/editProduct/${productId}`, {
           method: "POST",
@@ -783,10 +677,7 @@
         });
       }
     } else {
-      // Show validation error toast
       showToast("Please fix the errors in the form", "error");
-      
-      // Scroll to first error
       const firstError = document.querySelector(".error-message:not(:empty)");
       if (firstError) {
         firstError.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -794,7 +685,6 @@
     }
   });
 
-  // Price validation - ensure sale price is not higher than regular price
   const regularPriceInput = document.getElementById("regularPrice");
   const salePriceInput = document.getElementById("salePrice");
   
@@ -819,4 +709,4 @@
 </script>
 </body>
 
-<%- include('../partials/admin/footer') %>   
+<%- include('../partials/admin/footer') %>

@@ -618,7 +618,7 @@ const logout = async (req, res) => {
           });
         }
         
-        // Destroy the session after logging out with Passport
+        // Destroy the session after logout with Passport
         req.session.destroy((err) => {
           if (err) {
             console.error('Session destroy error:', err);

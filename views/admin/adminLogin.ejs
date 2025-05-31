@@ -6,6 +6,19 @@
   <title>SHADES - Admin Portal</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <style>
+    .error-message{
+            color: rgb(255, 37, 37);
+            font-size: 0.75rem;
+            font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+            display: none;
+        }
+        .error-message {
+  transition: opacity 0.3s ease-in-out;
+  
+}
+
+  </style>
 </head>
 <body class="font-sans bg-gradient-to-br from-gray-100 to-gray-200 min-h-screen flex flex-col">
   <!-- Fixed Header -->
@@ -40,6 +53,7 @@
               <input id="email" name="email" type="email" autocomplete="email" required 
                 class="pl-10 block w-full border border-gray-300 rounded-lg py-2.5 text-gray-900 focus:ring-2 focus:ring-black focus:border-black text-sm" 
                 placeholder="admin@shades.com">
+                <div id="error1" class="error-message"></div>
             </div>
           </div>
           
@@ -52,9 +66,14 @@
               <input id="password" name="password" type="password" autocomplete="current-password" required 
                 class="pl-10 block w-full border border-gray-300 rounded-lg py-2.5 text-gray-900 focus:ring-2 focus:ring-black focus:border-black text-sm" 
                 placeholder="••••••••">
+                <div id="error2" class="error-message"></div>
             </div>
           </div>
-
+           <% if(message) { %>
+                <div class="bg-red-600 border border-gray-700 text-white px-2 py-0.3 rounded text-center">
+                    <%= message %>
+                </div>
+            <% } %>
           <div class="flex items-center justify-between">
             <div class="flex items-center">
               <input id="remember-me" name="remember-me" type="checkbox" 
@@ -64,7 +83,7 @@
               </label>
             </div>
 
-            <a href="#" class="text-sm font-medium text-black hover:underline">
+            <a href="/forgot-password" class="text-sm font-medium text-black hover:underline">
               Forgot password?
             </a>
           </div>
@@ -91,5 +110,52 @@
       <p>Admin Portal v2.5.3</p>
     </div>
   </footer>
+
+
+
+  <script>
+    const emailid = document.getElementById('email')
+    const passwordid = document.getElementById('password')
+    const error1 = document.getElementById('error1')
+    const error2 = document.getElementById('error2')
+
+    function emailValidateChecking() {
+            const emailvalue = emailid.value.trim()
+            const emailPattern = /^[a-zA-Z0-9._%+-]+@gmail\.com$/
+            if (!emailPattern.test(emailvalue)) {
+                error1.style.display = 'block'
+                error1.innerHTML = 'Invalid email format'
+                return false
+            } else {
+                error1.style.display = 'none'
+                return true
+            }
+        }
+
+        function passwordValidateChecking() {
+            const passwordValue = passwordid.value
+            const alpha = /[A-Za-z]/
+            const digit = /\d/
+            let isValid = true
+    
+            if (passwordValue.length < 8) {
+                error2.style.display = 'block'
+                error2.innerHTML = 'Should contain at least 8 characters'
+                isValid = false
+            } else if (!alpha.test(passwordValue) || !digit.test(passwordValue)) {
+                error2.style.display = 'block'
+                error2.innerHTML = 'Should contain both letters and numbers'
+                isValid = false
+            } else {
+                error2.style.display = 'none'
+            }
+    
+            return isValid
+        }
+    
+        emailid.addEventListener('blur', emailValidateChecking)
+        passwordid.addEventListener('blur', passwordValidateChecking)
+</script>
+
 </body>
 </html>
