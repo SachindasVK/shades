@@ -5,6 +5,8 @@ const nodemailer = require("nodemailer");
 const bcrypt = require("bcrypt");
 const env = require("dotenv").config();
 const session = require("express-session");
+const path = require('path');
+const fs = require('fs');
 
 function generateOtp() {
     const digits = "1234567890";
@@ -242,7 +244,7 @@ const postNewPassword = async (req, res) => {
             const userData = await User.findById(userId);
             res.render("profile", {
                 user: userData,
-                username:userData.name,
+                username:userData.name
             });
         } catch (error) {
             console.error('Error:', error);
@@ -252,35 +254,59 @@ const postNewPassword = async (req, res) => {
 
 
     //edit user profile 
-    const editUserProfile = async(req,res)=>{
-        try {
+   const editUserProfile = async (req, res) => {
+    try {
         const { id } = req.params;
-        const { name, phone, email, password, address } = req.body;
+        const { name, phone, email } = req.body;
         const image = req.file ? req.file.filename : null;
 
-         const user = await User.findById(id);
-          if (image && user.image) {
-            const oldLogoPath = path.join(__dirname, '../../public/Uploads/userProfileimages', user.image);
-            if (fs.existsSync(oldLogoPath)) {
-                fs.unlinkSync(oldLogoPath);
-            }
+        const user = await User.findById(id);
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' });
         }
 
-        user.name = name;
-        user.email = email;
-        user.phone = phone;
-        user.password = password;
-        user.addresses = address;
-        if (image) user.image = image;
-        
+        // Handle image upload
+        if (image) {
+            if (user.image && user.image !== 'default.png') {
+                const oldImagePath = path.join(__dirname, '../../public/uploads/userProfileimages', user.image);
+                if (fs.existsSync(oldImagePath)) {
+                    fs.unlinkSync(oldImagePath);
+                }
+            }
+            user.image = image;
+        }
+
+        // Update fields
+        if (name) user.name = name;
+        if (email) user.email = email;
+        if (phone) user.phone = phone;
+
         await user.save();
-        res.json({ success: true, message: 'Brand updated successfully' });
+        
+        // Update session if needed
+        if (req.session.user === id) {
+            req.session.userName = user.name;
+        }
+
+        res.json({ 
+            success: true, 
+            message: 'Profile updated successfully',
+            user: {
+                name: user.name,
+                email: user.email,
+                phone: user.phone,
+                image: user.image
+            }
+        });
+        
     } catch (error) {
-        console.error('Error editing brand:', error.message, error.stack);
-        res.status(500).json({ success: false, message: 'Server error: ' + error.message });
+        console.error('Error editing profile:', error);
+        res.status(500).json({ 
+            success: false, 
+            message: 'Server error occurred'
+        });
     }
 };
-
 
 module.exports = {
     getForgotPassPage,

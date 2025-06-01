@@ -60,9 +60,8 @@ router.post('/verify-forgotpassword-otp',profileController.verifyForgotPassOtp)
 router.post('/resend-otp',profileController.resendOtp)
 router.get('/reset-password',profileController.getResetPassPage)
 router.post('/reset-password',profileController.postNewPassword)
-router.get('/profile',userAuth,profileController.userProfile)
-router.put('/profile/:id',userAuth,userUpload.single('image'),profileController.editUserProfile)
-
+router.get('/profile', userAuth, profileController.userProfile);
+router.post('/edit-profile/:id', userAuth, userUpload.single('image'), profileController.editUserProfile);
 
 
 

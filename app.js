@@ -23,7 +23,7 @@ app.use(session({
       maxAge:72*60*60*1000
    }
 }))
-app.use(passport.initialize())
+app.use(passport.initialize()) // authentication 
 app.use(passport.session())
 app.use((req,res,next)=>{
    res.set('cache-control','no-store')

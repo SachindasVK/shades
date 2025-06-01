@@ -19,22 +19,9 @@ const userSchema = new Schema({
         default:null
     },
     image:{
-        type:String
+        type:String,
+        required:false
     },
-  addresses: [
-  {
-    fullName: String,
-    pincode: String,
-    state: String,
-    city: String,
-    landmark: String,
-    addressLine: String,
-    isDefault: {
-      type: Boolean,
-      default: false
-    }
-  }
-],
     googleId:{
         type:String,
         unique:true,
@@ -52,14 +39,27 @@ const userSchema = new Schema({
         type:Boolean,
         default:false
     },
-    cart:[{
-        type:Schema.Types.ObjectId,
-        ref:'Cart',
-
+     username: {
+        type:String,
+        required:false
+    },
+     cart:[{
+        productId: {
+            type: Schema.Types.ObjectId,
+            ref: 'Product'
+        },
+        quantity: {
+            type: Number,
+            default: 1
+        }
+    }],
+    wishlist:[{
+        type: Schema.Types.ObjectId,
+        ref: 'Product'
     }],
     wallet:{
-       type:Schema.Types.ObjectId,
-       ref:'Wishlist'
+        type: Number,
+        default: 0
     },
     orderHistory:[{
         type:Schema.Types.ObjectId,
@@ -88,11 +88,11 @@ const userSchema = new Schema({
             ref:'Category'
         },
         brand:{
-            type:String,
-            searchOn:{
-                type:Date,
-                default:Date.now
-            }
+            type:String
+        },
+         searchOn:{
+            type: Date,
+            default: Date.now
         }
     }]
 },{ timestamps: true })
