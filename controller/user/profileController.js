@@ -48,12 +48,12 @@ const sendVerificationEmail = async (email, otp) => {
 
 const securePassword = async (password) => {
    try {
-    console.log("Password received for hashing:", password); // ✅ Add this
+    console.log("Password received for hashing:", password); 
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
     return hashedPassword;
   } catch (error) {
-    console.log("Error hashing password:", error); // ✅ Already there
+    console.log("Error hashing password:", error); 
     throw new Error("Password hashing failed");
   }
 };
@@ -258,24 +258,13 @@ const postNewPassword = async (req, res) => {
     try {
         const { id } = req.params;
         const { name, phone, email } = req.body;
-        const image = req.file ? req.file.filename : null;
 
         const user = await User.findById(id);
         if (!user) {
             return res.status(404).json({ success: false, message: 'User not found' });
         }
 
-        // Handle image upload
-        if (image) {
-            if (user.image && user.image !== 'default.png') {
-                const oldImagePath = path.join(__dirname, '../../public/uploads/userProfileimages', user.image);
-                if (fs.existsSync(oldImagePath)) {
-                    fs.unlinkSync(oldImagePath);
-                }
-            }
-            user.image = image;
-        }
-
+      
         // Update fields
         if (name) user.name = name;
         if (email) user.email = email;
@@ -308,6 +297,222 @@ const postNewPassword = async (req, res) => {
     }
 };
 
+
+const removeProfile = async(req,res)=>{
+    try {
+        const {id} = req.params
+        const user = await User.findById(id)
+
+        if(!user){
+            return res.status(400).json({success:false,message:'User not found!'})
+        }
+
+        if(user.image&&user.image !=='default.png'){
+            const imagePath = path.join(__dirname,'../../public/uploads/userProfileimages',user.image)
+            if(fs.existsSync(imagePath)){
+                fs.unlinkSync(imagePath)
+            }
+            user.image = null
+            await user.save()
+
+                return res.json({ success: true, message: 'Image removed successfully' });
+        }
+        return res.status(400).json({ success: false, message: 'No image to remove' });
+    } catch (error) {
+        console.error('Error removing profile image:', error);
+        return res.status(500).json({ success: false, message: 'Server error occurred' });
+    }
+}
+
+
+const uploadProfileImage = async (req, res) => {
+    try {
+        const userId = req.session.user;
+        const image = req.file ? req.file.filename : null;
+
+        if (!image) {
+            return res.status(400).json({ success: false, message: 'No image provided' });
+        }
+
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+
+        // Remove old image if exists
+        if (user.image && user.image !== 'default.png') {
+            const oldImagePath = path.join(__dirname, '../../public/uploads/userProfileimages', user.image);
+            if (fs.existsSync(oldImagePath)) {
+                fs.unlinkSync(oldImagePath);
+            }
+        }
+
+        user.image = image;
+        await user.save();
+
+        res.json({ 
+            success: true, 
+            message: 'Profile image uploaded successfully'
+        });
+        
+    } catch (error) {
+        console.error('Error uploading profile image:', error);
+        res.status(500).json({ 
+            success: false, 
+            message: 'Server error occurred'
+        });
+    }
+};
+const getchangePassword = async (req, res) => {
+    try {
+        // Debug: Log session structure
+        console.log('Session user:', req.session.user);
+        
+        // Handle different session structures
+        let userId;
+        if (typeof req.session.user === 'string') {
+            userId = req.session.user; // If user ID is stored directly as string
+        } else if (req.session.user && req.session.user._id) {
+            userId = req.session.user._id; // If user object with _id
+        } else if (req.session.user && req.session.user.id) {
+            userId = req.session.user.id; // If user object with id
+        } else {
+            return res.redirect('/login');
+        }
+
+        const userData = await User.findById(userId);
+        
+        if (!userData) {
+            return res.redirect('/login');
+        }
+        
+        res.render("changepassword", {
+            user: userData, // Pass full user object to match your EJS template
+            username: userData.name
+        });
+    } catch (error) {
+        console.error('Get change password error:', error);
+        res.redirect('/pageNotFound');
+    }
+};
+
+const changePassword = async (req, res) => {
+    try {
+        const { currentPassword, newPassword } = req.body;
+        
+        // Debug: Log session structure
+        console.log('Session user:', req.session.user);
+        console.log('Session keys:', Object.keys(req.session || {}));
+        
+        // Get user from session
+        if (!req.session || !req.session.user) {
+            return res.status(401).json({ 
+                success: false, 
+                message: 'Please log in to change your password.' 
+            });
+        }
+
+        // Handle different session structures consistently
+        let userId;
+        if (typeof req.session.user === 'string') {
+            userId = req.session.user; // If user ID is stored directly as string
+        } else if (req.session.user && req.session.user._id) {
+            userId = req.session.user._id; // If user object with _id
+        } else if (req.session.user && req.session.user.id) {
+            userId = req.session.user.id; // If user object with id
+        } else {
+            console.error('Invalid session structure:', req.session.user);
+            return res.status(401).json({ 
+                success: false, 
+                message: 'Invalid session. Please log in again.' 
+            });
+        }
+
+        console.log('Extracted userId:', userId);
+
+        // Validate input
+        if (!currentPassword || !newPassword) {
+            return res.status(400).json({ 
+                success: false, 
+                message: 'Current password and new password are required.' 
+            });
+        }
+
+        // Basic password length validation
+        if (newPassword.length < 6) {
+            return res.status(400).json({ 
+                success: false, 
+                message: 'New password must be at least 6 characters long.' 
+            });
+        }
+
+        // Find user in database by ID
+        const dbUser = await User.findById(userId);
+        console.log('Database user found:', !!dbUser);
+        
+        if (!dbUser) {
+            console.error('User not found in database with ID:', userId);
+            return res.status(404).json({ 
+                success: false, 
+                message: 'User account not found. Please log in again.' 
+            });
+        }
+
+        // Check if user has a password (in case of social login users)
+        if (!dbUser.password) {
+            return res.status(400).json({ 
+                success: false, 
+                message: 'Cannot change password for this account type.' 
+            });
+        }
+
+        // Verify current password
+        const isCurrentPasswordValid = await bcrypt.compare(currentPassword, dbUser.password);
+        if (!isCurrentPasswordValid) {
+            return res.status(400).json({ 
+                success: false, 
+                message: 'Current password is incorrect.' 
+            });
+        }
+
+        // Check if new password is same as current password
+        const isNewPasswordSameAsCurrent = await bcrypt.compare(newPassword, dbUser.password);
+        if (isNewPasswordSameAsCurrent) {
+            return res.status(400).json({ 
+                success: false, 
+                message: 'New password must be different from current password.' 
+            });
+        }
+
+        // Hash new password
+        const saltRounds = 10;
+        const hashedNewPassword = await bcrypt.hash(newPassword, saltRounds);
+
+        // Update password in database
+        await User.findByIdAndUpdate(userId, { 
+            password: hashedNewPassword,
+            updatedAt: new Date()
+        });
+
+        console.log('Password updated successfully for user:', userId);
+
+        // Success response
+        return res.json({ 
+            success: true, 
+            message: 'Password changed successfully.' 
+        });
+
+    } catch (error) {
+        console.error("Change password error:", error);
+        
+        return res.status(500).json({ 
+            success: false, 
+            message: 'An error occurred while changing your password. Please try again.' 
+        });
+    }
+};
+
+
 module.exports = {
     getForgotPassPage,
     forgotEmailValid,
@@ -316,5 +521,9 @@ module.exports = {
     resendOtp,
     postNewPassword,
     userProfile,
-    editUserProfile
+    editUserProfile,
+    removeProfile,
+    uploadProfileImage,
+    getchangePassword,
+    changePassword
 };

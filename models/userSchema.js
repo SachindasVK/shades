@@ -31,6 +31,10 @@ const userSchema = new Schema({
         type:String,
         required:false
     },
+passwordChangedAt: {
+    type: Date,
+    default: Date.now
+},
     isBlocked:{
         type:Boolean,
         default:false

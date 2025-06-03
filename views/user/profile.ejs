@@ -3,723 +3,744 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profile - Shades Store</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <title>Profile - SHADES</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
-            min-height: 100vh;
-            background-color: #f3f4f6;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: 'Inter', sans-serif;
         }
-
-        .header {
-            background-color: #ffffff;
-            border-bottom: 1px solid #d1d5db;
-            padding: 1rem 1.5rem;
-        }
-
-        .header-container {
-            max-width: 80rem;
-            margin: 0 auto;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .header-title {
-            font-family: 'Times New Roman', Times, serif;
-            font-size: 1.875rem;
-            font-weight: 700;
-            color: #000000;
-            text-align: center;
-            flex-grow: 1;
-        }
-
-        .logout-button {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            background-color: #000000;
-            color: #ffffff;
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            transition: all 300ms;
-            border: none;
-            cursor: pointer;
-            text-decoration: none;
-        }
-
-        .logout-button:hover {
-            background-color: #1f2937;
-        }
-
-        .main-container {
-            max-width: 80rem;
-            margin: 0 auto;
-            padding: 2rem 1.5rem;
-        }
-
-        .profile-card {
-            background-color: #ffffff;
-            border-radius: 1rem;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        }
-
-        .profile-header {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 1.5rem;
-        }
-
-        @media (min-width: 768px) {
-            .profile-header {
-                flex-direction: row;
-                align-items: flex-start;
-            }
-        }
-
-        .profile-image-container {
-            position: relative;
-            cursor: pointer;
-        }
-
-        .profile-image {
-            width: 8rem;
-            height: 8rem;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 4px solid #000000;
-        }
-
-        .camera-icon {
-            position: absolute;
-            bottom: 0;
-            right: 0;
-            background-color: #000000;
-            border-radius: 50%;
-            padding: 0.5rem;
-            color: #ffffff;
-            font-size: 0.875rem;
-        }
-
-        .profile-info {
-            text-align: center;
-            flex: 1;
-        }
-
-        @media (min-width: 768px) {
-            .profile-info {
-                text-align: left;
-            }
-        }
-
-        .profile-name {
-            font-family: 'Times New Roman', Times, serif;
-            font-size: 1.875rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-            color: #000000;
-        }
-
-        .info-container {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            color: #4b5563;
-            margin-bottom: 0.5rem;
-        }
-
-        .profile-buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-            min-width: 150px;
-        }
-
-        .edit-button, .password-button {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            padding: 0.75rem 1rem;
-            border-radius: 0.5rem;
-            transition: all 300ms;
-            cursor: pointer;
-            border: none;
-            font-size: 0.875rem;
-            font-weight: 500;
-        }
-
-        .edit-button {
-            background-color: #000000;
-            color: #ffffff;
-        }
-
-        .edit-button:hover {
-            background-color: #1f2937;
-        }
-
-        .password-button {
-            background-color: #ffffff;
-            color: #000000;
-            border: 1px solid #000000;
-        }
-
-        .password-button:hover {
+        .page-body {
             background-color: #f3f4f6;
         }
-
-        .grid-container {
-            display: grid;
+        .containeer {
+            max-width: 95%; 
+            margin-left: auto; 
+            margin-right: auto;
+            display: flex; 
             gap: 2rem;
+            padding: 10px;
         }
-
-        @media (min-width: 1024px) {
-            .grid-container {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-        .section-card {
+        .sidebar {
+            width: 20rem;
             background-color: #ffffff;
-            border-radius: 1rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            height: fit-content;
+        }
+        .profile-header {
             padding: 1.5rem;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        }
-
-        .section-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 1.5rem;
-        }
-
-        .section-title {
-            font-size: 1.25rem;
-            font-weight: 700;
+            border-bottom: 1px solid #e5e7eb;
             display: flex;
             align-items: center;
             gap: 0.75rem;
-            color: #000000;
+            position: relative;
         }
-
-        .add-button {
-            background-color: #000000;
-            color: #ffffff;
-            padding: 0.5rem;
-            border-radius: 0.5rem;
-            transition: all 300ms;
-            border: none;
-            cursor: pointer;
-            width: 2.5rem;
-            height: 2.5rem;
+        .profile-icon {
+            width: 3rem;
+            height: 3rem;
+            background-color: #a1a1a1;
+            border-radius: 9999px;
             display: flex;
             align-items: center;
             justify-content: center;
+            position: relative;
+            overflow: hidden;
         }
-
-        .add-button:hover {
-            background-color: #1f2937;
+        .profile-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 9999px;
         }
-
-        .address-list, .orders-list {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
+        .profile-icon i {
+            color: #ffffff;
+            font-size: 1.125rem;
         }
-
-        .address-card, .order-card {
-            background-color: #f9fafb;
-            border-radius: 0.5rem;
-            padding: 1rem;
-            border: 1px solid #e5e7eb;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 2rem;
+        .greeting {
             color: #6b7280;
-        }
-
-        .empty-state i {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            opacity: 0.5;
-        }
-
-        .order-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 0.5rem;
-        }
-
-        .order-id {
-            font-weight: 600;
-            color: #000000;
             font-size: 0.875rem;
         }
-
-        .order-status {
-            font-size: 0.75rem;
-            padding: 0.25rem 0.5rem;
-            rounded: 0.25rem;
-            font-weight: 500;
+        .username {
+            color: #1f2937;
+            font-weight: 600;
         }
-
-        .status-delivered { background-color: #dcfce7; color: #16a34a; }
-        .status-processing { background-color: #dbeafe; color: #2563eb; }
-        .status-pending { background-color: #fef3c7; color: #d97706; }
-        .status-cancelled { background-color: #fee2e2; color: #dc2626; }
-
-        /* Modal Styles */
-        .modal {
-            position: fixed;
-            inset: 0;
-            background-color: rgba(0, 0, 0, 0.5);
-            display: none;
-            z-index: 50;
-            align-items: center;
-            justify-content: center;
-            padding: 1rem;
+        .menu {
+            padding-top: 0;
+            padding-bottom: 0;
         }
-
-        .modal.show {
+        .menu-list {
+            margin: 0;
+        }
+        .menu-item {
+            border-bottom: 1px solid #f3f4f6;
+        }
+        .menu-link {
             display: flex;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            color: #4b5563;
+            font-size: 0.875rem;
         }
-
-        .modal-content {
+        .menu-link:hover {
+            background-color: #f9fafb;
+        }
+        .menu-link.active {
+            background-color: #eff6ff;
+            color: #2563eb;
+        }
+        .menu-icon {
+            width: 1.25rem;
+            margin-right: 0.75rem;
+        }
+        .logout-link {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            color: #dc2626;
+            font-size: 0.875rem;
+        }
+        .logout-link:hover {
+            background-color: #fef2f2;
+        }
+        .main-content {
+            flex: 1;
             background-color: #ffffff;
-            border-radius: 1rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
             padding: 2rem;
-            width: 100%;
-            max-width: 28rem;
-            max-height: 90vh;
-            overflow-y: auto;
         }
-
-        .modal-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+        .section-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #1f2937;
             margin-bottom: 1.5rem;
         }
-
-        .modal-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #000000;
+        .profile-container {
+            width: 7rem;
+            height: 7rem;
+            border-radius: 50%;
+            background-color: #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 20px;
         }
-
-        .close-button {
-            color: #4b5563;
-            font-size: 1.25rem;
+        .profile-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+        .default-icon {
+            font-size: 2.5rem;
+            color: #9ca3af;
+        }
+        .image-action-button {
+            position: relative;
+            display: inline-block;
+            background-color: white;
+            border: 2px solid black;
+            border-radius: 9999px;
+            padding: 6px 12px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
             cursor: pointer;
-            background: none;
-            border: none;
-            padding: 0.25rem;
-        }
-
-        .close-button:hover {
-            color: #000000;
-        }
-
-        .form {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .form-label {
             font-size: 0.875rem;
             font-weight: 500;
-            margin-bottom: 0.5rem;
-            color: #000000;
+            color: black;
+            margin-top: 10px;
+            text-align: center;
+            opacity: 1;
         }
-
+        .image-action-button:hover {
+            background-color: #f3f4f6;
+        }
+        .field-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .edit-icon {
+            font-size: 0.9rem;
+            color: black;
+            cursor: pointer;
+            margin-left: 4px;
+            transition: color 0.2s;
+        }
+        .edit-icon:hover {
+            color: #1f2937;
+        }
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+        .modal-header {
+            margin-bottom: 1rem;
+        }
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        .modal-message {
+            font-size: 1rem;
+            color: #374151;
+            margin-bottom: 1rem;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
         .form-input {
             width: 100%;
-            background-color: #f9fafb;
+            padding: 0.5rem;
             border: 1px solid #d1d5db;
-            border-radius: 0.5rem;
-            padding: 0.75rem 1rem;
-            transition: border-color 200ms;
+            border-radius: 4px;
+            font-size: 1rem;
         }
-
         .form-input:focus {
             outline: none;
-            border-color: #000000;
-            box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
         }
-
-        .form-buttons {
+        .button-group {
             display: flex;
-            gap: 0.75rem;
-            padding-top: 1rem;
+            gap: 0.5rem;
+            justify-content: flex-end;
         }
-
-        .save-button, .cancel-modal-button {
-            flex: 1;
-            padding: 0.75rem 1rem;
-            border-radius: 0.5rem;
-            font-weight: 500;
-            transition: all 300ms;
-            cursor: pointer;
+        .btn {
+            padding: 0.5rem 1rem;
             border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 500;
         }
-
-        .save-button {
-            background-color: #000000;
-            color: #ffffff;
+        .btn-primary {
+            background-color: #2563eb;
+            color: white;
         }
-
-        .save-button:hover {
+        .btn-primary:hover {
+            background-color: #1d4ed8;
+        }
+        .btn-secondary {
+            background-color: #6b7280;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background-color: #4b5563;
+        }
+        .btn-danger {
+            background-color: #ef4444;
+            color: white;
+        }
+        .btn-danger:hover {
+            background-color: #dc2626;
+        }
+        .info-item {
+            padding: 1rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .field-label {
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.5rem;
+        }
+        .field-value {
+            color: #111827;
+        }
+        .field-value-empty {
+            color: #9ca3af;
+            font-style: italic;
+        }
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            min-width: 250px;
             background-color: #1f2937;
+            color: white;
+            padding: 1rem;
+            border-radius: 4px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 2000;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
         }
-
-        .cancel-modal-button {
-            background-color: #e5e7eb;
-            color: #000000;
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
         }
-
-        .cancel-modal-button:hover {
-            background-color: #d1d5db;
+        .toast.success {
+            background-color: #22c55e;
         }
-
-        .file-input {
+        .toast.error {
+            background-color: #ef4444;
+        }
+        .bg-black-logo {
+            background-color: #000000;
+        }
+        .gucci-style-large {
+            display: flex;
+            justify-content: center;
+            margin: 0 auto;
+            max-width: 1400px;
+        }
+        .gucci-style-large .letter {
+            font-family: 'Times New Roman', serif;
+            font-weight: 100;
+            color: #ffffff;
+            font-size: 15rem;
+            line-height: 1;
+            letter-spacing: 0.10em;
+            text-transform: uppercase;
+            padding: 0 0.08em;
+        }
+        .footer-heading {
+            color: #8C8C8C;
+            font-size: 0.875rem;
+            font-weight: 500;
+            letter-spacing: 0.05em;
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+        }
+        .footer-link {
+            color: white;
+            display: block;
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        .footer-link:hover {
+            color: #8C8C8C;
+            text-decoration: underline;
+        }
+        .input-field {
+            background-color: transparent;
+            border: none;
+            border-bottom: 1px solid #555;
+            color: white;
+            padding: 0.5rem 0;
+            width: 100%;
+        }
+        .input-field:focus {
+            border-bottom: 1px solid white;
+            outline: none;
+        }
+        .input-button {
+            background-color: transparent;
+            border: none;
+            color: white;
+            cursor: pointer;
+            position: absolute;
+            right: 0;
+            top: 0.5rem;
+        }
+        .font-playfair {
+            font-family: 'Playfair Display', serif;
+        }
+        .dropdown-content {
             display: none;
         }
-
-        .loading {
-            opacity: 0.6;
-            pointer-events: none;
+        .dropdown-content.show {
+            display: block;
         }
-
-        .success-message, .error-message {
-            padding: 0.75rem 1rem;
-            border-radius: 0.5rem;
-            margin-bottom: 1rem;
-            font-size: 0.875rem;
+        .hidden:not(.md\:flex) {
+            display: none !important;
         }
-
-        .success-message {
-            background-color: #dcfce7;
-            color: #16a34a;
-            border: 1px solid #bbf7d0;
-        }
-
-        .error-message {
-            background-color: #fee2e2;
-            color: #dc2626;
-            border: 1px solid #fecaca;
+        @media (min-width: 768px) {
+            .hidden.md\:flex {
+                display: flex !important;
+            }
         }
     </style>
 </head>
+<body class="page-body">
+    <!-- Header Partial -->
+  <%-include("../../views/partials/user/header")%>
 
-<body>
-
-    <%- include("../../views/partials/user/header") %>
-    <!-- Header -->
-    <div class="header">
-        <div class="header-container">
-            <h1 class="header-title">My Profile</h1>
-            <a href="/logout" class="logout-button">
-                <i class="fas fa-sign-out-alt"></i> Logout
-            </a>
-        </div>
-    </div>
-
-    <div class="main-container">
-        <!-- Profile Header -->
-        <div class="profile-card">
+    <!-- Profile Header (Sidebar) Partial -->
+    <div class="containeer">
+        <div class="sidebar">
             <div class="profile-header">
-                <div class="profile-image-container" onclick="triggerImageUpload()">
-                    <img id="profileImage" src="/uploads/userProfileimages/<%= user.image || 'default.png' %>" alt="Profile" class="profile-image" />
-                    <div class="camera-icon">
-                        <i class="fas fa-camera"></i>
-                    </div>
+                <div class="profile-icon">
+                    <% if (user.image) { %>
+                        <img src="/uploads/userProfileimages/<%= user.image %>" alt="Profile Image" class="profile-image">
+                    <% } else { %>
+                        <i class="fas fa-user" style="color: #ffffff; font-size: 1.125rem;"></i>
+                    <% } %>
                 </div>
-                <div class="profile-info">
-                    <h2 id="userName" class="profile-name"><%= user.name || 'N/A' %></h2>
-                    <div class="info-container">
-                        <i class="fas fa-envelope"></i>
-                        <span id="userEmail"><%= user.email || 'N/A' %></span>
-                    </div>
-                    <div class="info-container">
-                        <i class="fas fa-phone"></i>
-                        <span id="userPhone"><%= user.phone || 'Not provided' %></span>
-                    </div>
-                </div>
-                <div class="profile-buttons">
-                    <button onclick="editProfile()" class="edit-button">
-                        <i class="fas fa-edit"></i>
-                        <span>Edit Profile</span>
-                    </button>
-                    <button onclick="changePassword()" class="password-button">
-                        <i class="fas fa-lock"></i>
-                        <span>Change Password</span>
-                    </button>
+                <div>
+                    <div class="greeting">Hello,</div>
+                    <div class="username"><%= user.name %></div>
                 </div>
             </div>
+            <nav class="menu">
+                <ul class="menu-list">
+                    <li class="menu-item">
+                        <a href="/profile" class="menu-link active">
+                            <i class="fas fa-user menu-icon"></i>
+                            Profile Information
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="/orders" class="menu-link">
+                            <i class="fas fa-box menu-icon"></i>
+                            My orders
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="/address" class="menu-link">
+                            <i class="fas fa-home menu-icon"></i>
+                            Manage Addresses
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="/wallet" class="menu-link">
+                            <i class="fas fa-wallet menu-icon"></i>
+                            My Wallet
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="/wishlist" class="menu-link">
+                            <i class="fas fa-heart menu-icon"></i>
+                            My Wishlist
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="/referals" class="menu-link">
+                            <i class="fas fa-users menu-icon"></i>
+                            Refer Friends
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="/changepassword" class="menu-link">
+                            <i class="fas fa-lock menu-icon"></i>
+                            Change Password
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="/logout" class="logout-link">
+                            <i class="fas fa-sign-out-alt menu-icon"></i>
+                            Log out
+                        </a>
+                    </li>
+                </ul>
+            </nav>
         </div>
 
-        <div class="grid-container">
-            <!-- Addresses Section -->
-            <div class="section-card">
-                <div class="section-header">
-                    <h3 class="section-title">
-                        <i class="fas fa-map-marker-alt"></i>
-                        Addresses
-                    </h3>
-                    <button class="add-button" onclick="addAddress()">
-                        <i class="fas fa-plus"></i>
-                    </button>
-                </div>
-                <div id="addressList" class="address-list">
-                    <% if (user.addresses && user.addresses.length > 0) { %>
-                        <% user.addresses.forEach((address, index) => { %>
-                            <div class="address-card">
-                                <p><%= address %></p>
-                            </div>
-                        <% }) %>
+        <!-- Main Content -->
+        <div class="main-content">
+            <h2 class="section-title">Account Information</h2>
+            
+            <!-- Profile Image -->
+            <div style="display: flex; flex-direction: column; align-items: center;">
+                <div class="profile-container">
+                    <% if (user.image) { %>
+                        <img id="profileImage" class="profile-image" src="/uploads/userProfileimages/<%= user.image %>" alt="Profile Image">
                     <% } else { %>
-                        <div class="empty-state">
-                            <i class="fas fa-map-marker-alt"></i>
-                            <p>No addresses added yet</p>
-                        </div>
+                        <i id="defaultProfileIcon" class="fas fa-user default-icon"></i>
                     <% } %>
                 </div>
+                <button class="image-action-button" onclick="toggleImageAction('<%= user._id %>', <%- user.image ? true : false %>)">
+                    <span id="toggleText"><%= user.image ? 'Remove' : 'Upload' %></span>
+                </button>
+                <input type="file" id="imageUpload" class="hidden" accept="image/*" onchange="handleImageUpload(event)">
             </div>
 
-            <!-- Orders Section -->
-            <div class="section-card">
-                <div class="section-header">
-                    <h3 class="section-title">
-                        <i class="fas fa-box"></i>
-                        Recent Orders
-                    </h3>
-                </div>
-                <div id="ordersList" class="orders-list">
-                    <% if (user.orderHistory && user.orderHistory.length > 0) { %>
-                        <% user.orderHistory.slice(0, 5).forEach(order => { %>
-                            <div class="order-card">
-                                <div class="order-header">
-                                    <div>
-                                        <p class="order-id">Order #<%= order._id.toString().slice(-8) %></p>
-                                    </div>
-                                    <span class="order-status status-<%= order.status.toLowerCase() %>">
-                                        <%= order.status %>
-                                    </span>
-                                </div>
-                                <p style="color: #6b7280; font-size: 0.875rem;">
-                                    <%= new Date(order.createdAt || order.orderDate).toLocaleDateString() %>
-                                </p>
-                            </div>
-                        <% }) %>
-                    <% } else { %>
-                        <div class="empty-state">
-                            <i class="fas fa-box"></i>
-                            <p>No orders yet</p>
+            <div class="account-section">
+                <div id="profileData" class="profile-data">
+                    <div class="info-item" data-field="name">
+                        <div class="field-label">Full Name</div>
+                        <div class="field-content">
+                            <span class="field-value"><%= user.name %></span>
+                            <i class="fas fa-edit edit-icon" onclick="editField('name', '<%= user.name %>')"></i>
                         </div>
+                    </div>
+                    <div class="info-item" data-field="email">
+                        <div class="field-label">Email Address</div>
+                        <div class="field-content">
+                            <span class="field-value"><%= user.email %></span>
+                        </div>
+                    </div>
+                    <% if (user.phone) { %>
+                    <div class="info-item" data-field="phone">
+                        <div class="field-label">Phone Number</div>
+                        <div class="field-content">
+                            <span class="field-value"><%= user.phone %></span>
+                            <i class="fas fa-edit edit-icon" onclick="editField('phone', '<%= user.phone %>')"></i>
+                        </div>
+                    </div>
                     <% } %>
+                    <div class="info-item" data-field="joined">
+                        <div class="field-label">Joined Date</div>
+                        <div class="field-content">
+                            <span class="field-value"><%= user.createdOn.toLocaleDateString('en-GB') %></span>
+                        </div>
+                    </div>
+                    <div class="info-item" data-field="address">
+                        <div class="field-label">Default Address</div>
+                        <div class="field-content">
+                            <% if (user.address) { %>
+                                <span class="field-value"><%= user.address %></span>
+                            <% } else { %>
+                                <span class="field-value field-value-empty">No saved address was found in your account</span>
+                            <% } %>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Edit Profile Modal -->
-    <div id="editModal" class="modal">
+    <!-- Edit Modal -->
+    <div id="editModal" class="modal-overlay hidden">
         <div class="modal-content">
             <div class="modal-header">
                 <h3 class="modal-title">Edit Profile</h3>
-                <button onclick="closeModal()" class="close-button">
-                    <i class="fas fa-times"></i>
-                </button>
             </div>
-            <div id="modalMessage"></div>
-            <form id="editForm" class="form" enctype="multipart/form-data">
+            <form id="editForm">
                 <div class="form-group">
-                    <label class="form-label">Profile Image</label>
-                    <input type="file" id="imageInput" name="image" accept="image/*" class="form-input">
+                    <label class="form-label" id="fieldLabel">Field</label>
+                    <input type="text" id="fieldInput" class="form-input" required>
+                    <input type="hidden" id="fieldName">
                 </div>
-                <div class="form-group">
-                    <label class="form-label">Name</label>
-                    <input type="text" id="editName" name="name" class="form-input" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Email</label>
-                    <input type="email" id="editEmail" name="email" class="form-input" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Phone</label>
-                    <input type="tel" id="editPhone" name="phone" class="form-input">
-                </div>
-                <div class="form-buttons">
-                    <button type="submit" class="save-button">Save Changes</button>
-                    <button type="button" onclick="closeModal()" class="cancel-modal-button">Cancel</button>
+                <div class="button-group">
+                    <button type="button" class="btn btn-secondary" onclick="closeEditModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Hidden file input for image upload -->
-    <input type="file" id="hiddenImageInput" class="file-input" accept="image/*">
+    <!-- Remove Image Confirmation Modal -->
+    <div id="removeImageModal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Confirm Removal</h3>
+                <div class="modal-message">
+                    Are you sure you want to remove your profile image?
+                </div>
+                <div class="button-group">
+                    <button type="button" class="btn btn-secondary" onclick="closeRemoveImageModal()">Cancel</button>
+                    <button type="button" class="btn btn-danger" onclick="confirmRemoveImage()">Confirm</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer"></div>
+
+    <!-- Footer Partial -->
+    <%-include("../../views/partials/user/footer")%>
 
     <script>
-        // Get user data from server
-        const userData = {
-            id: '<%= user._id %>',
-            name: '<%= user.name || "" %>',
-            email: '<%= user.email || "" %>',
-            phone: '<%= user.phone || "" %>'
-        };
+        let currentEditField = '';
+        let currentUserId = '';
 
-        function triggerImageUpload() {
-            document.getElementById('hiddenImageInput').click();
-        }
-
-        function editProfile() {
-            document.getElementById('editName').value = userData.name;
-            document.getElementById('editEmail').value = userData.email;
-            document.getElementById('editPhone').value = userData.phone;
-            document.getElementById('modalMessage').innerHTML = '';
-            document.getElementById('editModal').classList.add('show');
-        }
-
-        function closeModal() {
-            document.getElementById('editModal').classList.remove('show');
-            document.getElementById('editForm').reset();
-            document.getElementById('modalMessage').innerHTML = '';
-        }
-
-        function changePassword() {
-            // Implement change password functionality
-            alert('Change password functionality will be implemented');
-        }
-
-        function addAddress() {
-            // Implement add address functionality
-            alert('Add address functionality will be implemented');
-        }
-
-        function showMessage(message, type = 'success') {
-            const messageDiv = document.getElementById('modalMessage');
-            messageDiv.innerHTML = `<div class="${type}-message">${message}</div>`;
-            
-            if (type === 'success') {
+        function showToast(message, type = 'success') {
+            const toastContainer = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            toastContainer.appendChild(toast);
+            setTimeout(() => {
+                toast.classList.add('show');
+            }, 100);
+            setTimeout(() => {
+                toast.classList.remove('show');
                 setTimeout(() => {
-                    closeModal();
-                    location.reload(); // Refresh to show updated data
-                }, 1500);
+                    toast.remove();
+                }, 300);
+            }, 3000);
+        }
+
+        function toggleImageAction(userId, hasImage) {
+            if (hasImage) {
+                currentUserId = userId;
+                const modal = document.getElementById('removeImageModal');
+                modal.classList.remove('hidden');
+            } else {
+                const imageUploadInput = document.getElementById('imageUpload');
+                if (imageUploadInput) {
+                    imageUploadInput.click();
+                } else {
+                    showToast('Image upload functionality is unavailable', 'error');
+                }
             }
         }
 
-        // Handle profile image upload (direct upload)
-        document.getElementById('hiddenImageInput').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                const formData = new FormData();
-                formData.append('image', file);
-                
-                // Show loading state
-                document.body.classList.add('loading');
-                
-                fetch(`/edit-profile/${userData.id}`, {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(data => {
-                    document.body.classList.remove('loading');
-                    if (data.success) {
-                        // Update the profile image
-                        const timestamp = new Date().getTime();
-                        document.getElementById('profileImage').src = `/uploads/userProfileimages/${file.name}?t=${timestamp}`;
-                        alert('Profile image updated successfully!');
-                    } else {
-                        alert('Error updating profile image: ' + data.message);
-                    }
-                })
-                .catch(error => {
-                    document.body.classList.remove('loading');
-                    console.error('Error:', error);
-                    alert('Error updating profile image');
-                });
-            }
-        });
+        function confirmRemoveImage() {
+            fetch(`/remove-profile/${currentUserId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                closeRemoveImageModal();
+                if (data.success) {
+                    showToast('Profile image removed successfully', 'success');
+                    location.reload();
+                } else {
+                    showToast(data.message || 'Failed to remove profile image', 'error');
+                }
+            })
+            .catch(err => {
+                console.error('Error removing image:', err);
+                closeRemoveImageModal();
+                showToast('Something went wrong while removing the image!', 'error');
+            });
+        }
 
-        // Handle form submission
+        function closeRemoveImageModal() {
+            const modal = document.getElementById('removeImageModal');
+            modal.classList.add('hidden');
+            currentUserId = '';
+        }
+
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (!file) {
+                showToast('No file selected', 'error');
+                return;
+            }
+            const formData = new FormData();
+            formData.append('image', file);
+            fetch('/profile/upload', {
+                method: 'POST',
+                body: formData,
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    showToast('Profile image uploaded successfully', 'success');
+                    location.reload();
+                } else {
+                    showToast(data.message || 'Failed to upload profile image', 'error');
+                }
+            })
+            .catch(err => {
+                console.error('Upload error:', err);
+                showToast('Failed to upload profile image.', 'error');
+            });
+        }
+
+        function editField(fieldName, currentValue) {
+            currentEditField = fieldName;
+            const modal = document.getElementById('editModal');
+            const fieldLabel = document.getElementById('fieldLabel');
+            const fieldInput = document.getElementById('fieldInput');
+            const fieldNameInput = document.getElementById('fieldName');
+            fieldLabel.textContent = fieldName.charAt(0).toUpperCase() + fieldName.slice(1);
+            fieldInput.value = currentValue || '';
+            fieldNameInput.value = fieldName;
+            modal.classList.remove('hidden');
+            fieldInput.focus();
+        }
+
+        function closeEditModal() {
+            const modal = document.getElementById('editModal');
+            modal.classList.add('hidden');
+            currentEditField = '';
+        }
+
         document.getElementById('editForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            
-            const formData = new FormData(this);
-            
-            // Show loading state
-            const submitButton = this.querySelector('.save-button');
-            const originalText = submitButton.textContent;
-            submitButton.textContent = 'Saving...';
-            submitButton.disabled = true;
-            
-            fetch(`/edit-profile/${userData.id}`, {
+            const fieldName = document.getElementById('fieldName').value;
+            const fieldValue = document.getElementById('fieldInput').value.trim();
+            if (!fieldValue) {
+                showToast(`Please enter a valid ${fieldName}`, 'error');
+                return;
+            }
+            const formData = new FormData();
+            formData.append(fieldName, fieldValue);
+            fetch(`/edit-profile/<%= user._id %>`, {
                 method: 'POST',
                 body: formData
             })
-            .then(response => response.json())
+            .then(res => res.json())
             .then(data => {
-                submitButton.textContent = originalText;
-                submitButton.disabled = false;
-                
                 if (data.success) {
-                    // Update userData and UI
-                    userData.name = formData.get('name');
-                    userData.email = formData.get('email');
-                    userData.phone = formData.get('phone');
-                    
-                    document.getElementById('userName').textContent = userData.name;
-                    document.getElementById('userEmail').textContent = userData.email;
-                    document.getElementById('userPhone').textContent = userData.phone || 'Not provided';
-                    
-                    showMessage('Profile updated successfully!', 'success');
+                    const fieldElement = document.querySelector(`[data-field="${fieldName}"] .field-value`);
+                    if (fieldElement) {
+                        fieldElement.textContent = fieldValue;
+                    }
+                    closeEditModal();
+                    const fieldDisplayName = fieldName.charAt(0).toUpperCase() + fieldName.slice(1);
+                    showToast(`${fieldDisplayName} updated to "${fieldValue}" successfully`, 'success');
                 } else {
-                    showMessage('Error: ' + data.message, 'error');
+                    showToast(data.message || `Failed to update ${fieldName}`, 'error');
                 }
             })
-            .catch(error => {
-                submitButton.textContent = originalText;
-                submitButton.disabled = false;
-                console.error('Error:', error);
-                showMessage('An error occurred while updating profile', 'error');
+            .catch(err => {
+                console.error('Update error:', err);
+                showToast(`Failed to update ${fieldName}`, 'error');
             });
         });
 
-        // Close modal when clicking outside
         document.getElementById('editModal').addEventListener('click', function(e) {
             if (e.target === this) {
-                closeModal();
+                closeEditModal();
             }
         });
 
-        // Close modal with Escape key
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                closeModal();
+        document.getElementById('removeImageModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeRemoveImageModal();
             }
         });
+
+        window.addEventListener('click', function(event) {
+            const dropdowns = document.querySelectorAll('.dropdown-content');
+            dropdowns.forEach(dropdown => {
+                if (dropdown.classList.contains('show') && !event.target.closest('.dropdown')) {
+                    dropdown.classList.remove('show');
+                }
+            });
+        });
+
+        function toggleDropdown(dropdownId) {
+            event.stopPropagation();
+            const dropdowns = document.querySelectorAll('.dropdown-content');
+            dropdowns.forEach(dropdown => {
+                if (dropdown.id !== dropdownId && dropdown.classList.contains('show')) {
+                    dropdown.classList.remove('show');
+                }
+            });
+            document.getElementById(dropdownId).classList.toggle('show');
+        }
+
+        function toggleMobileMenu() {
+            console.log('Mobile menu toggled');
+        }
     </script>
-    <%- include("../../views/partials/user/footer") %>
 </body>
 </html>

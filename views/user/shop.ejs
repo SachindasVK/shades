@@ -535,8 +535,9 @@
                     <div class="position-relative">
 
                         <i class="fas fa-sort-amount-down sort-icon"></i>
-                        <select id="sortSelect" class="form-select sort-select">
-                            <option value="new" <%=filters.sort==='new' ? 'selected' : '' %>>New Arrivals</option>
+                        <select name="sort by" id="sortSelect" class="form-select sort-select">
+                            <option value disabled selected>sort by</option>
+                             <option value="new" <%=filters.sort==='new' ? 'selected' : '' %>>New Arrivals</option>
                             <option value="featured" <%=filters.sort==='featured' ? 'selected' : '' %>>Featured</option>
                             <option value="price-asc" <%=filters.sort==='price-asc' ? 'selected' : '' %>>Price: Low to
                                 High</option>

@@ -61,10 +61,12 @@ router.post('/resend-otp',profileController.resendOtp)
 router.get('/reset-password',profileController.getResetPassPage)
 router.post('/reset-password',profileController.postNewPassword)
 router.get('/profile', userAuth, profileController.userProfile);
+// Add this route for image upload
+router.post('/profile/upload', userAuth, userUpload.single('image'), profileController.uploadProfileImage);
 router.post('/edit-profile/:id', userAuth, userUpload.single('image'), profileController.editUserProfile);
-
-
-
+router.delete('/remove-profile/:id',userAuth,profileController.removeProfile)
+router.get('/changepassword',userAuth,profileController.getchangePassword)
+router.post('/changepassword',userAuth,profileController.changePassword)
 //product management
 router.get('/productDetails',productController.productDetails)
 module.exports = router

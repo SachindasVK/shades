@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Profile</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .page-body {
+            background-color: #f3f4f6;
+           
+        }
+
+        .containeer {
+            max-width: 95%; 
+            margin-left: auto; 
+            margin-right: auto;
+            display: flex; 
+            gap: 2rem;
+            padding: 10px;
+        }
+
+        .sidebar {
+            width: 20rem;
+            background-color: #ffffff;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            height: fit-content;
+        }
+
+        .profile-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            position: relative;
+        }
+
+        .profile-icon {
+            width: 3rem;
+            height: 3rem;
+            background-color: #a1a1a1;
+            border-radius: 9999px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+       
+     
+        .profile-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 9999px;
+        }
+        
+        .profile-icon i {
+            color: #ffffff;
+            font-size: 1.125rem;
+        }
+
+        .greeting {
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
+
+        .username {
+            color: #1f2937;
+            font-weight: 600;
+        }
+        
+
+        .menu {
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+
+        .menu-list {
+            margin: 0;
+        }
+
+        .menu-item {
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .menu-link {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            color: #4b5563;
+            font-size: 0.875rem;
+        }
+
+        .menu-link:hover {
+            background-color: #f9fafb;
+        }
+
+        .menu-link.active {
+            background-color: #eff6ff;
+            color: #2563eb;
+        }
+
+        .menu-icon {
+            width: 1.25rem;
+            margin-right: 0.75rem;
+        }
+
+        .logout-link {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            color: #dc2626;
+            font-size: 0.875rem;
+        }
+
+        .logout-link:hover {
+            background-color: #fef2f2;
+        }
+
+        .main-content {
+            flex: 1;
+            background-color: #ffffff;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 2rem;
+        }
+
+        .page-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 1.5rem;
+        }
+
+        .profile-data {
+            margin-bottom: 1.5rem;
+        }
+
+        .info-item {
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .info-item:last-child {
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .field-label {
+            color: #6b7280;
+            font-size: 0.875rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .field-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .field-value {
+            color: #1f2937;
+        }
+
+        .field-value-empty {
+            color: #9ca3af;
+            font-style: italic;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .edit-button {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+            background-color: #f3f4f6;
+            color: #4b5563;
+            border-radius: 0.25rem;
+        }
+
+        .edit-button:hover {
+            background-color: #e5e7eb;
+        }
+
+        .remove-button {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+            background-color: #fef2f2;
+            color: #dc2626;
+            border-radius: 0.25rem;
+        }
+
+        .remove-button:hover {
+            background-color: #fee2e2;
+        }
+
+        .add-button {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+            background-color: #eff6ff;
+            color: #2563eb;
+            border-radius: 0.25rem;
+        }
+
+        .add-button:hover {
+            background-color: #dbeafe;
+        }
+
+        .add-field-button {
+            margin-top: 1.5rem;
+            padding: 0.5rem 1rem;
+            background-color: #eff6ff;
+            color: #2563eb;
+            border-radius: 0.25rem;
+            font-size: 0.875rem;
+        }
+
+        .add-field-button:hover {
+            background-color: #dbeafe;
+        }
+
+        .button-icon {
+            margin-right: 0.25rem;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 50;
+        }
+
+        .modal-content {
+            background-color: #ffffff;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            width: 24rem;
+            max-width: 100%;
+            margin: 1rem;
+        }
+
+        .modal-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            color: #374151;
+            margin-bottom: 0.25rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.5rem 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.25rem;
+            font-size: 0.875rem;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: flex-end;
+        }
+
+        .cancel-button {
+            padding: 0.5rem 1rem;
+            background-color: #f3f4f6;
+            color: #4b5563;
+            border-radius: 0.25rem;
+            font-size: 0.875rem;
+        }
+
+        .cancel-button:hover {
+            background-color: #e5e7eb;
+        }
+
+        .save-button {
+            padding: 0.5rem 1rem;
+            background-color: #2563eb;
+            color: #ffffff;
+            border-radius: 0.25rem;
+            font-size: 0.875rem;
+        }
+
+        .save-button:hover {
+            background-color: #1d4ed8;
+        }
+    </style>
+</head>
+<body class="page-body">
+<div class="text-center">
+    <div class="containeer">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <!-- Profile Header -->
+            <div class="profile-header">
+                <div class="profile-icon">
+                     <% if (user.image) { %>
+        <img 
+            src="/uploads/userProfileimages/<%= user.image %>" 
+            alt="Profile Image"
+            class="rounded-full w-full h-full object-cover border border-gray-300"
+        >
+     <% } else { %>
+        <i id="defaultProfileIcon" class="fas fa-user default-icon"></i>
+     <% } %>
+                    <div>
+
+                    </div>
+                    <input type="file" id="imageUpload" accept="image/*" class="hidden" onchange="handleImageUpload(event)">
+                </div>
+                <div>
+                    <div class="greeting">Hello,</div>
+                    <div class="username"><%=user.name%></div>
+                </div>
+            </div>
+            
+            <!-- Menu -->
+            <nav class="menu">
+                <ul class="menu-list">
+                    <li class="menu-item">
+                        <a href="/profile" class="menu-link active">
+                            <i class="fas fa-user menu-icon"></i>
+                            Profile Information
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="/orders" class="menu-link">
+                            <i class="fas fa-box menu-icon"></i>
+                            My orders
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="/address" class="menu-link">
+                            <i class="fas fa-home menu-icon"></i>
+                            Manage Addresses
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="/wallet" class="menu-link">
+                            <i class="fas fa-wallet menu-icon"></i>
+                            My Wallet
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="/wishlist" class="menu-link">
+                            <i class="fas fa-heart menu-icon"></i>
+                            My Wishlist
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="/referals" class="menu-link">
+                            <i class="fas fa-users menu-icon"></i>
+                            Refer Friends
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="/changepassword" class="menu-link">
+                            <i class="fas fa-lock menu-icon"></i>
+                            Change Password
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="/logout" class="logout-link">
+                            <i class="fas fa-sign-out-alt menu-icon"></i>
+                            Log out
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    
+
+
+        
