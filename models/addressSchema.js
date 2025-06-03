@@ -8,6 +8,10 @@ const addressSchema = new Schema({
         required: true
     },
     address:[{
+        isDefault: {
+    type: Boolean,
+    default: false
+},
         addressType:{
             type: String,
             required: true
@@ -30,7 +34,7 @@ const addressSchema = new Schema({
         },
         landMark:{
             type: String,
-            required: true
+            required: false
         },
         state:{
             type: String,

@@ -67,6 +67,10 @@ router.post('/edit-profile/:id', userAuth, userUpload.single('image'), profileCo
 router.delete('/remove-profile/:id',userAuth,profileController.removeProfile)
 router.get('/changepassword',userAuth,profileController.getchangePassword)
 router.post('/changepassword',userAuth,profileController.changePassword)
+router.get('/address',userAuth,profileController.getAddress)
+router.post('/address/add',userAuth,profileController.addAddress)
+router.put('/address/update/:id',userAuth,profileController.updateAddress)
+router.delete('/address/delete/:id',userAuth,profileController.deleteAddress)
 //product management
 router.get('/productDetails',productController.productDetails)
 module.exports = router

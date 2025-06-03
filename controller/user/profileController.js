@@ -1,6 +1,7 @@
 // Backend controller file - fixed version
 
 const User = require("../../models/userSchema");
+const Address = require("../../models/addressSchema")
 const nodemailer = require("nodemailer");
 const bcrypt = require("bcrypt");
 const env = require("dotenv").config();
@@ -238,19 +239,57 @@ const postNewPassword = async (req, res) => {
 };
 
 //user profile page
-    const userProfile = async (req, res) => {
-        try {
-            const userId = req.session.user;
-            const userData = await User.findById(userId);
-            res.render("profile", {
-                user: userData,
-                username:userData.name
-            });
-        } catch (error) {
-            console.error('Error:', error);
-            res.redirect("/pageNotFound");
+  const userProfile = async (req, res) => {
+    try {
+        const userId = req.session.user;
+        const userData = await User.findById(userId);
+        
+        if (!userData) {
+            return res.redirect('/login');
         }
-    };
+
+        // Fetch the default address
+        let defaultAddress = null;
+        const addressDoc = await Address.findOne({ userId: userId });
+        
+        if (addressDoc && addressDoc.address && addressDoc.address.length > 0) {
+            // Find the default address
+            const defaultAddr = addressDoc.address.find(addr => addr.isDefault === true);
+            
+            if (defaultAddr) {
+                // Format the address for display
+                defaultAddress = {
+                    fullName: defaultAddr.name,
+                    addressLine: `${defaultAddr.streetAddress}, ${defaultAddr.landMark ? defaultAddr.landMark + ', ' : ''}${defaultAddr.city}, ${defaultAddr.state} - ${defaultAddr.pincode}`,
+                    phone: defaultAddr.phone,
+                    addressType: defaultAddr.addressType,
+                    complete: `${defaultAddr.name}, ${defaultAddr.streetAddress}, ${defaultAddr.landMark ? defaultAddr.landMark + ', ' : ''}${defaultAddr.city}, ${defaultAddr.state} - ${defaultAddr.pincode}, Phone: ${defaultAddr.phone}`
+                };
+            } else if (addressDoc.address.length > 0) {
+                // If no default is set, use the first address
+                const firstAddr = addressDoc.address[0];
+                defaultAddress = {
+                    fullName: firstAddr.name,
+                    addressLine: `${firstAddr.streetAddress}, ${firstAddr.landMark ? firstAddr.landMark + ', ' : ''}${firstAddr.city}, ${firstAddr.state} - ${firstAddr.pincode}`,
+                    phone: firstAddr.phone,
+                    addressType: firstAddr.addressType,
+                    complete: `${firstAddr.name}, ${firstAddr.streetAddress}, ${firstAddr.landMark ? firstAddr.landMark + ', ' : ''}${firstAddr.city}, ${firstAddr.state} - ${firstAddr.pincode}, Phone: ${firstAddr.phone}`
+                };
+            }
+        }
+
+        // Add default address to userData
+        userData.defaultAddress = defaultAddress;
+
+        res.render("profile", {
+            user: userData,
+            username: userData.name
+        });
+    } catch (error) {
+        console.error('Error:', error);
+        res.redirect("/pageNotFound");
+    }
+};
 
 
     //edit user profile 
@@ -512,6 +551,306 @@ const changePassword = async (req, res) => {
     }
 };
 
+const getAddress = async(req,res)=>{
+    try {
+        const userId = req.session.user||req.user.id;
+        const user = await User.findById(userId)
+
+        if(!user) {
+            return res.redirect('/login')
+        }
+
+        const addressDoc = await Address.findOne({userId:userId});
+
+        let addresses = [];
+
+        if(addressDoc && addressDoc.address && addressDoc.address.length > 0){
+            addresses = addressDoc.address.map(addr => ({
+                _id: addr._id,
+                fullName: addr.name,
+                phone: addr.phone,
+                flat: addr.streetAddress,
+                area: addr.landMark || '', // Use landMark as area fallback
+                city: addr.city,
+                state: addr.state,
+                pincode: addr.pincode,
+                landmark: addr.landMark || '',
+                addressType: addr.addressType,
+                isDefault: addr.isDefault || false
+            }))
+        }
+
+        user.addresses = addresses
+
+        res.render('address',{
+            user: user,
+            username:user.name, 
+            title: 'Manage Addresses'
+        })
+    } catch (error) {
+        console.error('Get address error:', error);
+        res.redirect('/pageNotFound')
+    }
+}
+
+const addAddress = async(req,res)=>{
+    try {
+        const userId = req.session.user || req.user.id;
+        const {
+            fullName,
+            phone,
+            flat,
+            area,
+            pincode,
+            landmark, // Fixed: was landMark, should be landmark to match frontend
+            city,
+            state,
+            addressType,
+            isDefault
+        } = req.body
+
+        if(!fullName || !phone || !flat || !area || !city || !state || !addressType){
+            return res.status(400).json({
+                success: false,
+                message: 'Please fill in all required fields'
+            })
+        }
+
+        // Validate phone number (10 digits)
+        if (!/^\d{10}$/.test(phone)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Please enter a valid 10-digit mobile number'
+            });
+        }
+
+        // Validate pincode (6 digits)
+        if (!/^\d{6}$/.test(pincode)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Please enter a valid 6-digit PIN code'
+            });
+        }
+
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: 'User not found'
+            });
+        }
+
+        // Find existing address document
+        let addressDoc = await Address.findOne({ userId: userId });
+
+        // If this is set as default, unset other defaults
+        if (isDefault && addressDoc && addressDoc.address.length > 0) {
+            addressDoc.address.forEach(addr => {
+                addr.isDefault = false;
+            });
+        }
+
+        // Create new address object matching your schema
+        const newAddress = {
+            isDefault: Boolean(isDefault),
+            addressType: addressType,
+            name: fullName.trim(),
+            country: 'India', // Default to India
+            city: city.trim(),
+            streetAddress: flat.trim(),
+            landMark: landmark ? landmark.trim() : area.trim(), // Use landmark if provided, otherwise use area
+            state: state.trim(),
+            pincode: parseInt(pincode),
+            phone: phone.trim(),
+            email: user.email,
+            altPhone: ''
+        };
+
+        if (addressDoc) {
+            // Add to existing address array
+            addressDoc.address.push(newAddress);
+        } else {
+            // Create new address document
+            addressDoc = new Address({
+                userId: userId,
+                address: [newAddress]
+            });
+        }
+
+        await addressDoc.save();
+
+        res.status(201).json({
+            success: true,
+            message: 'Address added successfully',
+            address: newAddress
+        });
+
+    } catch (error) {
+        console.error('Add address error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to add address. Please try again.'
+        });
+    }
+}
+
+const updateAddress = async (req, res) => {
+    try {
+        const userId = req.session.user || req.user.id;
+        const addressId = req.params.id;
+        const {
+            fullName,
+            phone,
+            flat,
+            area,
+            pincode,
+            landmark,
+            city,
+            state,
+            addressType,
+            isDefault
+        } = req.body;
+
+        // Validation
+        if (!fullName || !phone || !flat || !area || !pincode || !city || !state || !addressType) {
+            return res.status(400).json({
+                success: false,
+                message: 'Please fill in all required fields'
+            });
+        }
+
+        // Validate phone number (10 digits)
+        if (!/^\d{10}$/.test(phone)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Please enter a valid 10-digit mobile number'
+            });
+        }
+
+        // Validate pincode (6 digits)
+        if (!/^\d{6}$/.test(pincode)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Please enter a valid 6-digit PIN code'
+            });
+        }
+
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: 'User not found'
+            });
+        }
+
+        // Find the address document
+        const addressDoc = await Address.findOne({ userId: userId });
+        if (!addressDoc) {
+            return res.status(404).json({
+                success: false,
+                message: 'Address not found'
+            });
+        }
+
+        // Find the specific address to update
+        const addressIndex = addressDoc.address.findIndex(addr => addr._id.toString() === addressId);
+        if (addressIndex === -1) {
+            return res.status(404).json({
+                success: false,
+                message: 'Address not found'
+            });
+        }
+
+        // If this address is being set as default, unset others
+        if (isDefault) {
+            addressDoc.address.forEach((addr, index) => {
+                if (index !== addressIndex) {
+                    addr.isDefault = false;
+                }
+            });
+        }
+
+        // Update the address
+        addressDoc.address[addressIndex] = {
+            ...addressDoc.address[addressIndex],
+            isDefault: Boolean(isDefault),
+            addressType: addressType,
+            name: fullName.trim(),
+            country: 'India',
+            city: city.trim(),
+            streetAddress: flat.trim(),
+            landMark: landmark ? landmark.trim() : area.trim(),
+            state: state.trim(),
+            pincode: parseInt(pincode),
+            phone: phone.trim(),
+            email: user.email,
+            altPhone: addressDoc.address[addressIndex].altPhone || ''
+        };
+
+        await addressDoc.save();
+
+        res.status(200).json({
+            success: true,
+            message: 'Address updated successfully'
+        });
+
+    } catch (error) {
+        console.error('Update address error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to update address. Please try again.'
+        });
+    }
+};
+
+const deleteAddress = async (req, res) => {
+    try {
+        const userId = req.session.user || req.user.id;
+        const addressId = req.params.id;
+
+        const addressDoc = await Address.findOne({ userId: userId });
+        if (!addressDoc) {
+            return res.status(404).json({
+                success: false,
+                message: 'Address not found'
+            });
+        }
+
+        const addressIndex = addressDoc.address.findIndex(addr => addr._id.toString() === addressId);
+        if (addressIndex === -1) {
+            return res.status(404).json({
+                success: false,
+                message: 'Address not found'
+            });
+        }
+
+        // Check if we're deleting the default address
+        const isDefaultAddress = addressDoc.address[addressIndex].isDefault;
+
+        // Remove the address
+        addressDoc.address.splice(addressIndex, 1);
+
+        // If we deleted the default address and there are other addresses, make the first one default
+        if (isDefaultAddress && addressDoc.address.length > 0) {
+            addressDoc.address[0].isDefault = true;
+        }
+
+        await addressDoc.save();
+
+        res.status(200).json({
+            success: true,
+            message: 'Address deleted successfully'
+        });
+
+    } catch (error) {
+        console.error('Delete address error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to delete address. Please try again.'
+        });
+    }
+};
+
 
 module.exports = {
     getForgotPassPage,
@@ -525,5 +864,9 @@ module.exports = {
     removeProfile,
     uploadProfileImage,
     getchangePassword,
-    changePassword
+    changePassword,
+    getAddress,
+    addAddress,
+    updateAddress,
+    deleteAddress
 };
