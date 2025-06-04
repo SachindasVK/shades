@@ -672,138 +672,110 @@ const loadShoppingPage = async (req, res) => {
     // Get user data if logged in
     const userId = req.session.user;
     const userData = userId ? await User.findOne({ _id: userId }) : null;
-    
+
     // Get all active categories and brands
     const categories = await Category.find({ isActive: true, isDeleted: false });
     const brands = await Brand.find({ isActive: true, isDeleted: false });
-    
+
     // Parse query parameters with defaults
     const page = parseInt(req.query.page) || 1;
     const searchQuery = req.query.search || '';
     const categoryFilter = req.query.category || 'all';
     const brandFilter = req.query.brand || 'all';
-    const sortOption = req.query.sort || 'new'; // Default sort by newest
+    const sortOption = req.query.sort || 'new';
     const minPrice = req.query.minPrice ? parseInt(req.query.minPrice) : 0;
-    const maxPrice = req.query.maxPrice ? parseInt(req.query.maxPrice) : Number.MAX_SAFE_INTEGER;
-    
+    const maxPrice = req.query.maxPrice
+      ? parseInt(req.query.maxPrice)
+      : Number.MAX_SAFE_INTEGER;
+
     // Build the query object
     const query = {
       isDeleted: false,
-      quantity: { $gt: 0 }
+      quantity: { $gt: 0 },
     };
-    
-    // Add category filter if specified
+
+    // Add category filter
     if (categoryFilter !== 'all') {
       try {
-        const categoryObjectId = mongoose.Types.ObjectId.isValid(categoryFilter) 
-          ? new mongoose.Types.ObjectId(categoryFilter) 
+        const categoryObjectId = mongoose.Types.ObjectId.isValid(categoryFilter)
+          ? new mongoose.Types.ObjectId(categoryFilter)
           : null;
-          
         if (categoryObjectId) {
           query.category = categoryObjectId;
-          console.log('Filtering by category ID:', categoryFilter);
         }
       } catch (err) {
         console.log('Error with category filter:', err);
       }
     }
-    
-    // Add brand filter if specified
+
+    // Add brand filter
     if (brandFilter !== 'all') {
       try {
-        const brandObjectId = mongoose.Types.ObjectId.isValid(brandFilter) 
-          ? new mongoose.Types.ObjectId(brandFilter) 
+        const brandObjectId = mongoose.Types.ObjectId.isValid(brandFilter)
+          ? new mongoose.Types.ObjectId(brandFilter)
           : null;
-          
         if (brandObjectId) {
           query.brand = brandObjectId;
-          console.log('Filtering by brand ID:', brandFilter);
         }
       } catch (err) {
         console.log('Error with brand filter:', err);
       }
     }
-    
-    // Add price range filter - Handle both price structures that might exist in DB
-    // This handles both salePrice and price fields that might be used in products
+
+    // Add price range filter
     const priceQuery = {};
     if (minPrice !== 0) priceQuery.$gte = minPrice;
     if (maxPrice !== Number.MAX_SAFE_INTEGER) priceQuery.$lte = maxPrice;
-    
     if (Object.keys(priceQuery).length > 0) {
-      query.$or = [
-        { price: priceQuery },
-        { salePrice: priceQuery }
-      ];
+      query.$or = [{ price: priceQuery }, { salePrice: priceQuery }];
     }
-    
-    // Add search query if specified
+
+    // Add search query
     if (searchQuery) {
       const searchConditions = [
         { productName: { $regex: searchQuery, $options: 'i' } },
-        { name: { $regex: searchQuery, $options: 'i' } }, 
-        { description: { $regex: searchQuery, $options: 'i' } }
+        { name: { $regex: searchQuery, $options: 'i' } },
+        { description: { $regex: searchQuery, $options: 'i' } },
       ];
-      
-      // If search query already exists, combine with it
       if (query.$or) {
-        // Store the existing $or conditions
         const existingOr = query.$or;
-        // Create a new $and condition with both sets of $or conditions
-        query.$and = [
-          { $or: existingOr },
-          { $or: searchConditions }
-        ];
-        // Remove the original $or to avoid conflicts
+        query.$and = [{ $or: existingOr }, { $or: searchConditions }];
         delete query.$or;
       } else {
         query.$or = searchConditions;
       }
     }
-    
+
     // Set up pagination
-    const limit = 9; // Products per page
+    const limit = 9;
     const skip = (page - 1) * limit;
-    
-    console.log('Final query:', JSON.stringify(query, null, 2));
-    
-    // Use aggregation pipeline for proper sorting by price
+
+    // Aggregation pipeline
     let aggregatePipeline = [
       { $match: query },
-      // Add a stage to handle different price fields
-      { 
+      {
         $addFields: {
-          // Create a displayPrice field that uses price or salePrice (whichever exists)
-          displayPrice: { 
+          displayPrice: {
             $cond: {
-              if: { $gt: ["$salePrice", 0] },
-              then: "$salePrice",
-              else: { 
-                $cond: {
-                  if: { $gt: ["$price", 0] },
-                  then: "$price",
-                  else: 0
-                }
-              }
-            }
+              if: { $gt: ['$salePrice', 0] },
+              then: '$salePrice',
+              else: { $cond: { if: { $gt: ['$price', 0] }, then: '$price', else: 0 } },
+            },
           },
-          // Ensure we have a consistent name field for sorting
-          sortName: { 
+          sortName: {
             $cond: {
-              if: { $ifNull: ["$productName", false] },
-              then: { $toLower: "$productName" },
-              else: { $toLower: { $ifNull: ["$name", ""] } }
-            }
+              if: { $ifNull: ['$productName', false] },
+              then: { $toLower: '$productName' },
+              else: { $toLower: { $ifNull: ['$name', ''] } },
+            },
           },
-          // Ensure averageRating has a default value for sorting
-          averageRating: { $ifNull: ["$averageRating", 0] },
-          // Ensure views have a default value for popularity sorting
-          views: { $ifNull: ["$views", 0] }
-        }
-      }
+          averageRating: { $ifNull: ['$averageRating', 0] },
+          views: { $ifNull: ['$views', 0] },
+        },
+      },
     ];
-    
-    // Apply sort based on the option
+
+    // Apply sort
     switch (sortOption) {
       case 'price-asc':
         aggregatePipeline.push({ $sort: { displayPrice: 1, _id: 1 } });
@@ -812,11 +784,9 @@ const loadShoppingPage = async (req, res) => {
         aggregatePipeline.push({ $sort: { displayPrice: -1, _id: 1 } });
         break;
       case 'name-asc':
-        // Use the unified sortName field for consistent sorting
         aggregatePipeline.push({ $sort: { sortName: 1, _id: 1 } });
         break;
       case 'name-desc':
-        // Use the unified sortName field for consistent sorting
         aggregatePipeline.push({ $sort: { sortName: -1, _id: 1 } });
         break;
       case 'popularity':
@@ -828,112 +798,98 @@ const loadShoppingPage = async (req, res) => {
       case 'featured':
         aggregatePipeline.push({ $sort: { isFeatured: -1, createdAt: -1, _id: 1 } });
         break;
-      default: // 'new' - sort by newest first
+      default:
         aggregatePipeline.push({ $sort: { createdAt: -1, _id: 1 } });
     }
-    
-    // Add lookup for category data
+
+    // Add category lookup
     aggregatePipeline.push(
-      { 
+      {
         $lookup: {
-          from: 'categories', 
+          from: 'categories',
           localField: 'category',
           foreignField: '_id',
-          as: 'category'
-        }
+          as: 'category',
+        },
       },
-      // Convert category array to single object (similar to populate)
-      {
-        $addFields: {
-          category: { $arrayElemAt: ["$category", 0] }
-        }
-      }
+      { $addFields: { category: { $arrayElemAt: ['$category', 0] } } }
     );
-    
+
     // Add pagination
-    aggregatePipeline.push(
-      { $skip: skip },
-      { $limit: limit }
-    );
-    
-    console.log('Using aggregation pipeline with sort:', sortOption);
-    
-    // Execute the aggregation pipeline
+    aggregatePipeline.push({ $skip: skip }, { $limit: limit });
+
+    // Execute aggregation
     const products = await Product.aggregate(aggregatePipeline);
-    
-    console.log('Products found:', products.length);
-    if (products.length > 0) {
-      console.log('First product:', JSON.stringify(products[0], null, 2));
+
+    // Add wishlist status to products
+    let productsWithWishlistStatus = products;
+    if (userData) {
+      const wishlist = userData.wishlist.map(id => id.toString());
+      productsWithWishlistStatus = products.map(product => ({
+        ...product,
+        inWishlist: wishlist.includes(product._id.toString()),
+      }));
     }
-    
-    // Get total count for pagination
+
+    // Get total count
     const totalProducts = await Product.countDocuments(query);
     const totalPages = Math.ceil(totalProducts / limit);
-    
-    // Get price range for filter - using both price fields that might exist
+
+    // Get price range
     const priceStatsPrice = await Product.aggregate([
       { $match: { isDeleted: false, quantity: { $gt: 0 }, price: { $exists: true } } },
-      { 
-        $group: { 
-          _id: null, 
-          min: { $min: "$price" }, 
-          max: { $max: "$price" } 
-        } 
-      }
+      { $group: { _id: null, min: { $min: '$price' }, max: { $max: '$price' } } },
     ]);
-    
+
     const priceStatsSalePrice = await Product.aggregate([
       { $match: { isDeleted: false, quantity: { $gt: 0 }, salePrice: { $exists: true } } },
-      { 
-        $group: { 
-          _id: null, 
-          min: { $min: "$salePrice" }, 
-          max: { $max: "$salePrice" } 
-        } 
-      }
+      { $group: { _id: null, min: { $min: '$salePrice' }, max: { $max: '$salePrice' } } },
     ]);
-    
-    // Combine results from both price fields
+
     let minPrice1 = priceStatsPrice.length > 0 ? priceStatsPrice[0].min : Number.MAX_SAFE_INTEGER;
     let maxPrice1 = priceStatsPrice.length > 0 ? priceStatsPrice[0].max : 0;
-    
     let minPrice2 = priceStatsSalePrice.length > 0 ? priceStatsSalePrice[0].min : Number.MAX_SAFE_INTEGER;
     let maxPrice2 = priceStatsSalePrice.length > 0 ? priceStatsSalePrice[0].max : 0;
-    
+
     const priceRange = {
-      min: Math.floor(Math.min(minPrice1, minPrice2) === Number.MAX_SAFE_INTEGER ? 0 : Math.min(minPrice1, minPrice2)),
-      max: Math.ceil(Math.max(maxPrice1, maxPrice2) === 0 ? 1000 : Math.max(maxPrice1, maxPrice2))
+      min: Math.floor(
+        Math.min(minPrice1, minPrice2) === Number.MAX_SAFE_INTEGER
+          ? 0
+          : Math.min(minPrice1, minPrice2)
+      ),
+      max: Math.ceil(Math.max(maxPrice1, maxPrice2) === 0 ? 1000 : Math.max(maxPrice1, maxPrice2)),
     };
-    
-    // Save search in user history if logged in
+
+    // Save search history
     if (userData) {
       const searchEntry = {
         query: searchQuery,
         category: categoryFilter !== 'all' ? categoryFilter : null,
         brand: brandFilter !== 'all' ? brandFilter : null,
-        searchedOn: new Date()
+        searchedOn: new Date(),
       };
-      
-      // Only add to search history if there's an actual search
       if (searchQuery || categoryFilter !== 'all' || brandFilter !== 'all') {
         userData.searchHistory.push(searchEntry);
         await userData.save();
       }
     }
-     if (userData?.isBlocked) {
-    req.session.destroy(err => {
-      if (err) console.log('Session destroy error:', err);
-      console.log('user Blocked!')
-      return res.redirect('/login');
-    });
-    return;
-  }
-    // Render the shop page with all necessary data
+
+    // Check if user is blocked
+    if (userData?.isBlocked) {
+      req.session.destroy(err => {
+        if (err) console.log('Session destroy error:', err);
+        console.log('User Blocked!');
+        return res.redirect('/login');
+      });
+      return;
+    }
+
+    // Render the shop page
     res.render('shop', {
       isLoggedIn: !!req.session.user,
       user: userData,
       username: userData ? userData.name : null,
-      products: products,
+      products: productsWithWishlistStatus,
       category: categories,
       brand: brands,
       totalProducts: totalProducts,
@@ -945,15 +901,66 @@ const loadShoppingPage = async (req, res) => {
         brand: brandFilter,
         sort: sortOption,
         minPrice: minPrice === 0 ? priceRange.min : minPrice,
-        maxPrice: maxPrice === Number.MAX_SAFE_INTEGER ? priceRange.max : maxPrice
+        maxPrice: maxPrice === Number.MAX_SAFE_INTEGER ? priceRange.max : maxPrice,
       },
-      priceRange: priceRange
+      priceRange: priceRange,
     });
-    
   } catch (error) {
     console.log('Error in loadShoppingPage:', error);
     res.redirect('/pageNotFound');
   }
+};
+
+
+const getWishlistStatus = async (req, res) => {
+    try {
+        const userId = req.session.user;
+        const { productIds } = req.body;
+
+        // Check if user is logged in
+        if (!userId) {
+            return res.status(200).json({
+                success: true,
+                wishlistStatus: {}
+            });
+        }
+
+        // Validate productIds
+        if (!productIds || !Array.isArray(productIds)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Product IDs array is required'
+            });
+        }
+
+        // Find the user
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: 'User not found'
+            });
+        }
+
+        // Create status object for each product
+        const wishlistStatus = {};
+        productIds.forEach(productId => {
+            wishlistStatus[productId] = user.wishlist.some(item => item.toString() === productId);
+        });
+
+        // Return status for all products
+        res.status(200).json({
+            success: true,
+            wishlistStatus: wishlistStatus
+        });
+
+    } catch (error) {
+        console.error('Error in getWishlistStatus:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Internal server error'
+        });
+    }
 };
 module.exports = {
   loadHomepage,
@@ -967,4 +974,5 @@ module.exports = {
   loadAbout,
   logout,
   loadShoppingPage,
+  getWishlistStatus
 }

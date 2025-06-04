@@ -462,7 +462,6 @@ const getEditProduct = async (req, res) => {
   }
 };
 
-
 const editProduct = async (req, res) => {
   try {
     const id = req.params.id;
@@ -473,7 +472,9 @@ const editProduct = async (req, res) => {
     }
     
     const data = req.body;
-    console.log("📝 New product name:", data.productName);
+    console.log("Updating product:", id);
+    console.log("New product data:", data);
+    console.log("Files received:", req.files ? Object.keys(req.files) : 'No files');
 
     // Check if product name exists on another product
     const existingProduct = await Product.findOne({
@@ -491,21 +492,19 @@ const editProduct = async (req, res) => {
     // Prepare update fields
     const updateFields = {
       productName: data.productName,
-      description: data.description,
-      regularPrice: data.regularPrice,
-      salePrice: data.salePrice,
-      quantity: data.quantity,
+      description: data.description || '', // Add default empty string if description is missing
+      regularPrice: parseFloat(data.regularPrice),
+      salePrice: parseFloat(data.salePrice),
+      quantity: parseInt(data.quantity),
       shape: data.shape,
       color: data.color
     };
 
-    // Handle category - convert string to ObjectId if needed
+    // Handle category - ensure it's a valid ObjectId
     if (data.category) {
-      // Check if the category is already a valid ObjectId
       if (mongoose.Types.ObjectId.isValid(data.category)) {
-        updateFields.category = data.category;
+        updateFields.category = new mongoose.Types.ObjectId(data.category);
       } else {
-        // If category is provided as a string name, find its ID
         const category = await Category.findOne({ name: data.category });
         if (category) {
           updateFields.category = category._id;
@@ -518,39 +517,32 @@ const editProduct = async (req, res) => {
       }
     }
 
-    // Handle brand - convert string to ObjectId if needed
-if (data.brand) {
-  if (mongoose.Types.ObjectId.isValid(data.brand)) {
-    // If brand is already an ObjectId string
-    updateFields.brand = data.brand;
-  } else {
-    // If brand is a name, find its ObjectId from Brand collection
-    const brand = await Brand.findOne({ name: data.brand });
-    if (brand) {
-      updateFields.brand = brand._id;
-    } else {
-      return res.status(400).json({
-        success: false,
-        message: "Brand not found. Please select a valid brand."
-      });
+    // Handle brand - ensure it's a valid ObjectId
+    if (data.brand) {
+      if (mongoose.Types.ObjectId.isValid(data.brand)) {
+        updateFields.brand = new mongoose.Types.ObjectId(data.brand);
+      } else {
+        const brand = await Brand.findOne({ name: data.brand });
+        if (brand) {
+          updateFields.brand = brand._id;
+        } else {
+          return res.status(400).json({
+            success: false,
+            message: "Brand not found. Please select a valid brand."
+          });
+        }
+      }
     }
-  }
-}
 
-
-    // Handle image updates
+    // Handle image updates - Fixed Logic
     const existingImages = product.productImage || [];
     const newProductImages = [];
     
-    // Process the image keeping logic
+    // Process each image slot (1-4)
     for (let i = 1; i <= 4; i++) {
-      const keepImage = data[`keepImage${i}`] === 'true';
-      
-      if (keepImage && existingImages[i-1]) {
-        // Keep the existing image path
-        newProductImages.push(existingImages[i-1]);
-      } else if (req.files && req.files[`image${i}`] && req.files[`image${i}`][0]) {
-        // There's a new image uploaded for this position
+      // Check if there's a new file uploaded for this slot
+      if (req.files && req.files[`image${i}`] && req.files[`image${i}`][0]) {
+        // New image uploaded - process it
         const file = req.files[`image${i}`][0];
         const filename = `${Date.now()}-image${i}.webp`;
         const uploadDir = path.join(__dirname, "../../public/uploads/product-images");
@@ -561,7 +553,7 @@ if (data.brand) {
           fs.mkdirSync(uploadDir, { recursive: true });
         }
         
-        // Process image sharp
+        // Process image with sharp
         await sharp(file.buffer)
           .resize({
             width: 1200,
@@ -572,12 +564,23 @@ if (data.brand) {
           .webp({ quality: 80 })
           .toFile(filePath);
         
-        // Add the path that will be used in frontend
         newProductImages.push(`uploads/product-images/${filename}`);
+        
+        // Delete old image if it exists
+        if (existingImages[i-1]) {
+          const oldImagePath = path.join(__dirname, "../../public", existingImages[i-1]);
+          if (fs.existsSync(oldImagePath)) {
+            fs.unlinkSync(oldImagePath);
+          }
+        }
+      } else if (existingImages[i-1]) {
+        // No new image uploaded, keep existing image
+        newProductImages.push(existingImages[i-1]);
       }
+      // If no new image and no existing image, skip (empty slot)
     }
     
-    // Make sure at least one image
+    // Ensure at least one image exists
     if (newProductImages.length === 0) {
       return res.status(400).json({
         success: false,
@@ -585,16 +588,59 @@ if (data.brand) {
       });
     }
     
-    // Update the product with new images
+    // Update the product images array
     updateFields.productImage = newProductImages;
     
-    // Update the product
-    await Product.findByIdAndUpdate(id, updateFields, { new: true });
+    console.log("Update fields:", updateFields);
     
-    res.status(200).json({ success: true, message: "Product updated successfully" });
+    // Update the product
+    const updatedProduct = await Product.findByIdAndUpdate(
+      id, 
+      updateFields, 
+      { 
+        new: true,
+        runValidators: true // This ensures schema validation runs
+      }
+    );
+    
+    if (!updatedProduct) {
+      return res.status(404).json({
+        success: false,
+        message: "Product not found during update"
+      });
+    }
+    
+    console.log("Product updated successfully:", updatedProduct._id);
+    res.status(200).json({ 
+      success: true, 
+      message: "Product updated successfully",
+      product: updatedProduct
+    });
+    
   } catch (error) {
     console.error('Error updating product:', error);
-    res.status(500).json({ success: false, message: "An error occurred while updating the product" });
+    
+    // More specific error handling
+    if (error.name === 'ValidationError') {
+      const errorMessages = Object.values(error.errors).map(err => err.message);
+      return res.status(400).json({ 
+        success: false, 
+        message: `Validation error: ${errorMessages.join(', ')}` 
+      });
+    }
+    
+    if (error.name === 'CastError') {
+      return res.status(400).json({ 
+        success: false, 
+        message: "Invalid data format provided" 
+      });
+    }
+    
+    res.status(500).json({ 
+      success: false, 
+      message: "An error occurred while updating the product",
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
   }
 };
   module.exports = {

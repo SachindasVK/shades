@@ -3,6 +3,9 @@ const router = express.Router()
 const userController = require('../controller/user/userController')
 const profileController = require('../controller/user/profileController')
 const productController = require('../controller/user/productController')
+const wishlistController = require('../controller/user/wishlistController')
+const orderController = require('../controller/user/orderController')
+const cartController = require('../controller/user/cartController')
 const passport = require('passport')
 const {userAuth} = require('../middlewares/auth')
 const {userUpload} = require('../helpers/multer')
@@ -73,4 +76,15 @@ router.put('/address/update/:id',userAuth,profileController.updateAddress)
 router.delete('/address/delete/:id',userAuth,profileController.deleteAddress)
 //product management
 router.get('/productDetails',productController.productDetails)
+
+//wishlist management
+router.get('/wishlist',userAuth,wishlistController.loadWishlist)
+router.post('/addtowishlist',userAuth,wishlistController.addToWishlist)
+router.get('/wishlist/count',userAuth,wishlistController.getWishlistCount);
+router.delete('/wishlist/remove/:id',userAuth,wishlistController.removeFromWishlist)
+router.get('/wishlist/status',userAuth,userController.getWishlistStatus)
+
+//orde management
+router.get('/orders',userAuth,orderController.getOrders)
+router.get('/cart',userAuth,cartController.getCart)
 module.exports = router

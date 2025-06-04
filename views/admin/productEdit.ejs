@@ -270,7 +270,7 @@
             <label for="regularPrice" class="block text-sm font-medium text-gray-700 mb-1">Regular Price</label>
             <div class="relative rounded-md shadow-sm">
               <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <span class="text-gray-500 sm:text-sm">$ plump</span>
+                <span class="text-gray-500 sm:text-sm">₹</span>
               </div>
               <input type="number" id="regularPrice" name="regularPrice" value="<%= product.regularPrice %>"
                 class="w-full pl-7 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
@@ -282,7 +282,7 @@
             <label for="salePrice" class="block text-sm font-medium text-gray-700 mb-1">Sale Price</label>
             <div class="relative rounded-md shadow-sm">
               <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <span class="text-gray-500 sm:text-sm">$</span>
+                <span class="text-gray-500 sm:text-sm">₹</span>
               </div>
               <input type="number" id="salePrice" name="salePrice" value="<%= product.salePrice %>"
                 class="w-full pl-7 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
@@ -307,7 +307,12 @@
             <div id="color-error" class="error-message text-red-500 text-xs mt-1"></div>
           </div>
         </div>
-
+<div class="col-span-2">
+  <label for="description" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+  <textarea id="description" name="description" rows="4" 
+    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"><%= product.description || '' %></textarea>
+  <div id="description-error" class="error-message text-red-500 text-xs mt-1"></div>
+</div>
         <div class="mt-6">
           <label class="block text-sm font-medium text-gray-700 mb-3">Product Images</label>
           <p class="text-sm text-gray-500 mb-4">
@@ -549,124 +554,157 @@
     });
   }
 
-  document.getElementById("productForm").addEventListener("submit", async function (e) {
-    e.preventDefault();
+  // Fixed form submission script
+document.getElementById("productForm").addEventListener("submit", async function (e) {
+  e.preventDefault();
 
-    let isValid = true;
+  let isValid = true;
 
-    const requiredFields = [
-      "productName",
-      "brand",
-      "shape",
-      "regularPrice",
-      "salePrice",
-      "quantity",
-      "color",
-      "category",
-      "description",
-    ];
+  // Updated required fields list - removed 'description' if it's not in your form
+  const requiredFields = [
+    "productName",
+    "brand",
+    "shape",
+    "regularPrice",
+    "salePrice",
+    "quantity",
+    "color",
+    "category"
+  ];
 
-    requiredFields.forEach((field) => {
-      const input = document.getElementById(field);
-      const errorElement = document.getElementById(`${field}-error`);
+  // Validate required fields
+  requiredFields.forEach((field) => {
+    const input = document.getElementById(field);
+    const errorElement = document.getElementById(`${field}-error`);
 
-      if (!input.value.trim()) {
-        isValid = false;
+    if (!input || !input.value.trim()) {
+      isValid = false;
+      if (errorElement) {
         errorElement.textContent = "This field is required";
-      } else {
+      }
+    } else {
+      if (errorElement) {
         errorElement.textContent = "";
       }
-    });
+    }
+  });
 
-    let hasAtLeastOneImage = false;
-    for (let i = 1; i <= 4; i++) {
-      const hasNewImage = fileData[i] !== undefined;
-      const currentImageExists = document.querySelector(`#image${i}-current`) !== null;
-      
-      if (hasNewImage || currentImageExists) {
-        hasAtLeastOneImage = true;
-        document.getElementById(`image${i}-error`).textContent = "";
+  // Validate price logic
+  const regularPrice = parseFloat(document.getElementById("regularPrice").value);
+  const salePrice = parseFloat(document.getElementById("salePrice").value);
+  
+  if (salePrice > regularPrice) {
+    isValid = false;
+    const salePriceError = document.getElementById("salePrice-error");
+    if (salePriceError) {
+      salePriceError.textContent = "Sale price cannot be higher than regular price";
+    }
+  }
+
+  // Check if at least one image exists (either current or new)
+  let hasAtLeastOneImage = false;
+  for (let i = 1; i <= 4; i++) {
+    const hasNewImage = fileData[i] !== undefined;
+    const currentImageExists = document.querySelector(`#image${i}-current`) !== null;
+    
+    if (hasNewImage || currentImageExists) {
+      hasAtLeastOneImage = true;
+      const errorElement = document.getElementById(`image${i}-error`);
+      if (errorElement) {
+        errorElement.textContent = "";
       }
     }
-    
-    if (!hasAtLeastOneImage) {
-      isValid = false;
-      showToast("At least one product image is required", "error");
-    }
+  }
+  
+  if (!hasAtLeastOneImage) {
+    isValid = false;
+    showToast("At least one product image is required", "error");
+  }
 
-    if (isValid) {
-      try {
-        const formData = new FormData(this);
+  if (isValid) {
+    try {
+      const formData = new FormData(this);
 
-        for (let i = 1; i <= 4; i++) {
-          formData.delete(`image${i}`);
-          if (fileData[i]) {
-            formData.append(
-              `image${i}`,
-              fileData[i].blob,
-              fileData[i].filename
-            );
-          }
+      // Remove default file inputs and add cropped blobs
+      for (let i = 1; i <= 4; i++) {
+        formData.delete(`image${i}`);
+        if (fileData[i]) {
+          formData.append(
+            `image${i}`,
+            fileData[i].blob,
+            fileData[i].filename
+          );
         }
+      }
 
+      // Add description field if it exists
+      const descriptionField = document.getElementById('description');
+      if (descriptionField) {
+        formData.set('description', descriptionField.value);
+      } else {
+        formData.set('description', ''); // Set empty description if field doesn't exist
+      }
+
+      // Debug: Log form data
+      console.log("Submitting form data:");
+      for (let pair of formData.entries()) {
+        if (pair[1] instanceof File || pair[1] instanceof Blob) {
+          console.log(pair[0], `File: ${pair[1].name || 'blob'}, Size: ${pair[1].size}`);
+        } else {
+          console.log(pair[0], pair[1]);
+        }
+      }
+
+      Swal.fire({
+        title: "Updating Product",
+        text: "Please wait...",
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
+        },
+        customClass: {
+          popup: 'bg-white rounded-lg shadow-lg',
+          title: 'text-gray-800 font-semibold text-xl mb-2',
+          htmlContainer: 'text-gray-600 text-base',
+          confirmButton: 'bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-300',
+          cancelButton: 'bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-red-300',
+          actions: 'gap-3',
+        }
+      });
+
+      const productId = formData.get('productId');
+      const response = await fetch(`/admin/editProduct/${productId}`, {
+        method: "POST",
+        body: formData,
+      });
+
+      // Check if response is JSON
+      const contentType = response.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        throw new Error("Server did not return JSON response");
+      }
+      
+      const data = await response.json();
+      
+      if (data.success) {
         Swal.fire({
-          title: "Updating Product",
-          text: "Please wait...",
-          allowOutsideClick: false,
-          didOpen: () => {
-            Swal.showLoading();
-          },
+          title: "Success!",
+          text: "Product updated successfully",
+          icon: "success",
+          confirmButtonText: "OK",
           customClass: {
             popup: 'bg-white rounded-lg shadow-lg',
             title: 'text-gray-800 font-semibold text-xl mb-2',
             htmlContainer: 'text-gray-600 text-base',
             confirmButton: 'bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-300',
-            cancelButton: 'bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-red-300',
-            actions: 'gap-3',
           }
+        }).then(() => {
+          window.location.href = "/admin/products";
         });
-
-        const productId = formData.get('productId');
-        const response = await fetch(`/admin/editProduct/${productId}`, {
-          method: "POST",
-          body: formData,
-        });
-        
-        const data = await response.json();
-        
-        if (data.success) {
-          Swal.fire({
-            title: "Success!",
-            text: "Product updated successfully",
-            icon: "success",
-            confirmButtonText: "OK",
-            customClass: {
-              popup: 'bg-white rounded-lg shadow-lg',
-              title: 'text-gray-800 font-semibold text-xl mb-2',
-              htmlContainer: 'text-gray-600 text-base',
-              confirmButton: 'bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-300',
-            }
-          }).then(() => {
-            window.location.href = "/admin/products";
-          });
-        } else {
-          Swal.fire({
-            title: "Error",
-            text: data.message || "An error occurred",
-            icon: "error",
-            customClass: {
-              popup: 'bg-white rounded-lg shadow-lg',
-              title: 'text-gray-800 font-semibold text-xl mb-2',
-              htmlContainer: 'text-gray-600 text-base',
-              confirmButton: 'bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-300',
-            }
-          });
-        }
-      } catch (error) {
-        console.error("Error:", error);
+      } else {
         Swal.fire({
           title: "Error",
-          text: "An unexpected error occurred",
+          text: data.message || "An error occurred",
           icon: "error",
           customClass: {
             popup: 'bg-white rounded-lg shadow-lg',
@@ -676,15 +714,28 @@
           }
         });
       }
-    } else {
-      showToast("Please fix the errors in the form", "error");
-      const firstError = document.querySelector(".error-message:not(:empty)");
-      if (firstError) {
-        firstError.scrollIntoView({ behavior: "smooth", block: "center" });
-      }
+    } catch (error) {
+      console.error("Error:", error);
+      Swal.fire({
+        title: "Error",
+        text: error.message || "An unexpected error occurred",
+        icon: "error",
+        customClass: {
+          popup: 'bg-white rounded-lg shadow-lg',
+          title: 'text-gray-800 font-semibold text-xl mb-2',
+          htmlContainer: 'text-gray-600 text-base',
+          confirmButton: 'bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-300',
+        }
+      });
     }
-  });
-
+  } else {
+    showToast("Please fix the errors in the form", "error");
+    const firstError = document.querySelector(".error-message:not(:empty)");
+    if (firstError) {
+      firstError.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  }
+});
   const regularPriceInput = document.getElementById("regularPrice");
   const salePriceInput = document.getElementById("salePrice");
   

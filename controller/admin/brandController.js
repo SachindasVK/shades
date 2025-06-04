@@ -21,7 +21,7 @@ const getBrand = async (req, res) => {
 
         // Sort by createdAt in descending order (-1) to get newest brands first
         const brandData = await Brand.find(filter)
-            .sort({ createdAt: -1 })  // This already puts newest brands first
+            .sort({ createdAt: -1 })  // newest brands first
             .skip(skip)
             .limit(limit);
         

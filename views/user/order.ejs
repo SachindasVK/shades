@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Orders - SHADES</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .page-body {
+            background-color: #f3f4f6;
+        }
+        .containeer {
+            max-width: 95%; 
+            margin-left: auto; 
+            margin-right: auto;
+            display: flex; 
+            gap: 2rem;
+            padding: 10px;
+        }
+        .sidebar {
+            width: 20rem;
+            background-color: #ffffff;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            height: fit-content;
+        }
+        .profile-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            position: relative;
+        }
+        .profile-icon {
+            width: 3rem;
+            height: 3rem;
+            background-color: #a1a1a1;
+            border-radius: 9999px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .profile-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 9999px;
+        }
+        .profile-icon i {
+            color: #ffffff;
+            font-size: 1.125rem;
+        }
+        .greeting {
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
+        .username {
+            color: #1f2937;
+            font-weight: 600;
+        }
+        .menu {
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+        .menu-list {
+            margin: 0;
+        }
+        .menu-item {
+            border-bottom: 1px solid #f3f4f6;
+        }
+        .menu-link {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            color: #4b5563;
+            font-size: 0.875rem;
+        }
+        .menu-link:hover {
+            background-color: #f9fafb;
+        }
+        .menu-link.active {
+            background-color: #eff6ff;
+            color: #2563eb;
+        }
+        .menu-icon {
+            width: 1.25rem;
+            margin-right: 0.75rem;
+        }
+        .logout-link {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            color: #dc2626;
+            font-size: 0.875rem;
+        }
+        .logout-link:hover {
+            background-color: #fef2f2;
+        }
+        .main-content {
+            flex: 1;
+            background-color: #ffffff;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 2rem;
+        }
+        .section-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 1.5rem;
+        }
+        .filter-group {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            font-size: 0.875rem;
+            color: #1f2937;
+        }
+        .form-select {
+            width: 100%;
+            max-width: 200px;
+            padding: 0.5rem;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            color: #1f2937;
+        }
+        .form-select:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+        .order-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .order-item:last-child {
+            border-bottom: none;
+        }
+        .order-details {
+            flex: 1;
+            color: #111827;
+        }
+        .order-id {
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: #1f2937;
+        }
+        .order-date, .order-total, .order-status {
+            font-size: 0.875rem;
+            color: #374151;
+        }
+        .order-status {
+            font-weight: 600;
+        }
+        .order-status.pending {
+            color: #f59e0b;
+        }
+        .order-status.processing {
+            color: #d97706;
+        }
+        .order-status.shipped {
+            color: #3b82f6;
+        }
+        .order-status.delivered {
+            color: #22c55e;
+        }
+        .order-status.cancelled {
+            color: #ef4444;
+        }
+        .order-status.failed {
+            color: #dc2626;
+        }
+        .order-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        .view-link {
+            color: #2563eb;
+            font-size: 0.875rem;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+        .view-link:hover {
+            color: #1d4ed8;
+            text-decoration: underline;
+        }
+        .pagination {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        .pagination-btn {
+            padding: 0.25rem 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            background-color: #ffffff;
+            color: #374151;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: background-color 0.2s ease, border-color 0.2s ease;
+        }
+        .pagination-btn:hover:not(.disabled) {
+            background-color: #f9fafb;
+            border-color: #2563eb;
+        }
+        .pagination-btn.disabled {
+            color: #9ca3af;
+            border-color: #d1d5db;
+            cursor: not-allowed;
+        }
+        .pagination-info {
+            font-size: 0.875rem;
+            color: #374151;
+        }
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            min-width: 250px;
+            background-color: #1f2937;
+            color: white;
+            padding: 1rem;
+            border-radius: 4px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 2000;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .toast.success {
+            background-color: #22c55e;
+        }
+        .toast.error {
+            background-color: #ef4444;
+        }
+        .bg-black-logo {
+            background-color: #000000;
+        }
+        .gucci-style-large {
+            display: flex;
+            justify-content: center;
+            margin: 0 auto;
+            max-width: 1400px;
+        }
+        .gucci-style-large .letter {
+            font-family: 'Times New Roman', serif;
+            font-weight: 100;
+            color: #ffffff;
+            font-size: 15rem;
+            line-height: 1;
+            letter-spacing: 0.10em;
+            text-transform: uppercase;
+            padding: 0 0.08em;
+        }
+        .footer-heading {
+            color: #8C8C8C;
+            font-size: 0.875rem;
+            font-weight: 500;
+            letter-spacing: 0.05em;
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+        }
+        .footer-link {
+            color: white;
+            display: block;
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        .footer-link:hover {
+            color: #8C8C8C;
+            text-decoration: underline;
+        }
+        .font-playfair {
+            font-family: 'Playfair Display', serif;
+        }
+        .dropdown-content {
+            display: none;
+        }
+        .dropdown-content.show {
+            display: block;
+        }
+        .hidden:not(.md\:flex) {
+            display: none !important;
+        }
+        @media (min-width: 768px) {
+            .hidden.md\:flex {
+                display: flex !important;
+            }
+        }
+    </style>
+</head>
+<body class="page-body">
+    <!-- Header Partial -->
+    <%- include("../../views/partials/user/header") %>
+    <!-- Profile Header (Sidebar) Partial -->
+    <div class="containeer">
+        <div class="sidebar">
+            <div class="profile-header">
+                <div class="profile-icon">
+                    <% if (user.image) { %>
+                        <img src="/Uploads/userProfileimages/<%= user.image %>" alt="Profile Image" class="profile-image">
+                    <% } else { %>
+                        <i class="fas fa-user" style="color: #ffffff; font-size: 1.125rem;"></i>
+                    <% } %>
+                </div>
+                <div>
+                    <div class="greeting">Hello,</div>
+                    <div class="username"><%= user.name %></div>
+                </div>
+            </div>
+            <nav class="menu">
+                <ul class="menu-list">
+                    <li class="menu-item">
+                        <a href="/profile" class="menu-link">
+                            <i class="fas fa-user menu-icon"></i>
+                            Profile Information
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="/orders" class="menu-link active">
+                            <i class="fas fa-box menu-icon"></i>
+                            My Orders
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="/address" class="menu-link">
+                            <i class="fas fa-home menu-icon"></i>
+                            Manage Addresses
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="/wallet" class="menu-link">
+                            <i class="fas fa-wallet menu-icon"></i>
+                            My Wallet
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="/wishlist" class="menu-link">
+                            <i class="fas fa-heart menu-icon"></i>
+                            My Wishlist
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="/referals" class="menu-link">
+                            <i class="fas fa-users menu-icon"></i>
+                            Refer Friends
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="/changepassword" class="menu-link">
+                            <i class="fas fa-lock menu-icon"></i>
+                            Change Password
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="/image-gallery" class="menu-link">
+                            <i class="fas fa-image menu-icon"></i>
+                            Image Gallery
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="/logout" class="logout-link">
+                            <i class="fas fa-sign-out-alt menu-icon"></i>
+                            Log out
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <h2 class="section-title">My Orders</h2>
+            <div class="filter-group">
+                <div>
+                    <label class="form-label" for="statusFilter">Filter by Status</label>
+                    <select id="statusFilter" class="form-select" onchange="applyFilters()">
+                        <option value="All">All Statuses</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Processing">Processing</option>
+                        <option value="Shipped">Shipped</option>
+                        <option value="Delivered">Delivered</option>
+                        <option value="Cancelled">Cancelled</option>
+                        <option value="Failed">Failed</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="form-label" for="timeFilter">Filter by Time</label>
+                    <select id="timeFilter" class="form-select" onchange="applyFilters()">
+                        <option value="All">All Time</option>
+                        <option value="Last30Days">Last 30 Days</option>
+                        <option value="Last3Months">Last 3 Months</option>
+                        <option value="Last6Months">Last 6 Months</option>
+                    </select>
+                </div>
+            </div>
+            <div id="orderList">
+                <% if (user.orders && user.orders.length > 0) { %>
+                    <% user.orders.forEach((order) => { %>
+                        <div class="order-item" data-id="<%= order._id %>" data-status="<%= order.status %>" data-date="<%= order.date %>">
+                            <div class="order-details">
+                                <div class="order-id">Order #<%= order.orderId %></div>
+                                <div class="order-date">Placed on: <%= new Date(order.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) %></div>
+                                <div class="order-total">Total: ₹<%= order.totalAmount.toFixed(2) %></div>
+                                <div class="order-status <%= order.status.toLowerCase() %>">Status: <%= order.status %></div>
+                            </div>
+                            <div class="order-actions">
+                                <a href="/order/details/<%= order._id %>" class="view-link">View Details</a>
+                            </div>
+                        </div>
+                    <% }); %>
+                <% } else { %>
+                    <p class="text-gray-500 italic">No orders found. Start shopping to place your first order!</p>
+                <% } %>
+            </div>
+            <div id="pagination" class="pagination"></div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer"></div>
+
+    <!-- Footer Partial -->
+    <%- include("../../views/partials/user/footer") %>
+
+    <script>
+        let allOrders = [];
+        let filteredOrders = [];
+        let currentPage = 1;
+        const ordersPerPage = 5;
+
+        function showToast(message, type = 'success') {
+            const toastContainer = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            toastContainer.appendChild(toast);
+            setTimeout(() => {
+                toast.classList.add('show');
+            }, 100);
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => {
+                    toast.remove();
+                }, 300);
+            }, 3000);
+        }
+
+        function initializeOrders() {
+            const orderItems = document.querySelectorAll('.order-item');
+            allOrders = Array.from(orderItems).map(item => ({
+                element: item,
+                status: item.getAttribute('data-status'),
+                date: new Date(item.getAttribute('data-date'))
+            }));
+            applyFilters();
+        }
+
+        function applyFilters() {
+            const statusFilter = document.getElementById('statusFilter').value;
+            const timeFilter = document.getElementById('timeFilter').value;
+            const currentDate = new Date('2025-06-04T14:15:00Z'); // Current date in UTC (07:45 PM IST = 14:15 PM UTC)
+
+            filteredOrders = allOrders;
+
+            // Apply status filter
+            if (statusFilter !== 'All') {
+                filteredOrders = filteredOrders.filter(order => order.status === statusFilter);
+            }
+
+            // Apply time filter
+            if (timeFilter !== 'All') {
+                if (timeFilter === 'Last30Days') {
+                    const thirtyDaysAgo = new Date(currentDate);
+                    thirtyDaysAgo.setDate(currentDate.getDate() - 30);
+                    filteredOrders = filteredOrders.filter(order => order.date >= thirtyDaysAgo);
+                } else if (timeFilter === 'Last3Months') {
+                    const threeMonthsAgo = new Date(currentDate);
+                    threeMonthsAgo.setMonth(currentDate.getMonth() - 3);
+                    filteredOrders = filteredOrders.filter(order => order.date >= threeMonthsAgo);
+                } else if (timeFilter === 'Last6Months') {
+                    const sixMonthsAgo = new Date(currentDate);
+                    sixMonthsAgo.setMonth(currentDate.getMonth() - 6);
+                    filteredOrders = filteredOrders.filter(order => order.date >= sixMonthsAgo);
+                }
+            }
+
+            currentPage = 1; // Reset to first page after filtering
+            displayOrders();
+            updatePaginationControls();
+            showToast('Filters applied', 'success');
+        }
+
+        function displayOrders() {
+            const orderList = document.getElementById('orderList');
+            orderList.innerHTML = '';
+
+            if (filteredOrders.length === 0) {
+                orderList.innerHTML = '<p class="text-gray-500 italic">No orders match the selected filters.</p>';
+                return;
+            }
+
+            const startIndex = (currentPage - 1) * ordersPerPage;
+            const endIndex = startIndex + ordersPerPage;
+            const ordersToDisplay = filteredOrders.slice(startIndex, endIndex);
+
+            ordersToDisplay.forEach(order => orderList.appendChild(order.element));
+        }
+
+        function updatePaginationControls() {
+            const pagination = document.getElementById('pagination');
+            pagination.innerHTML = '';
+
+            if (filteredOrders.length === 0) return;
+
+            const totalOrders = filteredOrders.length;
+            const startIndex = (currentPage - 1) * ordersPerPage + 1;
+            const endIndex = Math.min(currentPage * ordersPerPage, totalOrders);
+
+            // Previous Button
+            const prevBtn = document.createElement('button');
+            prevBtn.className = `pagination-btn ${currentPage === 1 ? 'disabled' : ''}`;
+            prevBtn.textContent = 'Previous';
+            prevBtn.onclick = () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    displayOrders();
+                    updatePaginationControls();
+                }
+            };
+            pagination.appendChild(prevBtn);
+
+            // Next Button
+            const nextBtn = document.createElement('button');
+            nextBtn.className = `pagination-btn ${endIndex >= totalOrders ? 'disabled' : ''}`;
+            nextBtn.textContent = 'Next';
+            nextBtn.onclick = () => {
+                if (endIndex < totalOrders) {
+                    currentPage++;
+                    displayOrders();
+                    updatePaginationControls();
+                }
+            };
+            pagination.appendChild(nextBtn);
+
+            // Page Info
+            const pageInfo = document.createElement('span');
+            pageInfo.className = 'pagination-info';
+            pageInfo.textContent = `Showing ${startIndex}-${endIndex} of ${totalOrders} orders`;
+            pagination.appendChild(pageInfo);
+        }
+
+        window.addEventListener('load', initializeOrders);
+
+        window.addEventListener('click', function(event) {
+            const dropdowns = document.querySelectorAll('.dropdown-content');
+            dropdowns.forEach(dropdown => {
+                if (dropdown.classList.contains('show') && !event.target.closest('.dropdown')) {
+                    dropdown.classList.remove('show');
+                }
+            });
+        });
+
+        function toggleDropdown(dropdownId) {
+            event.stopPropagation();
+            const dropdowns = document.querySelectorAll('.dropdown-content');
+            dropdowns.forEach(dropdown => {
+                if (dropdown.id !== dropdownId && dropdown.classList.contains('show')) {
+                    dropdown.classList.remove('show');
+                }
+            });
+            document.getElementById(dropdownId).classList.toggle('show');
+        }
+
+        function toggleMobileMenu() {
+            console.log('Mobile menu toggled');
+        }
+    </script>
+</body>
+</html>

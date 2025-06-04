@@ -47,10 +47,9 @@ const categoryInfo = async (req, res) => {
 // Add Category
 const addCategory = async (req, res) => {
     try {
-        console.log("Received request to add category:", req.body)
         const { name, shape, description } = req.body;
        
-         // Improved name validation
+         //name validation
     const trimmedName = name.trim()
     const trimmedShape = shape.trim()
     if (!trimmedName || trimmedName.length === 0) {

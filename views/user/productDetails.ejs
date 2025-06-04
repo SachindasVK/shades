@@ -249,6 +249,15 @@
             background-color: #f8f9fa;
         }
 
+        .color-swatch {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 1px solid #dee2e6;
+            vertical-align: middle;
+        }
+
         .reviews-section {
             background-color: white;
             padding: 1.5rem;
@@ -277,21 +286,20 @@
 
         .recommendations-container {
             display: flex;
-            overflow-x: hidden; /* Changed from auto to hidden to hide scrollbar */
+            overflow-x: hidden;
             gap: 1rem;
             padding-bottom: 1rem;
             scroll-behavior: smooth;
             -webkit-overflow-scrolling: touch;
         }
 
-        /* Hide scrollbar completely */
         .recommendations-container::-webkit-scrollbar {
             display: none;
         }
 
         .recommendations-container {
-            -ms-overflow-style: none; /* IE and Edge */
-            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none;
+            scrollbar-width: none;
         }
 
         .recommendation-card {
@@ -341,7 +349,6 @@
             font-size: 1.1rem;
         }
 
-        /* Arrow buttons for scrolling */
         .scroll-btn {
             position: absolute;
             top: 50%;
@@ -529,9 +536,11 @@
                         <% } %>
                     </div>
 
+                  
+
                     <!-- Add to Cart and Wishlist -->
                     <div class="d-flex gap-3 mb-3">
-                        <button class="btn btn-add-cart add-to-cart" data-product-id="<%= product._id %>" <%= product.stock === 0 ? 'disabled' : '' %> aria-label="Add <%= product.name || product.productName %> to cart">
+                        <button class="btn btn-add-cart add-to-cart" data-product-id="<%= product._id %>" <%= product.quantity === 0 ? 'disabled' : '' %> aria-label="Add <%= product.name || product.productName %> to cart">
                             <i class="fas fa-shopping-cart me-2"></i>Add to Cart
                         </button>
                         <button class="wishlist-btn add-to-wishlist" data-product-id="<%= product._id %>" aria-label="Add <%= product.name || product.productName %> to wishlist">
@@ -546,15 +555,29 @@
                     </div>
 
                     <!-- Specifications -->
-                    <% if (product.specifications) { %>
+                    <% if (product.specifications || product.color || product.shape) { %>
                         <div class="mb-3">
                             <h5>Specifications</h5>
                             <table class="specifications-table">
-                                <% for (let [key, value] of Object.entries(product.specifications)) { %>
+                                <% if (product.color) { %>
                                     <tr>
-                                        <th><%= key %></th>
-                                        <td><%= value %></td>
+                                        <th>Color</th>
+                                        <td><span class="color-swatch" style="background-color: <%= product.color %>;"></span></td>
                                     </tr>
+                                <% } %>
+                                <% if (product.shape) { %>
+                                    <tr>
+                                        <th>Shape</th>
+                                        <td><%= product.shape || 'Sleek Silhouette' %></td>
+                                    </tr>
+                                <% } %>
+                                <% if (product.specifications) { %>
+                                    <% for (let [key, value] of Object.entries(product.specifications)) { %>
+                                        <tr>
+                                            <th><%= key %></th>
+                                            <td><%= value %></td>
+                                        </tr>
+                                    <% } %>
                                 <% } %>
                             </table>
                         </div>
@@ -607,18 +630,18 @@
                                         <img src="<%= rec.productImage?.[0] || rec.images?.[0] || '/images/default-product.jpg' %>" class="recommendation-img" alt="<%= rec.name || rec.productName %>">
                                     </a>
                                     <div class="p-3">
-                                          <a href="/productDetails?id=<%= rec._id%>" aria-label="View <%= rec.name || rec.productName %>">
-                                        <h6 class="mb-1 text-truncate"><%= rec.name || rec.productName %></h6>
-                                        <div class="product-price">
-                                            <span class="current-price">₹<%= (rec.price || rec.salePrice).toLocaleString('en-IN') %></span>
-                                            <% if (rec.regularPrice && rec.regularPrice > (rec.price || rec.salePrice)) { %>
-                                                <span class="original-price">₹<%= rec.regularPrice.toLocaleString('en-IN') %></span>
-                                                <% const discount = Math.round((rec.regularPrice - (rec.price || rec.salePrice)) / rec.regularPrice * 100); %>
-                                                <span class="discount-percentage"><%= discount %>% off</span>
-                                            <% } %>
-                                        </div>
+                                        <a href="/productDetails?id=<%= rec._id%>" aria-label="View <%= rec.name || rec.productName %>">
+                                            <h6 class="mb-1 text-truncate"><%= rec.name || rec.productName %></h6>
+                                            <div class="product-price">
+                                                <span class="current-price">₹<%= (rec.price || rec.salePrice).toLocaleString('en-IN') %></span>
+                                                <% if (rec.regularPrice && rec.regularPrice > (rec.price || rec.salePrice)) { %>
+                                                    <span class="original-price">₹<%= rec.regularPrice.toLocaleString('en-IN') %></span>
+                                                    <% const discount = Math.round((rec.regularPrice - (rec.price || rec.salePrice)) / rec.regularPrice * 100); %>
+                                                    <span class="discount-percentage"><%= discount %>% off</span>
+                                                <% } %>
+                                            </div>
+                                        </a>
                                     </div>
-                                    </a>
                                 </div>
                             <% }); %>
                         </div>
@@ -807,7 +830,7 @@
                     .then(response => response.json())
                     .then(data => {
                         button.classList.remove('loading');
-                        button.disabled = product.stock === 0;
+                        button.disabled = product.quantity === 0;
 
                         if (data.success) {
                             showToast('Product added to cart!', 'success');
@@ -823,7 +846,7 @@
                     })
                     .catch(error => {
                         button.classList.remove('loading');
-                        button.disabled = product.stock === 0;
+                        button.disabled = product.quantity === 0;
                         console.error('Error:', error);
                         showToast('An error occurred. Please try again.', 'error');
                     });
@@ -918,7 +941,7 @@
                 const cartCounter = document.querySelector('.cart-counter');
                 if (cartCounter) {
                     cartCounter.textContent = count;
-                    cartCounter.classList.toggle('d-none', count <= 0);
+                    cartCounter.spleen.classList.toggle('d-none', count <= 0);
                 }
             }
 

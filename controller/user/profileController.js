@@ -560,7 +560,8 @@ const getAddress = async(req,res)=>{
             return res.redirect('/login')
         }
 
-        const addressDoc = await Address.findOne({userId:userId});
+        const addressDoc = await Address.findOne({userId:userId})
+    
 
         let addresses = [];
 
@@ -577,7 +578,7 @@ const getAddress = async(req,res)=>{
                 landmark: addr.landMark || '',
                 addressType: addr.addressType,
                 isDefault: addr.isDefault || false
-            }))
+            })).reverse()
         }
 
         user.addresses = addresses

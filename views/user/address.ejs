@@ -334,6 +334,12 @@
             color: #8C8C8C;
             text-decoration: underline;
         }
+        .error-message {
+            color: red;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+            display: none;
+        }
         .input-field {
             background-color: transparent;
             border: none;
@@ -372,19 +378,29 @@
                 display: flex !important;
             }
         }
+        /* New styles for highlighting default address and type */
+        .address-item.default {
+            background-color: #f0fdf4; /* Light green background for default address */
+            border-left: 4px solid #22c55e; /* Green border to indicate default */
+        }
+        .address-type {
+            font-weight: 600;
+        }
+        .address-type.default {
+            color: #22c55e; /* Green color for default address type */
+        }
     </style>
 </head>
 <body class="page-body">
     <!-- Header Partial -->
-   
- <%-include("../../views/partials/user/header")%>
+    <%- include("../../views/partials/user/header") %>
     <!-- Profile Header (Sidebar) Partial -->
     <div class="containeer">
         <div class="sidebar">
             <div class="profile-header">
                 <div class="profile-icon">
                     <% if (user.image) { %>
-                        <img src="/uploads/userProfileimages/<%= user.image %>" alt="Profile Image" class="profile-image">
+                        <img src="/Uploads/userProfileimages/<%= user.image %>" alt="Profile Image" class="profile-image">
                     <% } else { %>
                         <i class="fas fa-user" style="color: #ffffff; font-size: 1.125rem;"></i>
                     <% } %>
@@ -455,7 +471,7 @@
             <div id="addressList">
                 <% if (user.addresses && user.addresses.length > 0) { %>
                     <% user.addresses.forEach((address, index) => { %>
-                        <div class="address-item" data-id="<%= address._id %>">
+                        <div class="address-item <%= address.isDefault ? 'default' : '' %>" data-id="<%= address._id %>">
                             <div class="address-details">
                                 <%= address.fullName %> <br>
                                 <%= address.flat %>, <%= address.area %>, <%= address.city %>, <%= address.state %> - <%= address.pincode %> <br>
@@ -463,7 +479,7 @@
                                 <% if (address.landmark) { %>
                                     Landmark: <%= address.landmark %> <br>
                                 <% } %>
-                                Type: <%= address.addressType %> 
+                                Type: <span class="address-type <%= address.isDefault ? 'default' : '' %>"><%= address.addressType %></span>
                                 <% if (address.isDefault) { %>
                                     (Default)
                                 <% } %>
@@ -492,30 +508,37 @@
                 <div class="form-group">
                     <label class="form-label" for="fullName">Full Name *</label>
                     <input type="text" id="fullName" class="form-input" required>
+                    <span class="error-message" id="error-fullName"></span>
                 </div>
                 <div class="form-group">
                     <label class="form-label" for="phone">Phone Number * (10 digit mobile number)</label>
                     <input type="text" id="phone" class="form-input" required pattern="\d{10}" title="Please enter a 10-digit mobile number">
+                    <span class="error-message" id="error-phone"></span>
                 </div>
                 <div class="form-group">
                     <label class="form-label" for="flat">Flat, House no., Building, Company *</label>
                     <input type="text" id="flat" class="form-input" required>
+                    <span class="error-message" id="error-flat"></span>
                 </div>
                 <div class="form-group">
                     <label class="form-label" for="area">Area, Street, Sector, Village *</label>
                     <input type="text" id="area" class="form-input" required>
+                    <span class="error-message" id="error-area"></span>
                 </div>
                 <div class="form-group">
                     <label class="form-label" for="pincode">Pincode * (6 digits [0-9] PIN code)</label>
                     <input type="text" id="pincode" class="form-input" required pattern="\d{6}" title="Please enter a 6-digit PIN code">
+                    <span class="error-message" id="error-pincode"></span>
                 </div>
                 <div class="form-group">
                     <label class="form-label" for="landmark">Landmark (optional)</label>
                     <input type="text" id="landmark" class="form-input" placeholder="e.g., near Apollo Hospital">
+                    <span class="error-message" id="error-landmark"></span>
                 </div>
                 <div class="form-group">
                     <label class="form-label" for="city">City/Town *</label>
                     <input type="text" id="city" class="form-input" required>
+                    <span class="error-message" id="error-city"></span>
                 </div>
                 <div class="form-group">
                     <label class="form-label" for="state">State *</label>
@@ -558,6 +581,7 @@
                         <option value="Lakshadweep">Lakshadweep</option>
                         <option value="Puducherry">Puducherry</option>
                     </select>
+                    <span class="error-message" id="error-state"></span>
                 </div>
                 <div class="form-group">
                     <label class="form-label">Address Type</label>
@@ -605,7 +629,7 @@
     <div id="toastContainer"></div>
 
     <!-- Footer Partial -->
-  <%-include("../../views/partials/user/footer")%>
+    <%- include("../../views/partials/user/footer") %>
 
     <script>
         let currentAddressId = '';
@@ -642,6 +666,14 @@
             document.getElementById('isDefault').checked = false;
             document.getElementById('addressModal').classList.remove('hidden');
             document.getElementById('fullName').focus();
+            // Clear all error messages
+            ['fullName', 'phone', 'flat', 'area', 'pincode', 'landmark', 'city', 'state'].forEach(id => {
+                const errorEl = document.getElementById(`error-${id}`);
+                if (errorEl) {
+                    errorEl.textContent = '';
+                    errorEl.style.display = 'none';
+                }
+            });
         }
 
         function openEditAddressModal(id, fullName, phone, flat, area, pincode, landmark, city, state, addressType, isDefault) {
@@ -659,10 +691,26 @@
             document.getElementById('isDefault').checked = isDefault === 'true';
             document.getElementById('addressModal').classList.remove('hidden');
             document.getElementById('fullName').focus();
+            // Clear all error messages
+            ['fullName', 'phone', 'flat', 'area', 'pincode', 'landmark', 'city', 'state'].forEach(id => {
+                const errorEl = document.getElementById(`error-${id}`);
+                if (errorEl) {
+                    errorEl.textContent = '';
+                    errorEl.style.display = 'none';
+                }
+            });
         }
 
         function closeAddressModal() {
             document.getElementById('addressModal').classList.add('hidden');
+            // Clear all error messages
+            ['fullName', 'phone', 'flat', 'area', 'pincode', 'landmark', 'city', 'state'].forEach(id => {
+                const errorEl = document.getElementById(`error-${id}`);
+                if (errorEl) {
+                    errorEl.textContent = '';
+                    errorEl.style.display = 'none';
+                }
+            });
         }
 
         function openDeleteAddressModal(id) {
@@ -702,8 +750,115 @@
             });
         }
 
+        function validateAddressForm() {
+            let isValid = true;
+
+            // Helper functions
+            function setError(id, message) {
+                const errorEl = document.getElementById(`error-${id}`);
+                if (errorEl) {
+                    errorEl.textContent = message;
+                    errorEl.classList.add('text-red-500', 'text-sm');
+                    errorEl.style.display = 'block';
+                }
+                isValid = false;
+            }
+
+            function clearError(id) {
+                const errorEl = document.getElementById(`error-${id}`);
+                if (errorEl) {
+                    errorEl.textContent = '';
+                    errorEl.style.display = 'none';
+                }
+            }
+
+            // Clear all previous errors
+            ['fullName', 'phone', 'flat', 'area', 'pincode', 'landmark', 'city', 'state'].forEach(clearError);
+
+            // Get form values
+            const fullName = document.getElementById('fullName').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const flat = document.getElementById('flat').value.trim();
+            const area = document.getElementById('area').value.trim();
+            const pincode = document.getElementById('pincode').value.trim();
+            const landmark = document.getElementById('landmark').value.trim();
+            const city = document.getElementById('city').value.trim();
+            const state = document.getElementById('state').value;
+            const addressType = document.querySelector('input[name="addressType"]:checked');
+
+            // Full Name validation
+            if (!fullName) {
+                setError('fullName', 'Full Name is required');
+            } else if (fullName.length < 2) {
+                setError('fullName', 'Full Name must be at least 2 characters long');
+            } else if (!/^[a-zA-Z\s.]+$/.test(fullName)) {
+                setError('fullName', 'Full Name can only contain letters, spaces, and periods');
+            }
+
+            // Phone validation
+            if (!phone) {
+                setError('phone', 'Phone number is required');
+            } else if (!/^\d{10}$/.test(phone)) {
+                setError('phone', 'Enter a valid 10-digit mobile number');
+            }
+
+            // Flat validation
+            if (!flat) {
+                setError('flat', 'Flat/House number is required');
+            } else if (flat.length < 2) {
+                setError('flat', 'Flat/House number must be at least 2 characters');
+            }
+
+            // Area validation
+            if (!area) {
+                setError('area', 'Area/Street is required');
+            } else if (area.length < 3) {
+                setError('area', 'Area/Street must be at least 3 characters');
+            }
+
+            // Pincode validation
+            if (!pincode) {
+                setError('pincode', 'Pincode is required');
+            } else if (!/^\d{6}$/.test(pincode)) {
+                setError('pincode', 'Enter a valid 6-digit PIN code');
+            }
+
+            // City validation
+            if (!city) {
+                setError('city', 'City is required');
+            } else if (city.length < 2) {
+                setError('city', 'City must be at least 2 characters');
+            } else if (!/^[a-zA-Z\s]+$/.test(city)) {
+                setError('city', 'City can only contain letters and spaces');
+            }
+
+            // State validation
+            if (!state) {
+                setError('state', 'Please select a state');
+            }
+
+            // Address Type validation
+            if (!addressType) {
+                showToast('Please select an address type', 'error');
+                isValid = false;
+            }
+
+            // Landmark is optional, but if provided, should meet minimum requirements
+            if (landmark && landmark.length < 3) {
+                setError('landmark', 'Landmark must be at least 3 characters if provided');
+            }
+
+            return isValid;
+        }
+
         document.getElementById('addressForm').addEventListener('submit', function(e) {
             e.preventDefault();
+
+            if (!validateAddressForm()) {
+                showToast('Please fix the errors in the form', 'error');
+                return;
+            }
+
             const id = document.getElementById('addressId').value;
             const fullName = document.getElementById('fullName').value.trim();
             const phone = document.getElementById('phone').value.trim();
@@ -715,21 +870,6 @@
             const state = document.getElementById('state').value;
             const addressType = document.querySelector('input[name="addressType"]:checked').value;
             const isDefault = document.getElementById('isDefault').checked;
-
-            if (!fullName || !phone || !flat || !area || !pincode || !city || !state || !addressType) {
-                showToast('Please fill in all required fields', 'error');
-                return;
-            }
-
-            if (!/^\d{10}$/.test(phone)) {
-                showToast('Please enter a valid 10-digit mobile number', 'error');
-                return;
-            }
-
-            if (!/^\d{6}$/.test(pincode)) {
-                showToast('Please enter a valid 6-digit PIN code', 'error');
-                return;
-            }
 
             const addressData = { fullName, phone, flat, area, pincode, landmark, city, state, addressType, isDefault };
             const method = id ? 'PUT' : 'POST';
