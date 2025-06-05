@@ -1,30 +1,58 @@
 const User = require('../../models/userSchema')
 const Product = require('../../models/productSchema')
+const Wishlist = require('../../models/wishlistSchema')
+
 
 const loadWishlist = async (req, res) => {
     try {
         const userId = req.session.user;
-        
+
         if (!userId) {
             return res.redirect('/login');
         }
 
-        // Populate user with wishlist products
-        const user = await User.findById(userId).populate({
-            path: 'wishlist',
-            populate: {
-                path: 'category'
-            }
-        });
-
+        // First, get the user with their wishlist
+        const user = await User.findById(userId);
+        
         if (!user) {
             return res.redirect('/login');
         }
 
+        // Get only active, non-deleted products from the wishlist
+        const products = await Product.find({
+            _id: { $in: user.wishlist },
+            isDeleted: false,
+            isActive: true,
+        }).populate('category');
+
+        // Get the IDs of products that are still valid (not deleted/inactive)
+        const validProductIds = products.map(product => product._id.toString());
+        
+        // Remove invalid products from user's wishlist
+        const originalWishlistIds = user.wishlist.map(id => id.toString());
+        const invalidProductIds = originalWishlistIds.filter(id => !validProductIds.includes(id));
+        
+        if (invalidProductIds.length > 0) {
+            // Update user's wishlist to remove deleted/inactive products
+            await User.findByIdAndUpdate(userId, {
+                $pull: { wishlist: { $in: invalidProductIds } }
+            });
+            
+            // Update the user object for rendering
+            user.wishlist = user.wishlist.filter(id => validProductIds.includes(id.toString()));
+        }
+
+        // Create a user object with populated wishlist for rendering
+        const userWithWishlist = {
+            ...user.toObject(),
+            wishlist: products
+        };
+
         res.render('wishlist', {
-            user: user, // Pass the entire user object
+            user: userWithWishlist,
             username: user.name,
-            wishlistCount: user.wishlist.length
+            wishlist: products,
+            wishlistCount: products.length
         });
 
     } catch (error) {

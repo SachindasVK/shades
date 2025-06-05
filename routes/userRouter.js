@@ -84,7 +84,10 @@ router.get('/wishlist/count',userAuth,wishlistController.getWishlistCount);
 router.delete('/wishlist/remove/:id',userAuth,wishlistController.removeFromWishlist)
 router.get('/wishlist/status',userAuth,userController.getWishlistStatus)
 
-//orde management
+//Cart management
 router.get('/orders',userAuth,orderController.getOrders)
 router.get('/cart',userAuth,cartController.getCart)
+router.post('/cart/add',userAuth,cartController.addToCart)
+router.post('/cart/remove',userAuth,cartController.removeCart)
+
 module.exports = router

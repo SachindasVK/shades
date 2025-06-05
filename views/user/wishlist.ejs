@@ -1,30 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Wishlist - SHADES</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@700&display=swap"
+        rel="stylesheet">
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
+        .remove {
+            color: #dc3545;
         }
+
+        .remove:hover {
+            color: #b02a37;
+        }
+
+        body {
+            background-color: var(--light-bg);
+            color: var(--text-color);
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+        }
+
         .page-body {
             background-color: #f3f4f6;
         }
+
         .current-price {
             font-size: 1.15rem;
             font-weight: bold;
             color: var(--primary-color);
         }
+
         .original-price {
             font-size: 0.85rem;
             text-decoration: line-through;
             color: #6c757d;
             margin-left: 0.5rem;
         }
+
         .discount-percentage {
             font-size: 0.75rem;
             background-color: #2bff006c;
@@ -34,19 +52,24 @@
             margin-left: 0.5rem;
             font-weight: 600;
         }
+
         .stock-status {
             font-size: 0.95rem;
             margin-bottom: 1rem;
         }
+
         .stock-status.in-stock {
             color: #28a745;
         }
+
         .stock-status.low-stock {
             color: #ffc107;
         }
+
         .stock-status.out-of-stock {
             color: #dc3545;
         }
+
         .containeer {
             max-width: 95%;
             margin-left: auto;
@@ -55,6 +78,7 @@
             gap: 2rem;
             padding: 10px;
         }
+
         .sidebar {
             width: 20rem;
             background-color: #ffffff;
@@ -62,6 +86,7 @@
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
             height: fit-content;
         }
+
         .profile-header {
             padding: 1.5rem;
             border-bottom: 1px solid #e5e7eb;
@@ -70,6 +95,7 @@
             gap: 0.75rem;
             position: relative;
         }
+
         .profile-icon {
             width: 3rem;
             height: 3rem;
@@ -81,34 +107,42 @@
             position: relative;
             overflow: hidden;
         }
+
         .profile-image {
             width: 100%;
             height: 100%;
             object-fit: cover;
             border-radius: 9999px;
         }
+
         .profile-icon i {
             color: #ffffff;
             font-size: 1.125rem;
         }
+
         .greeting {
             color: #6b7280;
             font-size: 0.875rem;
         }
+
         .username {
             color: #1f2937;
             font-weight: 600;
         }
+
         .menu {
             padding-top: 0;
             padding-bottom: 0;
         }
+
         .menu-list {
             margin: 0;
         }
+
         .menu-item {
             border-bottom: 1px solid #f3f4f6;
         }
+
         .menu-link {
             display: flex;
             align-items: center;
@@ -116,17 +150,21 @@
             color: #4b5563;
             font-size: 0.875rem;
         }
+
         .menu-link:hover {
             background-color: #f9fafb;
         }
+
         .menu-link.active {
             background-color: #eff6ff;
             color: #2563eb;
         }
+
         .menu-icon {
             width: 1.25rem;
             margin-right: 0.75rem;
         }
+
         .logout-link {
             display: flex;
             align-items: center;
@@ -134,9 +172,11 @@
             color: #dc2626;
             font-size: 0.875rem;
         }
+
         .logout-link:hover {
             background-color: #fef2f2;
         }
+
         .main-content {
             flex: 1;
             background-color: #ffffff;
@@ -144,21 +184,25 @@
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
             padding: 2rem;
         }
+
         .section-title {
             font-size: 1.125rem;
             font-weight: 600;
             color: #1f2937;
             margin-bottom: 1.5rem;
         }
+
         .wishlist-item {
             display: flex;
             align-items: center;
             padding: 1rem;
             border-bottom: 1px solid #e5e7eb;
         }
+
         .wishlist-item:last-child {
             border-bottom: none;
         }
+
         .wishlist-image {
             width: 180px;
             height: 150px;
@@ -166,46 +210,28 @@
             border-radius: 6px;
             margin-right: 1rem;
         }
+
         .wishlist-details {
             flex: 1;
             color: #111827;
         }
+
         .wishlist-name {
             font-weight: 600;
             font-size: 0.875rem;
             color: #1f2937;
         }
+
         .wishlist-price {
             font-size: 0.875rem;
             color: #374151;
         }
+
         .wishlist-actions {
             display: flex;
             gap: 0.5rem;
         }
-        .action-btn {
-            padding: 0.5rem 1rem;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.875rem;
-            font-weight: 500;
-            transition: background-color 0.2s ease;
-        }
-        .cart-btn {
-            background-color: #2563eb;
-            color: white;
-        }
-        .cart-btn:hover {
-            background-color: #1d4ed8;
-        }
-        .remove-btn {
-            background-color: #ef4444;
-            color: white;
-        }
-        .remove-btn:hover {
-            background-color: #dc2626;
-        }
+
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -218,6 +244,7 @@
             justify-content: center;
             z-index: 1000;
         }
+
         .modal-content {
             background: white;
             padding: 1.5rem;
@@ -228,27 +255,32 @@
             max-height: 85vh;
             overflow-y: auto;
         }
+
         .modal-header {
             padding-bottom: 1rem;
             border-bottom: 1px solid #e5e7eb;
             margin-bottom: 1.5rem;
         }
+
         .modal-title {
             font-size: 1.5rem;
             font-weight: 600;
             color: #1f2937;
         }
+
         .modal-message {
             font-size: 1rem;
             color: #374151;
             margin-bottom: 1rem;
         }
+
         .button-group {
             display: flex;
             gap: 1rem;
             justify-content: flex-end;
             margin-top: 1.5rem;
         }
+
         .btn {
             padding: 0.75rem 1.5rem;
             border: none;
@@ -258,21 +290,26 @@
             font-weight: 500;
             transition: background-color 0.2s ease;
         }
+
         .btn-secondary {
             background-color: #f3f4f6;
             color: #374151;
             border: 1px solid #d1d5db;
         }
+
         .btn-secondary:hover {
             background-color: #e5e7eb;
         }
+
         .btn-danger {
             background-color: #ef4444;
             color: white;
         }
+
         .btn-danger:hover {
             background-color: #dc2626;
         }
+
         .toast {
             position: fixed;
             bottom: 20px;
@@ -288,25 +325,31 @@
             transform: translateY(20px);
             transition: opacity 0.3s ease, transform 0.3s ease;
         }
+
         .toast.show {
             opacity: 1;
             transform: translateY(0);
         }
+
         .toast.success {
             background-color: #22c55e;
         }
+
         .toast.error {
             background-color: #ef4444;
         }
+
         .bg-black-logo {
             background-color: #000000;
         }
+
         .gucci-style-large {
             display: flex;
             justify-content: center;
             margin: 0 auto;
             max-width: 1400px;
         }
+
         .gucci-style-large .letter {
             font-family: 'Times New Roman', serif;
             font-weight: 100;
@@ -317,6 +360,7 @@
             text-transform: uppercase;
             padding: 0 0.08em;
         }
+
         .footer-heading {
             color: #8C8C8C;
             font-size: 0.875rem;
@@ -325,6 +369,7 @@
             margin-bottom: 1.5rem;
             text-transform: uppercase;
         }
+
         .footer-link {
             color: white;
             display: block;
@@ -333,22 +378,28 @@
             text-decoration: none;
             transition: color 0.3s ease;
         }
+
         .footer-link:hover {
             color: #8C8C8C;
             text-decoration: underline;
         }
+
         .font-playfair {
             font-family: 'Playfair Display', serif;
         }
+
         .dropdown-content {
             display: none;
         }
+
         .dropdown-content.show {
             display: block;
         }
+
         .hidden:not(.md\:flex) {
             display: none !important;
         }
+
         @media (min-width: 768px) {
             .hidden.md\:flex {
                 display: flex !important;
@@ -356,256 +407,301 @@
         }
     </style>
 </head>
+
 <body class="page-body">
     <!-- Header Partial -->
     <%- include("../../views/partials/user/header") %>
-    <!-- Profile Header (Sidebar) Partial -->
-    <div class="containeer">
-        <div class="sidebar">
-            <div class="profile-header">
-                <div class="profile-icon">
-                    <% if (user.image) { %>
-                        <img src="/Uploads/userProfileimages/<%= user.image %>" alt="Profile Image" class="profile-image" onerror="this.src='https://via.placeholder.com/80?text=Profile'">
-                    <% } else { %>
-                        <i class="fas fa-user" style="color: #ffffff; font-size: 1.125rem;"></i>
-                    <% } %>
-                </div>
-                <div>
-                    <div class="greeting">Hello,</div>
-                    <div class="username"><%= user.name %></div>
-                </div>
-            </div>
-            <nav class="menu">
-                <ul class="menu-list">
-                    <li class="menu-item">
-                        <a href="/profile" class="menu-link">
-                            <i class="fas fa-user menu-icon"></i>
-                            Profile Information
-                        </a>
-                    </li>
-                    <li class="menu-item">
-                        <a href="/orders" class="menu-link">
-                            <i class="fas fa-box menu-icon"></i>
-                            My Orders
-                        </a>
-                    </li>
-                    <li class="menu-item">
-                        <a href="/address" class="menu-link">
-                            <i class="fas fa-home menu-icon"></i>
-                            Manage Addresses
-                        </a>
-                    </li>
-                    <li class="menu-item">
-                        <a href="/wallet" class="menu-link">
-                            <i class="fas fa-wallet menu-icon"></i>
-                            My Wallet
-                        </a>
-                    </li>
-                    <li class="menu-item">
-                        <a href="/wishlist" class="menu-link active">
-                            <i class="fas fa-heart menu-icon"></i>
-                            My Wishlist
-                        </a>
-                    </li>
-                    <li class="menu-item">
-                        <a href="/referals" class="menu-link">
-                            <i class="fas fa-users menu-icon"></i>
-                            Refer Friends
-                        </a>
-                    </li>
-                    <li class="menu-item">
-                        <a href="/changepassword" class="menu-link">
-                            <i class="fas fa-lock menu-icon"></i>
-                            Change Password
-                        </a>
-                    </li>
-                    <li class="menu-item">
-                        <a href="/logout" class="logout-link">
-                            <i class="fas fa-sign-out-alt menu-icon"></i>
-                            Log out
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-        </div>
-
-        <!-- Main Content -->
-        <div class="main-content">
-            <h2 class="section-title">My Wishlist</h2>
-            <div id="wishlist">
-                <% if (user.wishlist && user.wishlist.length > 0) { %>
-                    <% user.wishlist.forEach((item) => { %>
-                        <div class="wishlist-item" data-id="<%= item._id %>">
-                            <a href="/productDetails?id=<%= item._id %>">
-                                <img src="<%= item.productImage && item.productImage[0] || item.images && item.images[0] || 'https://via.placeholder.com/80?text=Product' %>"
-                                     class="wishlist-image"
-                                     alt="<%= item.name || item.productName %>"
-                                     onerror="this.src='https://via.placeholder.com/80?text=Product'">
-                            </a>
-                            <div class="wishlist-details">
-                                <div class="product-category">
-                                    <%= item.category ? item.category.name : 'All Categories' %>
-                                </div>
-                                <h3 class="wishlist-name">
-                                    <%= item.name || item.productName %>
-                                </h3>
-                                <!-- Stock Status -->
-                                <div class="stock-status <%= item.quantity > 10 ? 'in-stock' : item.quantity > 0 ? 'low-stock' : 'out-of-stock' %>">
-                                    <% if (item.quantity > 10) { %>
-                                        <i class="fas fa-check-circle me-2"></i>In Stock
-                                    <% } else if (item.quantity > 0) { %>
-                                        <i class="fas fa-exclamation-circle me-2"></i>Low Stock (<%= item.quantity %> left)
-                                    <% } else { %>
-                                        <i class="fas fa-times-circle me-2"></i>Out of Stock
-                                    <% } %>
-                                </div>
-                                <div class="wishlist-price">
-                                    <span class="current-price">₹<%= (item.price || item.salePrice).toLocaleString('en-IN') %></span>
-                                    <% if (item.regularPrice && item.regularPrice > (item.price || item.salePrice)) { %>
-                                        <span class="original-price">₹<%= item.regularPrice.toLocaleString('en-IN') %></span>
-                                        <% const discount = Math.round((item.regularPrice - (item.price || item.salePrice)) / item.regularPrice * 100); %>
-                                        <span class="discount-percentage"><%= discount %>% off</span>
-                                    <% } %>
-                                </div>
-                            </div>
-                            <div class="wishlist-actions">
-                                <button class="action-btn cart-btn" onclick="addToCart('<%= item._id %>')">Add to Cart</button>
-                                <button class="action-btn remove-btn" onclick="openDeleteWishlistModal('<%= item._id %>')">Remove</button>
-                            </div>
+        <!-- Profile Header (Sidebar) Partial -->
+        <div class="containeer">
+            <div class="sidebar">
+                <div class="profile-header">
+                    <div class="profile-icon">
+                        <% if (user.image) { %>
+                            <img src="/Uploads/userProfileimages/<%= user.image %>" alt="Profile Image"
+                                class="profile-image" onerror="this.src='https://via.placeholder.com/80?text=Profile'">
+                            <% } else { %>
+                                <i class="fas fa-user" style="color: #ffffff; font-size: 1.125rem;"></i>
+                                <% } %>
+                    </div>
+                    <div>
+                        <div class="greeting">Hello,</div>
+                        <div class="username">
+                            <%= user.name %>
                         </div>
-                    <% }); %>
-                <% } else { %>
-                    <p class="text-gray-500 italic">Your wishlist is empty. Start adding products to your wishlist!</p>
-                <% } %>
+                    </div>
+                </div>
+                <nav class="menu">
+                    <ul class="menu-list">
+                        <li class="menu-item">
+                            <a href="/profile" class="menu-link">
+                                <i class="fas fa-user menu-icon"></i>
+                                Profile Information
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="/orders" class="menu-link">
+                                <i class="fas fa-box menu-icon"></i>
+                                My Orders
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="/address" class="menu-link">
+                                <i class="fas fa-home menu-icon"></i>
+                                Manage Addresses
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="/wallet" class="menu-link">
+                                <i class="fas fa-wallet menu-icon"></i>
+                                My Wallet
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="/wishlist" class="menu-link active">
+                                <i class="fas fa-heart menu-icon"></i>
+                                My Wishlist
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="/referals" class="menu-link">
+                                <i class="fas fa-users menu-icon"></i>
+                                Refer Friends
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="/changepassword" class="menu-link">
+                                <i class="fas fa-lock menu-icon"></i>
+                                Change Password
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="/logout" class="logout-link">
+                                <i class="fas fa-sign-out-alt menu-icon"></i>
+                                Log out
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+
+            <!-- Main Content -->
+            <div class="main-content">
+                <h2 class="section-title">My Wishlist</h2>
+                <div id="wishlist">
+                    <% if (user.wishlist && user.wishlist.length> 0) { %>
+                        <% user.wishlist.forEach((item)=> { %>
+                            <div class="wishlist-item" data-id="<%= item._id %>">
+                                <a href="/productDetails?id=<%= item._id %>">
+                                    <img src="<%= item.productImage && item.productImage[0] || item.images && item.images[0] || 'https://via.placeholder.com/80?text=Product' %>"
+                                        class="wishlist-image" alt="<%= item.name || item.productName %>"
+                                        onerror="this.src='https://via.placeholder.com/80?text=Product'">
+                                </a>
+                                <div class="wishlist-details">
+                                    <div class="product-category">
+                                        <%= item.category ? item.category.name : 'All Categories' %>
+                                    </div>
+                                    <h3 class="wishlist-name">
+                                        <%= item.name || item.productName %>
+                                    </h3>
+                                    <!-- Stock Status -->
+                                    <div
+                                        class="stock-status <%= item.quantity > 10 ? 'in-stock' : item.quantity > 0 ? 'low-stock' : 'out-of-stock' %>">
+                                        <% if (item.quantity> 10) { %>
+                                            <i class="fas fa-check-circle me-2"></i>In Stock
+                                            <% } else if (item.quantity> 0) { %>
+                                                <i class="fas fa-exclamation-circle me-2"></i>Low Stock (<%=
+                                                    item.quantity %> left)
+                                                    <% } else { %>
+                                                        <i class="fas fa-times-circle me-2"></i>Out of Stock
+                                                        <% } %>
+                                    </div>
+                                    <div class="wishlist-price">
+                                        <span class="current-price">
+                                            ₹<%= (item.salePrice || item.regularPrice || 0).toLocaleString('en-IN') %>
+                                        </span>
+
+                                        <% if (item.regularPrice && item.regularPrice> (item.price || item.salePrice)) {
+                                            %>
+                                            <span class="original-price">₹<%= item.regularPrice.toLocaleString('en-IN')
+                                                    %></span>
+                                            <% const discount=Math.round((item.regularPrice - (item.price ||
+                                                item.salePrice)) / item.regularPrice * 100); %>
+                                                <span class="discount-percentage">
+                                                    <%= discount %>% off
+                                                </span>
+                                                <% } %>
+                                    </div>
+                                </div>
+                                <div class="wishlist-actions">
+                                    <button class="action-btn cart-btn flex items-center gap-1"
+                                        onclick="addToCart('<%= item._id %>')">
+                                        <i class="fas fa-cart-plus"></i>
+                                    Add 
+                                    </button>
+
+
+                                    <a href="#" class="remove" onclick="openDeleteWishlistModal('<%= item._id %>')"
+                                        aria-label="Remove from Wishlist">
+                                         <i class="fas fa-times"></i> REMOVE
+                                    </a>
+                                </div>
+                            </div>
+                            <% }); %>
+                                <% } else { %>
+                                    <p class="text-gray-500 italic">Your wishlist is empty. Start adding products to
+                                        your wishlist!</p>
+                                    <% } %>
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- Delete Wishlist Item Confirmation Modal -->
-    <div id="deleteWishlistModal" class="modal-overlay hidden">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title">Confirm Removal</h3>
-                <div class="modal-message">
-                    Are you sure you want to remove this item from your wishlist?
-                </div>
-                <div class="button-group">
-                    <button type="button" class="btn btn-secondary" onclick="closeDeleteWishlistModal()">Cancel</button>
-                    <button type="button" class="btn btn-danger" onclick="confirmDeleteWishlistItem()">Confirm</button>
+        <!-- Delete Wishlist Item Confirmation Modal -->
+        <div id="deleteWishlistModal" class="modal-overlay hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">Confirm Removal</h3>
+                    <div class="modal-message">
+                        Are you sure you want to remove this item from your wishlist?
+                    </div>
+                    <div class="button-group">
+                        <button type="button" class="btn btn-secondary"
+                            onclick="closeDeleteWishlistModal()">Cancel</button>
+                        <button type="button" class="btn btn-danger"
+                            onclick="confirmDeleteWishlistItem()">Confirm</button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Toast Container -->
-    <div id="toastContainer"></div>
+        <!-- Toast Container -->
+        <div id="toastContainer"></div>
 
-    <!-- Footer Partial -->
-    <%- include("../../views/partials/user/footer") %>
+        <!-- Footer Partial -->
+        <%- include("../../views/partials/user/footer") %>
 
-    <script>
-        let currentWishlistItemId = '';
+            <script>
+                let currentWishlistItemId = '';
 
-        function showToast(message, type = 'success') {
-            const toastContainer = document.getElementById('toastContainer');
-            const toast = document.createElement('div');
-            toast.className = `toast ${type}`;
-            toast.textContent = message;
-            toastContainer.appendChild(toast);
-            setTimeout(() => {
-                toast.classList.add('show');
-            }, 100);
-            setTimeout(() => {
-                toast.classList.remove('show');
-                setTimeout(() => {
-                    toast.remove();
-                }, 300);
-            }, 3000);
-        }
-
-        function openDeleteWishlistModal(id) {
-            currentWishlistItemId = id;
-            document.getElementById('deleteWishlistModal').classList.remove('hidden');
-        }
-
-        function closeDeleteWishlistModal() {
-            document.getElementById('deleteWishlistModal').classList.add('hidden');
-            currentWishlistItemId = '';
-        }
-
-        function confirmDeleteWishlistItem() {
-            fetch(`/wishlist/remove/${currentWishlistItemId}`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
+                function showToast(message, type = 'success') {
+                    const toastContainer = document.getElementById('toastContainer');
+                    const toast = document.createElement('div');
+                    toast.className = `toast ${type}`;
+                    toast.textContent = message;
+                    toastContainer.appendChild(toast);
+                    setTimeout(() => {
+                        toast.classList.add('show');
+                    }, 100);
+                    setTimeout(() => {
+                        toast.classList.remove('show');
+                        setTimeout(() => {
+                            toast.remove();
+                        }, 300);
+                    }, 3000);
                 }
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    showToast('Item removed from wishlist', 'success');
-                    document.querySelector(`.wishlist-item[data-id="${currentWishlistItemId}"]`).remove();
-                    if (!document.querySelector('.wishlist-item')) {
-                        document.getElementById('wishlist').innerHTML = '<p class="text-gray-500 italic">Your wishlist is empty. Start adding products to your wishlist!</p>';
+
+                function openDeleteWishlistModal(id) {
+                    currentWishlistItemId = id;
+                    document.getElementById('deleteWishlistModal').classList.remove('hidden');
+                }
+
+                function closeDeleteWishlistModal() {
+                    document.getElementById('deleteWishlistModal').classList.add('hidden');
+                    currentWishlistItemId = '';
+                }
+
+                function confirmDeleteWishlistItem() {
+                    fetch(`/wishlist/remove/${currentWishlistItemId}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        }
+                    })
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.success) {
+                                showToast('Item removed from wishlist', 'success');
+                                document.querySelector(`.wishlist-item[data-id="${currentWishlistItemId}"]`).remove();
+                                if (!document.querySelector('.wishlist-item')) {
+                                    document.getElementById('wishlist').innerHTML = '<p class="text-gray-500 italic">Your wishlist is empty. Start adding products to your wishlist!</p>';
+                                }
+                            } else {
+                                showToast(data.message || 'Failed to remove item from wishlist', 'error');
+                            }
+                            closeDeleteWishlistModal();
+                        })
+                        .catch(err => {
+                            console.error('Remove wishlist item error:', err);
+                            showToast('Failed to remove item from wishlist', 'error');
+                            closeDeleteWishlistModal();
+                        });
+                }
+
+                function addToCart(productId) {
+                    if (!productId) {
+                        showToast('Invalid product ID', 'error');
+                        return;
                     }
-                } else {
-                    showToast(data.message || 'Failed to remove item from wishlist', 'error');
-                }
-                closeDeleteWishlistModal();
-            })
-            .catch(err => {
-                console.error('Remove wishlist item error:', err);
-                showToast('Failed to remove item from wishlist', 'error');
-                closeDeleteWishlistModal();
-            });
-        }
 
-        function addToCart(itemId) {
-            fetch(`/cart/add/${itemId}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
+                    fetch('/cart/add', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ productId: productId, quantity: 1 })
+                    })
+                        .then(response => {
+                            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                            return response.json();
+                        })
+                        .then(data => {
+                            if (data.success) {
+                                showToast('Product added to cart!', 'success');
+                                updateCartCounter(data.cartCount);
+                            } else {
+                                showToast(data.message || 'Failed to add product to cart', 'error');
+                                if (data.message && data.message.includes('login')) {
+                                    setTimeout(() => { window.location.href = '/login'; }, 2000);
+                                }
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            showToast('An error occurred. Please try again.', 'error');
+                        });
                 }
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    showToast('Item added to cart', 'success');
-                } else {
-                    showToast(data.message || 'Failed to add item to cart', 'error');
-                }
-            })
-            .catch(err => {
-                console.error('Add to cart error:', err);
-                showToast('Failed to add item to cart', 'error');
-            });
-        }
 
-        document.getElementById('deleteWishlistModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeDeleteWishlistModal();
-            }
-        });
-
-        window.addEventListener('click', function(event) {
-            const dropdowns = document.querySelectorAll('.dropdown-content');
-            dropdowns.forEach(dropdown => {
-                if (dropdown.classList.contains('show') && !event.target.closest('.dropdown')) {
-                    dropdown.classList.remove('show');
+                function updateCartCounter(count) {
+                    const cartCounter = document.querySelector('.cart-counter');
+                    if (cartCounter) {
+                        cartCounter.textContent = count || 0;
+                        cartCounter.classList.toggle('hidden', count === 0);
+                    }
                 }
-            });
-        });
 
-        function toggleDropdown(dropdownId) {
-            event.stopPropagation();
-            const dropdowns = document.querySelectorAll('.dropdown-content');
-            dropdowns.forEach(dropdown => {
-                if (dropdown.id !== dropdownId && dropdown.classList.contains('show')) {
-                    dropdown.classList.remove('show');
+                document.getElementById('deleteWishlistModal').addEventListener('click', function (e) {
+                    if (e.target === this) {
+                        closeDeleteWishlistModal();
+                    }
+                });
+
+                window.addEventListener('click', function (event) {
+                    const dropdowns = document.querySelectorAll('.dropdown-content');
+                    dropdowns.forEach(dropdown => {
+                        if (dropdown.classList.contains('show') && !event.target.closest('.dropdown')) {
+                            dropdown.classList.remove('show');
+                        }
+                    });
+                });
+
+                function toggleDropdown(dropdownId) {
+                    event.stopPropagation();
+                    const dropdowns = document.querySelectorAll('.dropdown-content');
+                    dropdowns.forEach(dropdown => {
+                        if (dropdown.id !== dropdownId && dropdown.classList.contains('show')) {
+                            dropdown.classList.remove('show');
+                        }
+                    });
+                    document.getElementById(dropdownId).classList.toggle('show');
                 }
-            });
-            document.getElementById(dropdownId).classList.toggle('show');
-        }
-    </script>
+            </script>
 </body>
+
 </html>

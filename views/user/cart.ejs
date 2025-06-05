@@ -59,12 +59,18 @@
         }
 
         .cart-item img {
-            width: 60px;
-            height: 60px;
-            object-fit: cover;
+            width: 200px;
+            height: 100px;
+            object-fit: contain;
             background-color: #f5f5f5;
-            border-radius: 5px;
+            border-radius: 8px;
             margin-right: 1rem;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .cart-item img:hover {
+            transform: scale(1.05);
         }
 
         .item-details {
@@ -72,13 +78,14 @@
         }
 
         .item-details h5 {
-            font-size: 0.9rem;
+            font-size: 1rem;
             font-weight: 700;
-            margin-bottom: 0.3rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-color);
         }
 
         .item-details p {
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             color: #6c757d;
             margin-bottom: 0.3rem;
         }
@@ -91,8 +98,8 @@
         }
 
         .quantity-control button {
-            width: 30px;
-            height: 30px;
+            width: 32px;
+            height: 32px;
             border: 1px solid var(--border-color);
             background-color: #fff;
             color: var(--text-color);
@@ -100,12 +107,14 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 0;
-            transition: background-color 0.3s ease;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            cursor: pointer;
         }
 
-        .quantity-control button:hover {
+        .quantity-control button:hover:not(:disabled) {
             background-color: #f1f3f5;
+            border-color: var(--primary-color);
         }
 
         .quantity-control button:disabled {
@@ -115,26 +124,30 @@
         }
 
         .quantity-control input {
-            width: 40px;
+            width: 50px;
             text-align: center;
             border: 1px solid var(--border-color);
             border-left: none;
             border-right: none;
-            height: 30px;
-            font-size: 0.85rem;
+            height: 32px;
+            font-size: 0.9rem;
+            background-color: #fff;
         }
 
         .item-price {
-            font-size: 0.9rem;
+            font-size: 1rem;
             font-weight: 700;
             color: var(--primary-color);
             margin-left: 1rem;
+            min-width: 120px;
+            text-align: right;
         }
 
         .item-actions {
             display: flex;
             gap: 1rem;
             font-size: 0.8rem;
+            margin-top: 0.5rem;
         }
 
         .item-actions a {
@@ -143,6 +156,7 @@
             align-items: center;
             gap: 0.3rem;
             transition: color 0.3s ease;
+            cursor: pointer;
         }
 
         .item-actions .favorite {
@@ -151,10 +165,6 @@
 
         .item-actions .favorite:hover {
             color: #0056b3;
-        }
-
-        .item-actions .favorite i {
-            color: #a1bffa;
         }
 
         .item-actions .remove {
@@ -178,7 +188,7 @@
         }
 
         .order-summary {
-            
+            position: sticky;
             top: 20px;
         }
 
@@ -190,7 +200,7 @@
         }
 
         .summary-item.discount {
-            color: #000;
+            color: #28a745;
         }
 
         .summary-item.free {
@@ -198,9 +208,11 @@
         }
 
         .summary-item.total {
-            font-size: 1rem;
+            font-size: 1.1rem;
             font-weight: 700;
-            margin-top: 0.75rem;
+            margin-top: 1rem;
+            padding-top: 0.75rem;
+            border-top: 2px solid var(--border-color);
         }
 
         .checkout-btn {
@@ -208,13 +220,15 @@
             background-color: var(--purple-color);
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             padding: 0.75rem;
             font-weight: 600;
+            font-size: 1rem;
             transition: background-color 0.3s ease;
+            margin-top: 1rem;
         }
 
-        .checkout-btn:hover {
+        .checkout-btn:hover:not(:disabled) {
             background-color: #1d1d1d;
         }
 
@@ -223,22 +237,47 @@
             cursor: not-allowed;
         }
 
+        .empty-cart {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: #6c757d;
+        }
+
+        .empty-cart i {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            color: #dee2e6;
+        }
+
+        .error-message {
+            color: #dc3545;
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+            display: none;
+        }
+
+        .loading {
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
         @media (max-width: 991.98px) {
             .cart-item img {
-                width: 50px;
-                height: 50px;
+                width: 60px;
+                height: 60px;
             }
 
             .item-details h5 {
-                font-size: 0.85rem;
+                font-size: 0.9rem;
             }
 
             .item-price {
-                font-size: 0.85rem;
+                font-size: 0.9rem;
+                min-width: 100px;
             }
 
             .quantity-control input {
-                width: 35px;
+                width: 40px;
             }
         }
 
@@ -250,21 +289,29 @@
             .cart-item {
                 flex-direction: column;
                 align-items: flex-start;
+                gap: 0.5rem;
             }
 
             .cart-item img {
                 margin-bottom: 0.5rem;
+                align-self: center;
             }
 
             .item-price {
                 margin-left: 0;
-                margin-top: 0.5rem;
+                align-self: center;
+                font-size: 1.1rem;
+            }
+
+            .order-summary {
+                position: static;
             }
         }
     </style>
 </head>
 <body>
     <%-include("../../views/partials/user/header")%>
+    
     <div class="cart-header">
         <div class="container">
             <nav aria-label="breadcrumb">
@@ -276,6 +323,7 @@
             </nav>
         </div>
     </div>
+
     <div class="container mb-5">
         <div class="row g-4">
             <!-- Shopping Cart Section -->
@@ -283,284 +331,323 @@
                 <div class="cart-section">
                     <h3>Shopping Cart</h3>
                     <div id="cart-items">
-                        <div class="cart-item">
-                            <img src="https://via.placeholder.com/60?text=VR+Headset" alt="Apple Vision Pro VR Headset">
-                            <div class="item-details">
-                                <h5>APPLE VISION PRO VR HEADSET</h5>
-                                <p>Model: VSN098765</p>
-                                <p>Color: Silver | Size: 512GB</p>
-                                <div class="quantity-control">
-                                    <button onclick="updateQuantity(0, -1)" aria-label="Decrease quantity">-</button>
-                                    <input type="text" value="1" readonly aria-label="Quantity">
-                                    <button onclick="updateQuantity(0, 1)" aria-label="Increase quantity">+</button>
-                                </div>
-                                <div class="item-actions">
-                                    <a href="#" class="favorite" onclick="moveToWishlist(0, event)" aria-label="Move to wishlist">
-                                        <i class="far fa-heart"></i> MOVE TO FAVORITES
-                                    </a>
-                                    <a href="#" class="remove" onclick="removeFromCart(0, event)" aria-label="Remove from cart">
-                                        <i class="fas fa-times"></i> REMOVE
-                                    </a>
-                                </div>
+                         <!-- <pre><%= JSON.stringify(cartItems, null, 2) %></pre> -->
+                        <% if (cartItems && cartItems.length > 0) { %>
+                            <% cartItems.forEach((item, index) => { %>
+                           
+     <div class="cart-item" data-product-id="<%= item.product._id %>" data-index="<%= index %>">
+      <a href="/productDetails?id=<%= item.product._id %>">
+          <img src="<%= item.product.productImage && item.product.productImage[0] || 'https://via.placeholder.com/80?text=Product' %>"
+               alt="<%= item.product.productName %>"
+               onerror="this.src='https://via.placeholder.com/80?text=Product'">
+      </a>
+      <div class="item-details">
+          <h5><%= item.product.productName %></h5>
+
+          <% if (item.product.brand) { %>
+  <p>Brand: <%= item.product.brand.name || item.product.brand %></p>
+<% } %>
+
+
+
+          <div class="quantity-control">
+              <button type="button" 
+                      onclick="updateQuantity('<%= item.product._id %>', <%= item.quantity - 1 %>)" 
+                      <%= item.quantity <= 1 ? 'disabled' : '' %> 
+                      aria-label="Decrease quantity">-</button>
+              <input type="text" value="<%= item.quantity %>" readonly aria-label="Quantity">
+              <button type="button" 
+                      onclick="updateQuantity('<%= item.product._id %>', <%= item.quantity + 1 %>)" 
+                      <%= item.quantity >= item.product.quantity ? 'disabled' : '' %> 
+                      aria-label="Increase quantity">+</button>
+          </div>
+
+          <div class="item-actions">
+              <a href="#" class="favorite" onclick="moveToWishlist('<%= item.product._id %>', event)" aria-label="Move to wishlist">
+                  <i class="far fa-heart"></i> MOVE TO FAVORITES
+              </a>
+              <a href="#" class="remove" onclick="removeFromCart('<%= item.product._id %>', event)" aria-label="Remove from cart">
+                  <i class="fas fa-times"></i> REMOVE
+              </a>
+          </div>
+      </div>
+      <div class="item-price">
+  ₹<%= (item.totalPrice || item.product.salePrice || 0).toLocaleString('en-IN') %>
+</div>
+
+  </div>
+<% }) %>
+
+                        <% } else { %>
+                            <div class="empty-cart">
+                                <i class="fas fa-shopping-cart"></i>
+                                <h4>Your cart is empty</h4>
+                                <p>Add some products to get started!</p>
                             </div>
-                            <div class="item-price">₹2,60,000.00</div>
-                        </div>
-                        <div class="cart-item">
-                            <img src="https://via.placeholder.com/60?text=Mouse" alt="Signature AI Edition M750 Wireless Mouse">
-                            <div class="item-details">
-                                <h5>SIGNATURE AI EDITION M750 WIRELESS MOUSE</h5>
-                                <p>Model: M7505</p>
-                                <p>Color: White</p>
-                                <div class="quantity-control">
-                                    <button onclick="updateQuantity(1, -1)" aria-label="Decrease quantity">-</button>
-                                    <input type="text" value="1" readonly aria-label="Quantity">
-                                    <button onclick="updateQuantity(1, 1)" aria-label="Increase quantity">+</button>
-                                </div>
-                                <div class="item-actions">
-                                    <a href="#" class="favorite" onclick="moveToWishlist(1, event)" aria-label="Move to wishlist">
-                                        <i class="far fa-heart"></i> MOVE TO FAVORITES
-                                    </a>
-                                    <a href="#" class="remove" onclick="removeFromCart(1, event)" aria-label="Remove from cart">
-                                        <i class="fas fa-times"></i> REMOVE
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="item-price">₹9,999.00</div>
-                        </div>
+                        <% } %>
                     </div>
-                    <a href="/shop" class="back-to-shop">BACK TO SHOP</a>
+                    <a href="/shop" class="back-to-shop"><i class="fas fa-arrow-left"></i> BACK TO SHOP</a>
                 </div>
             </div>
+
             <!-- Order Summary Section -->
             <div class="col-lg-4">
                 <div class="order-summary">
                     <h4>Order Summary</h4>
                     <div id="order-summary-items">
-                        <div class="summary-item">
-                            <span>Subtotal (2 items)</span>
-                            <span>₹43,999.00</span>
-                        </div>
-                        <div class="summary-item discount">
-                            <span>Discounts</span>
-                            <span>-₹74,500.00</span>
-                        </div>
-                        <div class="summary-item">
-                            <span>Delivery Charge</span>
-                            <span class="free">₹0.00 FREE DELIVERY</span>
-                        </div>
-                        <div class="summary-item">
-                            <span>GST (18%)</span>
-                            <span>₹8,510.00</span>
-                        </div>
-                        <div class="summary-item total">
-                            <span>TOTAL</span>
-                            <span>₹2,69,499.00</span>
-                        </div>
+                        <% if (cartItems && cartItems.length > 0) { %>
+                           <% 
+    let subtotal = 0;
+    cartItems.forEach(item => {
+        subtotal += (item.product.salePrice || item.product.regularPrice || 0) * item.quantity;
+    });
+    const deliveryCharge = subtotal > 500 ? 0 : 50;
+    const gst = Math.round(subtotal * 0.18);
+    const total = subtotal + deliveryCharge + gst;
+%>
+
+                            <div class="summary-item">
+                                <span>Subtotal (<%= cartItems.length %> items)</span>
+                                <span>₹<%= subtotal.toLocaleString('en-IN') %></span>
+                            </div>
+                            <div class="summary-item">
+                                <span>Delivery Charge</span>
+                                <span class="<%= deliveryCharge === 0 ? 'free' : '' %>">
+                                    ₹<%= deliveryCharge.toLocaleString('en-IN') %>
+                                    <% if (deliveryCharge === 0) { %> FREE DELIVERY<% } %>
+                                </span>
+                            </div>
+                            <div class="summary-item">
+                                <span>GST (18%)</span>
+                                <span>₹<%= gst.toLocaleString('en-IN') %></span>
+                            </div>
+                            <div class="summary-item total">
+                                <span>TOTAL</span>
+                                <span>₹<%= total.toLocaleString('en-IN') %></span>
+                            </div>
+                        <% } else { %>
+                            <div class="summary-item">
+                                <span>Subtotal (0 items)</span>
+                                <span>₹0</span>
+                            </div>
+                            <div class="summary-item total">
+                                <span>TOTAL</span>
+                                <span>₹0</span>
+                            </div>
+                        <% } %>
                     </div>
-                    <button id="checkout-btn" class="checkout-btn">Checkout</button>
+                    <button id="checkout-btn" class="checkout-btn" <%= (!cartItems || cartItems.length === 0) ? 'disabled' : '' %>>
+                        Proceed to Checkout
+                    </button>
                     <div id="cart-error" class="error-message"></div>
                 </div>
             </div>
         </div>
-        
     </div>
 
 
+    
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Simplified JavaScript for demo purposes (since we're hardcoding the UI)
-        document.addEventListener('DOMContentLoaded', function() {
-            const MAX_QUANTITY_PER_PRODUCT = 10;
-            let cartData = {
-                items: [
-                    {
-                        product: {
-                            name: "APPLE VISION PRO VR HEADSET",
-                            model: "VSN098765",
-                            color: "Silver",
-                            size: "512GB",
-                            salePrice: 260000,
-                            quantity: 10
-                        },
-                        quantity: 1,
-                        productId: "1"
+        const MAX_QUANTITY_PER_PRODUCT = 10;
+
+        // Update quantity function
+        async function updateQuantity(productId, newQuantity) {
+            if (newQuantity < 1) return;
+            if (newQuantity > MAX_QUANTITY_PER_PRODUCT) {
+                showToast(`Maximum quantity allowed is ${MAX_QUANTITY_PER_PRODUCT}`, 'error');
+                return;
+            }
+
+            try {
+                showLoading(true);
+                const response = await fetch('/cart/update-quantity', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
                     },
-                    {
-                        product: {
-                            name: "SIGNATURE AI EDITION M750 WIRELESS MOUSE",
-                            model: "M7505",
-                            color: "White",
-                            salePrice: 9999,
-                            quantity: 10
+                    body: JSON.stringify({
+                        productId: productId,
+                        quantity: newQuantity
+                    })
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    // Reload the page to reflect changes
+                    window.location.reload();
+                } else {
+                    showToast(result.message || 'Failed to update quantity', 'error');
+                }
+            } catch (error) {
+                console.error('Error updating quantity:', error);
+                showToast('Error updating quantity', 'error');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // Remove from cart function
+        async function removeFromCart(productId, event) {
+            event.preventDefault();
+            
+            if (!confirm('Are you sure you want to remove this item from your cart?')) {
+                return;
+            }
+
+            try {
+                showLoading(true);
+                const response = await fetch('/cart/remove', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        productId: productId
+                    })
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    showToast('Product removed from cart!', 'success');
+                    // Reload the page to reflect changes
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1000);
+                } else {
+                    showToast(result.message || 'Failed to remove item', 'error');
+                }
+            } catch (error) {
+                console.log(error)
+                console.error('Error removing item:', error);
+                showToast('Error removing item from cart', 'error');
+                
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // Move to wishlist function
+        async function moveToWishlist(productId, event) {
+            event.preventDefault();
+
+            try {
+                showLoading(true);
+                // First add to wishlist
+                const wishlistResponse = await fetch('/addtowishlist', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        productId: productId
+                    })
+                });
+
+                const wishlistResult = await wishlistResponse.json();
+                
+                if (wishlistResult.success) {
+                    // Then remove from cart
+                    const cartResponse = await fetch('/cart/remove', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
                         },
-                        quantity: 1,
-                        productId: "2"
+                        body: JSON.stringify({
+                            productId: productId
+                        })
+                    });
+
+                    const cartResult = await cartResponse.json();
+                    
+                    if (cartResult.success) {
+                        showToast('Product moved to wishlist!', 'success');
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 1000);
+                    } else {
+                        showToast('Added to wishlist but failed to remove from cart', 'warning');
                     }
-                ]
-            };
-
-            window.updateQuantity = function(index, change) {
-                const item = cartData.items[index];
-                const newQuantity = item.quantity + change;
-
-                if (newQuantity < 1) return;
-                if (newQuantity > item.product.quantity) {
-                    showToast(`Only ${item.product.quantity} items left in stock.`, 'error');
-                    return;
+                } else {
+                    showToast(wishlistResult.message || 'Failed to add to wishlist', 'error');
                 }
-                if (newQuantity > MAX_QUANTITY_PER_PRODUCT) {
-                    showToast(`Maximum quantity is ${MAX_QUANTITY_PER_PRODUCT}.`, 'error');
-                    return;
-                }
+            } catch (error) {
+                console.error('Error moving to wishlist:', error);
+                showToast('Error moving item to wishlist', 'error');
+            } finally {
+                showLoading(false);
+            }
+        }
 
-                item.quantity = newQuantity;
-                renderCart();
-                showToast('Quantity updated!', 'success');
-            };
+        // Checkout function
+        document.getElementById('checkout-btn')?.addEventListener('click', function() {
+            const hasItems = document.querySelectorAll('.cart-item[data-product-id]').length > 0;
+            if (hasItems) {
+                window.location.href = '/checkout';
+            }
+        });
 
-            window.removeFromCart = function(index, event) {
-                event.preventDefault();
-                cartData.items.splice(index, 1);
-                renderCart();
-                showToast('Product removed from cart!', 'success');
-            };
-
-            window.moveToWishlist = function(index, event) {
-                event.preventDefault();
-                const item = cartData.items[index];
-                cartData.items.splice(index, 1);
-                renderCart();
-                showToast('Product moved to wishlist!', 'success');
-            };
-
-            function renderCart() {
-                const cartItemsContainer = document.getElementById('cart-items');
-                const orderSummaryItems = document.getElementById('order-summary-items');
-                const checkoutBtn = document.getElementById('checkout-btn');
-
-                cartItemsContainer.innerHTML = '';
-                let subtotal = 0;
-                const deliveryCharge = 0;
-                const gstRate = 0.18;
-
-                if (!cartData.items.length) {
-                    cartItemsContainer.innerHTML = '<p>Your cart is empty.</p>';
-                    checkoutBtn.disabled = true;
-                    orderSummaryItems.innerHTML = `
-                        <div class="summary-item">
-                            <span>Subtotal (0 items)</span>
-                            <span>₹0.00</span>
-                        </div>
-                        <div class="summary-item total">
-                            <span>TOTAL</span>
-                            <span>₹0.00</span>
-                        </div>
-                    `;
-                    return;
-                }
-
-                cartData.items.forEach((item, index) => {
-                    const itemTotal = item.product.salePrice * item.quantity;
-                    subtotal += itemTotal;
-
-                    const cartItem = document.createElement('div');
-                    cartItem.className = 'cart-item';
-                    cartItem.innerHTML = `
-                        <img src="https://via.placeholder.com/60?text=${item.product.name.split(' ')[0]}" alt="${item.product.name}">
-                        <div class="item-details">
-                            <h5>${item.product.name}</h5>
-                            <p>Model: ${item.product.model}</p>
-                            <p>Color: ${item.product.color}${item.product.size ? ' | Size: ' + item.product.size : ''}</p>
-                            <div class="quantity-control">
-                                <button onclick="updateQuantity(${index}, -1)" ${item.quantity === 1 ? 'disabled' : ''} aria-label="Decrease quantity">-</button>
-                                <input type="text" value="${item.quantity}" readonly aria-label="Quantity">
-                                <button onclick="updateQuantity(${index}, 1)" ${item.quantity >= Math.min(item.product.quantity, MAX_QUANTITY_PER_PRODUCT) ? 'disabled' : ''} aria-label="Increase quantity">+</button>
-                            </div>
-                            <div class="item-actions">
-                                <a href="#" class="favorite" onclick="moveToWishlist(${index}, event)" aria-label="Move to wishlist">
-                                    <i class="far fa-heart"></i> MOVE TO FAVORITES
-                                </a>
-                                <a href="#" class="remove" onclick="removeFromCart(${index}, event)" aria-label="Remove from cart">
-                                    <i class="fas fa-times"></i> REMOVE
-                                </a>
-                            </div>
-                        </div>
-                        <div class="item-price">₹${itemTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</div>
-                    `;
-                    cartItemsContainer.appendChild(cartItem);
-                });
-
-                const gst = subtotal * gstRate;
-                const total = subtotal + deliveryCharge + gst;
-
-                orderSummaryItems.innerHTML = `
-                    <div class="summary-item">
-                        <span>Subtotal (${cartData.items.length} items)</span>
-                        <span>₹${subtotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
-                    </div>
-                    <div class="summary-item discount">
-                        <span>Discounts</span>
-                        <span>-₹0.00</span>
-                    </div>
-                    <div class="summary-item">
-                        <span>Delivery Charge</span>
-                        <span class="free">₹${deliveryCharge.toLocaleString('en-IN', { minimumFractionDigits: 2 })} FREE DELIVERY</span>
-                    </div>
-                    <div class="summary-item">
-                        <span>GST (18%)</span>
-                        <span>₹${gst.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
-                    </div>
-                    <div class="summary-item total">
-                        <span>TOTAL</span>
-                        <span>₹${total.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
-                    </div>
-                `;
-
-                checkoutBtn.disabled = false;
+        // Utility functions
+        function showToast(message, type = 'info') {
+            let toastContainer = document.querySelector('.toast-container');
+            if (!toastContainer) {
+                toastContainer = document.createElement('div');
+                toastContainer.className = 'toast-container position-fixed bottom-0 end-0 p-3';
+                toastContainer.style.zIndex = '9999';
+                document.body.appendChild(toastContainer);
             }
 
-            function showToast(message, type = 'info') {
-                let toastContainer = document.querySelector('.toast-container');
-                if (!toastContainer) {
-                    toastContainer = document.createElement('div');
-                    toastContainer.className = 'toast-container position-fixed bottom-0 end-0 p-3';
-                    document.body.appendChild(toastContainer);
-                }
+            const toastId = 'toast-' + Date.now();
+            const toast = document.createElement('div');
+            toast.className = `toast align-items-center text-white bg-${type === 'error' ? 'danger' : type === 'warning' ? 'warning' : type === 'success' ? 'success' : 'primary'} border-0`;
+            toast.id = toastId;
+            toast.setAttribute('role', 'alert');
+            toast.setAttribute('aria-live', 'assertive');
+            toast.setAttribute('aria-atomic', 'true');
 
-                const toastId = 'toast-' + Date.now();
-                const toast = document.createElement('div');
-                toast.className = `toast align-items-center text-white bg-${type === 'error' ? 'danger' : type} border-0`;
-                toast.id = toastId;
-                toast.setAttribute('role', 'alert');
-                toast.setAttribute('aria-live', 'assertive');
-                toast.setAttribute('aria-atomic', 'true');
-
-                toast.innerHTML = `
-                    <div class="d-flex">
-                        <div class="toast-body">
-                            ${message}
-                        </div>
-                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            toast.innerHTML = `
+                <div class="d-flex">
+                    <div class="toast-body">
+                        ${message}
                     </div>
-                `;
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            `;
 
-                toastContainer.appendChild(toast);
+            toastContainer.appendChild(toast);
 
-                const bsToast = new bootstrap.Toast(toast, {
-                    autohide: true,
-                    delay: 3000
-                });
-                bsToast.show();
+            const bsToast = new bootstrap.Toast(toast, {
+                autohide: true,
+                delay: 3000
+            });
+            bsToast.show();
 
-                toast.addEventListener('hidden.bs.toast', function() {
-                    toast.remove();
-                });
-            }
+            toast.addEventListener('hidden.bs.toast', function() {
+                toast.remove();
+            });
+        }
 
-            renderCart();
+        function showLoading(show) {
+            const elements = document.querySelectorAll('button, .cart-item');
+            elements.forEach(el => {
+                if (show) {
+                    el.classList.add('loading');
+                } else {
+                    el.classList.remove('loading');
+                }
+            });
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add any initialization code here
+            console.log('Cart page loaded successfully');
         });
     </script>
+    
     <%-include("../../views/partials/user/footer")%>
 </body>
 </html>

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Product Details - <%= product.name || product.productName %> - Your Store</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <style>
         :root {
             --primary-color: #000000;
@@ -23,22 +23,6 @@
             color: var(--text-color);
             font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             line-height: 1.6;
-        }
-
-        .product-header {
-            background-color: white;
-            border-bottom: 1px solid var(--border-color);
-            padding: 1.5rem 0;
-            margin-bottom: 2rem;
-        }
-
-        .breadcrumb-item + .breadcrumb-item::before {
-            content: ">";
-        }
-
-        .image-zoom-container {
-            position: relative;
-            margin-bottom: 1rem;
         }
 
         .product-img-container {
@@ -65,13 +49,6 @@
             transition: transform 0.2s ease;
         }
 
-        .thumbnail-gallery {
-            display: flex;
-            gap: 10px;
-            margin-top: 10px;
-            overflow-x: auto;
-        }
-
         .thumbnail-img {
             width: 80px;
             height: 80px;
@@ -88,73 +65,6 @@
 
         .thumbnail-img:hover {
             border-color: #ccc;
-        }
-
-        .product-title {
-            font-size: 1.8rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-        }
-
-        .product-rating {
-            margin-bottom: 1rem;
-        }
-
-        .rating-stars {
-            color: var(--accent-color);
-            font-size: 1rem;
-        }
-
-        .rating-count {
-            font-size: 0.85rem;
-            color: #6c757d;
-            margin-left: 0.5rem;
-        }
-
-        .product-price {
-            display: flex;
-            align-items: baseline;
-            margin-bottom: 1rem;
-        }
-
-        .current-price {
-            font-size: 1.8rem;
-            font-weight: bold;
-            color: var(--primary-color);
-        }
-
-        .original-price {
-            font-size: 1.2rem;
-            text-decoration: line-through;
-            color: #6c757d;
-            margin-left: 0.5rem;
-        }
-
-        .discount-percentage {
-            font-size: 0.9rem;
-            background-color: #2bff006c;
-            color: var(--primary-color);
-            padding: 0.3rem 0.6rem;
-            border-radius: 20px;
-            margin-left: 0.5rem;
-            font-weight: 600;
-        }
-
-        .stock-status {
-            font-size: 0.95rem;
-            margin-bottom: 1rem;
-        }
-
-        .stock-status.in-stock {
-            color: #28a745;
-        }
-
-        .stock-status.low-stock {
-            color: #ffc107;
-        }
-
-        .stock-status.out-of-stock {
-            color: #dc3545;
         }
 
         .btn-add-cart {
@@ -233,22 +143,6 @@
             to { transform: rotate(360deg); }
         }
 
-        .specifications-table {
-            width: 100%;
-            margin-bottom: 2rem;
-        }
-
-        .specifications-table th, .specifications-table td {
-            padding: 0.75rem;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .specifications-table th {
-            width: 30%;
-            font-weight: 600;
-            background-color: #f8f9fa;
-        }
-
         .color-swatch {
             display: inline-block;
             width: 20px;
@@ -258,95 +152,11 @@
             vertical-align: middle;
         }
 
-        .reviews-section {
-            background-color: white;
-            padding: 1.5rem;
-            border-radius: 10px;
-            box-shadow: var(--card-shadow);
-            margin-bottom: 2rem;
-        }
-
-        .review-item {
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 1rem;
-            margin-bottom: 1rem;
-        }
-
-        .review-item:last-child {
-            border-bottom: none;
-            padding-bottom: 0;
-            margin-bottom: 0;
-        }
-
-        .recommendations-section {
-            margin-top: 2rem;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .recommendations-container {
-            display: flex;
-            overflow-x: hidden;
-            gap: 1rem;
-            padding-bottom: 1rem;
-            scroll-behavior: smooth;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        .recommendations-container::-webkit-scrollbar {
-            display: none;
-        }
-
-        .recommendations-container {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
-
-        .recommendation-card {
-            flex: 0 0 auto;
-            width: 360px;
-            background-color: white;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: var(--card-shadow);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            height: 300px;
-        }
-
-        .recommendation-card:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--hover-shadow);
-        }
-
         .recommendation-img {
             width: 100%;
             height: 180px;
             object-fit: contain;
             background-color: #f5f5f5;
-        }
-
-        .recommendation-card .product-price {
-            font-size: 1rem;
-            margin-top: 0.5rem;
-        }
-
-        .recommendation-card .current-price {
-            font-size: 1.2rem;
-            font-weight: bold;
-        }
-
-        .recommendation-card .original-price {
-            font-size: 1rem;
-            margin-left: 0.3rem;
-        }
-
-        .recommendation-card .discount-percentage {
-            font-size: 0.9rem;
-            padding: 0.3rem 0.6rem;
-        }
-
-        .recommendation-card h6 {
-            font-size: 1.1rem;
         }
 
         .scroll-btn {
@@ -389,55 +199,13 @@
             cursor: not-allowed;
         }
 
-        .zoom-instruction {
-            font-size: 0.9rem;
-            color: #6c757d;
-            margin-top: 0.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
         @media (max-width: 767.98px) {
-            .product-title {
-                font-size: 1.5rem;
-            }
-
-            .current-price {
-                font-size: 1.5rem;
-            }
-
             .product-img-container {
                 max-width: 100%;
             }
 
-            .thumbnail-gallery {
-                justify-content: center;
-            }
-
-            .recommendation-card {
-                width: 240px;
-                height: 320px;
-            }
-
             .recommendation-img {
                 height: 160px;
-            }
-
-            .recommendation-card .current-price {
-                font-size: 1.1rem;
-            }
-
-            .recommendation-card .original-price {
-                font-size: 0.9rem;
-            }
-
-            .recommendation-card .discount-percentage {
-                font-size: 0.8rem;
-            }
-
-            .recommendation-card h6 {
-                font-size: 1rem;
             }
 
             .scroll-btn {
@@ -452,39 +220,39 @@
     <%- include("../../views/partials/user/header") %>
 
     <!-- Product Header -->
-    <div class="product-header">
-        <div class="container">
+    <div class="bg-white border-b border-gray-200 py-6 mb-8">
+        <div class="container mx-auto px-4">
             <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/">Home</a></li>
-                    <li class="breadcrumb-item"><a href="/shop">Shop</a></li>
-                    <li class="breadcrumb-item active" aria-current="page"><%= product.name || product.productName %></li>
+                <ol class="flex space-x-2 text-sm">
+                    <li><a href="/" class="text-blue-600 hover:underline">Home</a></li>
+                    <li class="flex items-center"><span class="mx-2">></span><a href="/shop" class="text-blue-600 hover:underline">Shop</a></li>
+                    <li class="flex items-center"><span class="mx-2">></span><span class="text-gray-500"><%= product.name || product.productName %></span></li>
                 </ol>
             </nav>
         </div>
     </div>
 
-    <div class="container mb-5">
+    <div class="container mx-auto px-4 mb-20">
         <% if (!product || product.isBlocked) { %>
-            <div class="alert alert-danger" role="alert">
-                <i class="fas fa-exclamation-circle me-2"></i>
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                <i class="fas fa-exclamation-circle mr-2"></i>
                 This product is unavailable or has been removed.
-                <a href="/shop" class="alert-link">Return to Shop</a>
+                <a href="/shop" class="text-red-700 underline hover:text-red-800">Return to Shop</a>
             </div>
         <% } else { %>
-            <div class="row g-4">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <!-- Product Images -->
-                <div class="col-lg-6">
-                    <div class="image-zoom-container">
+                <div>
+                    <div class="image-zoom-container mb-4">
                         <div class="product-img-container" id="imageContainer" role="region" aria-label="Product image with zoom">
                             <img src="<%= product.productImage?.[0] || product.images?.[0] || '/images/default-product.jpg' %>" class="product-img" alt="<%= product.name || product.productName %>" id="mainImage">
                         </div>
                     </div>
-                    <div class="zoom-instruction">
-                        <i class="fas fa-search-plus"></i>
+                    <div class="flex items-center text-gray-500 text-sm mb-4">
+                        <i class="fas fa-search-plus mr-2"></i>
                         Hover over image to zoom
                     </div>
-                    <div class="thumbnail-gallery" role="tablist">
+                    <div class="flex gap-2 overflow-x-auto" role="tablist">
                         <% (product.productImage || product.images || []).slice(0, 5).forEach((img, index) => { %>
                             <img src="<%= img || '/images/default-product.jpg' %>" class="thumbnail-img <%= index === 0 ? 'active' : '' %>" alt="Thumbnail <%= index + 1 %> of <%= product.name || product.productName %>" data-index="<%= index %>" role="tab" aria-selected="<%= index === 0 ? 'true' : 'false' %>">
                         <% }); %>
@@ -492,13 +260,13 @@
                 </div>
 
                 <!-- Product Details -->
-                <div class="col-lg-6">
-                    <h1 class="product-title"><%= product.name || product.productName %></h1>
+                <div>
+                    <h1 class="text-2xl lg:text-3xl font-semibold mb-2"><%= product.name || product.productName %></h1>
                     
                     <!-- Rating -->
                     <% if (product.averageRating) { %>
-                        <div class="product-rating">
-                            <span class="rating-stars" aria-label="Rating: <%= product.averageRating %> out of 5 stars">
+                        <div class="flex items-center mb-4">
+                            <span class="rating-stars text-yellow-400 text-sm" aria-label="Rating: <%= product.averageRating %> out of 5 stars">
                                 <% for(let i = 1; i <= 5; i++) { %>
                                     <% if (i <= Math.floor(product.averageRating)) { %>
                                         <i class="fas fa-star"></i>
@@ -510,38 +278,36 @@
                                 <% } %>
                             </span>
                             <% if (product.ratingCount) { %>
-                                <span class="rating-count">(<%= product.ratingCount %> reviews)</span>
+                                <span class="text-gray-500 text-sm ml-2">(<%= product.ratingCount %> reviews)</span>
                             <% } %>
                         </div>
                     <% } %>
 
                     <!-- Price and Discount -->
-                    <div class="product-price">
-                        <span class="current-price">₹<%= (product.price || product.salePrice).toLocaleString('en-IN') %></span>
+                    <div class="flex items-baseline mb-4">
+                        <span class="text-2xl lg:text-3xl font-bold text-black">₹<%= (product.price || product.salePrice).toLocaleString('en-IN') %></span>
                         <% if (product.regularPrice && product.regularPrice > (product.price || product.salePrice)) { %>
-                            <span class="original-price">₹<%= product.regularPrice.toLocaleString('en-IN') %></span>
+                            <span class="text-lg text-gray-500 line-through ml-2">₹<%= product.regularPrice.toLocaleString('en-IN') %></span>
                             <% const discount = Math.round((product.regularPrice - (product.price || product.salePrice)) / product.regularPrice * 100); %>
-                            <span class="discount-percentage"><%= discount %>% off</span>
+                            <span class="text-sm bg-green-100 text-black px-2 py-1 rounded-full ml-2 font-semibold"><%= discount %>% off</span>
                         <% } %>
                     </div>
 
                     <!-- Stock Status -->
-                    <div class="stock-status <%= product.quantity > 10 ? 'in-stock' : product.quantity > 0 ? 'low-stock' : 'out-of-stock' %>">
+                    <div class="mb-4 text-sm <%= product.quantity > 10 ? 'text-green-600' : product.quantity > 0 ? 'text-yellow-500' : 'text-red-600' %>">
                         <% if (product.quantity > 10) { %>
-                            <i class="fas fa-check-circle me-2"></i>In Stock
+                            <i class="fas fa-check-circle mr-2"></i>In Stock
                         <% } else if (product.quantity > 0) { %>
-                            <i class="fas fa-exclamation-circle me-2"></i>Low Stock (<%= product.quantity %> left)
+                            <i class="fas fa-exclamation-circle mr-2"></i>Low Stock (<%= product.quantity %> left)
                         <% } else { %>
-                            <i class="fas fa-times-circle me-2"></i>Out of Stock
+                            <i class="fas fa-times-circle mr-2"></i>Out of Stock
                         <% } %>
                     </div>
 
-                  
-
                     <!-- Add to Cart and Wishlist -->
-                    <div class="d-flex gap-3 mb-3">
-                        <button class="btn btn-add-cart add-to-cart" data-product-id="<%= product._id %>" <%= product.quantity === 0 ? 'disabled' : '' %> aria-label="Add <%= product.name || product.productName %> to cart">
-                            <i class="fas fa-shopping-cart me-2"></i>Add to Cart
+                    <div class="flex gap-3 mb-4">
+                        <button class="btn-add-cart add-to-cart flex items-center font-semibold" data-product-id="<%= product._id %>" <%= product.quantity === 0 ? 'disabled' : '' %> aria-label="Add <%= product.name || product.productName %> to cart">
+                            <i class="fas fa-shopping-cart mr-2"></i>Add to Cart
                         </button>
                         <button class="wishlist-btn add-to-wishlist" data-product-id="<%= product._id %>" aria-label="Add <%= product.name || product.productName %> to wishlist">
                             <i class="far fa-heart"></i>
@@ -549,33 +315,33 @@
                     </div>
 
                     <!-- Product Description -->
-                    <div class="mb-3">
-                        <h5>Description</h5>
+                    <div class="mb-4">
+                        <h5 class="text-lg font-semibold">Description</h5>
                         <p><%= product.description || 'No description available.' %></p>
                     </div>
 
                     <!-- Specifications -->
                     <% if (product.specifications || product.color || product.shape) { %>
-                        <div class="mb-3">
-                            <h5>Specifications</h5>
-                            <table class="specifications-table">
+                        <div class="mb-4">
+                            <h5 class="text-lg font-semibold">Specifications</h5>
+                            <table class="w-full border-collapse">
                                 <% if (product.color) { %>
                                     <tr>
-                                        <th>Color</th>
-                                        <td><span class="color-swatch" style="background-color: <%= product.color %>;"></span></td>
+                                        <th class="w-1/3 font-semibold bg-gray-100 p-3 border-b border-gray-200">Color</th>
+                                        <td class="p-3 border-b border-gray-200"><span class="color-swatch" style="background-color: <%= product.color %>;"></span></td>
                                     </tr>
                                 <% } %>
                                 <% if (product.shape) { %>
                                     <tr>
-                                        <th>Shape</th>
-                                        <td><%= product.shape || 'Sleek Silhouette' %></td>
+                                        <th class="w-1/3 font-semibold bg-gray-100 p-3 border-b border-gray-200">Shape</th>
+                                        <td class="p-3 border-b border-gray-200"><%= product.shape || 'Sleek Silhouette' %></td>
                                     </tr>
                                 <% } %>
                                 <% if (product.specifications) { %>
                                     <% for (let [key, value] of Object.entries(product.specifications)) { %>
                                         <tr>
-                                            <th><%= key %></th>
-                                            <td><%= value %></td>
+                                            <th class="w-1/3 font-semibold bg-gray-100 p-3 border-b border-gray-200"><%= key %></th>
+                                            <td class="p-3 border-b border-gray-200"><%= value %></td>
                                         </tr>
                                     <% } %>
                                 <% } %>
@@ -585,15 +351,15 @@
                 </div>
 
                 <!-- Reviews -->
-                <div class="col-12 reviews-section">
-                    <h4>Customer Reviews</h4>
+                <div class="col-span-1 lg:col-span-2 bg-white p-6 rounded-lg shadow-sm mb-8">
+                    <h4 class="text-xl font-semibold mb-4">Customer Reviews</h4>
                     <% if (product.reviews && product.reviews.length > 0) { %>
                         <% product.reviews.forEach(review => { %>
-                            <div class="review-item">
-                                <div class="d-flex justify-content-between">
+                            <div class="border-b border-gray-200 pb-4 mb-4 last:border-b-0 last:pb-0 last:mb-0">
+                                <div class="flex justify-between">
                                     <div>
                                         <strong><%= review.userName || 'Anonymous' %></strong>
-                                        <div class="rating-stars" aria-label="Review rating: <%= review.rating %> out of 5 stars">
+                                        <div class="rating-stars text-yellow-400 text-sm" aria-label="Review rating: <%= review.rating %> out of 5 stars">
                                             <% for(let i = 1; i <= 5; i++) { %>
                                                 <% if (i <= review.rating) { %>
                                                     <i class="fas fa-star"></i>
@@ -603,7 +369,7 @@
                                             <% } %>
                                         </div>
                                     </div>
-                                    <small class="text-muted"><%= new Date(review.date).toLocaleDateString() %></small>
+                                    <small class="text-gray-500"><%= new Date(review.date).toLocaleDateString() %></small>
                                 </div>
                                 <p><%= review.comment %></p>
                             </div>
@@ -612,46 +378,45 @@
                         <p>No reviews yet. Be the first to review this product!</p>
                     <% } %>
                 </div>
-
-                <!-- Recommendations -->
-                <% if (recommendations && recommendations.length > 0) { %>
-                    <div class="col-12 recommendations-section">
-                        <h4>YOU MAY ALSO LIKE</h4>
-                        <button class="scroll-btn left" id="scrollLeft" aria-label="Scroll left">
-                            <i class="fas fa-chevron-left"></i>
-                        </button>
-                        <button class="scroll-btn right" id="scrollRight" aria-label="Scroll right">
-                            <i class="fas fa-chevron-right"></i>
-                        </button>
-                        <div class="recommendations-container" id="recommendationsContainer">
-                            <% recommendations.slice(0, 6).forEach(rec => { %>
-                                <div class="recommendation-card">
-                                    <a href="/productDetails?id=<%= rec._id%>" aria-label="View <%= rec.name || rec.productName %>">
-                                        <img src="<%= rec.productImage?.[0] || rec.images?.[0] || '/images/default-product.jpg' %>" class="recommendation-img" alt="<%= rec.name || rec.productName %>">
-                                    </a>
-                                    <div class="p-3">
-                                        <a href="/productDetails?id=<%= rec._id%>" aria-label="View <%= rec.name || rec.productName %>">
-                                            <h6 class="mb-1 text-truncate"><%= rec.name || rec.productName %></h6>
-                                            <div class="product-price">
-                                                <span class="current-price">₹<%= (rec.price || rec.salePrice).toLocaleString('en-IN') %></span>
-                                                <% if (rec.regularPrice && rec.regularPrice > (rec.price || rec.salePrice)) { %>
-                                                    <span class="original-price">₹<%= rec.regularPrice.toLocaleString('en-IN') %></span>
-                                                    <% const discount = Math.round((rec.regularPrice - (rec.price || rec.salePrice)) / rec.regularPrice * 100); %>
-                                                    <span class="discount-percentage"><%= discount %>% off</span>
-                                                <% } %>
-                                            </div>
-                                        </a>
-                                    </div>
-                                </div>
-                            <% }); %>
-                        </div>
-                    </div>
-                <% } %>
             </div>
+
+            <!-- Recommendations -->
+            <% if (recommendations && recommendations.length > 0) { %>
+                <div class="relative mt-8">
+                    <h4 class="text-xl font-semibold mb-4">YOU MAY ALSO LIKE</h4>
+                    <button class="scroll-btn left" id="scrollLeft" aria-label="Scroll left">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button class="scroll-btn right" id="scrollRight" aria-label="Scroll right">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                    <div class="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory" id="recommendationsContainer" style="scrollbar-width: none; -ms-overflow-style: none;">
+                        <% recommendations.slice(0, 6).forEach(rec => { %>
+                            <div class="flex-none w-80 lg:w-96 bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all snap-start h-80">
+                                <a href="/productDetails?id=<%= rec._id%>" aria-label="View <%= rec.name || rec.productName %>">
+                                    <img src="<%= rec.productImage?.[0] || rec.images?.[0] || '/images/default-product.jpg' %>" class="recommendation-img" alt="<%= rec.name || rec.productName %>">
+                                </a>
+                                <div class="p-3">
+                                    <a href="/productDetails?id=<%= rec._id%>" aria-label="View <%= rec.name || rec.productName %>">
+                                        <h6 class="text-lg font-semibold mb-1 truncate"><%= rec.name || rec.productName %></h6>
+                                        <div class="flex items-baseline">
+                                            <span class="text-lg font-bold">₹<%= (rec.price || rec.salePrice).toLocaleString('en-IN') %></span>
+                                            <% if (rec.regularPrice && rec.regularPrice > (rec.price || rec.salePrice)) { %>
+                                                <span class="text-sm text-gray-500 line-through ml-2">₹<%= rec.regularPrice.toLocaleString('en-IN') %></span>
+                                                <% const discount = Math.round((rec.regularPrice - (rec.price || rec.salePrice)) / rec.regularPrice * 100); %>
+                                                <span class="text-sm bg-green-100 text-black px-2 py-1 rounded-full ml-2 font-semibold"><%= discount %>% off</span>
+                                            <% } %>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        <% }); %>
+                    </div>
+                </div>
+            <% } %>
         <% } %>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Redirect if product is blocked or unavailable
@@ -702,13 +467,16 @@
             }
 
             // Add to cart
-            const addToCartButton = document.querySelector('.add-to-cart');
-            if (addToCartButton) {
-                addToCartButton.addEventListener('click', debounce(function() {
+            const addToCartButtons = document.querySelectorAll('.add-to-cart');
+            addToCartButtons.forEach(button => {
+                button.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
                     const productId = this.getAttribute('data-product-id');
-                    addToCart(productId, this);
-                }, 300));
-            }
+                    addToCart(productId);
+                });
+            });
+
 
             // Add to wishlist
             const wishlistButton = document.querySelector('.add-to-wishlist');
@@ -731,7 +499,7 @@
                     const maxScroll = recommendationsContainer.scrollWidth - recommendationsContainer.clientWidth;
 
                     scrollLeftBtn.disabled = scrollLeft <= 0;
-                    scrollRightBtn.disabled = scrollLeft >= maxScroll - 1; // Account for rounding
+                    scrollRightBtn.disabled = scrollLeft >= maxScroll - 1;
                 }
 
                 // Initial button state
@@ -743,7 +511,7 @@
                 // Scroll left
                 scrollLeftBtn.addEventListener('click', function() {
                     recommendationsContainer.scrollBy({
-                        left: -360, // Scroll by one card width (desktop)
+                        left: -360,
                         behavior: 'smooth'
                     });
                 });
@@ -751,7 +519,7 @@
                 // Scroll right
                 scrollRightBtn.addEventListener('click', function() {
                     recommendationsContainer.scrollBy({
-                        left: 360, // Scroll by one card width (desktop)
+                        left: 360,
                         behavior: 'smooth'
                     });
                 });
@@ -760,13 +528,13 @@
                 if (window.innerWidth <= 767.98) {
                     scrollLeftBtn.addEventListener('click', function() {
                         recommendationsContainer.scrollBy({
-                            left: -240, // Mobile card width
+                            left: -240,
                             behavior: 'smooth'
                         });
                     });
                     scrollRightBtn.addEventListener('click', function() {
                         recommendationsContainer.scrollBy({
-                            left: 240, // Mobile card width
+                            left: 240,
                             behavior: 'smooth'
                         });
                     });
@@ -816,40 +584,36 @@
             }
 
             // Add to cart function
-            function addToCart(productId, button) {
-                button.classList.add('loading');
-                button.disabled = true;
+            function addToCart(productId) {
+                if (!productId) {
+                    showToast('Invalid product ID', 'error');
+                    return;
+                }
 
                 fetch('/cart/add', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ productId, quantity: 1 })
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ productId: productId, quantity: 1 })
                 })
-                    .then(response => response.json())
-                    .then(data => {
-                        button.classList.remove('loading');
-                        button.disabled = product.quantity === 0;
-
-                        if (data.success) {
-                            showToast('Product added to cart!', 'success');
-                            updateCartCounter(data.cartCount);
-                        } else {
-                            if (data.message.includes('unavailable') || data.message.includes('blocked')) {
-                                showToast('This product is no longer available.', 'error');
-                                setTimeout(() => window.location.href = '/shop', 2000);
-                            } else {
-                                showToast(data.message || 'Failed to add product to cart', 'error');
-                            }
+                .then(response => {
+                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        showToast('Product added to cart!', 'success');
+                        updateCartCounter(data.cartCount);
+                    } else {
+                        showToast(data.message || 'Failed to add product to cart', 'error');
+                        if (data.message && data.message.includes('login')) {
+                            setTimeout(() => { window.location.href = '/login'; }, 2000);
                         }
-                    })
-                    .catch(error => {
-                        button.classList.remove('loading');
-                        button.disabled = product.quantity === 0;
-                        console.error('Error:', error);
-                        showToast('An error occurred. Please try again.', 'error');
-                    });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showToast('An error occurred. Please try again.', 'error');
+                });
             }
 
             // Toggle wishlist function
@@ -902,38 +666,28 @@
                 let toastContainer = document.querySelector('.toast-container');
                 if (!toastContainer) {
                     toastContainer = document.createElement('div');
-                    toastContainer.className = 'toast-container position-fixed bottom-0 end-0 p-3';
+                    toastContainer.className = 'fixed bottom-0 right-0 p-3';
                     document.body.appendChild(toastContainer);
                 }
 
                 const toastId = 'toast-' + Date.now();
                 const toast = document.createElement('div');
-                toast.className = `toast align-items-center text-white bg-${type === 'error' ? 'danger' : type} border-0`;
+                toast.className = `flex items-center text-white p-3 rounded ${type === 'error' ? 'bg-red-500' : type === 'success' ? 'bg-green-500' : 'bg-blue-500'}`;
                 toast.id = toastId;
                 toast.setAttribute('role', 'alert');
                 toast.setAttribute('aria-live', 'assertive');
                 toast.setAttribute('aria-atomic', 'true');
 
                 toast.innerHTML = `
-                    <div class="d-flex">
-                        <div class="toast-body">
-                            ${message}
-                        </div>
-                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-                    </div>
+                    <div class="flex-1">${message}</div>
+                    <button type="button" class="ml-2 text-white hover:text-gray-200" onclick="this.parentElement.parentElement.remove()" aria-label="Close">×</button>
                 `;
 
                 toastContainer.appendChild(toast);
 
-                const bsToast = new bootstrap.Toast(toast, {
-                    autohide: true,
-                    delay: 3000
-                });
-                bsToast.show();
-
-                toast.addEventListener('hidden.bs.toast', function() {
+                setTimeout(() => {
                     toast.remove();
-                });
+                }, 3000);
             }
 
             // Update cart counter
@@ -941,7 +695,7 @@
                 const cartCounter = document.querySelector('.cart-counter');
                 if (cartCounter) {
                     cartCounter.textContent = count;
-                    cartCounter.spleen.classList.toggle('d-none', count <= 0);
+                    cartCounter.classList.toggle('hidden', count <= 0);
                 }
             }
 
@@ -950,7 +704,7 @@
                 const wishlistCounter = document.querySelector('.wishlist-counter');
                 if (wishlistCounter) {
                     wishlistCounter.textContent = count;
-                    wishlistCounter.classList.toggle('d-none', count <= 0);
+                    wishlistCounter.classList.toggle('hidden', count <= 0);
                 }
             }
         });
