@@ -19,6 +19,7 @@ const productDetails = async(req,res)=>{
         }
 
           const recommendations = await Product.find({
+            isDeleted: false,
             category: product.category,
             _id: { $ne: productId } // exclude the current product
         })
@@ -29,9 +30,7 @@ const productDetails = async(req,res)=>{
       return res.redirect('/login');
     });
     return;
-  }
-
-        
+  }        
         res.render('productDetails',{
             isLoggedIn: req.session.user,
       user: userData,

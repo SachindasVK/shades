@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shopping Cart - Your Store</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
         :root {
             --primary-color: #000000;
@@ -160,7 +160,7 @@
         }
 
         .item-actions .favorite {
-            color: #007bff;
+            color: #0d45ff;
         }
 
         .item-actions .favorite:hover {
@@ -261,6 +261,55 @@
             opacity: 0.6;
         }
 
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e5e7eb;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .modal-message {
+            font-size: 1rem;
+            color: #374151;
+            margin-bottom: 1rem;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 1.5rem;
+        }
+
         @media (max-width: 991.98px) {
             .cart-item img {
                 width: 60px;
@@ -312,72 +361,63 @@
 <body>
     <%-include("../../views/partials/user/header")%>
     
-    <div class="cart-header">
-        <div class="container">
+      <div class="bg-white border-b border-gray-200 py-6 mb-8">
+        <div class="container mx-auto px-4">
             <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/">Home</a></li>
-                    <li class="breadcrumb-item"><a href="/shop">Shop</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Cart</li>
+                <ol class="flex space-x-2 text-sm">
+                    <li><a href="/" class="text-blue-600 hover:underline">Home</a></li>
+                     <li  class="flex items-center"><span class="mx-2">></span><a href="/shop" class="text-blue-600 hover:underline">Shop</a></li>
+                    <li class="flex items-center"><span class="mx-2">></span><span class="text-gray-500">Cart</span></li>
                 </ol>
             </nav>
         </div>
     </div>
 
-    <div class="container mb-5">
-        <div class="row g-4">
+    <div class="container max-w-7xl mx-auto px-4 mb-20">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
             <!-- Shopping Cart Section -->
-            <div class="col-lg-8">
+            <div class="col-span-2">
                 <div class="cart-section">
-                    <h3>Shopping Cart</h3>
+                    <h3 class="text-xl font-bold">Shopping Cart</h3>
                     <div id="cart-items">
-                         <!-- <pre><%= JSON.stringify(cartItems, null, 2) %></pre> -->
                         <% if (cartItems && cartItems.length > 0) { %>
                             <% cartItems.forEach((item, index) => { %>
-                           
-     <div class="cart-item" data-product-id="<%= item.product._id %>" data-index="<%= index %>">
-      <a href="/productDetails?id=<%= item.product._id %>">
-          <img src="<%= item.product.productImage && item.product.productImage[0] || 'https://via.placeholder.com/80?text=Product' %>"
-               alt="<%= item.product.productName %>"
-               onerror="this.src='https://via.placeholder.com/80?text=Product'">
-      </a>
-      <div class="item-details">
-          <h5><%= item.product.productName %></h5>
-
-          <% if (item.product.brand) { %>
-  <p>Brand: <%= item.product.brand.name || item.product.brand %></p>
-<% } %>
-
-
-
-          <div class="quantity-control">
-              <button type="button" 
-                      onclick="updateQuantity('<%= item.product._id %>', <%= item.quantity - 1 %>)" 
-                      <%= item.quantity <= 1 ? 'disabled' : '' %> 
-                      aria-label="Decrease quantity">-</button>
-              <input type="text" value="<%= item.quantity %>" readonly aria-label="Quantity">
-              <button type="button" 
-                      onclick="updateQuantity('<%= item.product._id %>', <%= item.quantity + 1 %>)" 
-                      <%= item.quantity >= item.product.quantity ? 'disabled' : '' %> 
-                      aria-label="Increase quantity">+</button>
-          </div>
-
-          <div class="item-actions">
-              <a href="#" class="favorite" onclick="moveToWishlist('<%= item.product._id %>', event)" aria-label="Move to wishlist">
-                  <i class="far fa-heart"></i> MOVE TO FAVORITES
-              </a>
-              <a href="#" class="remove" onclick="removeFromCart('<%= item.product._id %>', event)" aria-label="Remove from cart">
-                  <i class="fas fa-times"></i> REMOVE
-              </a>
-          </div>
-      </div>
-      <div class="item-price">
-  ₹<%= (item.totalPrice || item.product.salePrice || 0).toLocaleString('en-IN') %>
-</div>
-
-  </div>
-<% }) %>
-
+                                <div class="cart-item" data-product-id="<%= item.product._id %>" data-index="<%= index %>">
+                                    <a href="/productDetails?id=<%= item.product._id %>">
+                                        <img src="<%= item.product.productImage && item.product.productImage[0] || 'https://via.placeholder.com/80?text=Product' %>"
+                                             alt="<%= item.product.productName %>"
+                                             onerror="this.src='https://via.placeholder.com/80?text=Product'">
+                                    </a>
+                                    <div class="item-details">
+                                        <h5><%= item.product.productName %></h5>
+                                        <% if (item.product.brand) { %>
+                                            <p>Brand: <%= item.product.brand.name || item.product.brand %></p>
+                                        <% } %>
+                                        <div class="quantity-control">
+                                            <button type="button" 
+                                                    onclick="updateQuantity('<%= item.product._id %>', <%= item.quantity - 1 %>)" 
+                                                    <%= item.quantity <= 1 ? 'disabled' : '' %> 
+                                                    aria-label="Decrease quantity">-</button>
+                                            <input type="text" value="<%= item.quantity %>" readonly aria-label="Quantity">
+                                            <button type="button" 
+                                                    onclick="updateQuantity('<%= item.product._id %>', <%= item.quantity + 1 %>)" 
+                                                    <%= item.quantity >= item.product.quantity ? 'disabled' : '' %> 
+                                                    aria-label="Increase quantity">+</button>
+                                        </div>
+                                        <div class="item-actions">
+                                            <a href="#" class="favorite" onclick="moveToWishlist('<%= item.product._id %>', event)" aria-label="Move to wishlist">
+                                                <i class="far fa-heart"></i> MOVE TO FAVORITES
+                                            </a>
+                                            <a href="#" class="remove" onclick="openRemoveCartModal('<%= item.product._id %>')" aria-label="Remove from cart">
+                                                <i class="fas fa-times"></i> REMOVE
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="item-price">
+                                        ₹<%= (item.totalPrice || item.product.salePrice || 0).toLocaleString('en-IN') %>
+                                    </div>
+                                </div>
+                            <% }) %>
                         <% } else { %>
                             <div class="empty-cart">
                                 <i class="fas fa-shopping-cart"></i>
@@ -391,25 +431,30 @@
             </div>
 
             <!-- Order Summary Section -->
-            <div class="col-lg-4">
+            <div class="col-span-1">
                 <div class="order-summary">
                     <h4>Order Summary</h4>
                     <div id="order-summary-items">
                         <% if (cartItems && cartItems.length > 0) { %>
-                           <% 
-    let subtotal = 0;
-    cartItems.forEach(item => {
-        subtotal += (item.product.salePrice || item.product.regularPrice || 0) * item.quantity;
-    });
-    const deliveryCharge = subtotal > 500 ? 0 : 50;
-    const gst = Math.round(subtotal * 0.18);
-    const total = subtotal + deliveryCharge + gst;
-%>
-
+                            <% 
+                                let subtotal = 0;
+                                cartItems.forEach(item => {
+                                    subtotal += (item.product.salePrice || item.product.regularPrice || 0) * item.quantity;
+                                });
+                                const discount = subtotal > 1500 ? 200 : 0;
+                                const deliveryCharge = subtotal > 1000 ? 0 : 50;
+                                const gst = Math.round(subtotal * 0.18);
+                                const total = subtotal + deliveryCharge + gst;
+                            %>
                             <div class="summary-item">
                                 <span>Subtotal (<%= cartItems.length %> items)</span>
                                 <span>₹<%= subtotal.toLocaleString('en-IN') %></span>
                             </div>
+                            <div class="summary-item">
+    <span>Discount</span>
+    <span class="text-green-600">- ₹<%= discount.toLocaleString('en-IN') %></span>
+</div>
+
                             <div class="summary-item">
                                 <span>Delivery Charge</span>
                                 <span class="<%= deliveryCharge === 0 ? 'free' : '' %>">
@@ -445,12 +490,75 @@
         </div>
     </div>
 
+    <!-- Remove Cart Item Confirmation Modal -->
+    <div id="removeCartModal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Confirm Removal</h3>
+            </div>
+            <div class="modal-message">
+                Are you sure you want to remove this item from your cart?
+            </div>
+            <div class="button-group">
+                <button type="button" class="btn bg-gray-100 text-gray-700 border border-gray-300 hover:bg-gray-200 py-3 px-6 rounded-md text-sm font-medium transition" onclick="closeRemoveCartModal()">Cancel</button>
+                <button type="button" class="btn bg-red-500 text-white hover:bg-red-600 py-3 px-6 rounded-md text-sm font-medium transition" onclick="confirmRemoveCartItem()">Confirm</button>
+            </div>
+        </div>
+    </div>
 
-    
+    <!-- Toast Container -->
+    <div id="toastContainer" class="fixed bottom-5 right-5 z-[2000]"></div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script>
         const MAX_QUANTITY_PER_PRODUCT = 10;
+        let productIdToRemove = null;
+
+        // Show confirmation modal for removing item
+        function openRemoveCartModal(productId) {
+            productIdToRemove = productId;
+            document.getElementById('removeCartModal').classList.remove('hidden');
+        }
+
+        // Close confirmation modal
+        function closeRemoveCartModal() {
+            document.getElementById('removeCartModal').classList.add('hidden');
+            productIdToRemove = null;
+        }
+
+        // Handle confirm button click in modal
+        async function confirmRemoveCartItem() {
+            if (!productIdToRemove) return;
+
+            try {
+                showLoading(true);
+                const response = await fetch('/cart/remove', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        productId: productIdToRemove
+                    })
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    showToast('Product removed from cart!', 'success');
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 100);
+                } else {
+                    showToast(result.message || 'Failed to remove item', 'error');
+                }
+            } catch (error) {
+                console.error('Error removing item:', error);
+                showToast('Error removing item from cart', 'error');
+            } finally {
+                showLoading(false);
+                closeRemoveCartModal();
+            }
+        }
 
         // Update quantity function
         async function updateQuantity(productId, newQuantity) {
@@ -476,7 +584,6 @@
                 const result = await response.json();
                 
                 if (result.success) {
-                    // Reload the page to reflect changes
                     window.location.reload();
                 } else {
                     showToast(result.message || 'Failed to update quantity', 'error');
@@ -489,54 +596,12 @@
             }
         }
 
-        // Remove from cart function
-        async function removeFromCart(productId, event) {
-            event.preventDefault();
-            
-            if (!confirm('Are you sure you want to remove this item from your cart?')) {
-                return;
-            }
-
-            try {
-                showLoading(true);
-                const response = await fetch('/cart/remove', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        productId: productId
-                    })
-                });
-
-                const result = await response.json();
-                
-                if (result.success) {
-                    showToast('Product removed from cart!', 'success');
-                    // Reload the page to reflect changes
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 1000);
-                } else {
-                    showToast(result.message || 'Failed to remove item', 'error');
-                }
-            } catch (error) {
-                console.log(error)
-                console.error('Error removing item:', error);
-                showToast('Error removing item from cart', 'error');
-                
-            } finally {
-                showLoading(false);
-            }
-        }
-
         // Move to wishlist function
         async function moveToWishlist(productId, event) {
             event.preventDefault();
 
             try {
                 showLoading(true);
-                // First add to wishlist
                 const wishlistResponse = await fetch('/addtowishlist', {
                     method: 'POST',
                     headers: {
@@ -550,7 +615,6 @@
                 const wishlistResult = await wishlistResponse.json();
                 
                 if (wishlistResult.success) {
-                    // Then remove from cart
                     const cartResponse = await fetch('/cart/remove', {
                         method: 'POST',
                         headers: {
@@ -567,7 +631,7 @@
                         showToast('Product moved to wishlist!', 'success');
                         setTimeout(() => {
                             window.location.reload();
-                        }, 1000);
+                        }, 100);
                     } else {
                         showToast('Added to wishlist but failed to remove from cart', 'warning');
                     }
@@ -592,42 +656,22 @@
 
         // Utility functions
         function showToast(message, type = 'info') {
-            let toastContainer = document.querySelector('.toast-container');
-            if (!toastContainer) {
-                toastContainer = document.createElement('div');
-                toastContainer.className = 'toast-container position-fixed bottom-0 end-0 p-3';
-                toastContainer.style.zIndex = '9999';
-                document.body.appendChild(toastContainer);
-            }
-
-            const toastId = 'toast-' + Date.now();
+            const toastContainer = document.getElementById('toastContainer');
             const toast = document.createElement('div');
-            toast.className = `toast align-items-center text-white bg-${type === 'error' ? 'danger' : type === 'warning' ? 'warning' : type === 'success' ? 'success' : 'primary'} border-0`;
-            toast.id = toastId;
-            toast.setAttribute('role', 'alert');
-            toast.setAttribute('aria-live', 'assertive');
-            toast.setAttribute('aria-atomic', 'true');
-
-            toast.innerHTML = `
-                <div class="d-flex">
-                    <div class="toast-body">
-                        ${message}
-                    </div>
-                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-                </div>
-            `;
-
+            toast.className = `min-w-[250px] text-white p-4 rounded shadow-lg transition-opacity transition-transform duration-300 opacity-0 translate-y-5 ${type === 'error' ? 'bg-red-500' : type === 'warning' ? 'bg-yellow-500' : type === 'success' ? 'bg-green-500' : 'bg-blue-600'}`;
+            toast.textContent = message;
             toastContainer.appendChild(toast);
 
-            const bsToast = new bootstrap.Toast(toast, {
-                autohide: true,
-                delay: 3000
-            });
-            bsToast.show();
+            setTimeout(() => {
+                toast.classList.remove('opacity-0', 'translate-y-5');
+            }, 100);
 
-            toast.addEventListener('hidden.bs.toast', function() {
-                toast.remove();
-            });
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-5');
+                setTimeout(() => {
+                    toast.remove();
+                }, 300);
+            }, 3000);
         }
 
         function showLoading(show) {
@@ -641,9 +685,15 @@
             });
         }
 
+        // Close modal when clicking outside
+        document.getElementById('removeCartModal').addEventListener('click', function (e) {
+            if (e.target === this) {
+                closeRemoveCartModal();
+            }
+        });
+
         // Initialize page
         document.addEventListener('DOMContentLoaded', function() {
-            // Add any initialization code here
             console.log('Cart page loaded successfully');
         });
     </script>

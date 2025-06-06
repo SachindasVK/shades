@@ -35,7 +35,7 @@ const getCart = async (req, res) => {
         product.category.status === 'Available'
       );
     });
-
+  cart.items.sort((a, b) => new Date(b.addedAt) - new Date(a.addedAt));
     await cart.save();
 
     // Prepare data for rendering
@@ -143,8 +143,42 @@ console.log('Cart after removal:', cart.items);
     res.status(500).json({ success: false, message: 'Server error' });
     }
 }
+
+const updateQuantity = async(req,res)=>{
+  try {
+    const userId = req.session.user;
+    const {productId,quantity} = req.body;
+
+    if(!productId||quantity<1){
+      return res.status(400).json({success:false,message:'Invalid input!'})
+    }
+
+    const cart = await Cart.findOne({userId})
+
+    if(!cart){
+      return res.status(404).json({success:false,message:'Cart not found!'})
+    }
+
+    const existingItem = cart.items.find(item=>item.productId.toString()===productId)
+
+    if(!existingItem){
+      return res.status(404).json({success:false,message:'Item not found in cart'})
+    }
+
+    existingItem.quantity = quantity
+
+    await cart.save()
+
+    return res.status(200).json({success:true,message:'Quantity updated'})
+
+  } catch (error) {
+    console.error('update quantity error',error)
+    return res.status(500).json({success:false,message:'Something went wrong'})
+  }
+}
 module.exports = {
     getCart,
    addToCart,
-   removeCart
+   removeCart,
+   updateQuantity
 };

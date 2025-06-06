@@ -667,6 +667,7 @@ const logout = async (req, res) => {
     });
   }
 };
+
 const loadShoppingPage = async (req, res) => {
   try {
     // Get user data if logged in
@@ -912,56 +913,6 @@ const loadShoppingPage = async (req, res) => {
 };
 
 
-const getWishlistStatus = async (req, res) => {
-    try {
-        const userId = req.session.user;
-        const { productIds } = req.body;
-
-        // Check if user is logged in
-        if (!userId) {
-            return res.status(200).json({
-                success: true,
-                wishlistStatus: {}
-            });
-        }
-
-        // Validate productIds
-        if (!productIds || !Array.isArray(productIds)) {
-            return res.status(400).json({
-                success: false,
-                message: 'Product IDs array is required'
-            });
-        }
-
-        // Find the user
-        const user = await User.findById(userId);
-        if (!user) {
-            return res.status(404).json({
-                success: false,
-                message: 'User not found'
-            });
-        }
-
-        // Create status object for each product
-        const wishlistStatus = {};
-        productIds.forEach(productId => {
-            wishlistStatus[productId] = user.wishlist.some(item => item.toString() === productId);
-        });
-
-        // Return status for all products
-        res.status(200).json({
-            success: true,
-            wishlistStatus: wishlistStatus
-        });
-
-    } catch (error) {
-        console.error('Error in getWishlistStatus:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Internal server error'
-        });
-    }
-};
 module.exports = {
   loadHomepage,
   pageNotFound,
@@ -974,5 +925,4 @@ module.exports = {
   loadAbout,
   logout,
   loadShoppingPage,
-  getWishlistStatus
 }

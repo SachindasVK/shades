@@ -18,9 +18,24 @@ const loadWishlist = async (req, res) => {
             return res.redirect('/login');
         }
 
+         // Find wishlist document for user
+    let wishlist = await Wishlist.findOne({ userId });
+
+    if (!wishlist) {
+      // If no wishlist document, render empty wishlist page
+      return res.render('wishlist', {
+        user: user.toObject(),
+        username: user.name,
+        wishlist: [],
+        wishlistCount: 0
+      });
+    }
+ // Extract productIds from wishlist.products
+    const productIds = wishlist.products.map(item => item.productId);
+        
         // Get only active, non-deleted products from the wishlist
         const products = await Product.find({
-            _id: { $in: user.wishlist },
+            _id: { $in: productIds },
             isDeleted: false,
             isActive: true,
         }).populate('category');
@@ -28,31 +43,26 @@ const loadWishlist = async (req, res) => {
         // Get the IDs of products that are still valid (not deleted/inactive)
         const validProductIds = products.map(product => product._id.toString());
         
-        // Remove invalid products from user's wishlist
-        const originalWishlistIds = user.wishlist.map(id => id.toString());
-        const invalidProductIds = originalWishlistIds.filter(id => !validProductIds.includes(id));
-        
-        if (invalidProductIds.length > 0) {
-            // Update user's wishlist to remove deleted/inactive products
-            await User.findByIdAndUpdate(userId, {
-                $pull: { wishlist: { $in: invalidProductIds } }
-            });
-            
-            // Update the user object for rendering
-            user.wishlist = user.wishlist.filter(id => validProductIds.includes(id.toString()));
-        }
 
-        // Create a user object with populated wishlist for rendering
-        const userWithWishlist = {
-            ...user.toObject(),
-            wishlist: products
-        };
+         // Find invalid product entries to remove
+    const invalidProducts = wishlist.products.filter(item => !validProductIds.includes(item.productId.toString()));
+        
+        if (invalidProducts.length > 0) {
+      // Remove invalid products from wishlist.products array using $pull
+      await Wishlist.updateOne(
+        { userId },
+        { $pull: { products: { productId: { $in: invalidProducts.map(i => i.productId) } } } }
+      );
+
+      // Update wishlist.products locally as well
+      wishlist.products = wishlist.products.filter(item => validProductIds.includes(item.productId.toString()));
+    }
 
         res.render('wishlist', {
-            user: userWithWishlist,
-            username: user.name,
-            wishlist: products,
-            wishlistCount: products.length
+            user: user.toObject(),
+      username: user.name,
+      wishlist: products,
+      wishlistCount: products.length
         });
 
     } catch (error) {
@@ -93,36 +103,41 @@ const addToWishlist = async (req, res) => {
 
         // Find the user
         const user = await User.findById(userId);
-        if (!user) {
+        if (!user||user.isBlocked) {
             return res.status(404).json({
                 success: false,
-                message: 'User not found'
+                message: 'Unauthorized or blocked'
             });
         }
 
+        let wishlist = await Wishlist.findOne({ userId });
+    if (!wishlist) {
+      wishlist = new Wishlist({ userId, products: [] });
+    }
+
         // Check if product is already in wishlist
-        const productIndex = user.wishlist.findIndex(item => item.toString() === productId);
+        const productIndex = wishlist.products.findIndex(item => item.productId.toString() === productId);
         let added = false;
 
         if (productIndex > -1) {
             // Remove from wishlist if already exists
-            user.wishlist.splice(productIndex, 1);
-            added = false;
+            wishlist.products.splice(productIndex, 1);
+      added = false;
         } else {
             // Add to wishlist if not exists
-            user.wishlist.push(productId);
-            added = true;
+            wishlist.products.push({ productId, addedOn: new Date() });
+      added = true;
         }
 
         // Save the updated user
-        await user.save();
+        await wishlist.save();
 
         // Return success response
         res.status(200).json({
             success: true,
             added: added,
             message: added ? 'Product added to wishlist' : 'Product removed from wishlist',
-            wishlistCount: user.wishlist.length
+            wishlistCount:  wishlist.products.length
         });
 
     } catch (error) {
@@ -134,44 +149,11 @@ const addToWishlist = async (req, res) => {
     }
 };
 
-const getWishlistCount = async (req, res) => {
-    try {
-        const userId = req.session.user;
-
-        if (!userId) {
-            return res.status(200).json({
-                success: true,
-                count: 0
-            });
-        }
-
-        const user = await User.findById(userId);
-        if (!user) {
-            return res.status(200).json({
-                success: true,
-                count: 0
-            });
-        }
-
-        res.status(200).json({
-            success: true,
-            count: user.wishlist.length
-        });
-
-    } catch (error) {
-        console.error('Error in getWishlistCount:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Internal server error'
-        });
-    }
-};
 
 // Fixed removeFromWishlist to handle both URL params and request body
 const removeFromWishlist = async (req, res) => {
     try {
         const userId = req.session.user;
-        // Get productId from URL params or request body
         const productId = req.params.id || req.body.productId;
 
         if (!userId) {
@@ -196,19 +178,28 @@ const removeFromWishlist = async (req, res) => {
             });
         }
 
+         // Find user's wishlist document
+    const wishlist = await Wishlist.findOne({ userId });
+    if (!wishlist) {
+      return res.status(404).json({
+        success: false,
+        message: 'Wishlist not found'
+      });
+    }
+
         // Remove product from wishlist
-        const initialLength = user.wishlist.length;
-        user.wishlist = user.wishlist.filter(id => id.toString() !== productId);
+        const initialLength =  wishlist.products.length;
+         wishlist.products = wishlist.products.filter(item => item.productId.toString() !== productId);
         
         // Check if item was actually removed
-        if (user.wishlist.length === initialLength) {
-            return res.status(404).json({
-                success: false,
-                message: 'Item not found in wishlist'
-            });
-        }
+        if (wishlist.products.length === initialLength) {
+      return res.status(404).json({
+        success: false,
+        message: 'Item not found in wishlist'
+      });
+    }
 
-        await user.save();
+        await wishlist.save();
 
         res.status(200).json({
             success: true,
@@ -226,10 +217,76 @@ const removeFromWishlist = async (req, res) => {
 };
 
 
+const getWishlistStatus = async (req, res) => {
+    try {
+        const userId = req.session.user;
+        const { productIds } = req.body;
+
+        // Check if user is logged in
+        if (!userId) {
+            return res.status(200).json({
+                success: true,
+                wishlistStatus: {}
+            });
+        }
+
+        // Validate productIds
+        if (!productIds || !Array.isArray(productIds)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Product IDs array is required'
+            });
+        }
+
+        // Find the user
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: 'User not found'
+            });
+        }
+
+          // Find user's wishlist
+    const wishlist = await Wishlist.findOne({ userId });
+        // Create status object for each product
+        const wishlistStatus = {};
+
+          if (wishlist && wishlist.products.length > 0) {
+      const productIdSet = new Set(
+        wishlist.products.map(item => item.productId.toString())
+      );
+
+
+        productIds.forEach(id => {
+        wishlistStatus[id] = productIdSet.has(id);
+      });
+    } else {
+      // If no wishlist, all are false
+      productIds.forEach(id => {
+        wishlistStatus[id] = false;
+      });
+    }
+
+        // Return status for all products
+        res.status(200).json({
+            success: true,
+             wishlistStatus
+        });
+
+    } catch (error) {
+        console.error('Error in getWishlistStatus:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Internal server error'
+        });
+    }
+};
 
 module.exports = {
     loadWishlist,
     addToWishlist,
-    getWishlistCount,
+  
     removeFromWishlist,
+    getWishlistStatus
 }

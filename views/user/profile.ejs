@@ -389,12 +389,31 @@
                 display: flex !important;
             }
         }
+         .shop-header {
+            background-color: white;
+            border-bottom: 1px solid var(--border-color);
+            padding: 1.5rem 0;
+            margin-bottom: 2rem;
+        }
+ .breadcrumb-item+.breadcrumb-item::before {
+            content: ">";
+        }
     </style>
 </head>
 <body class="page-body">
     <!-- Header Partial -->
   <%-include("../../views/partials/user/header")%>
-
+ <div class="shop-header">
+        <div class="max-w-7xl mx-auto px-4">
+            <nav aria-label="breadcrumb">
+                <ol class="flex space-x-2 text-sm">
+                    <li><a href="/" class="text-blue-600 hover:underline">Home</a></li>
+                     <li><a href="/shop" class="text-blue-600 hover:underline"><span class="mx-2 text-black">></span>Shop</a></li>
+                    <li class="flex items-center"><span class="mx-2">></span><span class="text-gray-500">Profile</span></li>
+                </ol>
+            </nav>
+        </div>
+    </div>
     <!-- Profile Header (Sidebar) Partial -->
     <div class="containeer">
         <div class="sidebar">

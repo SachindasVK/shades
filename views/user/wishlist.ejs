@@ -405,12 +405,33 @@
                 display: flex !important;
             }
         }
+
+        .shop-header {
+            background-color: white;
+            border-bottom: 1px solid var(--border-color);
+            padding: 1.5rem 0;
+            margin-bottom: 2rem;
+        }
+ .breadcrumb-item+.breadcrumb-item::before {
+            content: ">";
+        }
     </style>
 </head>
 
 <body class="page-body">
-    <!-- Header Partial -->
     <%- include("../../views/partials/user/header") %>
+ <div class="shop-header">
+        <div class="max-w-7xl mx-auto px-4">
+            <nav aria-label="breadcrumb">
+                <ol class="flex space-x-2 text-sm">
+                    <li><a href="/" class="text-blue-600 hover:underline">Home</a></li>
+                     <li><a href="/shop" class="text-blue-600 hover:underline"><span class="mx-2 text-black">></span>Shop</a></li>
+                    <li class="flex items-center"><span class="mx-2">></span><span class="text-gray-500">Wishlist</span></li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
         <!-- Profile Header (Sidebar) Partial -->
         <div class="containeer">
             <div class="sidebar">
@@ -488,8 +509,8 @@
             <div class="main-content">
                 <h2 class="section-title">My Wishlist</h2>
                 <div id="wishlist">
-                    <% if (user.wishlist && user.wishlist.length> 0) { %>
-                        <% user.wishlist.forEach((item)=> { %>
+                    <% if (wishlist && wishlist.length> 0) { %>
+                        <% wishlist.forEach((item)=> { %>
                             <div class="wishlist-item" data-id="<%= item._id %>">
                                 <a href="/productDetails?id=<%= item._id %>">
                                     <img src="<%= item.productImage && item.productImage[0] || item.images && item.images[0] || 'https://via.placeholder.com/80?text=Product' %>"
@@ -533,17 +554,18 @@
                                     </div>
                                 </div>
                                 <div class="wishlist-actions">
-                                    <button class="action-btn cart-btn flex items-center gap-1"
+                                    <button class="action-btn cart-btn flex items-center gap-1 text-blue-600"
                                         onclick="addToCart('<%= item._id %>')">
                                         <i class="fas fa-cart-plus"></i>
-                                    Add 
+                                        ADD
                                     </button>
 
-
-                                    <a href="#" class="remove" onclick="openDeleteWishlistModal('<%= item._id %>')"
+                                    <button class="remove" onclick="openDeleteWishlistModal('<%= item._id %>')"
                                         aria-label="Remove from Wishlist">
-                                         <i class="fas fa-times"></i> REMOVE
-                                    </a>
+                                         <i class="fas fa-times"></i>
+                                         REMOVE
+                                    </button>
+
                                 </div>
                             </div>
                             <% }); %>
@@ -642,6 +664,7 @@
                         return;
                     }
 
+                    // Step 1: Add to Cart
                     fetch('/cart/add', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
@@ -655,6 +678,21 @@
                             if (data.success) {
                                 showToast('Product added to cart!', 'success');
                                 updateCartCounter(data.cartCount);
+
+                                // Step 2: Remove from Wishlist after Cart Add Success
+                                fetch(`/wishlist/remove/${productId}`, {
+                                    method: 'DELETE',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ productId })
+                                })
+                                    .then(res => res.json())
+                                    .then(wishlistData => {
+                                        if (wishlistData.success) {
+                                            // Optionally reload page or update UI
+                                            setTimeout(() => location.reload(), 100);
+                                        }
+                                    });
+
                             } else {
                                 showToast(data.message || 'Failed to add product to cart', 'error');
                                 if (data.message && data.message.includes('login')) {
@@ -667,6 +705,7 @@
                             showToast('An error occurred. Please try again.', 'error');
                         });
                 }
+
 
                 function updateCartCounter(count) {
                     const cartCounter = document.querySelector('.cart-counter');
