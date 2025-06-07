@@ -204,7 +204,7 @@ const removeFromWishlist = async (req, res) => {
         res.status(200).json({
             success: true,
             message: 'Product removed from wishlist',
-            wishlistCount: user.wishlist.length
+            wishlistCount: wishlist.products.length
         });
 
     } catch (error) {
@@ -283,10 +283,10 @@ const getWishlistStatus = async (req, res) => {
     }
 };
 
+
 module.exports = {
     loadWishlist,
     addToWishlist,
-  
     removeFromWishlist,
-    getWishlistStatus
+    getWishlistStatus,
 }

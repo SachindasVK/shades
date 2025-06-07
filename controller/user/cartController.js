@@ -67,7 +67,7 @@ const getCart = async (req, res) => {
 
 
 
-const  addToCart = async (req, res) => {
+const addToCart = async (req, res) => {
     try {
         const userId = req.session.user;
         const { productId, quantity } = req.body;
@@ -85,7 +85,7 @@ const  addToCart = async (req, res) => {
             return res.status(400).json({ success: false, message: 'Product not found' });
         }
 
-        const itemPrice = product.salePrice; // `product.price` does NOT exist in your schema
+        const itemPrice = product.salePrice; 
         const itemTotal = itemPrice * quantity;
 
         let cart = await Cart.findOne({ userId });
@@ -99,7 +99,7 @@ const  addToCart = async (req, res) => {
         if (existingItem) {
             existingItem.quantity += quantity;
             existingItem.totalPrice = existingItem.quantity * itemPrice;
-            existingItem.price = itemPrice; // In case price changed
+            existingItem.price = itemPrice; 
         } else {
             cart.items.push({
                 productId,
@@ -176,9 +176,44 @@ const updateQuantity = async(req,res)=>{
     return res.status(500).json({success:false,message:'Something went wrong'})
   }
 }
+
+
+const getCartStatus = async (req, res) => {
+  try {
+    const userId = req.session.user;
+    const { productIds } = req.body;  // <-- important to get from body
+
+    if (!userId) {
+      return res.status(200).json({ success: true, cartStatus: {} });
+    }
+
+    if (!productIds || !Array.isArray(productIds)) {
+      return res.status(400).json({ success: false, message: 'Invalid product IDs' });
+    }
+
+    const cartItems = await Cart.findOne({ userId });
+
+    const cartStatus = {};
+    if (cartItems?.items?.length > 0) {
+      cartItems.items.forEach(item => {
+        if (productIds.includes(item.productId.toString())) {
+          cartStatus[item.productId.toString()] = true;
+        }
+      });
+    }
+
+    res.status(200).json({ success: true, cartStatus });
+  } catch (error) {
+    console.error("Cart status error:", error);
+    res.status(500).json({ success: false, message: 'Internal Server Error' });
+  }
+};
+
+
 module.exports = {
     getCart,
    addToCart,
    removeCart,
-   updateQuantity
+   updateQuantity,
+   getCartStatus
 };

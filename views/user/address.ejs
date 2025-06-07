@@ -12,7 +12,7 @@
             font-family: 'Inter', sans-serif;
         }
         .page-body {
-            background-color: #f3f4f6;
+            background-color: #f3f4f7;
         }
         .containeer {
             max-width: 95%; 
@@ -121,66 +121,87 @@
             margin-bottom: 1.25rem;
         }
         .form-label {
-            display: block;
-            margin-bottom: 0.5rem;
+            font-size: 0.80rem;
             font-weight: 500;
-            font-size: 0.875rem;
             color: #1f2937;
+            margin-bottom: 0.25rem;
+        }
+        .required {
+            color: #ef4444;
         }
         .form-input, .form-select {
+            margin-top: 0.25rem;
             width: 100%;
-            padding: 0.75rem;
+            padding: 0.5rem;
             border: 1px solid #d1d5db;
-            border-radius: 6px;
-            font-size: 0.875rem;
-            color: #1f2937;
+            border-radius: 0.5rem;
+            font-size: 0.90rem;
+            transition: all 0.2s ease;
         }
         .form-input:focus, .form-select:focus {
             outline: none;
-            border-color: #2563eb;
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+            border-color: #000000;
+            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+        }
+        .form-input:invalid:not(:placeholder-shown) {
+            border-color: #ef4444;
         }
         .radio-group, .checkbox-group {
             display: flex;
-            gap: 1.5rem;
+            gap: 1rem;
             align-items: center;
+            margin-top: 0.5rem;
         }
         .radio-label, .checkbox-label {
-            font-size: 0.875rem;
-            color: #374151;
+            font-size: 0.8125rem;
+            color: #1f2937;
             display: flex;
             align-items: center;
             gap: 0.5rem;
         }
+        .form-radio, .form-checkbox {
+            accent-color: #002fff;
+            margin-right: 0.5rem;
+        }
+        .form-row {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+        .form-row .form-group {
+            flex: 1;
+            min-width: 180px;
+        }
         .button-group {
             display: flex;
-            gap: 1rem;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
             justify-content: flex-end;
-            margin-top: 1.5rem;
         }
         .btn {
-            padding: 0.75rem 1.5rem;
-            border: none;
-            border-radius: 6px;
+            width: auto;
+            max-width: 30rem;
+            padding: 0.80rem 1.40rem;
+            border-radius: 0.25rem;
+            font-size: 0.90rem;
             cursor: pointer;
-            font-size: 0.875rem;
-            font-weight: 500;
-            transition: background-color 0.2s ease;
+            transition: all 0.2s ease;
         }
         .btn-primary {
             background-color: #000000;
             color: white;
+            border: none;
         }
         .btn-primary:hover {
-            background-color: #1f2937;
+            background-color: #272727;
         }
         .btn-secondary {
-            background-color: #f3f4f6;
-            color: #374151;
-            border: 1px solid #d1d5db;
+            border: 1px solid #ffffff;
+            color: #ffffff;
+            background-color: gray;
         }
         .btn-secondary:hover {
-            background-color: #e5e7eb;
+            background-color: #9c9c9c;
         }
         .btn-danger {
             background-color: #ef4444;
@@ -234,41 +255,38 @@
             color: #dc2626;
         }
         .modal-overlay {
+            display: none;
             position: fixed;
             top: 0;
             left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(0, 0, 0, 0.6);
-            display: flex;
-            align-items: center;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
             justify-content: center;
+            align-items: center;
             z-index: 1000;
         }
         .modal-content {
-            background: white;
+            background-color: white;
             padding: 1.5rem;
-            border-radius: 12px;
-            width: 90%;
-            max-width: 500px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-            max-height: 85vh;
+            border-radius: 0.75rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+            width: 100%;
+            max-width: 40rem;
+            max-height: 90vh;
             overflow-y: auto;
+        }
+        .modal-overlay.modal-visible {
+            display: flex;
         }
         .modal-header {
             padding-bottom: 1rem;
-            border-bottom: 1px solid #e5e7eb;
             margin-bottom: 1.5rem;
         }
         .modal-title {
-            font-size: 1.5rem;
+            font-size: 1.125rem;
             font-weight: 600;
             color: #1f2937;
-        }
-        .modal-message {
-            font-size: 1rem;
-            color: #374151;
-            margin-bottom: 1rem;
         }
         .toast {
             position: fixed;
@@ -335,7 +353,7 @@
             text-decoration: underline;
         }
         .error-message {
-            color: red;
+            color: #ef4444;
             font-size: 0.875rem;
             margin-top: 0.25rem;
             display: none;
@@ -378,16 +396,15 @@
                 display: flex !important;
             }
         }
-        /* New styles for highlighting default address and type */
         .address-item.default {
-            background-color: #f0fdf4; /* Light green background for default address */
-            border-left: 4px solid #22c55e; /* Green border to indicate default */
+            background-color: #f0fdf4;
+            border-left: 4px solid #22c55e;
         }
         .address-type {
             font-weight: 600;
         }
         .address-type.default {
-            color: #22c55e; /* Green color for default address type */
+            color: #22c55e;
         }
         .shop-header {
             background-color: white;
@@ -395,7 +412,7 @@
             padding: 1.5rem 0;
             margin-bottom: 2rem;
         }
- .breadcrumb-item+.breadcrumb-item::before {
+        .breadcrumb-item+.breadcrumb-item::before {
             content: ">";
         }
     </style>
@@ -403,12 +420,12 @@
 <body class="page-body">
     <!-- Header Partial -->
     <%- include("../../views/partials/user/header") %>
-     <div class="shop-header">
+    <div class="shop-header">
         <div class="max-w-7xl mx-auto px-4">
             <nav aria-label="breadcrumb">
                 <ol class="flex space-x-2 text-sm">
                     <li><a href="/" class="text-blue-600 hover:underline">Home</a></li>
-                     <li><a href="/shop" class="text-blue-600 hover:underline"><span class="mx-2 text-black">></span>Shop</a></li>
+                    <li><a href="/shop" class="text-blue-600 hover:underline"><span class="mx-2 text-black">></span>Shop</a></li>
                     <li class="flex items-center"><span class="mx-2">></span><span class="text-gray-500">Order</span></li>
                 </ol>
             </nav>
@@ -519,104 +536,106 @@
     <!-- Add/Edit Address Modal -->
     <div id="addressModal" class="modal-overlay hidden">
         <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title" id="addressModalTitle">Add Address</h3>
-            </div>
-            <form id="addressForm">
+            <h3 class="section-title" id="addressModalTitle">Add Address</h3>
+            <form id="addressForm" class="form">
                 <input type="hidden" id="addressId">
                 <div class="form-group">
-                    <label class="form-label" for="fullName">Full Name *</label>
-                    <input type="text" id="fullName" class="form-input" required>
+                    <label class="form-label" for="fullName">Full Name <span class="required">*</span></label>
+                    <input type="text" id="fullName" class="form-input" placeholder="Enter your full name" required>
                     <span class="error-message" id="error-fullName"></span>
                 </div>
                 <div class="form-group">
-                    <label class="form-label" for="phone">Phone Number * (10 digit mobile number)</label>
-                    <input type="text" id="phone" class="form-input" required pattern="\d{10}" title="Please enter a 10-digit mobile number">
+                    <label class="form-label" for="phone">Phone Number <span class="required">*</span> (10 digit mobile number)</label>
+                    <input type="tel" id="phone" class="form-input" placeholder="10 digit mobile number" required pattern="\d{10}" title="Please enter a 10-digit mobile number">
                     <span class="error-message" id="error-phone"></span>
                 </div>
                 <div class="form-group">
-                    <label class="form-label" for="flat">Flat, House no., Building, Company *</label>
-                    <input type="text" id="flat" class="form-input" required>
+                    <label class="form-label" for="flat">Flat, House no., Building, Company <span class="required">*</span></label>
+                    <input type="text" id="flat" class="form-input" placeholder="Enter house details" required>
                     <span class="error-message" id="error-flat"></span>
                 </div>
                 <div class="form-group">
-                    <label class="form-label" for="area">Area, Street, Sector, Village *</label>
-                    <input type="text" id="area" class="form-input" required>
+                    <label class="form-label" for="area">Area, Street, Sector, Village <span class="required">*</span></label>
+                    <input type="text" id="area" class="form-input" placeholder="Enter area details" required>
                     <span class="error-message" id="error-area"></span>
                 </div>
-                <div class="form-group">
-                    <label class="form-label" for="pincode">Pincode * (6 digits [0-9] PIN code)</label>
-                    <input type="text" id="pincode" class="form-input" required pattern="\d{6}" title="Please enter a 6-digit PIN code">
-                    <span class="error-message" id="error-pincode"></span>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="pincode">Pincode <span class="required">*</span> (6 digits [0-9] PIN code)</label>
+                        <input type="text" id="pincode" class="form-input" placeholder="6 digits [0-9] PIN code" required pattern="\d{6}" title="Please enter a 6-digit PIN code">
+                        <span class="error-message" id="error-pincode"></span>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="landmark">Landmark (optional)</label>
+                        <input type="text" id="landmark" class="form-input" placeholder="e.g., near Apollo Hospital">
+                        <span class="error-message" id="error-landmark"></span>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label class="form-label" for="landmark">Landmark (optional)</label>
-                    <input type="text" id="landmark" class="form-input" placeholder="e.g., near Apollo Hospital">
-                    <span class="error-message" id="error-landmark"></span>
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="city">City/Town *</label>
-                    <input type="text" id="city" class="form-input" required>
-                    <span class="error-message" id="error-city"></span>
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="state">State *</label>
-                    <select id="state" class="form-select" required>
-                        <option value="">Select your state</option>
-                        <option value="Andhra Pradesh">Andhra Pradesh</option>
-                        <option value="Arunachal Pradesh">Arunachal Pradesh</option>
-                        <option value="Assam">Assam</option>
-                        <option value="Bihar">Bihar</option>
-                        <option value="Chhattisgarh">Chhattisgarh</option>
-                        <option value="Goa">Goa</option>
-                        <option value="Gujarat">Gujarat</option>
-                        <option value="Haryana">Haryana</option>
-                        <option value="Himachal Pradesh">Himachal Pradesh</option>
-                        <option value="Jharkhand">Jharkhand</option>
-                        <option value="Karnataka">Karnataka</option>
-                        <option value="Kerala">Kerala</option>
-                        <option value="Madhya Pradesh">Madhya Pradesh</option>
-                        <option value="Maharashtra">Maharashtra</option>
-                        <option value="Manipur">Manipur</option>
-                        <option value="Meghalaya">Meghalaya</option>
-                        <option value="Mizoram">Mizoram</option>
-                        <option value="Nagaland">Nagaland</option>
-                        <option value="Odisha">Odisha</option>
-                        <option value="Punjab">Punjab</option>
-                        <option value="Rajasthan">Rajasthan</option>
-                        <option value="Sikkim">Sikkim</option>
-                        <option value="Tamil Nadu">Tamil Nadu</option>
-                        <option value="Telangana">Telangana</option>
-                        <option value="Tripura">Tripura</option>
-                        <option value="Uttar Pradesh">Uttar Pradesh</option>
-                        <option value="Uttarakhand">Uttarakhand</option>
-                        <option value="West Bengal">West Bengal</option>
-                        <option value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</option>
-                        <option value="Chandigarh">Chandigarh</option>
-                        <option value="Dadra and Nagar Haveli and Daman and Diu">Dadra and Nagar Haveli and Daman and Diu</option>
-                        <option value="Delhi">Delhi</option>
-                        <option value="Jammu and Kashmir">Jammu and Kashmir</option>
-                        <option value="Ladakh">Ladakh</option>
-                        <option value="Lakshadweep">Lakshadweep</option>
-                        <option value="Puducherry">Puducherry</option>
-                    </select>
-                    <span class="error-message" id="error-state"></span>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="city">City/Town <span class="required">*</span></label>
+                        <input type="text" id="city" class="form-input" placeholder="Enter city/town" required>
+                        <span class="error-message" id="error-city"></span>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="state">State <span class="required">*</span></label>
+                        <select id="state" class="form-select" required>
+                            <option value="">Select your state</option>
+                            <option value="Andhra Pradesh">Andhra Pradesh</option>
+                            <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+                            <option value="Assam">Assam</option>
+                            <option value="Bihar">Bihar</option>
+                            <option value="Chhattisgarh">Chhattisgarh</option>
+                            <option value="Goa">Goa</option>
+                            <option value="Gujarat">Gujarat</option>
+                            <option value="Haryana">Haryana</option>
+                            <option value="Himachal Pradesh">Himachal Pradesh</option>
+                            <option value="Jharkhand">Jharkhand</option>
+                            <option value="Karnataka">Karnataka</option>
+                            <option value="Kerala">Kerala</option>
+                            <option value="Madhya Pradesh">Madhya Pradesh</option>
+                            <option value="Maharashtra">Maharashtra</option>
+                            <option value="Manipur">Manipur</option>
+                            <option value="Meghalaya">Meghalaya</option>
+                            <option value="Mizoram">Mizoram</option>
+                            <option value="Nagaland">Nagaland</option>
+                            <option value="Odisha">Odisha</option>
+                            <option value="Punjab">Punjab</option>
+                            <option value="Rajasthan">Rajasthan</option>
+                            <option value="Sikkim">Sikkim</option>
+                            <option value="Tamil Nadu">Tamil Nadu</option>
+                            <option value="Telangana">Telangana</option>
+                            <option value="Tripura">Tripura</option>
+                            <option value="Uttar Pradesh">Uttar Pradesh</option>
+                            <option value="Uttarakhand">Uttarakhand</option>
+                            <option value="West Bengal">West Bengal</option>
+                            <option value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</option>
+                            <option value="Chandigarh">Chandigarh</option>
+                            <option value="Dadra and Nagar Haveli and Daman and Diu">Dadra and Nagar Haveli and Daman and Diu</option>
+                            <option value="Delhi">Delhi</option>
+                            <option value="Jammu and Kashmir">Jammu and Kashmir</option>
+                            <option value="Ladakh">Ladakh</option>
+                            <option value="Lakshadweep">Lakshadweep</option>
+                            <option value="Puducherry">Puducherry</option>
+                        </select>
+                        <span class="error-message" id="error-state"></span>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label class="form-label">Address Type</label>
                     <div class="radio-group">
                         <label class="radio-label">
-                            <input type="radio" name="addressType" value="Home" required> Home
+                            <input type="radio" name="addressType" value="Home" class="form-radio" required> Home
                         </label>
                         <label class="radio-label">
-                            <input type="radio" name="addressType" value="Work"> Work
+                            <input type="radio" name="addressType" value="Work" class="form-radio"> Work
                         </label>
                     </div>
                 </div>
                 <div class="form-group">
                     <div class="checkbox-group">
                         <label class="checkbox-label">
-                            <input type="checkbox" id="isDefault"> Make this my default address
+                            <input type="checkbox" id="isDefault" class="form-checkbox"> Make this my default address
                         </label>
                     </div>
                 </div>
@@ -633,13 +652,11 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h3 class="modal-title">Confirm Deletion</h3>
-                <div class="modal-message">
-                    Are you sure you want to delete this address?
-                </div>
-                <div class="button-group">
-                    <button type="button" class="btn btn-secondary" onclick="closeDeleteAddressModal()">Cancel</button>
-                    <button type="button" class="btn btn-danger" onclick="confirmDeleteAddress()">Confirm</button>
-                </div>
+            </div>
+            <p class="modal-message">Are you sure you want to delete this address?</p>
+            <div class="button-group">
+                <button type="button" class="btn btn-secondary" onclick="closeDeleteAddressModal()">Cancel</button>
+                <button type="button" class="btn btn-danger" onclick="confirmDeleteAddress()">Confirm</button>
             </div>
         </div>
     </div>
@@ -684,8 +701,8 @@
             document.querySelector('input[name="addressType"][value="Home"]').checked = true;
             document.getElementById('isDefault').checked = false;
             document.getElementById('addressModal').classList.remove('hidden');
+            document.getElementById('addressModal').classList.add('modal-visible');
             document.getElementById('fullName').focus();
-            // Clear all error messages
             ['fullName', 'phone', 'flat', 'area', 'pincode', 'landmark', 'city', 'state'].forEach(id => {
                 const errorEl = document.getElementById(`error-${id}`);
                 if (errorEl) {
@@ -709,8 +726,8 @@
             document.querySelector(`input[name="addressType"][value="${addressType}"]`).checked = true;
             document.getElementById('isDefault').checked = isDefault === 'true';
             document.getElementById('addressModal').classList.remove('hidden');
+            document.getElementById('addressModal').classList.add('modal-visible');
             document.getElementById('fullName').focus();
-            // Clear all error messages
             ['fullName', 'phone', 'flat', 'area', 'pincode', 'landmark', 'city', 'state'].forEach(id => {
                 const errorEl = document.getElementById(`error-${id}`);
                 if (errorEl) {
@@ -722,7 +739,7 @@
 
         function closeAddressModal() {
             document.getElementById('addressModal').classList.add('hidden');
-            // Clear all error messages
+            document.getElementById('addressModal').classList.remove('modal-visible');
             ['fullName', 'phone', 'flat', 'area', 'pincode', 'landmark', 'city', 'state'].forEach(id => {
                 const errorEl = document.getElementById(`error-${id}`);
                 if (errorEl) {
@@ -735,10 +752,12 @@
         function openDeleteAddressModal(id) {
             currentAddressId = id;
             document.getElementById('deleteAddressModal').classList.remove('hidden');
+            document.getElementById('deleteAddressModal').classList.add('modal-visible');
         }
 
         function closeDeleteAddressModal() {
             document.getElementById('deleteAddressModal').classList.add('hidden');
+            document.getElementById('deleteAddressModal').classList.remove('modal-visible');
             currentAddressId = '';
         }
 
@@ -772,7 +791,6 @@
         function validateAddressForm() {
             let isValid = true;
 
-            // Helper functions
             function setError(id, message) {
                 const errorEl = document.getElementById(`error-${id}`);
                 if (errorEl) {
@@ -791,10 +809,8 @@
                 }
             }
 
-            // Clear all previous errors
             ['fullName', 'phone', 'flat', 'area', 'pincode', 'landmark', 'city', 'state'].forEach(clearError);
 
-            // Get form values
             const fullName = document.getElementById('fullName').value.trim();
             const phone = document.getElementById('phone').value.trim();
             const flat = document.getElementById('flat').value.trim();
@@ -805,7 +821,6 @@
             const state = document.getElementById('state').value;
             const addressType = document.querySelector('input[name="addressType"]:checked');
 
-            // Full Name validation
             if (!fullName) {
                 setError('fullName', 'Full Name is required');
             } else if (fullName.length < 2) {
@@ -814,35 +829,30 @@
                 setError('fullName', 'Full Name can only contain letters, spaces, and periods');
             }
 
-            // Phone validation
             if (!phone) {
                 setError('phone', 'Phone number is required');
             } else if (!/^\d{10}$/.test(phone)) {
                 setError('phone', 'Enter a valid 10-digit mobile number');
             }
 
-            // Flat validation
             if (!flat) {
                 setError('flat', 'Flat/House number is required');
             } else if (flat.length < 2) {
                 setError('flat', 'Flat/House number must be at least 2 characters');
             }
 
-            // Area validation
             if (!area) {
                 setError('area', 'Area/Street is required');
             } else if (area.length < 3) {
                 setError('area', 'Area/Street must be at least 3 characters');
             }
 
-            // Pincode validation
             if (!pincode) {
                 setError('pincode', 'Pincode is required');
             } else if (!/^\d{6}$/.test(pincode)) {
                 setError('pincode', 'Enter a valid 6-digit PIN code');
             }
 
-            // City validation
             if (!city) {
                 setError('city', 'City is required');
             } else if (city.length < 2) {
@@ -851,18 +861,15 @@
                 setError('city', 'City can only contain letters and spaces');
             }
 
-            // State validation
             if (!state) {
                 setError('state', 'Please select a state');
             }
 
-            // Address Type validation
             if (!addressType) {
                 showToast('Please select an address type', 'error');
                 isValid = false;
             }
 
-            // Landmark is optional, but if provided, should meet minimum requirements
             if (landmark && landmark.length < 3) {
                 setError('landmark', 'Landmark must be at least 3 characters if provided');
             }

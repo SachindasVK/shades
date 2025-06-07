@@ -1,5 +1,3 @@
-// Backend controller file - fixed version
-
 const User = require("../../models/userSchema");
 const Address = require("../../models/addressSchema")
 const nodemailer = require("nodemailer");

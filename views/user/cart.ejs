@@ -383,7 +383,7 @@
                         <% if (cartItems && cartItems.length > 0) { %>
                             <% cartItems.forEach((item, index) => { %>
                                 <div class="cart-item" data-product-id="<%= item.product._id %>" data-index="<%= index %>">
-                                    <a href="/productDetails?id=<%= item.product._id %>">
+                                    <a vibranium-id="product-image-link" href="/productDetails?id=<%= item.product._id %>">
                                         <img src="<%= item.product.productImage && item.product.productImage[0] || 'https://via.placeholder.com/80?text=Product' %>"
                                              alt="<%= item.product.productName %>"
                                              onerror="this.src='https://via.placeholder.com/80?text=Product'">
@@ -413,7 +413,7 @@
                                             </a>
                                         </div>
                                     </div>
-                                    <div class="item-price">
+                                    <div class="item-price" data-price="<%= item.product.salePrice || item.product.regularPrice || 0 %>">
                                         ₹<%= (item.totalPrice || item.product.salePrice || 0).toLocaleString('en-IN') %>
                                     </div>
                                 </div>
@@ -451,10 +451,9 @@
                                 <span>₹<%= subtotal.toLocaleString('en-IN') %></span>
                             </div>
                             <div class="summary-item">
-    <span>Discount</span>
-    <span class="text-green-600">- ₹<%= discount.toLocaleString('en-IN') %></span>
-</div>
-
+                                <span>Discount</span>
+                                <span class="text-green-600">- ₹<%= discount.toLocaleString('en-IN') %></span>
+                            </div>
                             <div class="summary-item">
                                 <span>Delivery Charge</span>
                                 <span class="<%= deliveryCharge === 0 ? 'free' : '' %>">
@@ -545,9 +544,77 @@
                 
                 if (result.success) {
                     showToast('Product removed from cart!', 'success');
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 100);
+                    // Remove the cart item from the UI
+                    const removedItem = document.querySelector(`.cart-item[data-product-id="${productIdToRemove}"]`);
+                    if (removedItem) {
+                        removedItem.remove();
+                    }
+
+                    // Update cart items count
+                    const cartItems = document.querySelectorAll('.cart-item');
+                    const itemCount = cartItems.length;
+
+                    // Check if cart is empty
+                    if (itemCount === 0) {
+                        document.getElementById('cart-items').innerHTML = `
+                            <div class="empty-cart">
+                                <i class="fas fa-shopping-cart"></i>
+                                <h4>Your cart is empty</h4>
+                                <p>Add some products to get started!</p>
+                            </div>`;
+                        // Disable checkout button
+                        document.getElementById('checkout-btn').setAttribute('disabled', 'true');
+                        // Update order summary for empty cart
+                        document.getElementById('order-summary-items').innerHTML = `
+                            <div class="summary-item">
+                                <span>Subtotal (0 items)</span>
+                                <span>₹0</span>
+                            </div>
+                            <div class="summary-item total">
+                                <span>TOTAL</span>
+                                <span>₹0</span>
+                            </div>`;
+                    } else {
+                        // Calculate new subtotal
+                        let subtotal = 0;
+                        cartItems.forEach(item => {
+                            const price = parseFloat(item.querySelector('.item-price').getAttribute('data-price'));
+                            const quantity = parseInt(item.querySelector('.quantity-control input').value);
+                            subtotal += price * quantity;
+                        });
+
+                        // Calculate discounts and other charges
+                        const discount = subtotal > 1500 ? 200 : 0;
+                        const deliveryCharge = subtotal > 1000 ? 0 : 50;
+                        const gst = Math.round(subtotal * 0.18);
+                        const total = subtotal + deliveryCharge + gst;
+
+                        // Update order summary
+                        document.getElementById('order-summary-items').innerHTML = `
+                            <div class="summary-item">
+                                <span>Subtotal (${itemCount} items)</span>
+                                <span>₹${subtotal.toLocaleString('en-IN')}</span>
+                            </div>
+                            <div class="summary-item">
+                                <span>Discount</span>
+                                <span class="text-green-600">- ₹${discount.toLocaleString('en-IN')}</span>
+                            </div>
+                            <div class="summary-item">
+                                <span>Delivery Charge</span>
+                                <span class="${deliveryCharge === 0 ? 'free' : ''}">
+                                    ₹${deliveryCharge.toLocaleString('en-IN')}
+                                    ${deliveryCharge === 0 ? ' FREE DELIVERY' : ''}
+                                </span>
+                            </div>
+                            <div class="summary-item">
+                                <span>GST (18%)</span>
+                                <span>₹${gst.toLocaleString('en-IN')}</span>
+                            </div>
+                            <div class="summary-item total">
+                                <span>TOTAL</span>
+                                <span>₹${total.toLocaleString('en-IN')}</span>
+                            </div>`;
+                    }
                 } else {
                     showToast(result.message || 'Failed to remove item', 'error');
                 }
@@ -557,42 +624,6 @@
             } finally {
                 showLoading(false);
                 closeRemoveCartModal();
-            }
-        }
-
-        // Update quantity function
-        async function updateQuantity(productId, newQuantity) {
-            if (newQuantity < 1) return;
-            if (newQuantity > MAX_QUANTITY_PER_PRODUCT) {
-                showToast(`Maximum quantity allowed is ${MAX_QUANTITY_PER_PRODUCT}`, 'error');
-                return;
-            }
-
-            try {
-                showLoading(true);
-                const response = await fetch('/cart/update-quantity', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        productId: productId,
-                        quantity: newQuantity
-                    })
-                });
-
-                const result = await response.json();
-                
-                if (result.success) {
-                    window.location.reload();
-                } else {
-                    showToast(result.message || 'Failed to update quantity', 'error');
-                }
-            } catch (error) {
-                console.error('Error updating quantity:', error);
-                showToast('Error updating quantity', 'error');
-            } finally {
-                showLoading(false);
             }
         }
 
@@ -629,9 +660,77 @@
                     
                     if (cartResult.success) {
                         showToast('Product moved to wishlist!', 'success');
-                        setTimeout(() => {
-                            window.location.reload();
-                        }, 100);
+                        // Remove the cart item from the UI
+                        const removedItem = document.querySelector(`.cart-item[data-product-id="${productId}"]`);
+                        if (removedItem) {
+                            removedItem.remove();
+                        }
+
+                        // Update cart items count
+                        const cartItems = document.querySelectorAll('.cart-item');
+                        const itemCount = cartItems.length;
+
+                        // Check if cart is empty
+                        if (itemCount === 0) {
+                            document.getElementById('cart-items').innerHTML = `
+                                <div class="empty-cart">
+                                    <i class="fas fa-shopping-cart"></i>
+                                    <h4>Your cart is empty</h4>
+                                    <p>Add some products to get started!</p>
+                                </div>`;
+                            // Disable checkout button
+                            document.getElementById('checkout-btn').setAttribute('disabled', 'true');
+                            // Update order summary for empty cart
+                            document.getElementById('order-summary-items').innerHTML = `
+                                <div class="summary-item">
+                                    <span>Subtotal (0 items)</span>
+                                    <span>₹0</span>
+                                </div>
+                                <div class="summary-item total">
+                                    <span>TOTAL</span>
+                                    <span>₹0</span>
+                                </div>`;
+                        } else {
+                            // Calculate new subtotal
+                            let subtotal = 0;
+                            cartItems.forEach(item => {
+                                const price = parseFloat(item.querySelector('.item-price').getAttribute('data-price'));
+                                const quantity = parseInt(item.querySelector('.quantity-control input').value);
+                                subtotal += price * quantity;
+                            });
+
+                            // Calculate discounts and other charges
+                            const discount = subtotal > 1500 ? 200 : 0;
+                            const deliveryCharge = subtotal > 1000 ? 0 : 50;
+                            const gst = Math.round(subtotal * 0.18);
+                            const total = subtotal + deliveryCharge + gst;
+
+                            // Update order summary
+                            document.getElementById('order-summary-items').innerHTML = `
+                                <div class="summary-item">
+                                    <span>Subtotal (${itemCount} items)</span>
+                                    <span>₹${subtotal.toLocaleString('en-IN')}</span>
+                                </div>
+                                <div class="summary-item">
+                                    <span>Discount</span>
+                                    <span class="text-green-600">- ₹${discount.toLocaleString('en-IN')}</span>
+                                </div>
+                                <div class="summary-item">
+                                    <span>Delivery Charge</span>
+                                    <span class="${deliveryCharge === 0 ? 'free' : ''}">
+                                        ₹${deliveryCharge.toLocaleString('en-IN')}
+                                        ${deliveryCharge === 0 ? ' FREE DELIVERY' : ''}
+                                    </span>
+                                </div>
+                                <div class="summary-item">
+                                    <span>GST (18%)</span>
+                                    <span>₹${gst.toLocaleString('en-IN')}</span>
+                                </div>
+                                <div class="summary-item total">
+                                    <span>TOTAL</span>
+                                    <span>₹${total.toLocaleString('en-IN')}</span>
+                                </div>`;
+                        }
                     } else {
                         showToast('Added to wishlist but failed to remove from cart', 'warning');
                     }
@@ -641,6 +740,42 @@
             } catch (error) {
                 console.error('Error moving to wishlist:', error);
                 showToast('Error moving item to wishlist', 'error');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // Update quantity function
+        async function updateQuantity(productId, newQuantity) {
+            if (newQuantity < 1) return;
+            if (newQuantity > MAX_QUANTITY_PER_PRODUCT) {
+                showToast(`Maximum quantity allowed is ${MAX_QUANTITY_PER_PRODUCT}`, 'error');
+                return;
+            }
+
+            try {
+                showLoading(true);
+                const response = await fetch('/cart/update-quantity', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        productId: productId,
+                        quantity: newQuantity
+                    })
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    window.location.reload();
+                } else {
+                    showToast(result.message || 'Failed to update quantity', 'error');
+                }
+            } catch (error) {
+                console.error('Error updating quantity:', error);
+                showToast('Error updating quantity', 'error');
             } finally {
                 showLoading(false);
             }

@@ -6,11 +6,15 @@ const productController = require('../controller/user/productController')
 const wishlistController = require('../controller/user/wishlistController')
 const orderController = require('../controller/user/orderController')
 const cartController = require('../controller/user/cartController')
+const checkoutController = require('../controller/user/checkoutController')
+const walletController = require('../controller/user/walletController')
 const passport = require('passport')
 const {userAuth} = require('../middlewares/auth')
 const {userUpload} = require('../helpers/multer')
-const {wishlistCount} = require('../middlewares/wishlistCount')
-router.use(wishlistCount)
+
+
+
+
 router.get('/pageNotFound',userController.pageNotFound)
 
 //sign up management
@@ -84,10 +88,17 @@ router.get('/wishlist',userAuth,wishlistController.loadWishlist)
 router.post('/addtowishlist',userAuth,wishlistController.addToWishlist)
 router.delete('/wishlist/remove/:id',userAuth,wishlistController.removeFromWishlist)
 router.post('/wishlist/status',userAuth,wishlistController.getWishlistStatus)
+
 //Cart management
 router.get('/cart',userAuth,cartController.getCart)
 router.post('/cart/add',userAuth,cartController.addToCart)
 router.post('/cart/remove',userAuth,cartController.removeCart)
 router.post('/cart/update-quantity',userAuth,cartController.updateQuantity);
+router.post('/cart/status',userAuth,cartController.getCartStatus)
 
+//checkout management
+router.get('/select-address',checkoutController.getSelectAddress)
+
+//wallet management
+router.get('/wallet',userAuth,walletController.getWallet)
 module.exports = router

@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Wallet - SHADES</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@700&display=swap"
+        rel="stylesheet">
+    <style>
+        .page-body {
+            background-color: #f3f4f6;
+        }
+
+        .containeer {
+            max-width: 95%;
+            margin-left: auto;
+            margin-right: auto;
+            display: flex;
+            gap: 2rem;
+            padding: 10px;
+        }
+
+        .sidebar {
+            width: 20rem;
+            background-color: #ffffff;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            height: fit-content;
+        }
+
+        .profile-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .profile-icon {
+            width: 3rem;
+            height: 3rem;
+            background-color: #a1a1a1;
+            border-radius: 9999px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .profile-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 9999px;
+        }
+
+        .greeting {
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
+
+        .username {
+            color: #1f2937;
+            font-weight: 600;
+        }
+
+        .menu-link {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            color: #4b5563;
+            font-size: 0.875rem;
+        }
+
+        .menu-link:hover {
+            background-color: #f9fafb;
+        }
+
+        .menu-link.active {
+            background-color: #eff6ff;
+            color: #2563eb;
+        }
+
+        .menu-icon {
+            width: 1.25rem;
+            margin-right: 0.75rem;
+        }
+
+        .logout-link {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            color: #dc2626;
+            font-size: 0.875rem;
+        }
+
+        .logout-link:hover {
+            background-color: #fef2f2;
+        }
+
+        .main-content {
+            flex: 1;
+            background-color: #ffffff;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 1.5rem;
+        }
+
+        .wallet-balance {
+            background: linear-gradient(90deg, #1a1a1a 0%, #333333 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .wallet-balance::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="rgba(255,255,255,0.1)" fill-opacity="1" d="M0,160L48,176C96,192,192,224,288,213.3C384,203,480,149,576,144C672,139,768,181,864,192C960,203,1056,181,1152,165.3C1248,149,1344,139,1392,133.3L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>') no-repeat center;
+            background-size: cover;
+            opacity: 0.3;
+        }
+
+        .balance-label {
+            font-size: 1rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .balance-amount {
+            font-size: 2rem;
+            font-weight: 700;
+            position: relative;
+            z-index: 1;
+        }
+
+        .limit-note {
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: background-color 0.2s ease;
+        }
+
+        .btn-primary {
+            background-color: #ffffff;
+            color: #333333;
+        }
+
+        .btn-primary:hover {
+            background-color: #f3f4f6;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .modal-header {
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e5e7eb;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .modal-message {
+            font-size: 1rem;
+            color: #374151;
+            margin-bottom: 1rem;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 1.5rem;
+        }
+
+        .btn-secondary {
+            background-color: #f3f4f6;
+            color: #374151;
+            border: 1px solid #d1d5db;
+        }
+
+        .btn-secondary:hover {
+            background-color: #e5e7eb;
+        }
+
+        .btn-proceed {
+            background-color: #2563eb;
+            color: white;
+        }
+
+        .btn-proceed:hover {
+            background-color: #1d4ed8;
+        }
+
+        .transaction-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .transaction-details {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .transaction-icon {
+            width: 2.5rem;
+            height: 2.5rem;
+            background: linear-gradient(135deg, #22c55e 0%, #86efac 100%);
+            border-radius: 9999px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .transaction-title {
+            font-size: 1rem;
+            font-weight: 500;
+            color: #e5e7eb;
+        }
+
+        .transaction-date {
+            font-size: 0.875rem;
+            color: #9ca3af;
+        }
+
+        .transaction-amount {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #22c55e;
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: flex-end;
+            margin-bottom: 1rem;
+        }
+
+        .filter-group select {
+            padding: 0.5rem 2rem 0.5rem 0.5rem;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20"><path stroke="%236b7280" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 8l4 4 4-4"/></svg>') no-repeat right 0.5rem center;
+            background-size: 1rem;
+            appearance: none;
+        }
+
+        .filter-group .btn-proceed {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+        }
+
+        .pagination {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            margin-top: 1.5rem;
+            color: #6b7280;
+        }
+
+        .stats-card {
+            background: linear-gradient(90deg, #2563eb 0%, #60a5fa 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 100%;
+        }
+
+        .stats-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="rgba(255,255,255,0.1)" fill-opacity="1" d="M0,160L48,176C96,192,192,224,288,213.3C384,203,480,149,576,144C672,139,768,181,864,192C960,203,1056,181,1152,165.3C1248,149,1344,139,1392,133.3L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>') no-repeat center;
+            background-size: cover;
+            opacity: 0.3;
+        }
+
+        .stats-card h3 {
+            font-size: 1rem;
+            font-weight: 500;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .stats-card p {
+            font-size: 1.25rem;
+            font-weight: 600;
+            position: relative;
+            z-index: 1;
+        }
+
+        .stats-card .text-sm {
+            font-size: 0.875rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .referral-link {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #ffffff;
+            font-size: 0.875rem;
+            text-decoration: underline;
+            position: relative;
+            z-index: 1;
+            margin-top: auto;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            min-width: 250px;
+            background-color: #1f2937;
+            color: white;
+            padding: 1rem;
+            border-radius: 4px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 2000;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .toast.success {
+            background-color: #22c55e;
+        }
+
+        .toast.error {
+            background-color: #ef4444;
+        }
+
+        .shop-header {
+            background-color: white;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 1.5rem 0;
+            margin-bottom: 2rem;
+        }
+
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .radio-group label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            color: #374151;
+        }
+
+        .transaction-section {
+            background: linear-gradient(90deg, #1a1a1a 0%, #333333 100%);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .transaction-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="rgba(255,255,255,0.1)" fill-opacity="1" d="M0,160L48,176C96,192,192,224,288,213.3C384,203,480,149,576,144C672,139,768,181,864,192C960,203,1056,181,1152,165.3C1248,149,1344,139,1392,133.3L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>') no-repeat center;
+            background-size: cover;
+            opacity: 0.3;
+        }
+
+        .section-subtitle {
+            font-size: 1.125rem;
+            font-weight: 500;
+            color: #e5e7eb;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+    </style>
+</head>
+
+<body class="page-body">
+    <%- include("../../views/partials/user/header") %>
+    <div class="shop-header">
+        <div class="max-w-7xl mx-auto px-4">
+            <nav aria-label="breadcrumb">
+                <ol class="flex space-x-2 text-sm">
+                    <li><a href="/" class="text-blue-600 hover:underline">Home</a></li>
+                    <li><span class="mx-2 text-black">></span><a href="/shop" class="text-blue-600 hover:underline">Shop</a></li>
+                    <li><span class="mx-2">></span><span class="text-gray-500">Wallet</span></li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="containeer">
+        <div class="sidebar">
+            <div class="profile-header">
+                <div class="profile-icon">
+                    <% if (user.image) { %>
+                        <img src="/Uploads/userProfileimages/<%= user.image %>" alt="Profile Image"
+                            class="profile-image" onerror="this.src='https://via.placeholder.com/80?text=Profile'">
+                    <% } else { %>
+                        <i class="fas fa-user"></i>
+                    <% } %>
+                </div>
+                <div>
+                    <div class="greeting">Hello,</div>
+                    <div class="username"><%= user.name %></div>
+                </div>
+            </div>
+            <nav class="menu">
+                <ul class="menu-list">
+                    <li class="menu-item">
+                        <a href="/profile" class="menu-link">
+                            <i class="fas fa-user menu-icon"></i> Profile Information
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="/orders" class="menu-link">
+                            <i class="fas fa-box menu-icon"></i> My Orders
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="/address" class="menu-link">
+                            <i class="fas fa-home menu-icon"></i> Manage Addresses
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="/wallet" class="menu-link active">
+                            <i class="fas fa-wallet menu-icon"></i> My Wallet
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="/wishlist" class="menu-link">
+                            <i class="fas fa-heart menu-icon"></i> My Wishlist
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="/referals" class="menu-link">
+                            <i class="fas fa-users menu-icon"></i> Refer Friends
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="/changepassword" class="menu-link">
+                            <i class="fas fa-lock menu-icon"></i> Change Password
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="/logout" class="logout-link">
+                            <i class="fas fa-sign-out-alt menu-icon"></i> Log out
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+
+        <div class="main-content">
+            <h2 class="section-title">My Wallet</h2>
+
+            <!-- Wallet Balance and Rewards Section -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <!-- Wallet Balance Section -->
+                <div class="wallet-balance md:col-span-2">
+                    <h3 class="balance-label">Available Balance</h3>
+                    <p class="balance-amount">₹2,00,000.00</p>
+                    <button class="btn btn-primary mt-4" onclick="openAddMoneyModal()">Add Money</button>
+                    <p class="limit-note">
+                        <i class="fas fa-info-circle"></i>
+                        You can add up to ₹2.5 lakhs
+                    </p>
+                </div>
+
+                <!-- Rewards Section -->
+                <div class="stats-card">
+                    <h3>Rewards</h3>
+                    <div class="mt-2">
+                        <p class="text-sm">Cashback Earned</p>
+                        <p>₹0.00</p>
+                    </div>
+                    <div class="mt-2">
+                        <p class="text-sm">Total Referrals</p>
+                        <p>0</p>
+                    </div>
+                    <a href="/referals" class="referral-link">
+                        <i class="fas fa-users"></i>
+                        View Referral Program
+                    </a>
+                </div>
+            </div>
+
+            <!-- Recent Transactions -->
+            <div class="transaction-section">
+                <h3 class="section-subtitle">Recent Transactions</h3>
+                <div class="filter-group">
+                    <select id="transactionFilter">
+                        <option value="all">All Transactions</option>
+                        <option value="added">Money Added</option>
+                        <option value="reward">Rewards</option>
+                    </select>
+                    <button class="btn btn-proceed" onclick="filterTransactions()">Apply</button>
+                </div>
+
+                <div id="transactionList">
+                    <div class="transaction-item">
+                        <div class="transaction-details">
+                            <div class="transaction-icon">
+                                <i class="fas fa-arrow-up"></i>
+                            </div>
+                            <div>
+                                <p class="transaction-title">Added via Razorpay</p>
+                                <p class="transaction-date">7 Jun 2025</p>
+                            </div>
+                        </div>
+                        <p class="transaction-amount">+ ₹2,00,000.00</p>
+                    </div>
+                </div>
+
+                <!-- Pagination -->
+                <div class="pagination">
+                    <button id="prevPage" onclick="changePage(-1)" disabled>Previous</button>
+                    <span id="pageInfo">1 of 1</span>
+                    <button id="nextPage" onclick="changePage(1)">Next</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Money Modal -->
+    <div id="addMoneyModal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Add Money to Wallet</h3>
+            </div>
+            <div class="modal-message">
+                <label for="amountInput" class="block text-sm font-medium text-gray-700">Enter Amount</label>
+                <input type="number" id="amountInput" class="w-full p-2 border rounded mt-1" placeholder="Enter amount" min="1" max="250000">
+                <label class="block text-sm font-medium text-gray-700 mt-4">Payment Method</label>
+                <div class="radio-group">
+                    <label>
+                        <input type="radio" name="paymentMethod" value="razorpay" checked>
+                        Razorpay
+                    </label>
+                    <label>
+                        <input type="radio" name="paymentMethod" value="other" disabled>
+                        Other (Coming Soon)
+                    </label>
+                </div>
+            </div>
+            <div class="button-group">
+                <button type="button" class="btn btn-secondary" onclick="closeAddMoneyModal()">Cancel</button>
+                <button type="button" class="btn btn-proceed" onclick="proceedToPay()">Proceed to Pay</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer"></div>
+
+    <%- include("../../views/partials/user/footer") %>
+
+    <script>
+        let currentPage = 1;
+        const transactionsPerPage = 10;
+        let allTransactions = [
+            { type: 'added', amount: 200000, date: '2025-06-07' }
+        ];
+
+        function showToast(message, type = 'success') {
+            const toastContainer = document.getElementById('toastContainer');
+            if (!toastContainer) {
+                console.error('Toast container not found in the DOM');
+                return;
+            }
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            toastContainer.appendChild(toast);
+            setTimeout(() => {
+                toast.classList.add('show');
+            }, 100);
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => {
+                    toast.remove();
+                }, 300);
+            }, 3000);
+        }
+
+        function openAddMoneyModal() {
+            const modal = document.getElementById('addMoneyModal');
+            if (modal) {
+                modal.classList.remove('hidden');
+            } else {
+                console.error('Add Money Modal not found in the DOM');
+                showToast('Failed to open modal', 'error');
+            }
+        }
+
+        function closeAddMoneyModal() {
+            const modal = document.getElementById('addMoneyModal');
+            const amountInput = document.getElementById('amountInput');
+            if (modal && amountInput) {
+                modal.classList.add('hidden');
+                amountInput.value = '';
+            } else {
+                console.error('Modal or amount input not found in the DOM');
+                showToast('Failed to close modal', 'error');
+            }
+        }
+
+        async function proceedToPay() {
+            const amountInput = document.getElementById('amountInput');
+            const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked');
+            
+            if (!amountInput || !paymentMethod) {
+                showToast('Required elements not found', 'error');
+                return;
+            }
+
+            const amount = amountInput.value;
+            if (!amount || amount <= 0 || amount > 250000) {
+                showToast('Please enter a valid amount (₹1 - ₹2,50,000)', 'error');
+                return;
+            }
+
+            if (paymentMethod.value !== 'razorpay') {
+                showToast('Only Razorpay is supported at the moment', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch('/wallet/add-money', {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({ amount: parseFloat(amount), paymentMethod: paymentMethod.value })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                if (data.success) {
+                    showToast('Money added successfully!', 'success');
+                    const balanceElement = document.querySelector('.balance-amount');
+                    if (balanceElement) {
+                        balanceElement.textContent = `₹${data.newBalance.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                    } else {
+                        console.error('Balance element not found in the DOM');
+                    }
+                    allTransactions.unshift({ type: 'added', amount: parseFloat(amount), date: new Date().toISOString().split('T')[0] });
+                    closeAddMoneyModal();
+                    filterTransactions();
+                } else {
+                    showToast(data.message || 'Failed to add money', 'error');
+                }
+            } catch (error) {
+                console.error('Error adding money:', error);
+                showToast('An error occurred. Please try again.', 'error');
+            }
+        }
+
+        function filterTransactions() {
+            const filter = document.getElementById('transactionFilter');
+            const transactionList = document.getElementById('transactionList');
+            const pageInfo = document.getElementById('pageInfo');
+            const prevPage = document.getElementById('prevPage');
+            const nextPage = document.getElementById('nextPage');
+
+            if (!filter || !transactionList || !pageInfo || !prevPage || !nextPage) {
+                showToast('Required elements for filtering not found', 'error');
+                return;
+            }
+
+            let filteredTransactions = allTransactions.filter(t => {
+                return filter.value === 'all' || t.type === filter.value;
+            });
+
+            const totalPages = Math.ceil(filteredTransactions.length / transactionsPerPage);
+            currentPage = Math.min(currentPage, totalPages || 1);
+            const start = (currentPage - 1) * transactionsPerPage;
+            const paginatedTransactions = filteredTransactions.slice(start, start + transactionsPerPage);
+
+            transactionList.innerHTML = paginatedTransactions.length > 0 ? paginatedTransactions.map(t => `
+                <div class="transaction-item">
+                    <div class="transaction-details">
+                        <div class="transaction-icon">
+                            <i class="fas fa-arrow-up"></i>
+                        </div>
+                        <div>
+                            <p class="transaction-title">Added via Razorpay</p>
+                            <p class="transaction-date">${new Date(t.date).toLocaleDateString('en-IN')}</p>
+                        </div>
+                    </div>
+                    <p class="transaction-amount">+ ₹${t.amount.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                </div>
+            `).join('') : '<p class="text-gray-400 italic">No transactions found</p>';
+
+            pageInfo.textContent = `${currentPage} of ${totalPages || 1}`;
+            prevPage.disabled = currentPage === 1;
+            nextPage.disabled = currentPage === totalPages || totalPages === 0;
+        }
+
+        function changePage(delta) {
+            currentPage += delta;
+            filterTransactions();
+        }
+
+        document.getElementById('addMoneyModal')?.addEventListener('click', function (e) {
+            if (e.target === this) {
+                closeAddMoneyModal();
+            }
+        });
+
+        // Initial fetch of transactions on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            filterTransactions();
+        });
+    </script>
+</body>
+
+</html>

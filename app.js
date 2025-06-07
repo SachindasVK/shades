@@ -11,8 +11,8 @@
  db()
  const app = express()
 
-app.use(express.json())//form data convert into json
 app.use(express.urlencoded({extended:true}))//convert querystring data
+app.use(express.json())//form data convert into json
 app.use(session({
    secret:process.env.SESSION_SECRET,
    resave:false,
