@@ -110,57 +110,32 @@
         }
 
         .section-title {
-            font-size: 1.5rem;
+            font-size: 1.125rem;
             font-weight: 600;
             color: #1f2937;
             margin-bottom: 1.5rem;
         }
 
         .wallet-balance {
-            background: linear-gradient(90deg, #1a1a1a 0%, #333333 100%);
+            background: linear-gradient(135deg, #1a1a1a 0%, #333333 100%);
             color: white;
             padding: 1.5rem;
             border-radius: 0.5rem;
-            margin-bottom: 1rem;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .wallet-balance::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="rgba(255,255,255,0.1)" fill-opacity="1" d="M0,160L48,176C96,192,192,224,288,213.3C384,203,480,149,576,144C672,139,768,181,864,192C960,203,1056,181,1152,165.3C1248,149,1344,139,1392,133.3L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>') no-repeat center;
-            background-size: cover;
-            opacity: 0.3;
-        }
-
-        .balance-label {
-            font-size: 1rem;
-            font-weight: 500;
-            margin-bottom: 0.5rem;
-            position: relative;
-            z-index: 1;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
 
         .balance-amount {
             font-size: 2rem;
             font-weight: 700;
-            position: relative;
-            z-index: 1;
         }
 
         .limit-note {
             font-size: 0.875rem;
+            color: #d1d5db;
             margin-top: 0.5rem;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-            position: relative;
-            z-index: 1;
+            gap: 0.25rem;
         }
 
         .btn {
@@ -175,7 +150,8 @@
 
         .btn-primary {
             background-color: #ffffff;
-            color: #333333;
+            color: #1f2937;
+            border: 1px solid #d1d5db;
         }
 
         .btn-primary:hover {
@@ -239,76 +215,64 @@
             background-color: #e5e7eb;
         }
 
-        .btn-proceed {
+        .badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .badge-success {
+            background-color: #22c55e;
+            color: white;
+        }
+
+        .badge-reward {
             background-color: #2563eb;
             color: white;
         }
 
-        .btn-proceed:hover {
-            background-color: #1d4ed8;
-        }
-
-        .transaction-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1rem 0;
-            border-bottom: 1px solid #e5e7eb;
-        }
-
-        .transaction-details {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .transaction-icon {
-            width: 2.5rem;
-            height: 2.5rem;
-            background: linear-gradient(135deg, #22c55e 0%, #86efac 100%);
-            border-radius: 9999px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .badge-failed {
+            background-color: #ef4444;
             color: white;
         }
 
-        .transaction-title {
-            font-size: 1rem;
-            font-weight: 500;
-            color: #e5e7eb;
+        .badge-pending {
+            background-color: #f59e0b;
+            color: white;
         }
 
-        .transaction-date {
-            font-size: 0.875rem;
-            color: #9ca3af;
+        .transaction-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
         }
 
-        .transaction-amount {
-            font-size: 1rem;
+        .transaction-table th,
+        .transaction-table td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .transaction-table th {
             font-weight: 600;
-            color: #22c55e;
+            color: #1f2937;
         }
 
         .filter-group {
             display: flex;
-            gap: 0.5rem;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
             justify-content: flex-end;
-            margin-bottom: 1rem;
         }
 
-        .filter-group select {
-            padding: 0.5rem 2rem 0.5rem 0.5rem;
+        .filter-group select,
+        .filter-group input {
+            padding: 0.5rem;
             border: 1px solid #d1d5db;
             border-radius: 6px;
-            font-size: 0.875rem;
-            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20"><path stroke="%236b7280" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 8l4 4 4-4"/></svg>') no-repeat right 0.5rem center;
-            background-size: 1rem;
-            appearance: none;
-        }
-
-        .filter-group .btn-proceed {
-            padding: 0.5rem 1rem;
             font-size: 0.875rem;
         }
 
@@ -317,65 +281,38 @@
             gap: 0.5rem;
             justify-content: center;
             margin-top: 1.5rem;
-            color: #6b7280;
+        }
+
+        .pagination button {
+            padding: 0.5rem 1rem;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            background-color: white;
+            cursor: pointer;
+        }
+
+        .pagination button:disabled {
+            background-color: #f3f4f6;
+            cursor: not-allowed;
         }
 
         .stats-card {
-            background: linear-gradient(90deg, #2563eb 0%, #60a5fa 100%);
-            color: white;
-            padding: 1.5rem;
+            background-color: #008cff4a;
+            padding: 1rem;
             border-radius: 0.5rem;
-            margin-bottom: 1rem;
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            min-height: 100%;
-        }
-
-        .stats-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="rgba(255,255,255,0.1)" fill-opacity="1" d="M0,160L48,176C96,192,192,224,288,213.3C384,203,480,149,576,144C672,139,768,181,864,192C960,203,1056,181,1152,165.3C1248,149,1344,139,1392,133.3L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>') no-repeat center;
-            background-size: cover;
-            opacity: 0.3;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
 
         .stats-card h3 {
-            font-size: 1rem;
-            font-weight: 500;
-            margin-bottom: 1rem;
-            position: relative;
-            z-index: 1;
+            font-size: 0.90rem;
+            color: #6b7280;
+            margin-bottom: 0.5rem;
         }
 
         .stats-card p {
             font-size: 1.25rem;
             font-weight: 600;
-            position: relative;
-            z-index: 1;
-        }
-
-        .stats-card .text-sm {
-            font-size: 0.875rem;
-            margin-bottom: 0.25rem;
-        }
-
-        .referral-link {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            color: #ffffff;
-            font-size: 0.875rem;
-            text-decoration: underline;
-            position: relative;
-            z-index: 1;
-            margin-top: auto;
+            color: #1f2937;
         }
 
         .toast {
@@ -414,49 +351,39 @@
             margin-bottom: 2rem;
         }
 
-        .radio-group {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-            margin-top: 1rem;
-        }
-
-        .radio-group label {
+        .transaction-item {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-            font-size: 0.875rem;
-            color: #374151;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #e5e7eb;
         }
 
-        .transaction-section {
-            background: linear-gradient(90deg, #1a1a1a 0%, #333333 100%);
-            border-radius: 0.5rem;
-            padding: 1rem;
+        .transaction-details {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .transaction-icon {
+            width: 2rem;
+            height: 2rem;
+            border-radius: 9999px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #22c55e;
             color: white;
-            position: relative;
-            overflow: hidden;
         }
 
-        .transaction-section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="rgba(255,255,255,0.1)" fill-opacity="1" d="M0,160L48,176C96,192,192,224,288,213.3C384,203,480,149,576,144C672,139,768,181,864,192C960,203,1056,181,1152,165.3C1248,149,1344,139,1392,133.3L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>') no-repeat center;
-            background-size: cover;
-            opacity: 0.3;
+        .transaction-date {
+            font-size: 0.875rem;
+            color: #6b7280;
         }
 
-        .section-subtitle {
-            font-size: 1.125rem;
-            font-weight: 500;
-            color: #e5e7eb;
-            margin-bottom: 1rem;
-            position: relative;
-            z-index: 1;
+        .transaction-amount {
+            font-weight: 600;
+            color: #22c55e;
         }
     </style>
 </head>
@@ -479,11 +406,10 @@
         <div class="sidebar">
             <div class="profile-header">
                 <div class="profile-icon">
-                    <% if (user.image) { %>
-                        <img src="/Uploads/userProfileimages/<%= user.image %>" alt="Profile Image"
-                            class="profile-image" onerror="this.src='https://via.placeholder.com/80?text=Profile'">
+                   <% if (user.image) { %>
+                        <img src="/uploads/userProfileimages/<%= user.image %>" alt="Profile Image" class="profile-image">
                     <% } else { %>
-                        <i class="fas fa-user"></i>
+                        <i class="fas fa-user" style="color: #ffffff; font-size: 1.125rem;"></i>
                     <% } %>
                 </div>
                 <div>
@@ -541,69 +467,66 @@
             <h2 class="section-title">My Wallet</h2>
 
             <!-- Wallet Balance and Rewards Section -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                <!-- Wallet Balance Section -->
-                <div class="wallet-balance md:col-span-2">
-                    <h3 class="balance-label">Available Balance</h3>
-                    <p class="balance-amount">₹2,00,000.00</p>
-                    <button class="btn btn-primary mt-4" onclick="openAddMoneyModal()">Add Money</button>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <div class="wallet-balance">
+                    <h3 class="section-title text-white">Available Balance</h3>
+                    <p class="balance-amount">₹<%= user.wallet ? user.wallet.balance.toLocaleString('en-IN') : '0' %></p>
                     <p class="limit-note">
                         <i class="fas fa-info-circle"></i>
                         You can add up to ₹2.5 lakhs
                     </p>
+                    <button class="btn btn-primary mt-4" onclick="openAddMoneyModal()">Add Money</button>
                 </div>
-
-                <!-- Rewards Section -->
                 <div class="stats-card">
-                    <h3>Rewards</h3>
-                    <div class="mt-2">
-                        <p class="text-sm">Cashback Earned</p>
-                        <p>₹0.00</p>
+                    <h3 class="section-title">Rewards</h3>
+                    <div>
+                        <h3 class="text-sm text-gray-600">Cashback Earned</h3>
+                        <p class="text-lg font-semibold">₹0.00</p>
                     </div>
-                    <div class="mt-2">
-                        <p class="text-sm">Total Referrals</p>
-                        <p>0</p>
+                    <div class="mt-4">
+                        <h3 class="text-sm text-gray-600">Total Referrals</h3>
+                        <p class="text-lg font-semibold"><%= user.referrals ? user.referrals.length : 0 %></p>
+                        <a href="/referals" class="text-blue-600 hover:underline text-sm">View Referral Program</a>
                     </div>
-                    <a href="/referals" class="referral-link">
-                        <i class="fas fa-users"></i>
-                        View Referral Program
-                    </a>
                 </div>
             </div>
 
             <!-- Recent Transactions -->
-            <div class="transaction-section">
-                <h3 class="section-subtitle">Recent Transactions</h3>
-                <div class="filter-group">
-                    <select id="transactionFilter">
-                        <option value="all">All Transactions</option>
-                        <option value="added">Money Added</option>
-                        <option value="reward">Rewards</option>
-                    </select>
-                    <button class="btn btn-proceed" onclick="filterTransactions()">Apply</button>
-                </div>
+            <h3 class="section-title">Recent Transactions</h3>
+            <div class="filter-group">
+                <select id="transactionFilter" onchange="filterTransactions()">
+                    <option value="all">All Transactions</option>
+                    <option value="added">Money Added</option>
+                    <option value="reward">Rewards</option>
+                    <option value="used">Used</option>
+                </select>
+                <button onclick="filterTransactions()" class="btn btn-primary">Apply</button>
+            </div>
 
-                <div id="transactionList">
-                    <div class="transaction-item">
-                        <div class="transaction-details">
-                            <div class="transaction-icon">
-                                <i class="fas fa-arrow-up"></i>
+            <div id="transactionList">
+                <% if (transactions && transactions.length > 0) { %>
+                    <% transactions.forEach((transaction) => { %>
+                        <div class="transaction-item">
+                            <div class="transaction-details">
+                                <div class="transaction-icon">
+                                    <i class="fas fa-arrow-up"></i>
+                                </div>
+                                <div>
+                                    <p class="font-medium">Added via <%= transaction.method %></p>
+                                    <p class="transaction-date"><%= new Date(transaction.date).toLocaleDateString('en-IN') %></p>
+                                </div>
                             </div>
-                            <div>
-                                <p class="transaction-title">Added via Razorpay</p>
-                                <p class="transaction-date">7 Jun 2025</p>
-                            </div>
+                            <p class="transaction-amount">+₹<%= transaction.amount.toLocaleString('en-IN') %></p>
                         </div>
-                        <p class="transaction-amount">+ ₹2,00,000.00</p>
-                    </div>
-                </div>
+                    <% }); %>
+                <% } else { %>
+                    <p class="text-gray-500 italic text-center">No transactions found</p>
+                <% } %>
+            </div>
 
-                <!-- Pagination -->
-                <div class="pagination">
-                    <button id="prevPage" onclick="changePage(-1)" disabled>Previous</button>
-                    <span id="pageInfo">1 of 1</span>
-                    <button id="nextPage" onclick="changePage(1)">Next</button>
-                </div>
+            <!-- Pagination -->
+            <div class="pagination">
+                <span id="pageInfo">1 of 1</span>
             </div>
         </div>
     </div>
@@ -617,21 +540,11 @@
             <div class="modal-message">
                 <label for="amountInput" class="block text-sm font-medium text-gray-700">Enter Amount</label>
                 <input type="number" id="amountInput" class="w-full p-2 border rounded mt-1" placeholder="Enter amount" min="1" max="250000">
-                <label class="block text-sm font-medium text-gray-700 mt-4">Payment Method</label>
-                <div class="radio-group">
-                    <label>
-                        <input type="radio" name="paymentMethod" value="razorpay" checked>
-                        Razorpay
-                    </label>
-                    <label>
-                        <input type="radio" name="paymentMethod" value="other" disabled>
-                        Other (Coming Soon)
-                    </label>
-                </div>
+                <p class="mt-2 text-sm text-gray-600">Payment Method: Razorpay</p>
             </div>
             <div class="button-group">
                 <button type="button" class="btn btn-secondary" onclick="closeAddMoneyModal()">Cancel</button>
-                <button type="button" class="btn btn-proceed" onclick="proceedToPay()">Proceed to Pay</button>
+                <button type="button" class="btn btn-primary" onclick="proceedToPay()">Proceed to Pay</button>
             </div>
         </div>
     </div>
@@ -644,16 +557,10 @@
     <script>
         let currentPage = 1;
         const transactionsPerPage = 10;
-        let allTransactions = [
-            { type: 'added', amount: 200000, date: '2025-06-07' }
-        ];
+        let allTransactions = <%- JSON.stringify(transactions || []) %>;
 
         function showToast(message, type = 'success') {
             const toastContainer = document.getElementById('toastContainer');
-            if (!toastContainer) {
-                console.error('Toast container not found in the DOM');
-                return;
-            }
             const toast = document.createElement('div');
             toast.className = `toast ${type}`;
             toast.textContent = message;
@@ -670,96 +577,61 @@
         }
 
         function openAddMoneyModal() {
-            const modal = document.getElementById('addMoneyModal');
-            if (modal) {
-                modal.classList.remove('hidden');
-            } else {
-                console.error('Add Money Modal not found in the DOM');
-                showToast('Failed to open modal', 'error');
-            }
+            document.getElementById('addMoneyModal').classList.remove('hidden');
         }
 
         function closeAddMoneyModal() {
-            const modal = document.getElementById('addMoneyModal');
-            const amountInput = document.getElementById('amountInput');
-            if (modal && amountInput) {
-                modal.classList.add('hidden');
-                amountInput.value = '';
-            } else {
-                console.error('Modal or amount input not found in the DOM');
-                showToast('Failed to close modal', 'error');
-            }
+            document.getElementById('addMoneyModal').classList.add('hidden');
+            document.getElementById('amountInput').value = '';
         }
 
-        async function proceedToPay() {
-            const amountInput = document.getElementById('amountInput');
-            const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked');
-            
-            if (!amountInput || !paymentMethod) {
-                showToast('Required elements not found', 'error');
-                return;
-            }
-
-            const amount = amountInput.value;
+        function proceedToPay() {
+            const amount = document.getElementById('amountInput').value;
             if (!amount || amount <= 0 || amount > 250000) {
                 showToast('Please enter a valid amount (₹1 - ₹2,50,000)', 'error');
                 return;
             }
 
-            if (paymentMethod.value !== 'razorpay') {
-                showToast('Only Razorpay is supported at the moment', 'error');
-                return;
-            }
-
-            try {
-                const response = await fetch('/wallet/add-money', {
-                    method: 'POST',
-                    headers: { 
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify({ amount: parseFloat(amount), paymentMethod: paymentMethod.value })
-                });
-
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-
-                const data = await response.json();
-                if (data.success) {
-                    showToast('Money added successfully!', 'success');
-                    const balanceElement = document.querySelector('.balance-amount');
-                    if (balanceElement) {
-                        balanceElement.textContent = `₹${data.newBalance.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+            fetch('/wallet/add-money', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ amount: parseFloat(amount) })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showToast('Money added successfully!', 'success');
+                        document.querySelector('.balance-amount').textContent = `₹${data.newBalance.toLocaleString('en-IN')}`;
+                        closeAddMoneyModal();
+                        fetchTransactions();
                     } else {
-                        console.error('Balance element not found in the DOM');
+                        showToast(data.message || 'Failed to add money', 'error');
                     }
-                    allTransactions.unshift({ type: 'added', amount: parseFloat(amount), date: new Date().toISOString().split('T')[0] });
-                    closeAddMoneyModal();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showToast('An error occurred. Please try again.', 'error');
+                });
+        }
+
+        function fetchTransactions() {
+            fetch('/wallet/transactions')
+                .then(response => response.json())
+                .then(data => {
+                    allTransactions = data.transactions || [];
                     filterTransactions();
-                } else {
-                    showToast(data.message || 'Failed to add money', 'error');
-                }
-            } catch (error) {
-                console.error('Error adding money:', error);
-                showToast('An error occurred. Please try again.', 'error');
-            }
+                })
+                .catch(error => {
+                    console.error('Error fetching transactions:', error);
+                    showToast('Failed to load transactions', 'error');
+                });
         }
 
         function filterTransactions() {
-            const filter = document.getElementById('transactionFilter');
-            const transactionList = document.getElementById('transactionList');
-            const pageInfo = document.getElementById('pageInfo');
-            const prevPage = document.getElementById('prevPage');
-            const nextPage = document.getElementById('nextPage');
-
-            if (!filter || !transactionList || !pageInfo || !prevPage || !nextPage) {
-                showToast('Required elements for filtering not found', 'error');
-                return;
-            }
+            const filter = document.getElementById('transactionFilter').value;
 
             let filteredTransactions = allTransactions.filter(t => {
-                return filter.value === 'all' || t.type === filter.value;
+                return filter === 'all' || t.type === filter;
             });
 
             const totalPages = Math.ceil(filteredTransactions.length / transactionsPerPage);
@@ -767,6 +639,7 @@
             const start = (currentPage - 1) * transactionsPerPage;
             const paginatedTransactions = filteredTransactions.slice(start, start + transactionsPerPage);
 
+            const transactionList = document.getElementById('transactionList');
             transactionList.innerHTML = paginatedTransactions.length > 0 ? paginatedTransactions.map(t => `
                 <div class="transaction-item">
                     <div class="transaction-details">
@@ -774,33 +647,21 @@
                             <i class="fas fa-arrow-up"></i>
                         </div>
                         <div>
-                            <p class="transaction-title">Added via Razorpay</p>
+                            <p class="font-medium">Added via ${t.method}</p>
                             <p class="transaction-date">${new Date(t.date).toLocaleDateString('en-IN')}</p>
                         </div>
                     </div>
-                    <p class="transaction-amount">+ ₹${t.amount.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                    <p class="transaction-amount">+₹${t.amount.toLocaleString('en-IN')}</p>
                 </div>
-            `).join('') : '<p class="text-gray-400 italic">No transactions found</p>';
+            `).join('') : '<p class="text-gray-500 italic text-center">No transactions found</p>';
 
-            pageInfo.textContent = `${currentPage} of ${totalPages || 1}`;
-            prevPage.disabled = currentPage === 1;
-            nextPage.disabled = currentPage === totalPages || totalPages === 0;
+            document.getElementById('pageInfo').textContent = `${currentPage} of ${totalPages || 1}`;
         }
 
-        function changePage(delta) {
-            currentPage += delta;
-            filterTransactions();
-        }
-
-        document.getElementById('addMoneyModal')?.addEventListener('click', function (e) {
+        document.getElementById('addMoneyModal').addEventListener('click', function (e) {
             if (e.target === this) {
                 closeAddMoneyModal();
             }
-        });
-
-        // Initial fetch of transactions on page load
-        document.addEventListener('DOMContentLoaded', () => {
-            filterTransactions();
         });
     </script>
 </body>

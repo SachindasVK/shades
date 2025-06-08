@@ -444,7 +444,7 @@
                                 const discount = subtotal > 1500 ? 200 : 0;
                                 const deliveryCharge = subtotal > 1000 ? 0 : 50;
                                 const gst = Math.round(subtotal * 0.18);
-                                const total = subtotal + deliveryCharge + gst;
+                                const total = subtotal + deliveryCharge + gst - discount;
                             %>
                             <div class="summary-item">
                                 <span>Subtotal (<%= cartItems.length %> items)</span>
@@ -785,7 +785,7 @@
         document.getElementById('checkout-btn')?.addEventListener('click', function() {
             const hasItems = document.querySelectorAll('.cart-item[data-product-id]').length > 0;
             if (hasItems) {
-                window.location.href = '/checkout';
+                window.location.href = '/select-address';
             }
         });
 

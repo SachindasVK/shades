@@ -24,7 +24,7 @@ const getCart = async (req, res) => {
       });
     }
 
-    // Clean-up: Remove out-of-stock or invalid items
+    
     cart.items = cart.items.filter(item => {
       const product = item.productId;
       return (
@@ -38,7 +38,7 @@ const getCart = async (req, res) => {
   cart.items.sort((a, b) => new Date(b.addedAt) - new Date(a.addedAt));
     await cart.save();
 
-    // Prepare data for rendering
+  
     const cartItems = cart.items.map(item => ({
       product: item.productId,
       quantity: item.quantity,
@@ -46,14 +46,12 @@ const getCart = async (req, res) => {
       totalPrice: item.productId.salesPrice * item.quantity
     }));
 
-    const grandTotal = cartItems.reduce((total, item) => total + item.totalPrice, 0);
 
     const user = await User.findById(userId);
 
     res.render('cart', {
-      username: user?.name || '',
+      username: user.name,
       cartItems,
-      grandTotal
     });
 
   } catch (error) {

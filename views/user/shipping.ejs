@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shipping Selection (Checkout Step 2)</title>
+</head>
+<body style="background-color: #f4f5f7; min-height: 100vh; margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; display: flex; flex-direction: column;">
+    <%-include("../../views/partials/user/header")%>
+    <div style="background-color: white; padding: 1.5rem; border-radius: 0.75rem; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08); width: 100%; max-width: 64rem; margin: 1rem auto; flex: 1;">
+        <!-- Progress Indicator -->
+        <div style="display: flex; justify-content: space-between; margin-bottom: 1.5rem; gap: 0.75rem;">
+            <div style="display: flex; align-items: center; flex: 1; justify-content: center;">
+                <div style="width: 1.75rem; height: 1.75rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.875rem; font-weight: 600; transition: all 0.3s ease; background-color: #424242; color: white;" aria-label="Step 1: Address">1</div>
+                <span style="margin-left: 0.5rem; font-size: 0.875rem; font-weight: 500; color: #6b7280;">Address</span>
+            </div>
+            <div style="display: flex; align-items: center; flex: 1; justify-content: center;">
+                <div style="width: 1.75rem; height: 1.75rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.875rem; font-weight: 600; transition: all 0.3s ease; background-color: #000000; color: white;" aria-label="Step 2: Shipping">2</div>
+                <span style="margin-left: 0.5rem; font-size: 0.875rem; font-weight: 600; color: #000000;">Shipping</span>
+            </div>
+            <div style="display: flex; align-items: center; flex: 1; justify-content: center;">
+                <div style="width: 1.75rem; height: 1.75rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.875rem; font-weight: 600; transition: all 0.3s ease; background-color: #e5e7eb; color: #6b7280;" aria-label="Step 3: Payment">3</div>
+                <span style="margin-left: 0.5rem; font-size: 0.875rem; font-weight: 500; color: #6b7280;">Payment</span>
+            </div>
+        </div>
+
+        <!-- Section: Shipping Method -->
+        <div style="margin-bottom: 1.5rem;">
+            <h2 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 1rem; color: #1f2937;">Shipping Method</h2>
+            <div style="display: flex; align-items: center; background-color: #f9fafb; padding: 1rem; border-radius: 0.5rem; margin-bottom: 0.75rem; border: 1px solid #e5e7eb; transition: all 0.3s ease;">
+                <input type="radio" name="shippingMethod" id="freeShipping" value="free" checked style="margin-top: 0.25rem; accent-color: #000000;" aria-label="Select Free Shipping">
+                <div style="margin-left: 0.75rem; flex: 1;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-weight: 600; font-size: 0.9375rem; color: #1f2937;">Free</span>
+                        <span style="font-size: 0.875rem; color: #4b5563;">Jun 11, 2025</span>
+                    </div>
+                    <p style="color: #4b5563; font-size: 0.875rem; margin: 0.2rem 0;">Regular shipping</p>
+                </div>
+            </div>
+            <div style="display: flex; align-items: center; background-color: #f9fafb; padding: 1rem; border-radius: 0.5rem; margin-bottom: 0.75rem; border: 1px solid #e5e7eb; transition: all 0.3s ease;">
+                <input type="radio" name="shippingMethod" id="scheduleShipping" value="schedule" style="margin-top: 0.25rem; accent-color: #000000;" aria-label="Select Schedule Shipping">
+                <div style="margin-left: 0.75rem; flex: 1;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-weight: 600; font-size: 0.9375rem; color: #1f2937;">Schedule</span>
+                        <span id="scheduleDateDisplay" style="font-size: 0.875rem; color: #4b5563;">Jun 12, 2025</span>
+                    </div>
+                    <p style="color: #4b5563; font-size: 0.875rem; margin: 0.2rem 0;">Pick a custom delivery date</p>
+                </div>
+            </div>
+            <div id="datePickerSection" style="display: none; margin-top: 1rem;">
+                <label style="font-size: 0.875rem; font-weight: 500; color: #1f2937; margin-bottom: 0.25rem; display: block;">Select Delivery Date</label>
+                <input type="date" id="deliveryDate" style="width: 100%; max-width: 15rem; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.90rem; transition: all 0.2s ease;" min="" max="" onfocus="this.style.borderColor='#000000'; this.style.boxShadow='0 0 0 3px rgba(0, 0, 0, 0.1)';" onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none';">
+                <p style="font-size: 0.75rem; color: #6b7280; margin-top: 0.25rem;">Select a date after priority delivery within 7 days</p>
+            </div>
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div style="display: flex; gap: 0.5rem; margin-top: 1.5rem; justify-content: flex-end;">
+            <a href="/checkout/address">
+                <button style="width: 10rem; max-width: 100%; padding: 0.80rem 1rem; border-radius: 0.35rem; font-size: 0.90rem; cursor: pointer; transition: all 0.2s ease; border: 1px solid #ffffff; color: #ffffff; background-color: gray;" onmouseover="this.style.backgroundColor='#b1b1b1';" onmouseout="this.style.backgroundColor='gray';" aria-label="Back to address">Back</button>
+            </a>
+            <button id="nextButton" style="width: 10rem; max-width: 100%; padding: 0.80rem 1rem; border-radius: 0.35rem; font-size: 0.90rem; cursor: pointer; transition: all 0.3s ease; background-color: #000000; color: white; border: none;" onmouseover="this.style.backgroundColor='#333333';" onmouseout="this.style.backgroundColor='#000000';" aria-label="Continue to payment">Next</button>
+        </div>
+    </div>
+    <%-include("../../views/partials/user/footer")%>
+    <script>
+        // Set date constraints for the date picker
+        document.addEventListener('DOMContentLoaded', function() {
+            const today = new Date();
+            const minDate = new Date(today);
+            minDate.setDate(today.getDate() + 3); // Minimum 3 days from today (priority delivery)
+            const maxDate = new Date(today);
+            maxDate.setDate(today.getDate() + 7); // Maximum 7 days from today
+
+            const dateInput = document.getElementById('deliveryDate');
+            dateInput.min = minDate.toISOString().split('T')[0];
+            dateInput.max = maxDate.toISOString().split('T')[0];
+            dateInput.value = minDate.toISOString().split('T')[0]; // Default to min date
+
+            // Update displayed date
+            updateScheduleDateDisplay(minDate);
+        });
+
+        // Toggle date picker visibility based on shipping method
+        document.querySelectorAll('input[name="shippingMethod"]').forEach((input) => {
+            input.addEventListener('change', function() {
+                const datePickerSection = document.getElementById('datePickerSection');
+                if (this.value === 'schedule') {
+                    datePickerSection.style.display = 'block';
+                } else {
+                    datePickerSection.style.display = 'none';
+                }
+            });
+        });
+
+        // Update displayed schedule date when date input changes
+        document.getElementById('deliveryDate').addEventListener('change', function() {
+            const selectedDate = new Date(this.value);
+            updateScheduleDateDisplay(selectedDate);
+        });
+
+        function updateScheduleDateDisplay(date) {
+            const options = { month: 'short', day: 'numeric', year: 'numeric' };
+            document.getElementById('scheduleDateDisplay').textContent = date.toLocaleDateString('en-US', options);
+        }
+
+        // Handle form submission to proceed to payment
+        document.getElementById('nextButton').addEventListener('click', async function() {
+            const selectedMethod = document.querySelector('input[name="shippingMethod"]:checked').value;
+            let deliveryDate = null;
+
+            if (selectedMethod === 'schedule') {
+                deliveryDate = document.getElementById('deliveryDate').value;
+                if (!deliveryDate) {
+                    showNotification('Please select a delivery date.', 'error');
+                    return;
+                }
+            }
+
+            const data = {
+                shippingMethod: selectedMethod,
+                deliveryDate: deliveryDate
+            };
+
+            try {
+                const response = await fetch('/checkout/proceed-to-payment', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    window.location.href = result.redirectUrl;
+                } else {
+                    showNotification(result.message, 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showNotification('Something went wrong. Please try again.', 'error');
+            }
+        });
+
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 1rem 1.5rem;
+                border-radius: 0.5rem;
+                color: white;
+                font-weight: 500;
+                z-index: 9999;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                transition: all 0.3s ease;
+            `;
+
+            if (type === 'success') {
+                notification.style.backgroundColor = '#10b981';
+            } else if (type === 'error') {
+                notification.style.backgroundColor = '#ef4444';
+            } else {
+                notification.style.backgroundColor = '#3b82f6';
+            }
+
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateY(-20px)';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

@@ -28,6 +28,10 @@ const addressSchema = new Schema({
             type: String,
             required: true
         },
+         area: {                     
+            type: String,
+            required: true
+        },
         streetAddress:{
             type: String,
             required: true

@@ -26,7 +26,7 @@ const couponSchema = new Schema({
     },
     isDeleted:{
         type:Boolean,
-        default:true
+        default:false
     },
     userId:{
         type:mongoose.Schema.Types.ObjectId,

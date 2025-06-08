@@ -211,48 +211,76 @@
             background-color: #dc2626;
         }
         .add-button {
-            padding: 0.5rem 1rem;
-            background-color: #eff6ff;
-            color: #2563eb;
+            width: auto;
+            max-width: 30rem;
+            border: 2px dashed #4495ff;
+            color: #006eff;
+            padding: 0.25rem 0.5rem;
             border-radius: 0.25rem;
-            font-size: 0.875rem;
+            background-color: transparent;
+            cursor: pointer;
+            font-size: 0.90rem;
+            text-align: center;
+            transition: all 0.2s ease;
+            display: block;
+            margin-bottom: 1rem;
         }
         .add-button:hover {
-            background-color: #dbeafe;
+            background-color: #f3f4f6;
+            border-color: #0e44f5;
+            color: #0e44f5;
         }
         .address-item {
-            padding: 1rem;
-            border-bottom: 1px solid #e5e7eb;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .address-item:last-child {
-            border-bottom: none;
+            align-items: flex-start;
+            background-color: #f9fafb;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 0.75rem;
+            border: 1px solid #e5e7eb;
+            transition: all 0.3s ease;
         }
         .address-details {
-            color: #111827;
+            margin-left: 0.75rem;
+            flex: 1;
         }
         .address-actions {
             display: flex;
             gap: 0.5rem;
         }
-        .action-icon {
-            font-size: 0.9rem;
+        .action-button {
+            color: #000000;
+            text-decoration: none;
+            font-size: 0.90rem;
+            background: none;
+            border: none;
             cursor: pointer;
-            transition: color 0.2s;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            transition: all 0.2s ease;
         }
-        .edit-icon {
-            color: #2563eb;
+        .action-button:hover {
+            background-color: #ede9fe;
         }
-        .edit-icon:hover {
-            color: #1d4ed8;
+        .address-type-badge {
+            font-size: 0.6875rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 0.25rem;
+            margin-left: 0.5rem;
+            background-color: #919191;
+            color: white;
         }
-        .delete-icon {
-            color: #ef4444;
+        .default-badge {
+            font-size: 0.6875rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 0.25rem;
+            margin-left: 0.5rem;
+            background-color: #1f2937;
+            color: white;
         }
-        .delete-icon:hover {
-            color: #dc2626;
+        .address-radio {
+            margin-top: 0.25rem;
+            accent-color: #1a29ff;
         }
         .modal-overlay {
             display: none;
@@ -396,16 +424,6 @@
                 display: flex !important;
             }
         }
-        .address-item.default {
-            background-color: #f0fdf4;
-            border-left: 4px solid #22c55e;
-        }
-        .address-type {
-            font-weight: 600;
-        }
-        .address-type.default {
-            color: #22c55e;
-        }
         .shop-header {
             background-color: white;
             border-bottom: 1px solid var(--border-color);
@@ -500,29 +518,32 @@
             </nav>
         </div>
 
-        <!-- Main Content -->
+        <!-- Main Content (Updated UI for Manage Addresses Section) -->
         <div class="main-content">
             <h2 class="section-title">Manage Addresses</h2>
-            <button class="add-button" onclick="openAddAddressModal()">Add New Address</button>
+            <button class="add-button" onclick="openAddAddressModal()">+ Add New Address</button>
             <div id="addressList">
                 <% if (user.addresses && user.addresses.length > 0) { %>
                     <% user.addresses.forEach((address, index) => { %>
-                        <div class="address-item <%= address.isDefault ? 'default' : '' %>" data-id="<%= address._id %>">
+                        <div class="address-item" data-id="<%= address._id %>">
+                            <input type="radio" name="address" id="address<%= index %>" class="address-radio" <%= address.isDefault ? 'checked' : '' %>>
                             <div class="address-details">
-                                <%= address.fullName %> <br>
-                                <%= address.flat %>, <%= address.area %>, <%= address.city %>, <%= address.state %> - <%= address.pincode %> <br>
-                                Phone: <%= address.phone %> <br>
-                                <% if (address.landmark) { %>
-                                    Landmark: <%= address.landmark %> <br>
-                                <% } %>
-                                Type: <span class="address-type <%= address.isDefault ? 'default' : '' %>"><%= address.addressType %></span>
-                                <% if (address.isDefault) { %>
-                                    (Default)
-                                <% } %>
-                            </div>
-                            <div class="address-actions">
-                                <i class="fas fa-edit edit-icon action-icon" onclick="openEditAddressModal('<%= address._id %>', '<%= address.fullName %>', '<%= address.phone %>', '<%= address.flat %>', '<%= address.area %>', '<%= address.pincode %>', '<%= address.landmark %>', '<%= address.city %>', '<%= address.state %>', '<%= address.addressType %>', '<%= address.isDefault %>')"></i>
-                                <i class="fas fa-trash delete-icon action-icon" onclick="openDeleteAddressModal('<%= address._id %>')"></i>
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.25rem;">
+                                    <div>
+                                        <span style="font-weight: 600; font-size: 0.9375rem; color: #1f2937;"><%= address.fullName %></span>
+                                        <span class="address-type-badge"><%= address.addressType.toUpperCase() %></span>
+                                        <% if (address.isDefault) { %>
+                                            <span class="default-badge">Default</span>
+                                        <% } %>
+                                    </div>
+                                    <div class="address-actions">
+                                        <button class="action-button" onclick="openEditAddressModal('<%= address._id %>', '<%= address.fullName %>', '<%= address.phone %>', '<%= address.flat %>', '<%= address.area %>', '<%= address.pincode %>', '<%= address.landmark %>', '<%= address.city %>', '<%= address.state %>', '<%= address.addressType %>', '<%= address.isDefault %>')">Edit</button>
+                                        <button class="action-button" onclick="openDeleteAddressModal('<%= address._id %>')">Delete</button>
+                                    </div>
+                                </div>
+                                <p style="color: #4b5563; font-size: 1rem; margin: 0.2rem 0;"><%= address.flat %>, <%= address.area %>, <%= address.landmark ? address.landmark + ',' : '' %> <%= address.city %>, <%= address.state %></p>
+                                <p style="color: #4b5563; font-size: 1rem; margin: 0.2rem 0;">PIN: <%= address.pincode %></p>
+                                <p style="color: #4b5563; font-size: 1rem; margin: 0.2rem 0;">Phone: <%= address.phone %></p>
                             </div>
                         </div>
                     <% }); %>
