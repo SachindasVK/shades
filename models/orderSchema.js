@@ -1,13 +1,13 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
-const { v4: uuidv4 } = require('uuid');
+const crypto = require('crypto');
 
 const orderSchema = new Schema({
-    orderId: {
-        type: String,
-        default: () => uuidv4(),
-        unique: true
-    },
+   orderId: {
+  type: String,
+  default: () => `ORDER${crypto.randomBytes(4).toString('hex').toUpperCase()}`,
+  unique: true
+},
     userId: {
         type: Schema.Types.ObjectId,
         ref: 'User',
@@ -59,6 +59,10 @@ const orderSchema = new Schema({
         type: Number,
         default: 50
     },
+    gstAmount: {
+  type: Number,
+  required: true
+},
     finalAmount: {
         type: Number,
         required: true
@@ -84,6 +88,9 @@ const orderSchema = new Schema({
     cancelReason: {
         type: String
     },
+    cancelledAt: {
+    type: Date
+},
     returnReason: {
         type: String
     },
@@ -112,6 +119,9 @@ const orderSchema = new Schema({
     updatedOn: {
         type: Date,
     },
+    expectedDelivery: {
+    type: Date 
+},
     deliveredOn: {
         type: Date
     },
@@ -119,7 +129,7 @@ const orderSchema = new Schema({
         type: Boolean,
         default: false
     }
-});
+},{ timestamps: true });
 
 const Order = mongoose.model('Order', orderSchema);
 module.exports = Order;

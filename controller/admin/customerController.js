@@ -1,4 +1,7 @@
 const User = require('../../models/userSchema');
+const Order = require('../../models/orderSchema')
+const Address = require('../../models/addressSchema')
+const mongoose = require('mongoose');
 
 const customerInfo = async (req, res) => {
     try {
@@ -39,9 +42,7 @@ const customerInfo = async (req, res) => {
         
         // Get order count for each user
         for (let i = 0; i < userData.length; i++) {
-            // Assuming there's an Order model and relation
-            // This would need to be adapted based on your actual data model
-            // userData[i].orderCount = await Order.countDocuments({ userId: userData[i]._id });
+            userData[i].orderCount = await Order.countDocuments({ userId: userData[i]._id });
         }
 
         // Render the page with all required data
@@ -61,35 +62,45 @@ const customerInfo = async (req, res) => {
     }
 };
 
-// View specific customer
 const viewCustomer = async (req, res) => {
-    try {
-        const userId = req.params.id;
-        const userDetails = await User.findById(userId);
-        
-        if (!userDetails) {
-            return res.status(404).render('admin/error', {
-                message: 'Customer not found'
-            });
-        }
-        
-        // Fetch recent orders (uncomment and modify based on your Order model)
-        // const orders = await Order.find({ userId: userId })
-        //     .sort({ createdAt: -1 })
-        //     .limit(5);
-        
-        res.render('customer-view', {
-            pageTitle: 'Customer Details',
-            user: userDetails,
-            // orders: orders || []
-        });
-    } catch (error) {
-        console.error('Error viewing customer:', error);
-        res.status(500).render('admin/error', {
-            message: 'An error occurred while retrieving customer details'
-        });
+  try {
+    const userId = req.params.id;
+
+    // Fetch user details
+    const userDetails = await User.findById(userId);
+    if (!userDetails) {
+      return res.status(404).render('admin/error', {
+        message: 'Customer not found'
+      });
     }
+
+    // Fetch address document
+    const addressDoc = await Address.findOne({ userId });
+    const addresses = addressDoc ? addressDoc.address : [];
+
+    // Fetch orders for this user, sorted by newest first
+    const orders = await Order.find({ userId }).sort({ createdAt: -1 }).lean();
+
+    const userWithStats = {
+      ...userDetails.toObject(),
+      orderCount: orders.length
+    };
+
+    res.render('customer-view', {
+      pageTitle: 'Customer Details',
+      user: userWithStats,
+      address: addresses,
+      orders
+    });
+
+  } catch (error) {
+    console.error('Error viewing customer:', error);
+    res.status(500).render('admin/error', {
+      message: 'An error occurred while retrieving customer details'
+    });
+  }
 };
+
 
 // Function to block a user
 const blockUser = async (req, res) => {

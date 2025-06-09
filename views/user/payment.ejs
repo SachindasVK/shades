@@ -53,6 +53,8 @@
             font-size: 0.875rem;
             font-weight: 600;
             transition: all 0.3s ease;
+            background-color: #e5e7eb;
+            color: #6b7280;
         }
 
         .progress-step.active .step-circle {
@@ -124,6 +126,16 @@
             margin-bottom: 0.75rem;
             border: 1px solid #e5e7eb;
             transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .payment-option:hover:not(.disabled) {
+            border-color: #d1d5db;
+        }
+
+        .payment-option.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
 
         .payment-option input {
@@ -184,6 +196,7 @@
 
         .payment-option.selected {
             border: 2px solid var(--black-color);
+            background-color: #f8fafc;
         }
 
         .navigation-buttons {
@@ -246,6 +259,46 @@
 
         .coupon-section button:hover {
             background-color: #333333;
+        }
+
+        .applied-coupon {
+            background-color: #e6f7fa; /* Lighter background as in the image */
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.25rem;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .applied-coupon .coupon-info {
+            font-size: 0.875rem;
+            color: #4b5563;
+            font-weight: 500;
+        }
+
+        .applied-coupon .coupon-info .code {
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .applied-coupon .coupon-info .discount {
+            color: #10b981;
+        }
+
+        .applied-coupon button {
+            background-color: transparent;
+            border: none; /* Remove border */
+            color: #ff0000; /* Red color for the Remove link */
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .applied-coupon button:hover {
+            color: #cc0000; /* Slightly darker red on hover */
         }
 
         .available-coupons {
@@ -313,6 +366,8 @@
             font-weight: 700;
             margin-top: 1rem;
             color: #1f2937;
+            border-top: 1px solid #e5e7eb;
+            padding-top: 1rem;
         }
 
         .place-order-btn {
@@ -333,52 +388,44 @@
             background-color: #333333;
         }
 
-        footer {
-            background-color: #2d3748;
-            color: #e2e8f0;
-            padding: 2rem 0;
-            margin-top: auto;
+        .place-order-btn:disabled {
+            background-color: #9ca3af;
+            cursor: not-allowed;
         }
 
-        footer a {
-            color: #a0aec0;
-            text-decoration: none;
-            transition: color 0.3s ease;
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
         }
 
-        footer a:hover {
-            color: #ffffff;
+        #toastContainer {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
         }
 
-        footer .footer-section {
-            margin-bottom: 1.5rem;
+        .toast {
+            min-width: 250px;
+            padding: 12px 24px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 500;
+            margin-bottom: 8px;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
         }
 
-        footer .footer-section h5 {
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-            color: #ffffff;
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
         }
 
-        footer .footer-section ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        footer .footer-section ul li {
-            margin-bottom: 0.5rem;
-        }
-
-        footer .social-icons a {
-            font-size: 1.5rem;
-            margin-right: 1rem;
-            color: #a0aec0;
-        }
-
-        footer .social-icons a:hover {
-            color: #ffffff;
-        }
+        .toast.success { background-color: #10b981; }
+        .toast.error { background-color: #ef4444; }
+        .toast.warning { background-color: #f59e0b; }
+        .toast.info { background-color: #3b82f6; }
 
         @media (max-width: 991.98px) {
             .order-summary {
@@ -387,10 +434,13 @@
         }
 
         @media (max-width: 767.98px) {
-
             .main-section,
             .order-summary {
                 padding: 1rem;
+            }
+            
+            .progress-step .step-label {
+                display: none;
             }
         }
     </style>
@@ -399,184 +449,170 @@
 <body>
     <%-include("../../views/partials/user/header")%>
 
-        <div class="container max-w-7xl mx-auto px-4 mb-20">
-            <!-- Progress Indicator -->
-            <div class="progress-section">
-                <div style="display: flex; justify-content: space-between; gap: 0.75rem;">
-                    <div class="progress-step completed">
-                        <div class="step-circle" aria-label="Step 1: Address">1</div>
-                        <span class="step-label">Address</span>
+    <div class="container max-w-7xl mx-auto px-4 mb-20">
+        <!-- Progress Indicator -->
+        <div class="progress-section">
+            <div style="display: flex; justify-content: space-between; gap: 0.75rem;">
+                <div class="progress-step completed">
+                    <div class="step-circle" aria-label="Step 1: Address">1</div>
+                    <span class="step-label">Address</span>
+                </div>
+                <div class="progress-step completed">
+                    <div class="step-circle" aria-label="Step 2: Shipping">2</div>
+                    <span class="step-label">Shipping</span>
+                </div>
+                <div class="progress-step active">
+                    <div class="step-circle" aria-label="Step 3: Payment">3</div>
+                    <span class="step-label">Payment</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap: 4;">
+            <!-- Main Content -->
+            <div class="col-span-2">
+                <div class="main-section">
+                    <!-- Section: Shipping Address -->
+                    <div class="info-section">
+                        <div class="header">
+                            <h2>Shipping Address</h2>
+                            <a href="/select-address">Change</a>
+                        </div>
+                        <p>
+                            <%= address.streetAddress %>, <%= address.area %>, <%= address.city %>, <%= address.state %> - <%= address.pincode %>
+                        </p>
                     </div>
-                    <div class="progress-step completed">
-                        <div class="step-circle" aria-label="Step 2: Shipping">2</div>
-                        <span class="step-label">Shipping</span>
+
+                    <!-- Section: Contact Details -->
+                    <div class="info-section">
+                        <h2>Contact Details</h2>
+                        <p>Email: <%= user.email || "No email found" %><br>
+                           Phone: <%= user.phone || "No phone number found" %>
+                        </p>
                     </div>
-                    <div class="progress-step active">
-                        <div class="step-circle" aria-label="Step 3: Payment">3</div>
-                        <span class="step-label">Payment</span>
+
+                    <!-- Section: Delivery Date -->
+                    <div class="info-section">
+                        <h2>Delivery Date</h2>
+                        <p>Expected delivery by <%= expectedDeliveryDate %> (Regular)</p>
+                    </div>
+
+                    <!-- Section: Payment Method -->
+                    <div class="info-section">
+                        <h2>Payment Method</h2>
+                        <div class="payment-option <%= !isCodEligible ? 'disabled' : '' %>" data-method="cod">
+                            <input type="radio" name="paymentMethod" id="cod" value="cod" <%= !isCodEligible ? 'disabled' : '' %>>
+                            <i class="fas fa-money-bill-wave icon"></i>
+                            <div class="details">
+                                <div class="title">
+                                    <span>Cash on Delivery</span>
+                                    <% if (!isCodEligible) { %>
+                                        <span class="not-eligible">( Not eligible for this order )</span>
+                                    <% } else { %>
+                                        <span class="eligible">( Eligible for this order )</span>
+                                    <% } %>
+                                </div>
+                                <p>Pay when you receive your order</p>
+                            </div>
+                        </div>
+                        <div class="payment-option selected" data-method="online">
+                            <input type="radio" name="paymentMethod" id="online" value="online">
+                            <i class="fas fa-credit-card icon online"></i>
+                            <div class="details">
+                                <div class="title">
+                                    <span>Secure Online Payment</span>
+                                </div>
+                                <p>Credit/Debit Cards, UPI, Net Banking</p>
+                            </div>
+                        </div>
+                        <div class="payment-option" data-method="wallet">
+                            <input type="radio" name="paymentMethod" id="wallet" value="wallet">
+                            <i class="fas fa-wallet icon wallet"></i>
+                            <div class="details">
+                                <div class="title">
+                                    <span>Wallet</span>
+                                    <span class="balance">Balance: ₹<%= walletBalance.toFixed(2) %></span>
+                                </div>
+                                <p>Pay using your wallet balance</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Navigation Buttons -->
+                    <div class="navigation-buttons">
+                        <a href="/shipping">
+                            <button aria-label="Go to shipping method">Go to Ship Method</button>
+                        </a>
                     </div>
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
-                <!-- Main Content -->
-                <div class="col-span-2">
-                    <div class="main-section">
-                        <!-- Section: Shipping Address -->
-                        <div class="info-section">
-                            <div class="header">
-                                <h2>Shipping Address</h2>
-                                <a href="/select-address">Change</a>
-                            </div>
-                            <p>
-                                <%= address.streetAddress %>, <%= address.area %>, <%= address.city %>, <%=
-                                                address.state %> - <%= address.pincode %>
-                            </p>
-
-                        </div>
-
-                        <!-- Section: Contact Details -->
-                        <div class="info-section">
-                            <h2>Contact Details</h2>
-                            <p>Email: <%= user.email || "No email found" %><br>
-                                    Phone: <%= user.phone || "No phone number found" %>
-                            </p>
-
-                        </div>
-
-                        <!-- Section: Delivery Date -->
-                        <div class="info-section">
-                            <h2>Delivery Date</h2>
-                            <p>Expected delivery by <%= expectedDeliveryDate %> (Regular)</p>
-                        </div>
-
-                        <!-- Section: Payment Method -->
-                        <div class="info-section">
-                            <h2>Payment Method</h2>
-                            <div class="payment-option" data-method="cod">
-                                <input type="radio" name="paymentMethod" id="cod" value="cod"
-                                    aria-label="Select Cash on Delivery" <%=!isCodEligible ? 'disabled' : '' %>
-                                >
-                                <i class="fas fa-money-bill-wave icon"></i>
-                                <div class="details">
-                                    <div class="title">
-                                        <span>Cash on Delivery</span>
-                                        <% if (!isCodEligible) { %>
-                                            <span class="not-eligible">( Not eligible for this order. )</span>
-                                            <% } %>
-                                                <% if (isCodEligible) { %>
-                                                    <span class="eligible">( Eligible for this order. )</span>
-                                                    <% } %>
-                                    </div>
-                                    <p>Pay when you receive your order</p>
-                                </div>
-                            </div>
-                            <div class="payment-option selected" data-method="online">
-                                <input type="radio" name="paymentMethod" id="online" value="online" checked
-                                    aria-label="Select Secure Online Payment">
-                                <i class="fas fa-credit-card icon online"></i>
-                                <div class="details">
-                                    <div class="title">
-                                        <span>Secure Online Payment</span>
-                                    </div>
-                                    <p>Credit/Debit Cards, UPI, Net Banking</p>
-                                </div>
-                            </div>
-                            <div class="payment-option" data-method="wallet">
-                                <input type="radio" name="paymentMethod" id="wallet" value="wallet"
-                                    aria-label="Select Wallet Payment">
-                                <i class="fas fa-wallet icon wallet"></i>
-                                <div class="details">
-                                    <div class="title">
-                                        <span>Wallet</span>
-                                        <span class="balance">Balance: ₹<%= walletBalance.toFixed(2) %></span>
-                                    </div>
-
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Navigation Buttons -->
-                        <div class="navigation-buttons">
-                            <a href="/shipping">
-                                <button aria-label="Go to shipping method">Go to Ship Method</button>
-                            </a>
-                        </div>
+            <!-- Order Summary Section -->
+            <div class="col-span-1">
+                <div class="order-summary">
+                    <h4>Order Summary</h4>
+                    <div class="coupon-section">
+                        <input type="text" placeholder="Enter code" id="couponInput">
+                        <button id="applyCouponBtn">APPLY</button>
                     </div>
-                </div>
-
-                <!-- Order Summary Section -->
-                <div class="col-span-1">
-                    <div class="order-summary">
-                        <h4>Order Summary</h4>
-                        <div class="coupon-section">
-                            <input type="text" placeholder="Enter code" id="couponInput">
-                            <button class="applyCouponBtn" data-code="<%= coupons.name %>"
-                                data-minprice="<%= coupons.minimumPrice %>" data-discount="<%= coupons.offerPrice %>">
-                                APPLY
-                            </button>
-                        </div>
-                        <div class="available-coupons-list">
-                            <% if (coupons && coupons.length> 0) { %>
-                                <% coupons.forEach(coupon=> { %>
-                                    <div class="available-coupons">
-                                        <div class="coupon-info">
-                                            <div class="code">
-                                                <%= coupon.name %>
-                                            </div>
-                                            <div class="discount">Get Instant Discount ₹<%= coupon.offerPrice %>
-                                            </div>
-                                            <div class="condition">Valid on orders above ₹<%= coupon.minimumPrice %>
-                                            </div>
-                                        </div>
-                                        <button class="applyCouponBtn" data-code="<%= coupon.name %>">APPLY</button>
+                    <div id="applied-coupon-container"></div>
+                    <div class="available-coupons-list">
+                        <% if (coupons && coupons.length > 0) { %>
+                            <% coupons.forEach(coupon => { %>
+                                <div class="available-coupons">
+                                    <div class="coupon-info">
+                                        <div class="code"><%= coupon.name %></div>
+                                        <div class="discount">Get Instant Discount ₹<%= coupon.offerPrice %></div>
+                                        <div class="condition">Valid on orders above ₹<%= coupon.minimumPrice %></div>
                                     </div>
-                                    <% }) %>
-                                        <% } else { %>
-                                            <p>No available coupons right now.</p>
-                                            <% } %>
-                        </div>
-                       <div id="order-summary-items">
+                                    <button class="applyCouponBtn" data-code="<%= coupon.name %>" 
+                                            data-discount="<%= coupon.offerPrice %>" 
+                                            data-minprice="<%= coupon.minimumPrice %>">APPLY</button>
+                                </div>
+                            <% }) %>
+                        <% } else { %>
+                            <p>No available coupons right now.</p>
+                        <% } %>
+                    </div>
+                    
+                    <div id="order-summary-items">
                         <% if (cartItems && cartItems.length > 0) { %>
                             <% 
                                 let subtotal = 0;
                                 cartItems.forEach(item => {
                                     subtotal += (item.productId.salePrice || item.productId.regularPrice || 0) * item.quantity;
                                 });
-                                const discount = subtotal > 1500 ? 200 : 0;
-                                const deliveryCharge = subtotal > 2000 ? 0 : 50;
-                                const gst = Math.round(subtotal * 0.18);
-                                const total = subtotal + deliveryCharge + gst - discount;
+                                let discount = subtotal > 1500 ? 200 : 0;
+                                let deliveryCharge = subtotal > 2000 ? 0 : 50;
+                                let gst = Math.round(subtotal * 0.18);
+                                let total = subtotal + deliveryCharge + gst - discount;
                             %>
                             <div class="summary-item">
                                 <span>Subtotal (<%= cartItems.length %> items)</span>
-                                <span>₹<%= subtotal.toLocaleString('en-IN') %></span>
+                                <span id="subtotal-amount">₹<%= subtotal.toLocaleString('en-IN') %></span>
+                            </div>
+                            <div class="summary-item discount">
+                                <span>Discount</span>
+                                <span id="discount-amount">- ₹<%= discount.toLocaleString('en-IN') %></span>
                             </div>
                             <div class="summary-item">
-                                <span>Discount</span>
-                                <span class="text-green-600">- ₹<%= discount.toLocaleString('en-IN') %></span>
+                                <span>Delivery Charge</span>
+                                <span id="delivery-charge">
+                                    <% if (deliveryCharge === 0) { %>
+                                        <span style="text-decoration: line-through; color: rgb(255, 38, 38);">₹50</span>
+                                          FREE DELIVERY
+                                    <% } else { %>
+                                        ₹<%= deliveryCharge.toLocaleString('en-IN') %>
+                                    <% } %>
+                                </span>
                             </div>
-                           <div class="summary-item">
-    <span>Delivery Charge</span>
-    <span>
-        <% if (deliveryCharge === 0) { %>
-            <span style="text-decoration: line-through; color: rgb(255, 38, 38);">
-                ₹50
-            </span>
-            &nbsp; FREE DELIVERY
-        <% } else { %>
-            ₹<%= deliveryCharge.toLocaleString('en-IN') %>
-        <% } %>
-    </span>
-</div>
-
                             <div class="summary-item">
                                 <span>GST (18%)</span>
-                                <span>₹<%= gst.toLocaleString('en-IN') %></span>
+                                <span id="gst-amount">₹<%= gst.toLocaleString('en-IN') %></span>
                             </div>
                             <div class="summary-item total">
                                 <span>TOTAL</span>
-                                <span>₹<%= total.toLocaleString('en-IN') %></span>
+                                <span id="total-amount">₹<%= total.toLocaleString('en-IN') %></span>
                             </div>
                         <% } else { %>
                             <div class="summary-item">
@@ -589,161 +625,277 @@
                             </div>
                         <% } %>
                     </div>
-                        <button id="placeOrderButton" class="place-order-btn">Place Order</button>
-                    </div>
+                    
+                    <button id="placeOrderButton" class="place-order-btn">Place Order</button>
                 </div>
             </div>
         </div>
+    </div>
 
-        <div id="toastContainer" class="fixed bottom-5 right-5 z-[2000]"></div>
+    <div id="toastContainer"></div>
 
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                updateOrderSummary();
-                updatePaymentOptionStyles();
+    <script>
+        // Get dynamic data from server
+        const cartItems = <%- JSON.stringify(cartItems || []) %>;
+        const availableCoupons = <%- JSON.stringify(coupons || []) %>;
+        const walletBalance = <%= walletBalance || 0 %>;
+        const isCodEligible = <%= isCodEligible || false %>;
+        
+        let appliedCouponDiscount = 0;
+        let appliedCouponCode = '';
+
+        // Calculate initial order summary
+        function calculateOrderSummary() {
+            let subtotal = 0;
+            if (cartItems && cartItems.length > 0) {
+                cartItems.forEach(item => {
+                    const price = item.productId.salePrice || item.productId.regularPrice || 0;
+                    subtotal += price * item.quantity;
+                });
+            }
+            
+            let baseDiscount = subtotal > 1500 ? 200 : 0;
+            let totalDiscount = baseDiscount + appliedCouponDiscount;
+            let deliveryCharge = subtotal > 2000 ? 0 : 50;
+            let gst = Math.round(subtotal * 0.18);
+            let total = subtotal + deliveryCharge + gst - totalDiscount;
+            
+            return { subtotal, totalDiscount, deliveryCharge, gst, total };
+        }
+
+        // Update order summary display
+        function updateOrderSummary() {
+            const summary = calculateOrderSummary();
+            
+            if (document.getElementById('subtotal-amount')) {
+                document.getElementById('subtotal-amount').textContent = `₹${summary.subtotal.toLocaleString('en-IN')}`;
+            }
+            if (document.getElementById('discount-amount')) {
+                document.getElementById('discount-amount').textContent = `- ₹${summary.totalDiscount.toLocaleString('en-IN')}`;
+            }
+            if (document.getElementById('gst-amount')) {
+                document.getElementById('gst-amount').textContent = `₹${summary.gst.toLocaleString('en-IN')}`;
+            }
+            if (document.getElementById('total-amount')) {
+                document.getElementById('total-amount').textContent = `₹${summary.total.toLocaleString('en-IN')}`;
+            }
+            
+            // Update delivery charge display
+            const deliveryElement = document.getElementById('delivery-charge');
+            if (deliveryElement) {
+                if (summary.deliveryCharge === 0) {
+                    deliveryElement.innerHTML = '<span style="text-decoration: line-through; color: rgb(255, 38, 38);">₹50</span>   FREE DELIVERY';
+                } else {
+                    deliveryElement.textContent = `₹${summary.deliveryCharge.toLocaleString('en-IN')}`;
+                }
+            }
+            
+            // Update applied coupon display
+            const appliedCouponContainer = document.getElementById('applied-coupon-container');
+            if (appliedCouponCode) {
+                const coupon = availableCoupons.find(c => c.name === appliedCouponCode);
+                if (coupon) {
+                    appliedCouponContainer.innerHTML = `
+                        <div class="applied-coupon">
+                            <div class="coupon-info">
+                                Applied: <span class="code">${coupon.name}</span> (₹${coupon.offerPrice} off)
+                            </div>
+                            <button id="removeCouponBtn">Remove</button>
+                        </div>
+                    `;
+                    // Add event listener for remove button
+                    document.getElementById('removeCouponBtn').addEventListener('click', removeCoupon);
+                }
+            } else {
+                appliedCouponContainer.innerHTML = '';
+            }
+        }
+
+        // Apply coupon functionality
+        function applyCoupon(couponCode = null) {
+            const inputCode = couponCode || document.getElementById('couponInput').value.trim();
+            const summary = calculateOrderSummary();
+            
+            if (!inputCode) {
+                showToast('Please enter a coupon code', 'error');
+                return;
+            }
+            
+            const coupon = availableCoupons.find(c => c.name === inputCode);
+           
+            if (!coupon) {
+                showToast('Invalid coupon code', 'error');
+                appliedCouponDiscount = 0;
+                appliedCouponCode = '';
+            } else if (summary.subtotal < coupon.minimumPrice) {
+                showToast(`Minimum order should be ₹${coupon.minimumPrice}`, 'error');
+                appliedCouponDiscount = 0;
+                appliedCouponCode = '';
+            } else {
+                appliedCouponDiscount = coupon.offerPrice;
+                appliedCouponCode = coupon.name;
+                document.getElementById('couponInput').value = coupon.name;
+                showToast(`Coupon applied: ₹${coupon.offerPrice} OFF`, 'success');
+            }
+            
+            updateOrderSummary();
+        }
+
+        // Remove coupon functionality
+        function removeCoupon() {
+            appliedCouponDiscount = 0;
+            appliedCouponCode = '';
+            document.getElementById('couponInput').value = '';
+            showToast('Coupon removed', 'info');
+            updateOrderSummary();
+        }
+
+        // Update payment option styles
+        function updatePaymentOptionStyles() {
+            document.querySelectorAll('.payment-option').forEach(option => {
+                const input = option.querySelector('input');
+                if (input && input.checked) {
+                    option.classList.add('selected');
+                } else {
+                    option.classList.remove('selected');
+                }
             });
+        }
 
-            // Apply coupon functionality
-            let couponDiscount = 0;
-
-           document.querySelectorAll('.applyCouponBtn').forEach(button => {
-    button.addEventListener('click', () => {
-        const code = button.getAttribute('data-code');
-        document.getElementById('couponInput').value = code;
-        applyCoupon();
-    });
-});
-
-            // Remove the first block that adds listeners here, keep only one:
-document.querySelectorAll('input[name="paymentMethod"]').forEach(input => {
-    input.addEventListener('change', updatePaymentOptionStyles);
-});
-
-
-            document.getElementById('placeOrderButton').addEventListener('click', placeOrderHandler);
-            const nexoraBtn = document.getElementById('applyNexora10Btn');
-            if (nexoraBtn) {
-                nexoraBtn.addEventListener('click', () => {
-                    document.getElementById('couponInput').value = 'NEXORA10';
-                    applyCoupon();
-                });
+        // Place order handler
+        async function placeOrderHandler() {
+            const selectedMethodInput = document.querySelector('input[name="paymentMethod"]:checked');
+            
+            if (!selectedMethodInput) {
+                showToast('Please select a payment method', 'error');
+                return;
             }
-
-
-
-          function applyCoupon() {
-    const inputCode = document.getElementById('couponInput').value.trim().toUpperCase();
-    const subtotal = cartItems.reduce((sum, item) => sum + (item.product.salePrice * item.quantity), 0);
-
-    const matched = availableCoupons.find(coupon => coupon.name === inputCode);
-
-    if (!matched) {
-        couponDiscount = 0;
-        showToast("Invalid coupon code", "error");
-    } else if (subtotal < matched.minimumPrice) {
-        couponDiscount = 0;
-        showToast(`Minimum order should be ₹${matched.minimumPrice}`, "error");
-    } else {
-        couponDiscount = matched.offerPrice;
-        showToast(`Coupon applied: ₹${couponDiscount} OFF`, "success");
-    }
-
-    updateOrderSummary();
-}
-
-
-            // Update payment option styles based on selection
-            function updatePaymentOptionStyles() {
-                const paymentOptions = document.querySelectorAll('.payment-option');
-                paymentOptions.forEach(option => {
-                    const input = option.querySelector('input');
-                    if (input.checked) {
-                        option.classList.add('selected');
-                    } else {
-                        option.classList.remove('selected');
-                    }
-                });
+            
+            const selectedMethod = selectedMethodInput.value;
+            
+            if (selectedMethod === 'cod' && !isCodEligible) {
+                showToast('Cash on Delivery is not eligible for this order', 'error');
+                return;
             }
+            
+            if (selectedMethod === 'wallet') {
+                const summary = calculateOrderSummary();
+                if (summary.total > walletBalance) {
+                    showToast('Insufficient wallet balance', 'error');
+                    return;
+                }
+            }
+            
+            const orderData = {
+                paymentMethod: selectedMethod,
+                appliedCoupon: appliedCouponCode || null,
+                couponDiscount: appliedCouponDiscount || 0
+            };
+            
+            try {
+                showLoading(true);
+                const response = await fetch('/place-order', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(orderData)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showToast('Order placed successfully!', 'success');
+                    setTimeout(() => {
+                        window.location.href = result.redirectUrl || '/order-confirmation';
+                    }, 1500);
+                } else {
+                    showToast(result.message || 'Failed to place order', 'error');
+                }
+            } catch (error) {
+                console.error('Error placing order:', error);
+                showToast('Something went wrong. Please try again.', 'error');
+            } finally {
+                showLoading(false);
+            }
+        }
 
-            // Add event listeners to update styles on selection change
+        // Utility functions
+        function showToast(message, type = 'info') {
+            const toastContainer = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            toastContainer.appendChild(toast);
+            
+            setTimeout(() => toast.classList.add('show'), 100);
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        function showLoading(show) {
+            const button = document.getElementById('placeOrderButton');
+            if (show) {
+                button.disabled = true;
+                button.textContent = 'Processing...';
+                button.classList.add('loading');
+            } else {
+                button.disabled = false;
+                button.textContent = 'Place Order';
+                button.classList.remove('loading');
+            }
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            updateOrderSummary();
+            updatePaymentOptionStyles();
+            
+            // Add event listeners for payment method changes
             document.querySelectorAll('input[name="paymentMethod"]').forEach(input => {
                 input.addEventListener('change', updatePaymentOptionStyles);
             });
-
-            // Handle form submission to place the order
-            document.getElementById('placeOrderButton').addEventListener('click', async function () {
-                const selectedMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
-
-                if (selectedMethod === 'cod') {
-                    showToast('Cash on Delivery is not eligible for this order.', 'error');
-                    return;
-                }
-
-                const data = {
-                    paymentMethod: selectedMethod
-                };
-
-                try {
-                    showLoading(true);
-                    const response = await fetch('/checkout/place-order', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(data)
-                    });
-
-                    const result = await response.json();
-
-                    if (result.success) {
-                        window.location.href = result.redirectUrl;
-                    } else {
-                        showToast(result.message || 'Failed to place order', 'error');
-                    }
-                } catch (error) {
-                    console.error('Error:', error);
-                    showToast('Something went wrong. Please try again.', 'error');
-                } finally {
-                    showLoading(false);
-                }
-            });
-
-            // Utility functions
-            function showToast(message, type = 'info') {
-                const toastContainer = document.getElementById('toastContainer');
-                const toast = document.createElement('div');
-                toast.className = `min-w-[250px] text-white p-4 rounded shadow-lg transition-opacity transition-transform duration-300 opacity-0 translate-y-5 ${type === 'error' ? 'bg-red-500' : type === 'warning' ? 'bg-yellow-500' : type === 'success' ? 'bg-green-500' : 'bg-blue-600'}`;
-                toast.textContent = message;
-                toastContainer.appendChild(toast);
-
-                setTimeout(() => {
-                    toast.classList.remove('opacity-0', 'translate-y-5');
-                }, 100);
-
-                setTimeout(() => {
-                    toast.classList.add('opacity-0', 'translate-y-5');
-                    setTimeout(() => {
-                        toast.remove();
-                    }, 300);
-                }, 3000);
-            }
-
-            function showLoading(show) {
-                const elements = document.querySelectorAll('button');
-                elements.forEach(el => {
-                    if (show) {
-                        el.classList.add('loading');
-                        el.style.opacity = '0.6';
-                        el.style.pointerEvents = 'none';
-                    } else {
-                        el.classList.remove('loading');
-                        el.style.opacity = '1';
-                        el.style.pointerEvents = 'auto';
+            
+            // Add click handlers for payment option containers
+            document.querySelectorAll('.payment-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    if (!this.classList.contains('disabled')) {
+                        const input = this.querySelector('input');
+                        if (input && !input.disabled) {
+                            input.checked = true;
+                            updatePaymentOptionStyles();
+                        }
                     }
                 });
-            }
-        </script>
-        <%-include("../../views/partials/user/footer")%>
+            });
+            
+            // Apply coupon button handler
+            document.getElementById('applyCouponBtn').addEventListener('click', () => applyCoupon());
+            
+            // Individual coupon apply buttons
+            document.querySelectorAll('.applyCouponBtn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const code = this.getAttribute('data-code');
+                    applyCoupon(code);
+                });
+            });
+            
+            // Place order button handler
+            document.getElementById('placeOrderButton').addEventListener('click', placeOrderHandler);
+            
+            // Enter key support for coupon input
+            document.getElementById('couponInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    applyCoupon();
+                }
+            });
+        });
+    </script>
+    
+    <%-include("../../views/partials/user/footer")%>
 </body>
 
 </html>

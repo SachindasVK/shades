@@ -82,7 +82,10 @@ router.post('/changepassword',userAuth,profileController.changePassword)
 
 //order management
 router.get('/orders',userAuth,orderController.getOrders)
-
+router.get('/order/details/:id', userAuth, orderController.getOrderDetails)
+router.get('/order/invoice/:id',userAuth,orderController.downloadInvoice)
+router.put('/order/cancel/:orderId', userAuth,orderController.cancelOrder)
+router.put('/order/cancel-item/:itemId', userAuth, orderController.cancelOrderItem);
 //wallet management
 router.get('/wallet',userAuth,walletController.getWallet)
 
@@ -112,6 +115,8 @@ router.post('/checkout/proceed-to-shipping',userAuth,checkoutController.loadShip
 router.get('/shipping',userAuth,checkoutController.getShipping)  
 router.post('/checkout/proceed-to-payment',userAuth,checkoutController.proceedToPayment)
 router.get('/payment',userAuth,checkoutController.loadPayment)
+router.post('/place-order',userAuth,checkoutController.placeOrder)
+router.get('/order-confirmation/:id',userAuth,checkoutController.confirmOrder)
 // router.post('/')
 // Address selection and proceed to next step
 

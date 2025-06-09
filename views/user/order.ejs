@@ -143,63 +143,166 @@
             border-color: #2563eb;
             box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
         }
+
+        /* New Order Item Styles - matching the image */
         .order-item {
+            background-color: #ffffff;
+            border: 2px solid #e0d4f5;
+            border-radius: 12px;
+            padding: 0;
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+        }
+        
+        .order-header {
+            background-color: #e0d4f5;
+            padding: 12px 20px;
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            padding: 1rem;
-            border-bottom: 1px solid #e5e7eb;
+            margin-bottom: 0;
         }
-        .order-item:last-child {
-            border-bottom: none;
-        }
-        .order-details {
-            flex: 1;
-            color: #111827;
-        }
-        .order-id {
-            font-weight: 600;
+        
+        .order-date {
             font-size: 0.875rem;
             color: #1f2937;
+            font-weight: 500;
         }
-        .order-date, .order-total, .order-status {
+        
+        .order-id {
             font-size: 0.875rem;
-            color: #374151;
+            color: #1f2937;
+            font-weight: 500;
         }
-        .order-status {
-            font-weight: 600;
-        }
-        .order-status.pending {
-            color: #f59e0b;
-        }
-        .order-status.processing {
-            color: #d97706;
-        }
-        .order-status.shipped {
-            color: #3b82f6;
-        }
-        .order-status.delivered {
-            color: #22c55e;
-        }
-        .order-status.cancelled {
-            color: #ef4444;
-        }
-        .order-status.failed {
-            color: #dc2626;
-        }
-        .order-actions {
-            display: flex;
-            gap: 0.5rem;
-        }
+        
         .view-link {
             color: #2563eb;
             font-size: 0.875rem;
             text-decoration: none;
-            transition: color 0.2s ease;
+            font-weight: 500;
         }
+        
         .view-link:hover {
-            color: #1d4ed8;
             text-decoration: underline;
         }
+        
+        .order-content {
+            padding: 20px;
+        }
+        
+        .product-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #f3f4f6;
+            margin-bottom: 20px;
+        }
+        
+        .product-item:last-of-type {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        
+        .order-image {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+            flex-shrink: 0;
+        }
+        
+        .product-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        
+        .product-name {
+            font-weight: 600;
+            font-size: 1rem;
+            color: #1f2937;
+            line-height: 1.4;
+            margin-bottom: 4px;
+        }
+        
+        .product-details-row {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .product-detail {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+        
+        .order-summary {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #f3f4f6;
+        }
+        
+        .total-section {
+            text-align: right;
+        }
+        
+        .total-label {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin-bottom: 4px;
+        }
+        
+        .total-amount {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #1f2937;
+        }
+        
+        .status-section {
+            text-align: right;
+        }
+        
+        .status-label {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin-bottom: 4px;
+        }
+        
+        .order-status {
+            font-size: 1rem;
+            font-weight: 600;
+            padding: 4px 12px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+        
+        .order-status.pending {
+            color: #1b3bf5;
+            background-color: #1525ff28;
+        }
+        
+        .order-status.delivered {
+            color: #059669;
+            background-color: #d1fae5;
+        }
+        
+        .order-status.shipped {
+            color: #0284c7;
+            background-color: #dbeafe;
+        }
+        
+        .order-status.cancelled {
+            color: #dc2626;
+            background-color: #fecaca;
+        }
+
         .pagination {
             display: flex;
             justify-content: flex-end;
@@ -255,70 +358,17 @@
         .toast.error {
             background-color: #ef4444;
         }
-        .bg-black-logo {
-            background-color: #000000;
-        }
-        .gucci-style-large {
-            display: flex;
-            justify-content: center;
-            margin: 0 auto;
-            max-width: 1400px;
-        }
-        .gucci-style-large .letter {
-            font-family: 'Times New Roman', serif;
-            font-weight: 100;
-            color: #ffffff;
-            font-size: 15rem;
-            line-height: 1;
-            letter-spacing: 0.10em;
-            text-transform: uppercase;
-            padding: 0 0.08em;
-        }
-        .footer-heading {
-            color: #8C8C8C;
-            font-size: 0.875rem;
-            font-weight: 500;
-            letter-spacing: 0.05em;
-            margin-bottom: 1.5rem;
-            text-transform: uppercase;
-        }
-        .footer-link {
-            color: white;
-            display: block;
-            font-size: 0.875rem;
-            margin-bottom: 1rem;
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-        .footer-link:hover {
-            color: #8C8C8C;
-            text-decoration: underline;
-        }
-        .font-playfair {
-            font-family: 'Playfair Display', serif;
-        }
-        .dropdown-content {
-            display: none;
-        }
-        .dropdown-content.show {
-            display: block;
-        }
-        .hidden:not(.md\:flex) {
-            display: none !important;
-        }
-        @media (min-width: 768px) {
-            .hidden.md\:flex {
-                display: flex !important;
-            }
-        }
-         .shop-header {
+        .shop-header {
             background-color: white;
             border-bottom: 1px solid var(--border-color);
             padding: 1.5rem 0;
             margin-bottom: 2rem;
         }
- .breadcrumb-item+.breadcrumb-item::before {
-            content: ">";
+        .no-orders {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: #6b7280;
+            font-size: 1.1rem;
         }
     </style>
 </head>
@@ -330,7 +380,7 @@
             <nav aria-label="breadcrumb">
                 <ol class="flex space-x-2 text-sm">
                     <li><a href="/" class="text-blue-600 hover:underline">Home</a></li>
-                     <li><a href="/shop" class="text-blue-600 hover:underline"><span class="mx-2 text-black">></span>Shop</a></li>
+                    <li><a href="/shop" class="text-blue-600 hover:underline"><span class="mx-2 text-black">></span>Shop</a></li>
                     <li class="flex items-center"><span class="mx-2">></span><span class="text-gray-500">Orders</span></li>
                 </ol>
             </nav>
@@ -340,7 +390,7 @@
         <div class="sidebar">
             <div class="profile-header">
                 <div class="profile-icon">
-                    <% if (user.image) { %>
+                    <% if (user && user.image) { %>
                         <img src="/Uploads/userProfileimages/<%= user.image %>" alt="Profile Image" class="profile-image">
                     <% } else { %>
                         <i class="fas fa-user" style="color: #ffffff; font-size: 1.125rem;"></i>
@@ -348,7 +398,7 @@
                 </div>
                 <div>
                     <div class="greeting">Hello,</div>
-                    <div class="username"><%= user.name %></div>
+                    <div class="username"><%= user ? user.name : 'User' %></div>
                 </div>
             </div>
             <nav class="menu">
@@ -438,22 +488,50 @@
                 </div>
             </div>
             <div id="orderList">
-                <% if (user.orders && user.orders.length > 0) { %>
-                    <% user.orders.forEach((order) => { %>
-                        <div class="order-item" data-id="<%= order._id %>" data-status="<%= order.status %>" data-date="<%= order.date %>">
-                            <div class="order-details">
-                                <div class="order-id">Order #<%= order.orderId %></div>
-                                <div class="order-date">Placed on: <%= new Date(order.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) %></div>
-                                <div class="order-total">Total: ₹<%= order.totalAmount.toFixed(2) %></div>
-                                <div class="order-status <%= order.status.toLowerCase() %>">Status: <%= order.status %></div>
+                <% if (orders && orders.length > 0) { %>
+                    <% orders.forEach((order) => { %>
+                        <div class="order-item" data-id="<%= order._id %>" data-status="<%= order.status %>" data-date="<%= order.createdOn %>">
+                            <div class="order-header">
+                                <div class="order-date">Order-Date: <%= new Date(order.createdOn).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) %></div>
+                                <div class="order-id">Order Id- #<%= order._id %></div>
+                                <a href="/order/details/<%= order._id %>" class="view-link">View Order Details</a>
                             </div>
-                            <div class="order-actions">
-                                <a href="/order/details/<%= order._id %>" class="view-link">View Details</a>
+                            
+                            <div class="order-content">
+                                <% if (order.orderedItems && order.orderedItems.length > 0) { %>
+                                    <% order.orderedItems.forEach((item) => { %>
+                                    <div class="product-item">
+                                        <img src="/<%= item.productImages && item.productImages[0] ? item.productImages[0] : 'default-image.jpg' %>" alt="Product Image" class="order-image">
+                                        <div class="product-info">
+                                            <div class="product-name"><%= item.productName || 'Product Name' %></div>
+                                            <div class="product-details-row">
+                                                <div class="product-detail">Quantity: <%= item.quantity || 1 %></div>
+                                                <div class="product-detail">Payment Method: <%= order.paymentMethod || 'N/A' %></div>
+                                                <div class="product-detail">Expected Delivery by: <%= order.expectedDelivery ? new Date(order.expectedDelivery).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : 'TBD' %></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <% }) %>
+                                <% } %>
+                                
+                                <div class="order-summary">
+                                    <div class="total-section">
+                                        <div class="total-label">Total Amount</div>
+                                        <div class="total-amount">₹<%= order.finalAmount || order.totalAmount || 0 %></div>
+                                    </div>
+                                    <div class="status-section">
+                                        <div class="status-label">Order Status</div>
+                                        <div class="order-status <%= (order.status || '').toLowerCase() %>"><%= order.status || 'Unknown' %></div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    <% }); %>
+                    <% }) %>
                 <% } else { %>
-                    <p class="text-gray-500 italic">No orders found. Start shopping to place your first order!</p>
+                    <div class="no-orders">
+                        <i class="fas fa-box-open" style="font-size: 3rem; margin-bottom: 1rem; color: #d1d5db;"></i>
+                        <p>No orders found.</p>
+                    </div>
                 <% } %>
             </div>
             <div id="pagination" class="pagination"></div>
@@ -478,9 +556,11 @@
             toast.className = `toast ${type}`;
             toast.textContent = message;
             toastContainer.appendChild(toast);
+            
             setTimeout(() => {
                 toast.classList.add('show');
             }, 100);
+            
             setTimeout(() => {
                 toast.classList.remove('show');
                 setTimeout(() => {
@@ -491,63 +571,94 @@
 
         function initializeOrders() {
             const orderItems = document.querySelectorAll('.order-item');
-            allOrders = Array.from(orderItems).map(item => ({
-                element: item,
-                status: item.getAttribute('data-status'),
-                date: new Date(item.getAttribute('data-date'))
-            }));
-            applyFilters();
+            allOrders = Array.from(orderItems).map(item => {
+                const dateStr = item.getAttribute('data-date');
+                return {
+                    element: item,
+                    status: item.getAttribute('data-status'),
+                    date: dateStr ? new Date(dateStr) : new Date()
+                };
+            });
+            
+            // Initial display
+            filteredOrders = [...allOrders];
+            displayOrders();
+            updatePaginationControls();
         }
 
         function applyFilters() {
             const statusFilter = document.getElementById('statusFilter').value;
             const timeFilter = document.getElementById('timeFilter').value;
-            const currentDate = new Date('2025-06-04T14:15:00Z'); // Current date in UTC (07:45 PM IST = 14:15 PM UTC)
+            const currentDate = new Date();
 
-            filteredOrders = allOrders;
+            // Start with all orders
+            filteredOrders = [...allOrders];
 
             // Apply status filter
             if (statusFilter !== 'All') {
-                filteredOrders = filteredOrders.filter(order => order.status === statusFilter);
+                filteredOrders = filteredOrders.filter(order => 
+                    order.status && order.status.toLowerCase() === statusFilter.toLowerCase()
+                );
             }
 
             // Apply time filter
             if (timeFilter !== 'All') {
+                let cutoffDate;
+                
                 if (timeFilter === 'Last30Days') {
-                    const thirtyDaysAgo = new Date(currentDate);
-                    thirtyDaysAgo.setDate(currentDate.getDate() - 30);
-                    filteredOrders = filteredOrders.filter(order => order.date >= thirtyDaysAgo);
+                    cutoffDate = new Date(currentDate);
+                    cutoffDate.setDate(currentDate.getDate() - 30);
                 } else if (timeFilter === 'Last3Months') {
-                    const threeMonthsAgo = new Date(currentDate);
-                    threeMonthsAgo.setMonth(currentDate.getMonth() - 3);
-                    filteredOrders = filteredOrders.filter(order => order.date >= threeMonthsAgo);
+                    cutoffDate = new Date(currentDate);
+                    cutoffDate.setMonth(currentDate.getMonth() - 3);
                 } else if (timeFilter === 'Last6Months') {
-                    const sixMonthsAgo = new Date(currentDate);
-                    sixMonthsAgo.setMonth(currentDate.getMonth() - 6);
-                    filteredOrders = filteredOrders.filter(order => order.date >= sixMonthsAgo);
+                    cutoffDate = new Date(currentDate);
+                    cutoffDate.setMonth(currentDate.getMonth() - 6);
+                }
+                
+                if (cutoffDate) {
+                    filteredOrders = filteredOrders.filter(order => order.date >= cutoffDate);
                 }
             }
 
-            currentPage = 1; // Reset to first page after filtering
+            currentPage = 1;
             displayOrders();
             updatePaginationControls();
-            showToast('Filters applied', 'success');
         }
 
         function displayOrders() {
             const orderList = document.getElementById('orderList');
-            orderList.innerHTML = '';
+            
+            // Clear existing orders
+            const existingOrders = orderList.querySelectorAll('.order-item');
+            existingOrders.forEach(order => order.style.display = 'none');
+            
+            // Remove any existing "no orders" message
+            const noOrdersMsg = orderList.querySelector('.no-orders');
+            if (noOrdersMsg) {
+                noOrdersMsg.remove();
+            }
 
             if (filteredOrders.length === 0) {
-                orderList.innerHTML = '<p class="text-gray-500 italic">No orders match the selected filters.</p>';
+                const noOrdersDiv = document.createElement('div');
+                noOrdersDiv.className = 'no-orders';
+                noOrdersDiv.innerHTML = `
+                    <i class="fas fa-search" style="font-size: 3rem; margin-bottom: 1rem; color: #d1d5db;"></i>
+                    <p>No orders match the selected filters.</p>
+                `;
+                orderList.appendChild(noOrdersDiv);
                 return;
             }
 
+            // Calculate pagination
             const startIndex = (currentPage - 1) * ordersPerPage;
             const endIndex = startIndex + ordersPerPage;
             const ordersToDisplay = filteredOrders.slice(startIndex, endIndex);
 
-            ordersToDisplay.forEach(order => orderList.appendChild(order.element));
+            // Show only the orders for current page
+            ordersToDisplay.forEach(order => {
+                order.element.style.display = 'block';
+            });
         }
 
         function updatePaginationControls() {
@@ -556,11 +667,12 @@
 
             if (filteredOrders.length === 0) return;
 
+            const totalPages = Math.ceil(filteredOrders.length / ordersPerPage);
             const totalOrders = filteredOrders.length;
             const startIndex = (currentPage - 1) * ordersPerPage + 1;
             const endIndex = Math.min(currentPage * ordersPerPage, totalOrders);
 
-            // Previous Button
+            // Previous button
             const prevBtn = document.createElement('button');
             prevBtn.className = `pagination-btn ${currentPage === 1 ? 'disabled' : ''}`;
             prevBtn.textContent = 'Previous';
@@ -573,12 +685,12 @@
             };
             pagination.appendChild(prevBtn);
 
-            // Next Button
+            // Next button
             const nextBtn = document.createElement('button');
-            nextBtn.className = `pagination-btn ${endIndex >= totalOrders ? 'disabled' : ''}`;
+            nextBtn.className = `pagination-btn ${currentPage >= totalPages ? 'disabled' : ''}`;
             nextBtn.textContent = 'Next';
             nextBtn.onclick = () => {
-                if (endIndex < totalOrders) {
+                if (currentPage < totalPages) {
                     currentPage++;
                     displayOrders();
                     updatePaginationControls();
@@ -586,38 +698,15 @@
             };
             pagination.appendChild(nextBtn);
 
-            // Page Info
+            // Page info
             const pageInfo = document.createElement('span');
             pageInfo.className = 'pagination-info';
             pageInfo.textContent = `Showing ${startIndex}-${endIndex} of ${totalOrders} orders`;
             pagination.appendChild(pageInfo);
         }
 
-        window.addEventListener('load', initializeOrders);
-
-        window.addEventListener('click', function(event) {
-            const dropdowns = document.querySelectorAll('.dropdown-content');
-            dropdowns.forEach(dropdown => {
-                if (dropdown.classList.contains('show') && !event.target.closest('.dropdown')) {
-                    dropdown.classList.remove('show');
-                }
-            });
-        });
-
-        function toggleDropdown(dropdownId) {
-            event.stopPropagation();
-            const dropdowns = document.querySelectorAll('.dropdown-content');
-            dropdowns.forEach(dropdown => {
-                if (dropdown.id !== dropdownId && dropdown.classList.contains('show')) {
-                    dropdown.classList.remove('show');
-                }
-            });
-            document.getElementById(dropdownId).classList.toggle('show');
-        }
-
-        function toggleMobileMenu() {
-            console.log('Mobile menu toggled');
-        }
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', initializeOrders);
     </script>
 </body>
 </html>

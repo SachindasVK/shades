@@ -30,7 +30,15 @@
             <% if (addresses.length > 0) { %>
                 <% addresses.forEach((address, index) => { %>
                     <div style="display: flex; align-items: flex-start; background-color: #f9fafb; padding: 1rem; border-radius: 0.5rem; margin-bottom: 0.75rem; border: 1px solid #e5e7eb; transition: all 0.3s ease;">
-                        <input type="radio" name="address" id="address<%= index %>" <%= address.isDefault ? 'checked' : '' %> style="margin-top: 0.25rem; accent-color: #1a29ff;" aria-label="Select address: <%= address.name %>">
+                         <input 
+      type="radio" 
+      name="address" 
+      id="address<%= index %>" 
+      value="<%= address._id %>"
+      style="margin-top: 0.25rem; accent-color: #000000;" 
+      aria-label="Select address: <%= address.name %>"
+      <% if (selectedAddress && selectedAddress.addressId === address._id.toString()) { %> checked <% } %>
+    >
                         <div style="margin-left: 0.75rem; flex: 1;">
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.25rem;">
                                 <div>

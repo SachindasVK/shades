@@ -1,0 +1,402 @@
+<%- include('../../views/partials/admin/header') %>
+    <!-- Orders Page Content -->
+    <div class="p-6">
+        <!-- Search, Sort, and Filter Controls -->
+        <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+            <div class="flex flex-col md:flex-row justify-between items-center mb-4">
+                <h3 class="text-lg font-semibold">Orders Management</h3>
+                <form method="GET" action="/admin/orders" class="flex space-x-4 mt-4 md:mt-0">
+                    <!-- Search -->
+                    <div class="relative">
+                        <input type="text" name="search" value="<%= search %>" placeholder="Search by Order ID or Customer"
+                            class="pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    </div>
+                    <!-- Sort -->
+                    <select name="sort"
+                        class="px-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        onchange="this.form.submit()">
+                        <option value="date-desc" <%= sort === 'date-desc' ? 'selected' : '' %>>Date: Newest First</option>
+                        <option value="date-asc" <%= sort === 'date-asc' ? 'selected' : '' %>>Date: Oldest First</option>
+                        <option value="total-desc" <%= sort === 'total-desc' ? 'selected' : '' %>>Total: High to Low</option>
+                        <option value="total-asc" <%= sort === 'total-asc' ? 'selected' : '' %>>Total: Low to High</option>
+                    </select>
+                    <!-- Filter -->
+                    <select name="status"
+                        class="px-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        onchange="this.form.submit()">
+                        <option value="all" <%= status === 'all' ? 'selected' : '' %>>All Statuses</option>
+                        <option value="delivered" <%= status === 'delivered' ? 'selected' : '' %>>Delivered</option>
+                        <option value="shipped" <%= status === 'shipped' ? 'selected' : '' %>>Shipped</option>
+                        <option value="processing" <%= status === 'processing' ? 'selected' : '' %>>Processing</option>
+                        <option value="cancelled" <%= status === 'cancelled' ? 'selected' : '' %>>Cancelled</option>
+                        <option value="return_requested" <%= status === 'return_requested' ? 'selected' : '' %>>Return Requested</option>
+                    </select>
+                    <!-- Search Button -->
+                    <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">Search</button>
+                    <!-- Clear Search -->
+                    <a href="/admin/orders" class="px-3 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 text-decoration-none">Clear</a>
+                </form>
+            </div>
+        </div>
+
+        <!-- Orders Table -->
+        <div class="bg-white rounded-lg shadow-sm overflow-hidden mb-6">
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200" id="ordersTable">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col"
+                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Order ID</th>
+                            <th scope="col"
+                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Customer</th>
+                            <th scope="col"
+                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Date</th>
+                            <th scope="col"
+                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Total</th>
+                            <th scope="col"
+                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Status</th>
+                            <th scope="col"
+                                class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200" id="ordersBody">
+                        <% orders.forEach(order=> { %>
+                            <tr data-order-id="<%= order.orderId %>">
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm font-medium text-gray-900">#<%= order.orderId %>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        <div class="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center">
+                                            <span class="text-xs font-medium">
+                                                <%= order.userId?.name?.split(' ').map(n => n[0]).join('').toUpperCase() %>
+                                            </span>
+                                        </div>
+                                        <div class="ml-3">
+                                            <div class="text-sm font-medium text-gray-900"><%= order.userId?.name || 'Unknown' %>
+                                            </div>
+                                            <div class="text-xs text-gray-500">
+                                                <%= order.userId?.email || 'N/A' %>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm text-gray-900">
+                                        <%= new Date(order.createdAt).toLocaleDateString('en-GB') %>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm font-medium text-gray-900">₹<%= order.finalAmount %>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <select class="status-select px-2 py-1 text-xs font-semibold rounded-full"
+                                        data-order-id="<%= order.orderId %>">
+                                        <option value="pending" <%=order.status==='pending' ? 'selected' : '' %>>Pending</option>
+                                        <option value="confirmed" <%=order.status==='confirmed' ? 'selected' : '' %>>Confirmed</option>
+                                        <option value="shipped" <%=order.status==='shipped' ? 'selected' : '' %>>Shipped</option>
+                                        <option value="delivered" <%=order.status==='delivered' ? 'selected' : '' %>>Delivered</option>
+                                        <option value="cancelled" <%=order.status==='cancelled' ? 'selected' : '' %>>Cancelled</option>
+                                        <option value="return_requested" <%=order.status==='return_requested' ? 'selected' : '' %>>Return Requested</option>
+                                        <option value="returning" <%=order.status==='returning' ? 'selected' : '' %>>Returning</option>
+                                        <option value="returned" <%=order.status==='returned' ? 'selected' : '' %>>Returned</option>
+                                    </select>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                    <button class="view-order text-black hover:underline mr-2"
+                                        data-order-id="<%= order.orderId %>">View</button>
+                                    <button class="verify-return text-blue-500 hover:underline" data-order-id="<%= order.orderId %>"
+                                        <%=order.status==='return_requested' ? '' : 'disabled' %>>
+                                        Verify Return
+                                    </button>
+                                </td>
+                            </tr>
+                            <% }) %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        <div class="flex justify-between items-center">
+            <div>
+                <p class="text-sm text-gray-700">
+                    Showing <span><%= ((currentPage - 1) * limit) + 1 %></span> to 
+                    <span><%= Math.min(currentPage * limit, totalOrders) %></span> of 
+                    <span><%= totalOrders %></span> orders
+                </p>
+            </div>
+            <div class="flex space-x-2">
+                <% if (currentPage > 1) { %>
+                    <a href="?page=<%= currentPage - 1 %>&search=<%= search %>&sort=<%= sort %>&status=<%= status %>&limit=<%= limit %>" 
+                       class="px-3 py-1 bg-gray-200 rounded-lg hover:bg-gray-300 text-decoration-none">Previous</a>
+                <% } else { %>
+                    <span class="px-3 py-1 bg-gray-200 rounded-lg opacity-50 cursor-not-allowed">Previous</span>
+                <% } %>
+                
+                <% if (currentPage < totalPages) { %>
+                    <a href="?page=<%= currentPage + 1 %>&search=<%= search %>&sort=<%= sort %>&status=<%= status %>&limit=<%= limit %>" 
+                       class="px-3 py-1 bg-gray-200 rounded-lg hover:bg-gray-300 text-decoration-none">Next</a>
+                <% } else { %>
+                    <span class="px-3 py-1 bg-gray-200 rounded-lg opacity-50 cursor-not-allowed">Next</span>
+                <% } %>
+            </div>
+        </div>
+
+        <!-- Order Details Modal -->
+        <div id="orderModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden">
+            <div class="bg-white rounded-lg p-6 w-full max-w-2xl">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold">Order Details</h3>
+                    <button id="closeModal" class="text-gray-500 hover:text-black"><i class="fas fa-times"></i></button>
+                </div>
+                <div id="orderDetailsContent">
+                    <!-- Order details will be populated here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast Notification -->
+        <div id="toast" class="fixed bottom-4 right-4 z-50 hidden">
+            <div class="bg-white rounded-lg shadow-lg border-l-4 border-green-500 px-4 py-3 max-w-sm">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-check-circle text-green-500"></i>
+                    </div>
+                    <div class="ml-3">
+                        <p id="toastMessage" class="text-sm font-medium text-gray-900"></p>
+                    </div>
+                    <div class="ml-auto pl-3">
+                        <button id="closeToast" class="text-gray-400 hover:text-gray-500">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- JavaScript for Functionality -->
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                // Close toast functionality
+                const closeToast = document.getElementById('closeToast');
+                if (closeToast) {
+                    closeToast.addEventListener('click', function () {
+                        document.getElementById('toast').classList.add('hidden');
+                    });
+                }
+
+                // Status change functionality
+                document.querySelectorAll('.status-select').forEach(select => {
+                    const currentStatus = select.value;
+                    select.setAttribute('data-original-status', currentStatus);
+                    updateStatusStyling(select, currentStatus);
+
+                    select.addEventListener('change', async (e) => {
+                        const orderId = e.target.dataset.orderId;
+                        const newStatus = e.target.value;
+                        const originalStatus = e.target.getAttribute('data-original-status');
+
+                        try {
+                            e.target.disabled = true;
+                            e.target.style.opacity = '0.6';
+
+                            const response = await fetch(`/admin/orders/${orderId}/status`, {
+                                method: 'PATCH',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({ status: newStatus }),
+                            });
+
+                            const data = await response.json();
+
+                            if (response.ok && data.success) {
+                                showToast('Order status updated successfully');
+                                e.target.setAttribute('data-original-status', newStatus);
+                                updateStatusStyling(e.target, newStatus);
+                                handleStatusSpecificActions(orderId, newStatus);
+                            } else {
+                                showToast(data.message || 'Failed to update order status', 'error');
+                                e.target.value = originalStatus;
+                            }
+                        } catch (error) {
+                            console.error('Error updating status:', error);
+                            showToast('An error occurred. Please try again.', 'error');
+                            e.target.value = originalStatus;
+                        } finally {
+                            e.target.disabled = false;
+                            e.target.style.opacity = '1';
+                        }
+                    });
+                });
+
+                function updateStatusStyling(selectElement, status) {
+                    selectElement.className = selectElement.className.replace(/bg-\w+-\d+/g, '').replace(/text-\w+-\d+/g, '');
+
+                    const statusStyles = {
+                        'pending': 'bg-yellow-100 text-yellow-800',
+                        'confirmed': 'bg-blue-100 text-blue-800',
+                        'shipped': 'bg-purple-100 text-purple-800',
+                        'delivered': 'bg-green-100 text-green-800',
+                        'cancelled': 'bg-red-100 text-red-800',
+                        'return_requested': 'bg-orange-100 text-orange-800',
+                        'returning': 'bg-orange-100 text-orange-800',
+                        'returned': 'bg-gray-100 text-gray-800'
+                    };
+
+                    if (statusStyles[status]) {
+                        selectElement.className += ` ${statusStyles[status]}`;
+                    }
+                }
+
+                function handleStatusSpecificActions(orderId, status) {
+                    const verifyReturnButton = document.querySelector(`.verify-return[data-order-id="${orderId}"]`);
+                    if (verifyReturnButton) {
+                        if (status === 'return_requested') {
+                            verifyReturnButton.disabled = false;
+                            verifyReturnButton.classList.remove('opacity-50', 'cursor-not-allowed');
+                        } else {
+                            verifyReturnButton.disabled = true;
+                            verifyReturnButton.classList.add('opacity-50', 'cursor-not-allowed');
+                        }
+                    }
+                }
+
+                function showToast(message, type = 'success') {
+                    const toastMessage = document.getElementById('toastMessage');
+                    const toastElement = document.getElementById('toast');
+
+                    toastMessage.textContent = message;
+
+                    if (type === 'error') {
+                        toastElement.querySelector('div').classList.remove('border-green-500');
+                        toastElement.querySelector('div').classList.add('border-red-500');
+                        toastElement.querySelector('i').classList.remove('text-green-500');
+                        toastElement.querySelector('i').classList.add('text-red-500');
+                        toastElement.querySelector('i').classList.remove('fa-check-circle');
+                        toastElement.querySelector('i').classList.add('fa-exclamation-circle');
+                    } else {
+                        toastElement.querySelector('div').classList.remove('border-red-500');
+                        toastElement.querySelector('div').classList.add('border-green-500');
+                        toastElement.querySelector('i').classList.remove('text-red-500');
+                        toastElement.querySelector('i').classList.add('text-green-500');
+                        toastElement.querySelector('i').classList.remove('fa-exclamation-circle');
+                        toastElement.querySelector('i').classList.add('fa-check-circle');
+                    }
+
+                    toastElement.classList.remove('hidden');
+
+                    setTimeout(() => {
+                        toastElement.classList.add('hidden');
+                    }, 5000);
+                }
+
+                // View order modal functionality
+                document.querySelectorAll('.view-order').forEach(button => {
+                    button.addEventListener('click', async (e) => {
+                        const orderId = e.target.dataset.orderId;
+                        try {
+                            const response = await fetch(`/admin/orders/${orderId}`);
+                            const data = await response.json();
+                            
+                            if (response.ok && data.success) {
+                                const order = data.order;
+                                const modal = document.getElementById('orderModal');
+                                const content = document.getElementById('orderDetailsContent');
+
+                                content.innerHTML = `
+                                    <h4 class="text-md font-medium mb-4">Order #${order.orderId}</h4>
+                                    <div class="grid grid-cols-2 gap-4 mb-4">
+                                        <div>
+                                            <p><strong>Customer:</strong> ${order.userId?.name || 'Unknown'}</p>
+                                            <p><strong>Email:</strong> ${order.userId?.email || 'N/A'}</p>
+                                        </div>
+                                        <div>
+                                            <p><strong>Date:</strong> ${new Date(order.createdAt).toLocaleDateString('en-GB')}</p>
+                                            <p><strong>Status:</strong> ${order.status}</p>
+                                        </div>
+                                    </div>
+                                    <div class="mb-4">
+                                        <p><strong>Total:</strong> ₹${order.finalAmount}</p>
+                                    </div>
+                                    <h5 class="text-sm font-semibold mb-2">Order Items:</h5>
+                                    <div class="max-h-60 overflow-y-auto">
+                                        ${order.orderedItems?.map(item => `
+                                            <div class="border-b py-2">
+                                                <p><strong>${item.product?.productName || 'Unknown Product'}</strong></p>
+                                                <p>Quantity: ${item.quantity}</p>
+                                                <p>Price: ₹${item.price}</p>
+                                            </div>
+                                        `).join('') || '<p>No items found</p>'}
+                                    </div>
+                                `;
+                                modal.classList.remove('hidden');
+                            } else {
+                                showToast('Failed to load order details', 'error');
+                            }
+                        } catch (error) {
+                            console.error('Error fetching order details:', error);
+                            showToast('An error occurred while loading order details', 'error');
+                        }
+                    });
+                });
+
+                // Verify return functionality
+                document.querySelectorAll('.verify-return').forEach(button => {
+                    button.addEventListener('click', async (e) => {
+                        const orderId = e.target.dataset.orderId;
+                        
+                        if (confirm(`Are you sure you want to verify the return for Order #${orderId}?`)) {
+                            try {
+                                const response = await fetch(`/admin/orders/${orderId}/verify-return`, {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                    }
+                                });
+
+                                const data = await response.json();
+
+                                if (response.ok && data.success) {
+                                    showToast('Return verified successfully');
+                                    // Refresh the page to show updated data
+                                    setTimeout(() => {
+                                        window.location.reload();
+                                    }, 1500);
+                                } else {
+                                    showToast(data.message || 'Failed to verify return', 'error');
+                                }
+                            } catch (error) {
+                                console.error('Error verifying return:', error);
+                                showToast('An error occurred while verifying return', 'error');
+                            }
+                        }
+                    });
+                });
+
+                // Close modal
+                document.getElementById('closeModal').addEventListener('click', () => {
+                    document.getElementById('orderModal').classList.add('hidden');
+                });
+
+                // Close modal when clicking outside
+                document.getElementById('orderModal').addEventListener('click', (e) => {
+                    if (e.target.id === 'orderModal') {
+                        document.getElementById('orderModal').classList.add('hidden');
+                    }
+                });
+            });
+        </script>
+    </div>
+
+<%- include('../../views/partials/admin/footer') %>
