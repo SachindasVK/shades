@@ -14,7 +14,7 @@
         .page-body {
             background-color: #f3f4f6;
         }
-        .containeer {
+        .container {
             max-width: 95%; 
             margin-left: auto; 
             margin-right: auto;
@@ -51,7 +51,7 @@
         .profile-image {
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            object-fit: contain;
             border-radius: 9999px;
         }
         .profile-icon i {
@@ -144,7 +144,7 @@
             box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
         }
 
-        /* New Order Item Styles - matching the image */
+        /* Order Item Styles */
         .order-item {
             background-color: #ffffff;
             border: 2px solid #e0d4f5;
@@ -206,9 +206,9 @@
         }
         
         .order-image {
-            width: 80px;
-            height: 80px;
-            object-fit: cover;
+            width: 150px;
+            height: 100px;
+            object-fit: contain;
             border-radius: 8px;
             border: 1px solid #e5e7eb;
             flex-shrink: 0;
@@ -284,24 +284,48 @@
         }
         
         .order-status.pending {
-            color: #1b3bf5;
-            background-color: #1525ff28;
+            color: #f59e1b;
+            background-color: #ffae0028;
         }
         
-        .order-status.delivered {
-            color: #059669;
-            background-color: #d1fae5;
+        .order-status.confirmed{
+            color: blue;
+            background-color: rgba(0, 0, 255, 0.11);
         }
-        
         .order-status.shipped {
             color: #0284c7;
-            background-color: #dbeafe;
+            background-color: #0285c723;
+        }
+         .order-status.delivered {
+            color: green;
+            background-color: rgba(0, 128, 0, 0.219);
         }
         
-        .order-status.cancelled {
-            color: #dc2626;
-            background-color: #fecaca;
+        .order-status.return_requested{
+            color: orangered;
+            background-color: rgba(255, 68, 0, 0.137);
         }
+         .order-status.returning {
+            color: orange;
+            background-color: rgba(255, 166, 0, 0.178);
+        }
+        .order-status.cancelled {
+            color: red;
+            background-color: rgba(255, 0, 0, 0.171);
+        }
+
+        /* Cancelled Item Styling */
+        .cancelled-item {
+            opacity: 0.6;
+            background-color: #f9fafb;
+        }
+
+        .cancel-reason {
+            font-size: 0.75rem;
+            color: red;
+            margin-top: 4px;
+        }
+        
 
         .pagination {
             display: flex;
@@ -370,6 +394,10 @@
             color: #6b7280;
             font-size: 1.1rem;
         }
+        .order-status.processing {
+    color: #0369a1;
+    background-color: rgba(3, 105, 161, 0.1);
+}
     </style>
 </head>
 <body class="page-body">
@@ -386,7 +414,7 @@
             </nav>
         </div>
     </div>
-    <div class="containeer">
+    <div class="container">
         <div class="sidebar">
             <div class="profile-header">
                 <div class="profile-icon">
@@ -468,14 +496,16 @@
                 <div>
                     <label class="form-label" for="statusFilter">Filter by Status</label>
                     <select id="statusFilter" class="form-select" onchange="applyFilters()">
-                        <option value="All">All Statuses</option>
-                        <option value="Pending">Pending</option>
-                        <option value="Processing">Processing</option>
-                        <option value="Shipped">Shipped</option>
-                        <option value="Delivered">Delivered</option>
-                        <option value="Cancelled">Cancelled</option>
-                        <option value="Failed">Failed</option>
-                    </select>
+    <option value="All">All Statuses</option>
+    <option value="Pending">Pending</option>
+    <option value="Confirmed">Confirmed</option>
+    <option value="Processing">Processing</option>
+    <option value="Shipped">Shipped</option>
+    <option value="Delivered">Delivered</option>
+    <option value="Return_Requested">Return Requested</option>
+    <option value="Returning">Returning</option>
+    <option value="Cancelled">Cancelled</option>
+</select>
                 </div>
                 <div>
                     <label class="form-label" for="timeFilter">Filter by Time</label>
@@ -500,15 +530,24 @@
                             <div class="order-content">
                                 <% if (order.orderedItems && order.orderedItems.length > 0) { %>
                                     <% order.orderedItems.forEach((item) => { %>
-                                    <div class="product-item">
+                                    <div class="product-item <%= item.status === 'cancelled' ? 'cancelled-item' : '' %>">
                                         <img src="/<%= item.productImages && item.productImages[0] ? item.productImages[0] : 'default-image.jpg' %>" alt="Product Image" class="order-image">
                                         <div class="product-info">
                                             <div class="product-name"><%= item.productName || 'Product Name' %></div>
                                             <div class="product-details-row">
                                                 <div class="product-detail">Quantity: <%= item.quantity || 1 %></div>
                                                 <div class="product-detail">Payment Method: <%= order.paymentMethod || 'N/A' %></div>
-                                                <div class="product-detail">Expected Delivery by: <%= order.expectedDelivery ? new Date(order.expectedDelivery).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : 'TBD' %></div>
+                                                <% if (item.status !== 'cancelled') { %>
+                                                    <div class="product-detail">Expected Delivery by: <%= order.expectedDelivery ? new Date(order.expectedDelivery).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : 'TBD' %></div>
+                                                <% } %>
                                             </div>
+                                             <% if (order.status === 'cancelled' && order.cancelReason) { %>
+                                                <div class="cancel-reason">Cancelled: <%= order.cancelReason %></div>
+                                    
+                                            <%}else if (item.status === 'cancelled' && item.cancelReason) { %>
+                                                <div class="cancel-reason">Cancelled: <%= item.cancelReason %></div>
+                                            <% } %>
+                                            
                                         </div>
                                     </div>
                                     <% }) %>
@@ -521,7 +560,9 @@
                                     </div>
                                     <div class="status-section">
                                         <div class="status-label">Order Status</div>
-                                        <div class="order-status <%= (order.status || '').toLowerCase() %>"><%= order.status || 'Unknown' %></div>
+                                        <div class="order-status <%= (order.status || '').toLowerCase() %>">
+                                            <%= order.status || 'Unknown' %>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -547,84 +588,149 @@
     <script>
         let allOrders = [];
         let filteredOrders = [];
-        let currentPage = 1;
-        const ordersPerPage = 5;
+       let currentPage = 1;
+const ordersPerPage = 5;
 
-        function showToast(message, type = 'success') {
-            const toastContainer = document.getElementById('toastContainer');
-            const toast = document.createElement('div');
-            toast.className = `toast ${type}`;
-            toast.textContent = message;
-            toastContainer.appendChild(toast);
-            
-            setTimeout(() => {
-                toast.classList.add('show');
-            }, 100);
-            
-            setTimeout(() => {
-                toast.classList.remove('show');
-                setTimeout(() => {
-                    toast.remove();
-                }, 300);
-            }, 3000);
+function showToast(message, type = 'success') {
+    const toastContainer = document.getElementById('toastContainer');
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.textContent = message;
+    toastContainer.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.classList.add('show');
+    }, 100);
+    
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => {
+            toast.remove();
+        }, 300);
+    }, 300);
+}
+
+function showLoading() {
+    const orderList = document.getElementById('orderList');
+    orderList.innerHTML = `
+        <div style="text-align: center; padding: 2rem;">
+            <i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: #6b7280;"></i>
+            <p style="margin-top: 1rem; color: #6b7280;">Loading orders...</p>
+        </div>
+    `;
+}
+
+async function applyFilters(page = 1) {
+    const statusFilter = document.getElementById('statusFilter').value;
+    const timeFilter = document.getElementById('timeFilter').value;
+    
+    try {
+        showLoading();
+        
+        // Build query parameters
+        const params = new URLSearchParams();
+        if (statusFilter !== 'All') params.append('status', statusFilter);
+        if (timeFilter !== 'All') params.append('timeFilter', timeFilter);
+        params.append('page', page);
+        params.append('limit', ordersPerPage);
+        
+        // Make AJAX request to backend
+        const response = await fetch(`/orders?${params.toString()}`, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        });
+        
+        if (!response.ok) {
+            throw new Error('Failed to fetch orders');
         }
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            currentPage = page;
+            displayOrders(data.orders);
+            updatePaginationControls(data.pagination);
+        } else {
+            showToast('Error loading orders', 'error');
+        }
+        
+    } catch (error) {
+        console.error('Filter error:', error);
+        showToast('Error loading orders', 'error');
+        displayNoOrders();
+    }
+}
+
+
 
         function initializeOrders() {
-            const orderItems = document.querySelectorAll('.order-item');
-            allOrders = Array.from(orderItems).map(item => {
-                const dateStr = item.getAttribute('data-date');
-                return {
-                    element: item,
-                    status: item.getAttribute('data-status'),
-                    date: dateStr ? new Date(dateStr) : new Date()
-                };
-            });
-            
-            // Initial display
-            filteredOrders = [...allOrders];
-            displayOrders();
-            updatePaginationControls();
-        }
+    const orderItems = document.querySelectorAll('.order-item');
+    allOrders = Array.from(orderItems).map(item => {
+        const dateStr = item.getAttribute('data-date');
+        const status = item.getAttribute('data-status');
+        
+        return {
+            element: item,
+            status: status ? status.trim() : '',
+            date: dateStr ? new Date(dateStr) : new Date()
+        };
+    });
+    
+    console.log('Initialized orders:', allOrders.map(o => ({ status: o.status, date: o.date })));
+    
+    // Initial display
+    filteredOrders = [...allOrders];
+    displayOrders();
+    updatePaginationControls();
+}
 
         function applyFilters() {
-            const statusFilter = document.getElementById('statusFilter').value;
-            const timeFilter = document.getElementById('timeFilter').value;
-            const currentDate = new Date();
+    const statusFilter = document.getElementById('statusFilter').value;
+    const timeFilter = document.getElementById('timeFilter').value;
+    const currentDate = new Date();
 
-            // Start with all orders
-            filteredOrders = [...allOrders];
+    // Start with all orders
+    filteredOrders = [...allOrders];
 
-            // Apply status filter
-            if (statusFilter !== 'All') {
-                filteredOrders = filteredOrders.filter(order => 
-                    order.status && order.status.toLowerCase() === statusFilter.toLowerCase()
-                );
-            }
+    // Apply status filter
+    if (statusFilter !== 'All') {
+        filteredOrders = filteredOrders.filter(order => {
+            if (!order.status) return false;
+            // Handle case variations and underscores
+            const orderStatus = order.status.toLowerCase().replace(/[_\s]/g, '');
+            const filterStatus = statusFilter.toLowerCase().replace(/[_\s]/g, '');
+            return orderStatus === filterStatus;
+        });
+    }
 
-            // Apply time filter
-            if (timeFilter !== 'All') {
-                let cutoffDate;
-                
-                if (timeFilter === 'Last30Days') {
-                    cutoffDate = new Date(currentDate);
-                    cutoffDate.setDate(currentDate.getDate() - 30);
-                } else if (timeFilter === 'Last3Months') {
-                    cutoffDate = new Date(currentDate);
-                    cutoffDate.setMonth(currentDate.getMonth() - 3);
-                } else if (timeFilter === 'Last6Months') {
-                    cutoffDate = new Date(currentDate);
-                    cutoffDate.setMonth(currentDate.getMonth() - 6);
-                }
-                
-                if (cutoffDate) {
-                    filteredOrders = filteredOrders.filter(order => order.date >= cutoffDate);
-                }
-            }
-
-            currentPage = 1;
-            displayOrders();
-            updatePaginationControls();
+    // Apply time filter
+    if (timeFilter !== 'All') {
+        let cutoffDate = new Date(currentDate);
+        
+        switch(timeFilter) {
+            case 'Last30Days':
+                cutoffDate.setDate(currentDate.getDate() - 30);
+                break;
+            case 'Last3Months':
+                cutoffDate.setMonth(currentDate.getMonth() - 3);
+                break;
+            case 'Last6Months':
+                cutoffDate.setMonth(currentDate.getMonth() - 6);
+                break;
         }
+        
+        filteredOrders = filteredOrders.filter(order => {
+            return order.date && order.date >= cutoffDate;
+        });
+    }
+
+    currentPage = 1;
+    displayOrders();
+    updatePaginationControls();
+}
 
         function displayOrders() {
             const orderList = document.getElementById('orderList');

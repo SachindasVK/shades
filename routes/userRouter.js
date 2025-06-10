@@ -82,6 +82,7 @@ router.post('/changepassword',userAuth,profileController.changePassword)
 
 //order management
 router.get('/orders',userAuth,orderController.getOrders)
+router.post('/orders/filter',userAuth,orderController.filterOrders);
 router.get('/order/details/:id', userAuth, orderController.getOrderDetails)
 router.get('/order/invoice/:id',userAuth,orderController.downloadInvoice)
 router.put('/order/cancel/:orderId', userAuth,orderController.cancelOrder)

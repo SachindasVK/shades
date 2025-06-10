@@ -200,125 +200,118 @@ const proceedToPayment = async (req, res) => {
         });
     }
 }
-
 const loadPayment = async (req, res) => {
-    try {
-        const userId = req.session.user;
-        const selectedAddress = req.session.selectedAddress;
-        const user = await User.findById(userId);
+  try {
+    const userId = req.session.user;
+    const selectedAddress = req.session.selectedAddress;
+    const user = await User.findById(userId);
 
-        const cart = await Cart.findOne({ userId }).populate('items.productId');
-        let total = 0;
-        let cartItems = [];
-        if (cart) {
-            cartItems = cart.items.filter(item => item.status === 'Placed');
-            cartItems.forEach(item => {
-                total += item.totalPrice;
-            });
-        }
+    const cart = await Cart.findOne({ userId }).populate('items.productId');
+    let subtotal = 0;
+    let cartItems = [];
 
+    if (cart) {
+      cartItems = cart.items.filter(item => item.status === 'Placed');
 
-        const wallet = await Wallet.findOne({ userId });
-
-       
-        const coupons = await Coupon.find({
-            isDeleted: false,
-            expireOn: { $gte: new Date() },
-            minimumPrice: { $lte: total }
-        });
-
-
-        const expectedDelivery = new Date();
-        expectedDelivery.setDate(expectedDelivery.getDate() + 3);
-        const expectedDeliveryDate = expectedDelivery.toDateString();
-        
-        const maxCodAmount = 10000;
-        const isCodEligible = total <= maxCodAmount;
-      
-        res.render('payment', {
-            user,
-            username: user.name,
-            address: selectedAddress,
-            cartItems,
-            totalAmount: total,
-            walletBalance: wallet?.balance || 0,
-            coupons,
-            expectedDeliveryDate,
-            isCodEligible,
-        });
-
-    } catch (error) {
-        console.error("Error rendering payment page:", error.message);
-        res.status(500).send("Error loading payment page");
+      cartItems.forEach(item => {
+        const pricePerUnit = item.productId?.salePrice || item.productId?.regularPrice || 0;
+        subtotal += pricePerUnit * item.quantity;
+      });
     }
+    
+
+
+    //calculate final amount
+    const baseDiscount = subtotal > 1500 ? 200 : 0;
+    const deliveryCharge = subtotal > 2000 ? 0 : 50;
+    const gst = Math.round(subtotal * 0.18);
+    const totalAmount = subtotal + deliveryCharge + gst - baseDiscount;
+
+
+
+    const wallet = await Wallet.findOne({ userId });
+
+    const coupons = await Coupon.find({
+      isDeleted: false,
+      expireOn: { $gte: new Date() },
+      minimumPrice: { $lte: subtotal }
+    });
+
+    const expectedDelivery = new Date();
+    expectedDelivery.setDate(expectedDelivery.getDate() + 3);
+    const expectedDeliveryDate = expectedDelivery.toDateString();
+
+
+    const maxCodAmount = 20000; 
+    const isCodEligible = totalAmount <= maxCodAmount;
+
+    res.render('payment', {
+      user,
+      username: user.name,
+      address: selectedAddress,
+      cartItems,
+      totalAmount: subtotal,
+      finalAmount, 
+      walletBalance: wallet?.balance || 0,
+      coupons,
+      expectedDeliveryDate,
+      isCodEligible,
+    });
+
+  } catch (error) {
+    console.error("Error rendering payment page:", error.message);
+    res.status(500).send("Error loading payment page");
+  }
 };
 
 const placeOrder = async (req, res) => {
   try {
-   
     const userId = req.session.user?._id || req.user?._id;
     if (!userId) {
-      return res.status(401).json({ 
-        success: false, 
-        message: 'User not authenticated' 
-      });
+      return res.status(401).json({ success: false, message: 'User not authenticated' });
     }
 
-   
     const { paymentMethod, appliedCoupon, couponDiscount } = req.body;
-    
     if (!paymentMethod) {
-      return res.status(400).json({ 
-        success: false, 
-        message: 'Payment method is required' 
-      });
+      return res.status(400).json({ success: false, message: 'Payment method is required' });
     }
 
-    
     const selectedAddress = req.session.selectedAddress;
     if (!selectedAddress) {
-      return res.status(400).json({ 
-        success: false, 
-        message: 'No address selected. Please select an address first.' 
-      });
+      return res.status(400).json({ success: false, message: 'No address selected' });
     }
 
-    // Get user's cart items with populated product data
     const cart = await Cart.findOne({ userId }).populate('items.productId');
-    if (!cart || !cart.items || cart.items.length === 0) {
-      return res.status(400).json({ 
-        success: false, 
-        message: 'Cart is empty' 
-      });
+    if (!cart || cart.items.length === 0) {
+      return res.status(400).json({ success: false, message: 'Cart is empty' });
     }
 
-    // Filter only active cart items
     const activeItems = cart.items.filter(item => item.status === 'Placed');
     if (activeItems.length === 0) {
-      return res.status(400).json({ 
-        success: false, 
-        message: 'No active items in cart' 
-      });
+      return res.status(400).json({ success: false, message: 'No active items in cart' });
     }
 
-    // Calculate pricing
     let subtotal = 0;
     const orderedItems = [];
 
     for (const item of activeItems) {
-      if (!item.productId) {
-        return res.status(400).json({ 
-          success: false, 
-          message: 'Invalid product in cart' 
+      const product = item.productId;
+      if (!product) {
+        return res.status(400).json({ success: false, message: 'Invalid product in cart' });
+      }
+
+      // Stock check
+      if (product.stock < item.quantity) {
+        return res.status(400).json({
+          success: false,
+          message: `Insufficient stock for product: ${product.productName}`
         });
       }
 
-      const product = item.productId;
       const itemPrice = product.salePrice || product.regularPrice || 0;
       const itemTotal = itemPrice * item.quantity;
       subtotal += itemTotal;
 
-      
       orderedItems.push({
         product: product._id,
         productName: product.productName,
@@ -330,39 +323,31 @@ const placeOrder = async (req, res) => {
       });
     }
 
-    // calcu discount
-    let baseDiscount = subtotal > 1500 ? 200 : 0;
-    let totalDiscount = baseDiscount + (couponDiscount || 0);
-    let deliveryCharge = subtotal > 2000 ? 0 : 50;
-    let gst = Math.round(subtotal * 0.18);
-    let finalAmount = subtotal + deliveryCharge + gst - totalDiscount;
+    // Discounts and charges
+    const baseDiscount = subtotal > 1500 ? 200 : 0;
+    const totalDiscount = baseDiscount + (couponDiscount || 0);
+    const deliveryCharge = subtotal > 2000 ? 0 : 50;
+    const gst = Math.round(subtotal * 0.18);
+    const finalAmount = subtotal + deliveryCharge + gst - totalDiscount;
 
-    // cod check
-    if (paymentMethod === 'cod') {
-      const isCodEligible = finalAmount <= 10000;
-      if (!isCodEligible) {
-        return res.status(400).json({ 
-          success: false, 
-          message: 'Cash on Delivery not available for this order' 
-        });
-      }
+    // Use consistent COD limit (20000) to match loadPayment
+    if (paymentMethod === 'cod' && finalAmount > 20000) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'COD not allowed for orders above ₹20,000' 
+      });
     }
 
-    //check wallet balance
     if (paymentMethod === 'wallet') {
       const user = await User.findById(userId);
       if (!user || user.wallet < finalAmount) {
-        return res.status(400).json({ 
-          success: false, 
-          message: 'Insufficient wallet balance' 
-        });
+        return res.status(400).json({ success: false, message: 'Insufficient wallet balance' });
       }
     }
 
     const expectedDelivery = new Date();
-    expectedDelivery.setDate(expectedDelivery.getDate() + 5); // set to 5 days later
+    expectedDelivery.setDate(expectedDelivery.getDate() + 5);
 
-    // new order document
     const order = new Order({
       userId,
       orderedItems,
@@ -371,30 +356,24 @@ const placeOrder = async (req, res) => {
       deliveryCharge,
       gstAmount: gst,
       finalAmount,
-      address: selectedAddress, 
+      address: selectedAddress,
       paymentMethod,
-      status: 'pending',
+      status: paymentMethod === 'wallet' ? 'confirmed' : 'pending',
       invoiceDate: new Date(),
       createdOn: new Date(),
-      couponApplied: appliedCoupon ? true : false,
+      couponApplied: !!appliedCoupon,
       expectedDelivery
     });
 
-   
     const savedOrder = await order.save();
-    console.log('order: ',savedOrder)
+
+    // Wallet payment
     if (paymentMethod === 'wallet') {
-      await User.findByIdAndUpdate(userId, {
-        $inc: { wallet: -finalAmount }
-      });
-      
-      // Update order status to confirmed for wallet payments
-      savedOrder.status = 'confirmed';
-      await savedOrder.save();
+      await User.findByIdAndUpdate(userId, { $inc: { wallet: -finalAmount } });
     }
 
+    // If Razorpay/online payment needed
     if (paymentMethod === 'online') {
-     // when i use razorpay
       return res.json({
         success: true,
         message: 'Redirecting to payment gateway',
@@ -404,11 +383,10 @@ const placeOrder = async (req, res) => {
       });
     }
 
-    await Cart.findOneAndUpdate(
-      { userId },
-      { $set: { items: [] } }
-    );
+    // Clear the cart
+    await Cart.findOneAndUpdate({ userId }, { $set: { items: [] } });
 
+    // Clear session data
     delete req.session.selectedAddress;
     delete req.session.shippingMethod;
 
@@ -421,13 +399,15 @@ const placeOrder = async (req, res) => {
 
   } catch (error) {
     console.error('Error placing order:', error);
-    res.status(500).json({ 
-      success: false, 
+    res.status(500).json({
+      success: false,
       message: 'Failed to place order. Please try again.',
       error: process.env.NODE_ENV === 'development' ? error.message : undefined
     });
   }
 };
+
+
 const confirmOrder = async (req, res) => {
   try {
     const userId = req.session.user;

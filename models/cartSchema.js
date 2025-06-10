@@ -48,6 +48,14 @@ const cartSchema = new Schema({
 });
 
 
+cartSchema.pre('save', function (next) {
+  this.items.forEach(item => {
+    item.totalPrice = item.price * item.quantity;
+  });
+  next();
+});
+
+
 cartSchema.methods.getTotalValue = function() {
   return this.items.reduce((total, item) => {
     if (item.status === 'Placed') {
@@ -57,7 +65,6 @@ cartSchema.methods.getTotalValue = function() {
   }, 0);
 };
 
-// Custom method to get count of active (Placed) items
 cartSchema.methods.getActiveItemsCount = function() {
   return this.items.filter(item => item.status === 'Placed').length;
 };

@@ -81,5 +81,7 @@ router.get('/coupons/:id', adminAuth, couponController.getCouponById)
 //order management
 router.get('/orders',adminAuth,orderController.viewAllOrders)
 router.patch('/orders/:orderId/status', adminAuth,orderController.updateOrderStatus);
-router.patch('/orders/:orderId/verify-return',adminAuth,orderController.verifyReturn);
+router.post('/orders/:orderId/verify-return',adminAuth,orderController.verifyReturn);
+router.get('/orders/:orderId', adminAuth, orderController.getOrderDetails);
+
 module.exports = router;

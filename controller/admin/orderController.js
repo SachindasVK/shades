@@ -46,7 +46,7 @@ const viewAllOrders = async (req, res) => {
 
     // Render the EJS template with paginated data
     res.render('ordermanagement', {
-      pageTitle: 'Order Management',
+      pageTitle: 'Orders Management',
       orders,
       totalOrders,
       currentPage: page,
@@ -210,7 +210,7 @@ async function processRefund(userId, amount, orderId, reason) {
   }
 }
 
-// Additional controller for handling verify return specifically
+
 const verifyReturn = async (req, res) => {
   const { orderId } = req.params;
 
@@ -268,8 +268,31 @@ const verifyReturn = async (req, res) => {
     });
   }
 };
+
+
+const getOrderDetails = async(req,res)=>{
+  try {
+    const {orderId} = req.params
+
+    console.log('Requested Order ID:', orderId);
+
+       const order = await Order.findOne({ orderId })
+            .populate('userId', 'name email')  // populate name and email only
+            .populate('orderedItems.product', 'productName'); // productName only
+
+        if (!order) {
+            return res.status(404).json({ success: false, message: 'Order not found' });
+        }
+
+        res.json({ success: true, order });
+    } catch (error) {
+        console.error('Error fetching order details:', error);
+        res.status(500).json({ success: false, message: 'Server error' });
+  }
+}
 module.exports = {
   viewAllOrders,
    updateOrderStatus,
-  verifyReturn
+  verifyReturn,
+  getOrderDetails
 };

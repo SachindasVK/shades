@@ -143,59 +143,77 @@
                 </div>
             <% } else { %>
                 <div class="flex items-center justify-between">
-                    <!-- Order Confirmed -->
-                    <div class="flex items-center space-x-2">
-                        <div class="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center">
-                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                            </svg>
-                        </div>
-                        <div>
-                            <p class="text-sm font-medium">Order Confirmed</p>
-                            <p class="text-xs text-gray-500">
-                                <%= new Date(order.createdOn).toLocaleDateString('en-GB') %>
-                            </p>
-                        </div>
-                    </div>
-                    
-                    <div class="flex-1 h-1 <%= order.status === 'shipped' || order.status === 'delivered' ? 'bg-blue-600' : 'bg-gray-200' %> mx-2"></div>
-                    
-                    <!-- Shipped -->
-                    <div class="flex items-center space-x-2">
-                        <div class="w-6 h-6 <%= order.status === 'shipped' || order.status === 'delivered' ? 'bg-blue-600' : 'bg-gray-300' %> rounded-full flex items-center justify-center">
-                            <% if (order.status === 'shipped' || order.status === 'delivered') { %>
-                                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                                </svg>
-                            <% } %>
-                        </div>
-                        <div>
-                            <p class="text-sm <%= order.status === 'shipped' || order.status === 'delivered' ? 'font-medium' : 'text-gray-500' %>">Shipped</p>
-                            <% if (order.shippedDate) { %>
-                                <p class="text-xs text-gray-500"><%= new Date(order.shippedDate).toLocaleDateString('en-GB') %></p>
-                            <% } %>
-                        </div>
-                    </div>
-                    
-                    <div class="flex-1 h-1 <%= order.status === 'delivered' ? 'bg-blue-600' : 'bg-gray-200' %> mx-2"></div>
-                    
-                    <!-- Delivered -->
-                    <div class="flex items-center space-x-2">
-                        <div class="w-6 h-6 <%= order.status === 'delivered' ? 'bg-green-600' : 'bg-gray-300' %> rounded-full flex items-center justify-center">
-                            <% if (order.status === 'delivered') { %>
-                                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                                </svg>
-                            <% } %>
-                        </div>
-                        <div>
-                            <p class="text-sm <%= order.status === 'delivered' ? 'font-medium text-green-600' : 'text-gray-500' %>">Delivered</p>
-                            <% if (order.deliveredDate) { %>
-                                <p class="text-xs text-gray-500"><%= new Date(order.deliveredDate).toLocaleDateString('en-GB') %></p>
-                            <% } %>
-                        </div>
-                    </div>
-                </div>
+
+    <!-- Pending -->
+    <div class="flex items-center space-x-2">
+        <div class="w-6 h-6 <%= order.status === 'pending' ? 'bg-yellow-500' : 'bg-green-600' %> rounded-full flex items-center justify-center">
+            <% if (order.status !== 'pending') { %>
+                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+            <% } %>
+        </div>
+        <div>
+            <p class="text-sm font-medium">Pending</p>
+            <p class="text-xs text-gray-500"><%= new Date(order.createdOn).toLocaleDateString('en-GB') %></p>
+        </div>
+    </div>
+
+    <div class="flex-1 h-1 <%= ['confirmed', 'shipped', 'delivered'].includes(order.status) ? 'bg-blue-600' : 'bg-gray-200' %> mx-2"></div>
+
+    <!-- Confirmed -->
+    <div class="flex items-center space-x-2">
+        <div class="w-6 h-6 <%= ['confirmed', 'shipped', 'delivered'].includes(order.status) ? 'bg-blue-600' : 'bg-gray-300' %> rounded-full flex items-center justify-center">
+            <% if (['confirmed', 'shipped', 'delivered'].includes(order.status)) { %>
+                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+            <% } %>
+        </div>
+        <div>
+            <p class="text-sm font-medium">Confirmed</p>
+        </div>
+    </div>
+
+    <div class="flex-1 h-1 <%= ['shipped', 'delivered'].includes(order.status) ? 'bg-blue-600' : 'bg-gray-200' %> mx-2"></div>
+
+    <!-- Shipped -->
+    <div class="flex items-center space-x-2">
+        <div class="w-6 h-6 <%= ['shipped', 'delivered'].includes(order.status) ? 'bg-blue-600' : 'bg-gray-300' %> rounded-full flex items-center justify-center">
+            <% if (['shipped', 'delivered'].includes(order.status)) { %>
+                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+            <% } %>
+        </div>
+        <div>
+            <p class="text-sm font-medium">Shipped</p>
+            <% if (order.shippedDate) { %>
+                <p class="text-xs text-gray-500"><%= new Date(order.shippedDate).toLocaleDateString('en-GB') %></p>
+            <% } %>
+        </div>
+    </div>
+
+    <div class="flex-1 h-1 <%= order.status === 'delivered' ? 'bg-blue-600' : 'bg-gray-200' %> mx-2"></div>
+
+    <!-- Delivered -->
+    <div class="flex items-center space-x-2">
+        <div class="w-6 h-6 <%= order.status === 'delivered' ? 'bg-green-600' : 'bg-gray-300' %> rounded-full flex items-center justify-center">
+            <% if (order.status === 'delivered') { %>
+                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+            <% } %>
+        </div>
+        <div>
+            <p class="text-sm font-medium <%= order.status === 'delivered' ? 'text-green-600' : 'text-gray-500' %>">Delivered</p>
+            <% if (order.deliveredDate) { %>
+                <p class="text-xs text-gray-500"><%= new Date(order.deliveredDate).toLocaleDateString('en-GB') %></p>
+            <% } %>
+        </div>
+    </div>
+</div>
+
             <% } %>
         </div>
 
@@ -249,64 +267,80 @@
         </div>
 
         <!-- Order Summary -->
-        <div class="border-t pt-4 mt-4">
-            <h2 class="text-lg font-semibold mb-4">Order Summary</h2>
-            <div class="bg-gray-50 p-4 rounded-lg">
-                <div class="space-y-2 text-sm">
-                    <div class="flex justify-between">
-                        <p>Original Subtotal</p>
-                        <p>₹<%= order.totalPrice.toLocaleString('en-IN') %></p>
-                    </div>
-                    
-                    <% if (allItemsCancelled) { %>
-                        <div class="flex justify-between text-red-600">
-                            <p>All Items Cancelled</p>
-                            <p>-₹<%= order.totalPrice.toLocaleString('en-IN') %></p>
-                        </div>
-                    <% } else if (!hasActiveitems) { %>
-                        <div class="flex justify-between">
-                            <p>Active Items Subtotal</p>
-                            <p>₹<%= activeItemsTotal.toLocaleString('en-IN') %></p>
-                        </div>
-                    <% } %>
-                    
-                    <div class="flex justify-between">
-                        <p>Discount</p>
-                        <p class="text-green-600">-₹<%= (order.discount || 0).toLocaleString('en-IN') %></p>
-                    </div>
-                    
-                    <% if (!allItemsCancelled) { %>
-                        <div class="flex justify-between">
-                            <p>Delivery Charge</p>
-                            <p>₹<%= (order.deliveryCharge || 0).toLocaleString('en-IN') %></p>
-                        </div>
-                        <div class="flex justify-between">
-                            <p>GST</p>
-                            <p>₹<%= (order.gstAmount || 0).toLocaleString('en-IN') %></p>
-                        </div>
-                    <% } %>
-                    
-                    <hr class="my-2">
-                    <div class="flex justify-between font-semibold text-lg">
-                        <p>TOTAL</p>
-                        <p class="<%= allItemsCancelled ? 'text-red-600' : '' %>">
-                            <% if (allItemsCancelled) { %>
-                                ₹0
-                            <% } else { %>
-                                ₹<%= order.finalAmount.toLocaleString('en-IN') %>
-                            <% } %>
-                        </p>
-                    </div>
-                    
-                    <% if (allItemsCancelled) { %>
-                        <div class="flex justify-between text-sm text-gray-500">
-                            <p>Refund Amount</p>
-                            <p>₹<%= order.finalAmount.toLocaleString('en-IN') %></p>
-                        </div>
-                    <% } %>
-                </div>
+        <!-- Order Summary Section - Updated Logic -->
+<div class="border-t pt-4 mt-4">
+    <h2 class="text-lg font-semibold mb-4">Order Summary</h2>
+    <div class="bg-gray-50 p-4 rounded-lg">
+        <div class="space-y-2 text-sm">
+            <%
+            // Calculate totals for active items
+            const activeItems = order.orderedItems.filter(item => item.status !== 'cancelled');
+            const cancelledItems = order.orderedItems.filter(item => item.status === 'cancelled');
+            
+            const originalSubtotal = order.orderedItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const activeSubtotal = activeItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const cancelledSubtotal = cancelledItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            %>
+            
+            <div class="flex justify-between">
+                <p>Original Subtotal (<%= order.orderedItems.length %> items)</p>
+                <p>₹<%= originalSubtotal.toLocaleString('en-IN') %></p>
             </div>
+            
+            <% if (cancelledItems.length > 0) { %>
+                <div class="flex justify-between text-red-600">
+                    <p>Cancelled Items (<%= cancelledItems.length %> items)</p>
+                    <p>-₹<%= cancelledSubtotal.toLocaleString('en-IN') %></p>
+                </div>
+                
+                <% if (activeItems.length > 0) { %>
+                    <div class="flex justify-between font-medium">
+                        <p>Active Items Subtotal (<%= activeItems.length %> items)</p>
+                        <p>₹<%= activeSubtotal.toLocaleString('en-IN') %></p>
+                    </div>
+                <% } %>
+            <% } %>
+            
+            <% if (!allItemsCancelled && order.discount > 0) { %>
+                <div class="flex justify-between">
+                    <p>Discount</p>
+                    <p class="text-green-600">-₹<%= (order.discount || 0).toLocaleString('en-IN') %></p>
+                </div>
+            <% } %>
+            
+            <% if (!allItemsCancelled) { %>
+                <div class="flex justify-between">
+                    <p>Delivery Charge</p>
+                    <p>₹<%= (order.deliveryCharge || 0).toLocaleString('en-IN') %></p>
+                </div>
+                <div class="flex justify-between">
+                    <p>GST (18%)</p>
+                    <p>₹<%= (order.gstAmount || 0).toLocaleString('en-IN') %></p>
+                </div>
+            <% } %>
+            
+            <hr class="my-2">
+            <div class="flex justify-between font-semibold text-lg">
+                <p>TOTAL PAYABLE</p>
+                <p class="<%= allItemsCancelled ? 'text-red-600' : '' %>">
+                    <% if (allItemsCancelled) { %>
+                        ₹0
+                    <% } else { %>
+                        ₹<%= order.finalAmount.toLocaleString('en-IN') %>
+                    <% } %>
+                </p>
+            </div>
+            
+            <% if (cancelledItems.length > 0) { %>
+                <div class="flex justify-between text-sm text-blue-600 bg-blue-50 p-2 rounded mt-2">
+                    <p>Refund Amount</p>
+                    <p>₹<%= (allItemsCancelled ? order.finalAmount : cancelledSubtotal).toLocaleString('en-IN') %></p>
+                </div>
+                <p class="text-xs text-gray-500 mt-1">*Refund will be processed within 5-7 business days</p>
+            <% } %>
         </div>
+    </div>
+</div>
 
         <!-- Address and Payment Info -->
         <div class="border-t pt-4 mt-4">

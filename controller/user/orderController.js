@@ -16,21 +16,172 @@ const getOrders = async (req, res) => {
             return res.redirect('/pageNotFound');
         }
 
-        const orders = await Order.find({ userId })
-            .populate('orderedItems.product')
-            .sort({ createdAt: -1 }); 
+        // Extract filter parameters from query string
+        const { status, timeFilter, page = 1, limit = 5 } = req.query;
+        
+        // Build the base query
+        let query = { userId };
+        
+        // Apply status filter
+        if (status && status !== 'All') {
+            // Handle different status formats (e.g., "Return_Requested" vs "Return Requested")
+            const statusValue = status.replace(/[_\s]/g, ' ').trim();
+            query.status = new RegExp(`^${statusValue}$`, 'i'); // Case insensitive match
+        }
+        
+        // Apply time-based filter
+        if (timeFilter && timeFilter !== 'All') {
+            const currentDate = new Date();
+            let cutoffDate = new Date();
+            
+            switch(timeFilter) {
+                case 'Last30Days':
+                    cutoffDate.setDate(currentDate.getDate() - 30);
+                    break;
+                case 'Last3Months':
+                    cutoffDate.setMonth(currentDate.getMonth() - 3);
+                    break;
+                case 'Last6Months':
+                    cutoffDate.setMonth(currentDate.getMonth() - 6);
+                    break;
+                default:
+                    cutoffDate = null;
+            }
+            
+            if (cutoffDate) {
+                query.createdOn = { $gte: cutoffDate };
+            }
+        }
 
+        // Calculate pagination
+        const pageNum = parseInt(page);
+        const limitNum = parseInt(limit);
+        const skip = (pageNum - 1) * limitNum;
+
+        // Get total count for pagination
+        const totalOrders = await Order.countDocuments(query);
+        const totalPages = Math.ceil(totalOrders / limitNum);
+
+        // Fetch filtered and paginated orders
+        const orders = await Order.find(query)
+            .populate('orderedItems.product')
+            .sort({ createdOn: -1 }) // Make sure this matches your date field
+            .skip(skip)
+            .limit(limitNum);
+
+        // If it's an AJAX request, return JSON
+        if (req.xhr || req.headers.accept.indexOf('json') > -1) {
+            return res.json({
+                success: true,
+                orders,
+                pagination: {
+                    currentPage: pageNum,
+                    totalPages,
+                    totalOrders,
+                    hasNext: pageNum < totalPages,
+                    hasPrev: pageNum > 1
+                }
+            });
+        }
+
+        // Regular page render
         res.render('order', {
             orders,
-            username: userData.name
+            username:userData.name,
+            pagination: {
+                currentPage: pageNum,
+                totalPages,
+                totalOrders,
+                hasNext: pageNum < totalPages,
+                hasPrev: pageNum > 1
+            },
+            filters: {
+                status: status || 'All',
+                timeFilter: timeFilter || 'All'
+            }
         });
 
     } catch (error) {
         console.error('Get Orders Error:', error);
+        
+        // AJAX errors
+        if (req.xhr || req.headers.accept.indexOf('json') > -1) {
+            return res.status(500).json({
+                success: false,
+                message: 'Error fetching orders'
+            });
+        }
+        
         res.redirect('/pageNotFound');
     }
 };
+const filterOrders = async (req, res) => {
+    try {
+        const userId = req.session.user;
+        
+        if (!userId) {
+            return res.status(401).json({ success: false, message: 'Unauthorized' });
+        }
 
+        const { status, timeFilter, page = 1, limit = 5 } = req.body;
+        
+        let query = { userId };
+        
+        // Apply filters (same logic as above)
+        if (status && status !== 'All') {
+            const statusValue = status.replace(/[_\s]/g, ' ').trim();
+            query.status = new RegExp(`^${statusValue}$`, 'i');
+        }
+        
+        if (timeFilter && timeFilter !== 'All') {
+            const currentDate = new Date();
+            let cutoffDate = new Date();
+            
+            switch(timeFilter) {
+                case 'Last30Days':
+                    cutoffDate.setDate(currentDate.getDate() - 30);
+                    break;
+                case 'Last3Months':
+                    cutoffDate.setMonth(currentDate.getMonth() - 3);
+                    break;
+                case 'Last6Months':
+                    cutoffDate.setMonth(currentDate.getMonth() - 6);
+                    break;
+            }
+            
+            if (cutoffDate) {
+                query.createdOn = { $gte: cutoffDate };
+            }
+        }
+
+        const pageNum = parseInt(page);
+        const limitNum = parseInt(limit);
+        const skip = (pageNum - 1) * limitNum;
+
+        const totalOrders = await Order.countDocuments(query);
+        const orders = await Order.find(query)
+            .populate('orderedItems.product')
+            .sort({ createdOn: -1 })
+            .skip(skip)
+            .limit(limitNum);
+
+        res.json({
+            success: true,
+            orders,
+            pagination: {
+                currentPage: pageNum,
+                totalPages: Math.ceil(totalOrders / limitNum),
+                totalOrders,
+                hasNext: pageNum < Math.ceil(totalOrders / limitNum),
+                hasPrev: pageNum > 1
+            }
+        });
+
+    } catch (error) {
+        console.error('Filter Orders Error:', error);
+        res.status(500).json({ success: false, message: 'Error filtering orders' });
+    }
+};
 const getOrderDetails = async (req, res) => {
     try {
         const userId = req.session.user;
@@ -337,6 +488,9 @@ const cancelOrderItem = async (req, res) => {
             });
         }
 
+        // Calculate the item's total value (before cancellation)
+        const itemTotal = item.price * item.quantity;
+
         // Update item status
         item.status = 'cancelled';
         item.cancelReason = cancelReason.trim();
@@ -350,6 +504,40 @@ const cancelOrderItem = async (req, res) => {
             );
         }
 
+        // Recalculate order totals
+        const activeItems = order.orderedItems.filter(orderItem => 
+            orderItem.status !== 'cancelled'
+        );
+
+        // Calculate new subtotal from active items only
+        const newSubtotal = activeItems.reduce((sum, orderItem) => 
+            sum + (orderItem.price * orderItem.quantity), 0
+        );
+
+        // Update order totals
+        order.totalPrice = newSubtotal;
+
+        // Recalculate discount proportionally if there was any
+        if (order.discount && order.discount > 0) {
+            // Calculate discount ratio and apply to remaining items
+            const originalTotal = order.orderedItems.reduce((sum, orderItem) => 
+                sum + (orderItem.price * orderItem.quantity), 0
+            );
+            
+            if (originalTotal > 0) {
+                const discountRatio = order.discount / originalTotal;
+                order.discount = Math.round(newSubtotal * discountRatio);
+            }
+        }
+
+        // Recalculate GST (assuming 18% GST rate, adjust as needed)
+        const gstRate = 0.18;
+        const taxableAmount = newSubtotal - (order.discount || 0);
+        order.gstAmount = Math.round(taxableAmount * gstRate);
+
+        // Update final amount
+        order.finalAmount = newSubtotal - (order.discount || 0) + (order.deliveryCharge || 0) + order.gstAmount;
+
         // Check if all items in the order are cancelled
         const allCancelled = order.orderedItems.every(orderItem => 
             orderItem.status === 'cancelled'
@@ -359,13 +547,45 @@ const cancelOrderItem = async (req, res) => {
             order.status = 'cancelled';
             order.cancelReason = 'All items cancelled';
             order.cancelledAt = new Date();
+            order.totalPrice = 0;
+            order.discount = 0;
+            order.gstAmount = 0;
+            order.deliveryCharge = 0;
+            order.finalAmount = 0;
+        } else {
+            // If there are still active items, check if delivery charge should be adjusted
+            // You might want to remove delivery charge if order total falls below a threshold
+            const freeDeliveryThreshold = 500; // Adjust as needed
+            if (newSubtotal < freeDeliveryThreshold && order.deliveryCharge === 0) {
+                // Add delivery charge if order no longer qualifies for free delivery
+                order.deliveryCharge = 50; // Adjust delivery charge as needed
+                order.finalAmount += order.deliveryCharge;
+            }
         }
 
         await order.save();
 
+        // Calculate refund amount for the cancelled item
+        let refundAmount = itemTotal;
+        
+        // If there was a discount, calculate proportional refund
+        if (order.discount && order.discount > 0) {
+            const originalOrderTotal = order.orderedItems.reduce((sum, orderItem) => 
+                sum + (orderItem.price * orderItem.quantity), 0
+            );
+            const itemDiscountShare = (itemTotal / originalOrderTotal) * order.discount;
+            refundAmount = itemTotal - itemDiscountShare;
+        }
+
+        // Add GST refund
+        const itemGstRefund = Math.round(refundAmount * gstRate);
+        refundAmount += itemGstRefund;
+
         res.json({ 
             success: true, 
-            message: 'Item cancelled successfully. Refund will be processed within 5-7 business days.' 
+            message: `Item cancelled successfully. Refund of ₹${refundAmount.toLocaleString('en-IN')} will be processed within 5-7 business days.`,
+            refundAmount: refundAmount,
+            newOrderTotal: order.finalAmount
         });
 
     } catch (error) {
@@ -482,6 +702,7 @@ module.exports = {
     downloadInvoice,
     cancelOrder,
     cancelOrderItem,
+    filterOrders,
     // updateOrderStatus,
     // requestReturn
 }
