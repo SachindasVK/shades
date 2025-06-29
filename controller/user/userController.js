@@ -104,9 +104,6 @@ const signup = async (req, res) => {
       password: hashedPassword 
     };
     
-    console.log('Session data set:', req.session.userData);
-    console.log('Session ID:', req.sessionID);
-    
     // Force session save before rendering
     req.session.save((err) => {
       if (err) {
@@ -144,14 +141,12 @@ const loadHomepage = async (req, res) => {
   try {
     const userId = req.session.user || (req.user && req.user._id);
     const categories = await Category.find({isActive: true});
-    console.log('Categories:', categories);
 
     // New arrivals 
     let productData = await Product.find({
       isDeleted: false,
-      category: {$in: categories.map(category => category._id)},
-      quantity: {$gt: 0}
-    }).populate('category'); // Add populate method to load category data
+      category: {$in: categories.map(category => category._id)}
+    }).populate('category'); // populate to load category data
     
     productData.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     productData = productData.slice(0, 12);
@@ -159,16 +154,14 @@ const loadHomepage = async (req, res) => {
     // Best sellers - products with highest sales count
     let bestSellerProducts = await Product.find({
       isDeleted: false,
-      category: {$in: categories.map(category => category._id)},
-      quantity: {$gt: 0}
-    }).populate('category').sort({ salesCount: -1 }); // Add populate method here too
+      category: {$in: categories.map(category => category._id)}
+    }).populate('category').sort({ salesCount: -1 }); 
     
     if (!bestSellerProducts[0]?.salesCount) {
       bestSellerProducts = await Product.find({
         isDeleted: false,
-        category: {$in: categories.map(category => category._id)},
-        quantity: {$gt: 0}
-      }).populate('category').skip(4).limit(4); // And here
+        category: {$in: categories.map(category => category._id)}
+      }).populate('category').skip(4).limit(4); 
     } else {
       bestSellerProducts = bestSellerProducts.slice(0, 4);
     }
@@ -231,12 +224,10 @@ const verifyOtp = async (req, res) => {
     if (otp === req.session.userOtp) {
       const user = req.session.userData;
 
-      console.log('Saving user:', user.email);
-
       const saveUserData = new User({
         name: user.name,
         email: user.email,
-        password: user.password, // ✅ already hashed, no need to hash again!
+        password: user.password, 
         isAdmin: 0,
         isBlocked: false,
       });
@@ -269,12 +260,8 @@ const verifyOtp = async (req, res) => {
 
 // Resend OTP with Session Recovery
 const resendOtp = async (req, res) => {
-  console.log('Resend OTP route called');
-  
   try {
-    // Check if session exists
     if (!req.session) {
-      console.log('No session found');
       return res.status(400).json({ 
         success: false, 
         message: 'Session expired. Please restart the signup process.',
@@ -282,18 +269,11 @@ const resendOtp = async (req, res) => {
       });
     }
 
-    // Check if userData exists in session
     if (!req.session.userData) {
-      console.log('No userData in session');
-      console.log('Available session keys:', Object.keys(req.session));
-      
       // Try to get email from request body as fallback
       let email = req.body.email;
       if (email) {
         email = email.trim().toLowerCase();
-        console.log('Using email from request body:', email);
-        
-        // Verify this email exists in database (to prevent abuse)
         const existingUser = await User.findOne({ email: email });
         if (existingUser) {
           console.log('User already exists, cannot resend OTP for existing user');
@@ -306,7 +286,7 @@ const resendOtp = async (req, res) => {
         
         // Generate new OTP
         const otp = generateOtp();
-        console.log('Generated new OTP for email from body:', otp);
+        console.log('Resend OTP:', otp);
         
         // Recreate session data
         req.session.userOtp = otp;
@@ -338,7 +318,6 @@ const resendOtp = async (req, res) => {
     }
 
     const email = req.session.userData.email;
-    console.log('Email from session:', email);
 
     if (!email) {
       console.log('Email not found in userData');
@@ -393,33 +372,6 @@ const resendOtp = async (req, res) => {
   }
 };
 
-// // Load Shop
-// const loadShop = async (req, res) => {
-//   try {
-//     const userId = req.session.user || (req.user && req.user._id);
-//   const categories = await Category.find({isActive:true})
-//     if (userId) {
-//       const userData = await User.findOne({ _id: userId });
-//       if (userData) {
-//         return res.render('shop', {
-//           isLoggedIn: true,
-//           username: userData.name,
-//         });
-//       }
-//     }
-//     res.render('shop', {
-//       isLoggedIn: false,
-//       username: '',
-//     });
-//   } catch (error) {
-//     console.error('Shop page error:', error);
-//     res.status(500).render('page-404', {
-//       isLoggedIn: false,
-//       username: '',
-//       message: 'Server error'
-//     });
-//   }
-// };
 
 // Load Signup
 const loadSignup = async (req, res) => {
@@ -484,9 +436,7 @@ const login = async (req, res) => {
     // Trim whitespace inputs
     const trimmedEmail = email.trim().toLowerCase();
     const trimmedPassword = password.trim();
-    
-    console.log('Login attempt for email:', trimmedEmail);
-    
+     
     const findUser = await User.findOne({ 
       isAdmin: 0, 
       email: trimmedEmail 
@@ -497,10 +447,6 @@ const login = async (req, res) => {
       req.session.errorMessage = 'User not found!'
       return res.redirect('/login')
     }
-    
-    console.log('User found:', findUser.email)
-    console.log('User ID:', findUser._id)
-    console.log('Is user blocked:', findUser.isBlocked)
     
     if (findUser.isBlocked) {
       console.log('User is blocked:', trimmedEmail);
@@ -514,13 +460,7 @@ const login = async (req, res) => {
       req.session.errorMessage = 'Account setup incomplete. Please contact support.'
       return res.redirect('/login')
     }
-    
-    console.log('Attempting password comparison...')
-    console.log('Stored password hash length:', findUser.password.length)
-    console.log('Input password length:', trimmedPassword.length)
-    
     const passwordMatch = await bcrypt.compare(trimmedPassword, findUser.password)
-    
     console.log('Password match result:', passwordMatch)
     
     if (!passwordMatch) {
@@ -532,14 +472,14 @@ const login = async (req, res) => {
     console.log('Login successful for user:', trimmedEmail);
     req.session.user = findUser._id;
     
-    // Add session regeneration for security
+    // Add session id regeneration for security
     req.session.regenerate((err) => {
       if (err) {
         console.error('Session regeneration error:', err);
         req.session.errorMessage = 'Login failed. Please try again.';
         return res.redirect('/login');
       }
-      
+      // save user id again
       req.session.user = findUser._id;
       console.log('Session regenerated, redirecting to shop');
       res.redirect('/shop');
@@ -566,40 +506,7 @@ const pageNotFound = async (req, res) => {
   }
 };
 
-// Load About
-const loadAbout = async (req, res) => {
-  try {
-    const userId = req.session.user || (req.user && req.user._id);
-    if (userId) {
-      const userData = await User.findById(userId);
-        if (userData?.isBlocked) {
-    req.session.destroy(err => {
-      if (err) console.log('Session destroy error:', err);
-      console.log('user Blocked!')
-      return res.redirect('/login');
-    });
-    return;
-  }
-      if (userData) {
-        return res.render('about', {
-          isLoggedIn: true,
-          username: userData.name
-        });
-      }
-    }
-    res.render('about', {
-      isLoggedIn: false,
-      username: ''
-    });
-  } catch (error) {
-    console.error('About page error:', error);
-    res.status(500).render('page-404', {
-      isLoggedIn: false,
-      username: '',
-      message: 'Server error'
-    });
-  }
-};
+
 
 // Logout
 const logout = async (req, res) => {
@@ -692,7 +599,6 @@ const loadShoppingPage = async (req, res) => {
     // Build the query object
     const query = {
       isDeleted: false,
-      quantity: { $gt: 0 },
     };
 
     // Add category filter
@@ -922,7 +828,6 @@ module.exports = {
   verifyOtp,
   resendOtp,
   login,
-  loadAbout,
   logout,
   loadShoppingPage,
 }

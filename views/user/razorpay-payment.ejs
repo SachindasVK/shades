@@ -1,0 +1,33 @@
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<script>
+  const options = {
+    key: "<%= razorpayKey %>",
+    amount: "<%= amount %>",
+    currency: "INR",
+    name: "SHADES",
+    description: "Online Payment",
+    order_id: "<%= orderId %>",
+    handler: function (response) {
+      fetch("/verify-payment", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...response,
+          orderDbId: "<%= orderDbId %>"
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          window.location.href = `/order-confirmation/${data.orderId}`;
+        } else {
+          alert("Payment failed. Please try again.");
+        }
+      });
+    }
+  };
+
+  const rzp = new Razorpay(options);
+  rzp.open();
+</script>

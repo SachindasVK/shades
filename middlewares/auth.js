@@ -1,5 +1,5 @@
 const User = require('../models/userSchema')
-
+const Cart = require('../models/cartSchema')
 const userAuth = async (req, res, next) => {
   try {
     res.locals.isLoggedIn = false;
@@ -45,23 +45,58 @@ const userAuth = async (req, res, next) => {
 
 
 
+const adminAuth = async (req, res, next) => {
+    try {
+        const adminId = req.session.admin;
 
-const adminAuth = (req,res,next)=>{
-    User.findOne({isAdmin:true})
-    .then(data=>{
-        if(data){
-            next()
-        }else{
-            res.redirect('/admin/login')
+        if (!adminId) {
+            return res.redirect('/admin/login');
         }
-    })
-    .catch(error=>{
-        console.log('Error in admin Auth middleware',error)
-        res.status(500).send('Internal server Error!')
-    })
-}
+
+        const adminUser = await User.findById(adminId);
+
+        if (adminUser && adminUser.isAdmin) {
+            next();
+        } else {
+            res.redirect('/admin/login');
+        }
+    } catch (error) {
+        console.error('Error in adminAuth middleware:', error);
+        res.status(500).send('Internal Server Error!');
+    }
+};
+
+
+
+
+const validateCartStock = async (req, res, next) => {
+  try {
+    const userId = req.session.user;
+    const cart = await Cart.findOne({ userId }).populate('items.productId');
+
+    if (!cart || cart.items.length === 0) {
+      return res.redirect('/cart'); // redirect if empty
+    }
+
+    const outOfStockItems = cart.items.filter(item => {
+      const product = item.productId;
+      return !product || product.quantity < item.quantity;
+    });
+
+    if (outOfStockItems.length > 0) {
+      req.session.cartError = "Some items in your cart are out of stock. Please update your cart.";
+      return res.redirect('/cart');
+    }
+
+    next(); // everything ok
+  } catch (error) {
+    console.error("Checkout stock validation failed:", error);
+    res.redirect('/cart');
+  }
+};
 
 module.exports = {
     userAuth,
-    adminAuth
+    adminAuth,
+    validateCartStock
 }

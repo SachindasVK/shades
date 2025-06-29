@@ -11,7 +11,7 @@
         :root {
             --primary-color: #000000;
             --text-color: #333333;
-            --light-bg: #f8f9fa;
+            --light-bg: #ffffff;
             --border-color: #dee2e6;
             --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             --black-color: #000000;
@@ -32,8 +32,9 @@
             background-color: white;
             border-radius: 15px;
             padding: 1.5rem;
-            box-shadow: var(--card-shadow);
-            margin-bottom: 1rem;
+           
+             border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
         }
 
         .progress-step {
@@ -83,8 +84,10 @@
         .order-summary {
             background-color: white;
             border-radius: 15px;
+             border-top-left-radius: 0;
+  border-top-right-radius: 0;
             padding: 1.5rem;
-            box-shadow: var(--card-shadow);
+            
         }
 
         .main-section h2,
@@ -449,7 +452,7 @@
 <body>
     <%-include("../../views/partials/user/header")%>
 
-    <div class="container max-w-7xl mx-auto px-4 mb-20">
+    <div class="container max-w-6xl mx-auto px-4 py-6 mb-20">
         <!-- Progress Indicator -->
         <div class="progress-section">
             <div style="display: flex; justify-content: space-between; gap: 0.75rem;">
@@ -487,14 +490,14 @@
                     <div class="info-section">
                         <h2>Contact Details</h2>
                         <p>Email: <%= user.email || "No email found" %><br>
-                           Phone: <%= user.phone || "No phone number found" %>
+                           Phone: <%= address.phone || "No phone number found" %>
                         </p>
                     </div>
 
                     <!-- Section: Delivery Date -->
                     <div class="info-section">
                         <h2>Delivery Date</h2>
-                        <p>Expected delivery by <%= expectedDeliveryDate %> (Regular)</p>
+                        <p>Expected delivery by <%= expectedDeliveryDate%> ( <%=shippingMethod%> )</p>
                     </div>
 
                     <!-- Section: Payment Method -->
@@ -822,25 +825,98 @@
 
         // Utility functions
         function showToast(message, type = 'info') {
-            const toastContainer = document.getElementById('toastContainer');
-            const toast = document.createElement('div');
-            toast.className = `toast ${type}`;
-            toast.textContent = message;
-            toastContainer.appendChild(toast);
-            
-            setTimeout(() => toast.classList.add('show'), 100);
-            
-            setTimeout(() => {
-                toast.classList.remove('show');
-                setTimeout(() => toast.remove(), 300);
-            }, 3000);
-        }
+    let toastContainer = document.querySelector('.toast-container');
+    if (!toastContainer) {
+        toastContainer = document.createElement('div');
+        toastContainer.className = 'toast-container';
+        toastContainer.style.position = 'fixed';
+        toastContainer.style.top = '20px';
+        toastContainer.style.right = '20px';
+        toastContainer.style.zIndex = '9999';
+        toastContainer.style.display = 'flex';
+        toastContainer.style.flexDirection = 'column';
+        toastContainer.style.gap = '10px';
+        document.body.appendChild(toastContainer);
+    }
+
+    const toastId = 'toast-' + Date.now();
+    const toast = document.createElement('div');
+
+    // Background and border color based on toast type
+    let bgColor, borderColor;
+    switch (type) {
+        case 'success':
+            bgColor = '#16a34a';  // green
+            borderColor = '#16a34a';
+            break;
+        case 'error':
+            bgColor = '#dc2626';  // red
+            borderColor = '#dc2626';
+            break;
+        case 'info':
+        default:
+            bgColor = '#2563eb';  // blue
+            borderColor = '#2563eb';
+    }
+
+    // Toast styles
+    toast.style.cssText = `
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background-color: ${bgColor};
+        border-left: 4px solid ${borderColor};
+        color: white;
+        padding: 12px 16px;
+        border-radius: 6px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        max-width: 300px;
+        width: 100%;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.3s ease, transform 0.3s ease;
+    `;
+
+    toast.id = toastId;
+    toast.setAttribute('role', 'alert');
+    toast.setAttribute('aria-live', 'assertive');
+    toast.setAttribute('aria-atomic', 'true');
+
+    toast.innerHTML = `
+        <div style="flex: 1; font-size: 14px;">${message}</div>
+        <button type="button" style="margin-left: 12px; background: none; border: none; color: white; font-size: 16px; cursor: pointer;" data-toast-id="${toastId}">
+            &times;
+        </button>
+    `;
+
+    toastContainer.appendChild(toast);
+
+    // Animate in
+    setTimeout(() => {
+        toast.style.opacity = '1';
+        toast.style.transform = 'translateY(0)';
+    }, 100);
+
+    // Close on button click
+    const closeButton = toast.querySelector(`[data-toast-id="${toastId}"]`);
+    closeButton.addEventListener('click', () => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(20px)';
+        setTimeout(() => toast.remove(), 300);
+    });
+
+    // Auto-dismiss after 1.5s
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(20px)';
+        setTimeout(() => toast.remove(), 300);
+    }, 1500);
+}
 
         function showLoading(show) {
             const button = document.getElementById('placeOrderButton');
             if (show) {
                 button.disabled = true;
-                button.textContent = 'Processing...';
                 button.classList.add('loading');
             } else {
                 button.disabled = false;

@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-const {Schema} = mongoose
+const { Schema } = mongoose
 
 const productSchema = new Schema({
     productName: {
@@ -11,11 +11,11 @@ const productSchema = new Schema({
         required: true
     },
     brand: {
-  type: mongoose.Schema.Types.ObjectId,
-  ref: "Brand"
-},
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Brand"
+    },
 
-     hasOffer: {
+    hasOffer: {
         type: Boolean,
         default: false
     },
@@ -26,7 +26,7 @@ const productSchema = new Schema({
         max: 99
     },
     category: {
-        type: Schema.Types.ObjectId, 
+        type: Schema.Types.ObjectId,
         ref: 'Category',
         required: true
     },
@@ -50,7 +50,7 @@ const productSchema = new Schema({
         type: String,
         required: true
     },
-     shape: {
+    shape: {
         type: String,
         trim: true,
     },
@@ -58,9 +58,9 @@ const productSchema = new Schema({
         type: [String],
         required: true
     },
-    isDeleted:{
-        type:Boolean,
-        default:false
+    isDeleted: {
+        type: Boolean,
+        default: false
     },
     isActive: {
         type: Boolean,
@@ -70,12 +70,12 @@ const productSchema = new Schema({
         type: String,
         enum: ['active', 'inactive', 'out-of-stock', 'available'],
         default: 'available'
-      },
-      salesCount: {
-    type: Number,
-    default: 0
-  }
-}, {timestamps: true})
+    },
+    salesCount: {
+        type: Number,
+        default: 0
+    }
+}, { timestamps: true })
 
 const Product = mongoose.model('Product', productSchema)
 

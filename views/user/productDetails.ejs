@@ -796,68 +796,93 @@
 
             // Show toast notification
             function showToast(message, type = 'info') {
-                let toastContainer = document.querySelector('.toast-container');
-                if (!toastContainer) {
-                    toastContainer = document.createElement('div');
-                    toastContainer.className = 'fixed bottom-4 right-4 p-3';
-                    toastContainer.style.zIndex = '9999';
-                    document.body.appendChild(toastContainer);
+                    let toastContainer = document.querySelector('.toast-container');
+                    if (!toastContainer) {
+                        toastContainer = document.createElement('div');
+                        toastContainer.className = 'toast-container';
+                        toastContainer.style.position = 'fixed';
+                        toastContainer.style.top = '20px';
+                        toastContainer.style.right = '20px';
+                        toastContainer.style.zIndex = '9999';
+                        toastContainer.style.display = 'flex';
+                        toastContainer.style.flexDirection = 'column';
+                        toastContainer.style.gap = '10px';
+                        document.body.appendChild(toastContainer);
+                    }
+
+                    const toastId = 'toast-' + Date.now();
+                    const toast = document.createElement('div');
+
+                    // Background color and border based on type
+                    let bgColor, borderColor;
+                    switch (type) {
+                        case 'success':
+                            bgColor = '#16a34a';  // green
+                            borderColor = '#16a34a';
+                            break;
+                        case 'error':
+                            bgColor = '#dc2626';  // red
+                            borderColor = '#dc2626';
+                            break;
+                        case 'info':
+                        default:
+                            bgColor = '#2563eb';  // blue
+                            borderColor = '#2563eb';
+                    }
+
+                    // Toast styles (no slide, only fade + slight vertical shift)
+                    toast.style.cssText = `
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background-color: ${bgColor};
+        border-left: 4px solid ${borderColor};
+        color: white;
+        padding: 12px 16px;
+        border-radius: 6px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        max-width: 300px;
+        width: 100%;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.3s ease, transform 0.3s ease;
+    `;
+
+                    toast.id = toastId;
+                    toast.setAttribute('role', 'alert');
+                    toast.setAttribute('aria-live', 'assertive');
+                    toast.setAttribute('aria-atomic', 'true');
+
+                    toast.innerHTML = `
+        <div style="flex: 1; font-size: 14px;">${message}</div>
+        <button type="button" style="margin-left: 12px; background: none; border: none; color: white; font-size: 16px; cursor: pointer;" data-toast-id="${toastId}">
+            &times;
+        </button>
+    `;
+
+                    toastContainer.appendChild(toast);
+
+                    // Fade in + move up
+                    setTimeout(() => {
+                        toast.style.opacity = '1';
+                        toast.style.transform = 'translateY(0)';
+                    }, 100);
+
+                    // Close button
+                    const closeButton = toast.querySelector(`[data-toast-id="${toastId}"]`);
+                    closeButton.addEventListener('click', () => {
+                        toast.style.opacity = '0';
+                        toast.style.transform = 'translateY(20px)';
+                        setTimeout(() => toast.remove(), 300);
+                    });
+
+                    // Auto remove after 1.5s
+                    setTimeout(() => {
+                        toast.style.opacity = '0';
+                        toast.style.transform = 'translateY(20px)';
+                        setTimeout(() => toast.remove(), 300);
+                    }, 1500);
                 }
-
-                const toastId = 'toast-' + Date.now();
-                const toast = document.createElement('div');
-                let bgClass, borderClass;
-                switch(type) {
-                    case 'success':
-                        bgClass = 'bg-green-500';
-                        borderClass = 'border-green-500';
-                        break;
-                    case 'error':
-                        bgClass = 'bg-red-500';
-                        borderClass = 'border-red-500';
-                        break;
-                    case 'info':
-                        bgClass = 'bg-blue-500';
-                        borderClass = 'border-blue-500';
-                        break;
-                    default:
-                        bgClass = 'bg-blue-500';
-                        borderClass = 'border-blue-500';
-                }
-
-                toast.className = `flex items-center text-white ${bgClass} border-l-4 ${borderClass} rounded shadow-lg p-3 mb-2 max-w-xs w-full opacity-0 transition-all duration-300 transform translate-x-full`;
-                toast.id = toastId;
-                toast.setAttribute('role', 'alert');
-                toast.setAttribute('aria-live', 'assertive');
-                toast.setAttribute('aria-atomic', 'true');
-
-                toast.innerHTML = `
-                    <div class="flex-1 text-sm">${message}</div>
-                    <button type="button" class="ml-2 text-white hover:text-gray-200 focus:outline-none" data-toast-id="${toastId}">
-                        <i class="fas fa-times"></i>
-                    </button>
-                `;
-
-                toastContainer.appendChild(toast);
-
-                setTimeout(() => {
-                    toast.classList.remove('opacity-0', 'translate-x-full');
-                    toast.classList.add('opacity-100', 'translate-x-0');
-                }, 100);
-
-                const closeButton = toast.querySelector(`[data-toast-id="${toastId}"]`);
-                closeButton.addEventListener('click', () => {
-                    toast.classList.remove('opacity-100', 'translate-x-0');
-                    toast.classList.add('opacity-0', 'translate-x-full');
-                    setTimeout(() => toast.remove(), 300);
-                });
-
-                setTimeout(() => {
-                    toast.classList.remove('opacity-100', 'translate-x-0');
-                    toast.classList.add('opacity-0', 'translate-x-full');
-                    setTimeout(() => toast.remove(), 300);
-                }, 3000);
-            }
 
             // Update cart counter
             function updateCartCounter(count) {

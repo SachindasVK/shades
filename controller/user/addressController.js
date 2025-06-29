@@ -22,7 +22,7 @@ const getAddress = async (req, res) => {
                 fullName: addr.name,
                 phone: addr.phone,
                 flat: addr.streetAddress,
-                area: addr.landMark || '', // Use landMark as area fallback
+                area: addr.area || '', 
                 city: addr.city,
                 state: addr.state,
                 pincode: addr.pincode,
@@ -237,13 +237,12 @@ const updateAddress = async (req, res) => {
         }
 
         // Update the address
-        // ✅ Better: Update field by field (no replacement)
         const addrToUpdate = addressDoc.address[addressIndex];
 
         addrToUpdate.name = fullName.trim();
         addrToUpdate.phone = phone.trim();
         addrToUpdate.streetAddress = flat.trim();
-        addrToUpdate.area = area.trim(); // ✅ Required field - this was missing!
+        addrToUpdate.area = area.trim(); 
         addrToUpdate.pincode = parseInt(pincode);
         addrToUpdate.city = city.trim();
         addrToUpdate.state = state.trim();

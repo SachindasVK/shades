@@ -1,190 +1,822 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Address Selection (Checkout Step 1)</title>
-</head>
-<body style="background-color: #f4f5f7; min-height: 100vh; margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; display: flex; flex-direction: column;">
+  </head>
+
+  <body
+    style="
+      background-color: #ffffff;
+      min-height: 100vh;
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+        sans-serif;
+      display: flex;
+      flex-direction: column;
+    "
+  >
     <%-include("../../views/partials/user/header")%>
-    <div style="background-color: white; padding: 1.5rem; border-radius: 0.75rem; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08); width: 100%; max-width: 64rem; margin: 1rem auto; flex: 1;">
-        <!-- Progress Indicator -->
-        <div style="display: flex; justify-content: space-between; margin-bottom: 1.5rem; gap: 0.75rem;">
-            <div style="display: flex; align-items: center; flex: 1; justify-content: center;">
-                <div style="width: 1.75rem; height: 1.75rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.875rem; font-weight: 600; transition: all 0.3s ease; background-color: #000000; color: white;" aria-label="Step 1: Address">1</div>
-                <span style="margin-left: 0.5rem; font-size: 0.875rem; font-weight: 600; color: #000000;">Address</span>
-            </div>
-            <div style="display: flex; align-items: center; flex: 1; justify-content: center;">
-                <div style="width: 1.75rem; height: 1.75rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.875rem; font-weight: 600; transition: all 0.3s ease; background-color: #e5e7eb; color: #6b7280;" aria-label="Step 2: Shipping">2</div>
-                <span style="margin-left: 0.5rem; font-size: 0.875rem; font-weight: 500; color: #6b7280;">Shipping</span>
-            </div>
-            <div style="display: flex; align-items: center; flex: 1; justify-content: center;">
-                <div style="width: 1.75rem; height: 1.75rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.875rem; font-weight: 600; transition: all 0.3s ease; background-color: #e5e7eb; color: #6b7280;" aria-label="Step 3: Payment">3</div>
-                <span style="margin-left: 0.5rem; font-size: 0.875rem; font-weight: 500; color: #6b7280;">Payment</span>
-            </div>
-        </div>
-
-        <!-- Section 1: Select Address -->
-        <div style="margin-bottom: 1.5rem;">
-            <h2 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 1rem; color: #1f2937;">Select Address</h2>
-            <% if (addresses.length > 0) { %>
-                <% addresses.forEach((address, index) => { %>
-                    <div style="display: flex; align-items: flex-start; background-color: #f9fafb; padding: 1rem; border-radius: 0.5rem; margin-bottom: 0.75rem; border: 1px solid #e5e7eb; transition: all 0.3s ease;">
-                         <input 
-      type="radio" 
-      name="address" 
-      id="address<%= index %>" 
-      value="<%= address._id %>"
-      style="margin-top: 0.25rem; accent-color: #000000;" 
-      aria-label="Select address: <%= address.name %>"
-      <% if (selectedAddress && selectedAddress.addressId === address._id.toString()) { %> checked <% } %>
+    <div
+      style="
+        background-color: white;
+        padding: 1.5rem;
+        border-radius: 0.75rem;
+        width: 100%;
+        max-width: 64rem;
+        margin: 1rem auto;
+        flex: 1;
+        margin-bottom: 10rem;
+      "
     >
-                        <div style="margin-left: 0.75rem; flex: 1;">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.25rem;">
-                                <div>
-                                    <span style="font-weight: 600; font-size: 0.9375rem; color: #1f2937;"><%= address.name %></span>
-                                    <span style="font-size: 0.6875rem; padding: 0.2rem 0.5rem; border-radius: 0.25rem; margin-left: 0.5rem; background-color: #919191; color: white;"><%= address.addressType.toUpperCase() %></span>
-                                    <% if (address.isDefault) { %>
-                                        <span style="font-size: 0.6875rem; padding: 0.2rem 0.5rem; border-radius: 0.25rem; margin-left: 0.5rem; background-color: #1f2937; color: white;">Default</span>
-                                    <% } %>
-                                </div>
-                                <button onclick='openModal(false, <%- JSON.stringify(address) %>)' style="color: #000000; text-decoration: none; font-size: 0.90rem; background: none; border: none; cursor: pointer; padding: 0.25rem 0.5rem; border-radius: 0.25rem; transition: all 0.2s ease;" onmouseover="this.style.backgroundColor='#ede9fe'" onmouseout="this.style.backgroundColor='none'" aria-label="Edit address">Edit</button>
-                            </div>
-                            <p style="color: #4b5563; font-size: 1rem; margin: 0.2rem 0;"><%= address.streetAddress %>, <%= address.landMark %>, <%= address.city %>, <%= address.state %></p>
-                            <p style="color: #4b5563; font-size: 1rem; margin: 0.2rem 0;">PIN: <%= address.pincode %></p>
-                            <p style="color: #4b5563; font-size: 1rem; margin: 0.2rem 0;">Phone: <%= address.phone %></p>
-                        </div>
-                    </div>
-                <% }) %>
-            <% } else { %>
-                 <p class="text-gray-500 italic">No addresses found. Add a new address to get started.</p>
-            <% } %>
-            <button onclick="openModal(true)" style="width: auto; max-width: 30rem; border: 2px dashed #4495ff; color: #006eff; padding: 0.25rem 0.5rem; border-radius: 0.25rem; background-color: transparent; cursor: pointer; font-size: 0.90rem; text-align: center; transition: all 0.2s ease; margin-right: auto; display: block;" onmouseover="this.style.backgroundColor='#f3f4f6'; this.style.borderColor='#0e44f5'; this.style.color='#0e44f5';" onmouseout="this.style.backgroundColor='transparent'; this.style.borderColor='#4495ff'; this.style.color='#006eff';" aria-label="Add new address">+ Add New Address</button>
+      <!-- Progress Indicator -->
+      <div
+        style="
+          display: flex;
+          justify-content: space-between;
+          margin-bottom: 1.5rem;
+          gap: 0.75rem;
+        "
+      >
+        <div
+          style="
+            display: flex;
+            align-items: center;
+            flex: 1;
+            justify-content: center;
+          "
+        >
+          <div
+            style="
+              width: 1.75rem;
+              height: 1.75rem;
+              border-radius: 50%;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              font-size: 0.875rem;
+              font-weight: 600;
+              transition: all 0.3s ease;
+              background-color: #000000;
+              color: white;
+            "
+            aria-label="Step 1: Address"
+          >
+            1
+          </div>
+          <span
+            style="
+              margin-left: 0.5rem;
+              font-size: 0.875rem;
+              font-weight: 600;
+              color: #000000;
+            "
+            >Address</span
+          >
+        </div>
+        <div
+          style="
+            display: flex;
+            align-items: center;
+            flex: 1;
+            justify-content: center;
+          "
+        >
+          <div
+            style="
+              width: 1.75rem;
+              height: 1.75rem;
+              border-radius: 50%;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              font-size: 0.875rem;
+              font-weight: 600;
+              transition: all 0.3s ease;
+              background-color: #e5e7eb;
+              color: #6b7280;
+            "
+            aria-label="Step 2: Shipping"
+          >
+            2
+          </div>
+          <span
+            style="
+              margin-left: 0.5rem;
+              font-size: 0.875rem;
+              font-weight: 500;
+              color: #6b7280;
+            "
+            >Shipping</span
+          >
+        </div>
+        <div
+          style="
+            display: flex;
+            align-items: center;
+            flex: 1;
+            justify-content: center;
+          "
+        >
+          <div
+            style="
+              width: 1.75rem;
+              height: 1.75rem;
+              border-radius: 50%;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              font-size: 0.875rem;
+              font-weight: 600;
+              transition: all 0.3s ease;
+              background-color: #e5e7eb;
+              color: #6b7280;
+            "
+            aria-label="Step 3: Payment"
+          >
+            3
+          </div>
+          <span
+            style="
+              margin-left: 0.5rem;
+              font-size: 0.875rem;
+              font-weight: 500;
+              color: #6b7280;
+            "
+            >Payment</span
+          >
+        </div>
+      </div>
+
+      <!-- Section 1: Select Address -->
+      <div class="main-content" style="margin-bottom: 6rem;">
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+          "
+        >
+          <h2
+            class="section-title"
+            style="font-size: 1.25rem; font-weight: 600"
+          >
+            Manage Addresses
+          </h2>
+          <button
+            class="add-button"
+            onclick="openModal(true)"
+            style="
+              padding: 0.5rem 1rem;
+              color: #006eff;
+              border-radius: 0.375rem;
+              font-size: 0.875rem;
+              font-weight: 500;
+            "
+          >
+            <i class="fas fa-plus mr-1"></i> Add New Address
+          </button>
         </div>
 
-        <!-- Modal for Add/Edit Address -->
-        <div id="addressModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); justify-content: center; align-items: center; z-index: 1000;">
-            <div style="background-color: white; padding: 1.5rem; border-radius: 0.75rem; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08); width: 100%; max-width: 40rem; max-height: 90vh; overflow-y: auto;">
-                <h2 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 1rem; color: #1f2937;" id="modalTitle">Add New Address</h2>
-                <form style="display: flex; flex-direction: column; gap: 1rem;" id="address-form" onsubmit="handleSubmit(event)">
-                    <input type="hidden" id="address-id" />
-                    <div style="display: flex; flex-direction: column;">
-                        <label style="font-size: 0.80rem; font-weight: 500; color: #1f2937; margin-bottom: 0.25rem;" for="full-name">Full Name <span style="color: #ef4444;">*</span></label>
-                        <input type="text" style="margin-top: 0.25rem; width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.90rem; transition: all 0.2s ease;" id="full-name" placeholder="Enter your full name" required onfocus="this.style.borderColor='#000000'; this.style.boxShadow='0 0 0 3px rgba(124, 58, 237, 0.1)';" onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none';">
-                    </div>
-                    <div style="display: flex; flex-direction: column;">
-                        <label style="font-size: 0.80rem; font-weight: 500; color: #1f2937; margin-bottom: 0.25rem;" for="phone">Phone Number <span style="color: #ef4444;">*</span></label>
-                        <input type="tel" style="margin-top: 0.25rem; width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.90rem; transition: all 0.2s ease;" id="phone" placeholder="10 digit mobile number" pattern="[0-9]{10}" required onfocus="this.style.borderColor='#000000'; this.style.boxShadow='0 0 0 3px rgba(124, 58, 237, 0.1)';" onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none';">
-                    </div>
-                    <div style="display: flex; flex-direction: column;">
-                        <label style="font-size: 0.80rem; font-weight: 500; color: #1f2937; margin-bottom: 0.25rem;" for="house">Flat, House No., Building, Company <span style="color: #ef4444;">*</span></label>
-                        <input type="text" style="margin-top: 0.25rem; width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.90rem; transition: all 0.2s ease;" id="house" placeholder="Enter house details" required onfocus="this.style.borderColor='#000000'; this.style.boxShadow='0 0 0 3px rgba(124, 58, 237, 0.1)';" onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none';">
-                    </div>
-                    <div style="display: flex; flex-direction: column;">
-                        <label style="font-size: 0.80rem; font-weight: 500; color: #1f2937; margin-bottom: 0.25rem;" for="area">Area, Street, Sector, Village <span style="color: #ef4444;">*</span></label>
-                        <input type="text" style="margin-top: 0.25rem; width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.90rem; transition: all 0.2s ease;" id="area" placeholder="Enter area details" required onfocus="this.style.borderColor='#000000'; this.style.boxShadow='0 0 0 3px rgba(124, 58, 237, 0.1)';" onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none';">
-                    </div>
+        <div id="addressList">
+          <% if (addresses.length > 0) { %> <% addresses.forEach((address,
+          index) => { %>
+          <div
+            class="address-item"
+            data-id="<%= address._id %>"
+            data-index="<%= index %>"
+            style="
+              cursor: pointer;
+              border: 1px solid #e5e7eb;
+              border-radius: 0.5rem;
+              padding: 1rem;
+              margin-bottom: 1rem;
+              background-color: #fff;
+            "
+          >
+            <div style="display: flex; align-items: flex-start">
+              <input type="radio" name="address" id="address<%= index %>"
+              class="address-radio" value="<%= address._id %>" <%=
+              (selectedAddress && selectedAddress.addressId ===
+              address._id.toString()) ? 'checked' : '' %> style="margin-top:
+              4px; margin-right: 1rem; accent-color: #000000;" />
 
+              <div class="address-details" style="flex: 1">
+                <div
+                  style="
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-bottom: 0.5rem;
+                  "
+                >
+                  <div>
+                    <span
+                      style="
+                        font-weight: 600;
+                        font-size: 0.95rem;
+                        color: #1f2937;
+                      "
+                    >
+                      <%= address.name %>
+                    </span>
 
-                    <div style="display: flex; gap: 2rem; flex-wrap: wrap;">
-                        <div style="flex: 1; min-width: 180px; display: flex; flex-direction: column;">
-                            <label style="font-size: 0.80rem; font-weight: 500; color: #1f2937; margin-bottom: 0.25rem;" for="pincode">Pincode <span style="color: #ef4444;">*</span></label>
-                            <input type="text" style="margin-top: 0.25rem; width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.90rem; transition: all 0.2s ease;" id="pincode" placeholder="6 digits [0-9] PIN code" pattern="[0-9]{6}" required onfocus="this.style.borderColor='#000000'; this.style.boxShadow='0 0 0 3px rgba(124, 58, 237, 0.1)';" onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none';">
-                        </div>
-                        <div style="flex: 1; min-width: 180px; display: flex; flex-direction: column;">
-                            <label style="font-size: 0.80rem; font-weight: 500; color: #1f2937; margin-bottom: 0.25rem;" for="landmark">Landmark (optional)</label>
-                            <input type="text" style="margin-top: 0.25rem; width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.90rem; transition: all 0.2s ease;" id="landmark" placeholder="near apollo hospital" onfocus="this.style.borderColor='#000000'; this.style.boxShadow='0 0 0 3px rgba(124, 58, 237, 0.1)';" onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none';">
-                        </div>
-                    </div>
+                    <span
+                      class="address-type-badge"
+                      style="
+                        margin-left: 0.5rem;
+                        background-color: #d1fae5;
+                        color: #065f46;
+                        font-size: 0.75rem;
+                        padding: 2px 8px;
+                        border-radius: 0.25rem;
+                      "
+                    >
+                      <i class="fas fa-briefcase mr-1"></i> <%=
+                      address.addressType.toUpperCase() %>
+                    </span>
 
+                    <% if (address.isDefault) { %>
+                    <span
+                      class="default-badge"
+                      style="
+                        margin-left: 0.5rem;
+                        background-color: #fef3c7;
+                        color: #92400e;
+                        font-size: 0.75rem;
+                        padding: 2px 8px;
+                        border-radius: 0.25rem;
+                      "
+                    >
+                      <i class="fas fa-check mr-1"></i> DEFAULT
+                    </span>
+                    <% } %>
+                  </div>
 
-                    <div style="display: flex; gap: 2rem; flex-wrap: wrap;">
-                        <div style="flex: 1; min-width: 180px; display: flex; flex-direction: column;">
-                            <label for="city" style="font-size: 0.80rem; font-weight: 500; color: #1f2937; margin-bottom: 0.25rem;">City/Town <span style="color: #ef4444;">*</span></label>
-                            <input type="text" style="margin-top: 0.25rem; width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.90rem; transition: all 0.2s ease;" id="city" placeholder="Required city/town" required onfocus="this.style.borderColor='#000000'; this.style.boxShadow='0 0 0 3px rgba(124, 58, 237, 0.1);" onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none';">
-                        </div>
-                        <div style="flex: 1; min-width: 180px; display: flex; flex-direction: column;">
-                            <label style="font-size: 0.80rem; font-weight: 500; color: #1f2937; margin-bottom: 0.25rem;" for="state">State <span style="color: #ef4444;">*</span></label>
-                            <select style="margin-top: 0.25rem; width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.90rem; transition: all 0.2s ease;" id="state" required onfocus="this.style.borderColor='#000000'; this.style.boxShadow='0 0 0 3px rgba(124, 58, 237, 0.1)';" onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none';">
-                                <option value="">Select your state</option>
-                                <option value="Andhra Pradesh">Andhra Pradesh</option>
-                                <option value="Arunachal Pradesh">Arunachal Pradesh</option>
-                                <option value="Assam">Assam</option>
-                                <option value="Bihar">Bihar</option>
-                                <option value="Chhattisgarh">Chhattisgarh</option>
-                                <option value="Goa">Goa</option>
-                                <option value="Gujarat">Gujarat</option>
-                                <option value="Haryana">Haryana</option>
-                                <option value="Himachal Pradesh">Himachal Pradesh</option>
-                                <option value="Jharkhand">Jharkhand</option>
-                                <option value="Karnataka">Karnataka</option>
-                                <option value="Kerala">Kerala</option>
-                                <option value="Madhya Pradesh">Madhya Pradesh</option>
-                                <option value="Maharashtra">Maharashtra</option>
-                                <option value="Manipur">Manipur</option>
-                                <option value="Meghalaya">Meghalaya</option>
-                                <option value="Mizoram">Mizoram</option>
-                                <option value="Nagaland">Nagaland</option>
-                                <option value="Odisha">Odisha</option>
-                                <option value="Punjab">Punjab</option>
-                                <option value="Rajasthan">Rajasthan</option>
-                                <option value="Sikkim">Sikkim</option>
-                                <option value="Tamil Nadu">Tamil Nadu</option>
-                                <option value="Telangana">Telangana</option>
-                                <option value="Tripura">Tripura</option>
-                                <option value="Uttar Pradesh">Uttar Pradesh</option>
-                                <option value="Uttarakhand">Uttarakhand</option>
-                                <option value="West Bengal">West Bengal</option>
-                                <option value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</option>
-                                <option value="Chandigarh">Chandigarh</option>
-                                <option value="Dadra and Nagar Haveli and Daman and Diu">Dadra and Nagar Haveli and Daman and Diu</option>
-                                <option value="Delhi">Delhi</option>
-                                <option value="Jammu and Kashmir">Jammu and Kashmir</option>
-                                <option value="Ladakh">Ladakh</option>
-                                <option value="Lakshadweep">Lakshadweep</option>
-                                <option value="Puducherry">Puducherry</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div style="display: flex; flex-direction: column;">
-                        <label style="font-size: 0.875rem; font-weight: 500; color: #1f2937;">Address Type</label>
-                        <div style="display: flex; gap: 1rem; margin-top: 0.5rem;">
-                            <label style="display: flex; align-items: center; font-size: 0.8125rem;">
-                                <input type="radio" name="addressType" value="Home" style="accent-color: #002fff; margin-right: 0.5rem;" checked id="type-home">
-                                <span>Home</span>
-                            </label>
-                            <label style="display: flex; align-items: center; font-size: 0.8125rem;">
-                                <input type="radio" name="addressType" value="Work" style="accent-color: #002fff; margin-right: 0.5rem;" id="type-work">
-                                <span>Work</span>
-                            </label>
-                        </div>
-                    </div>
-                    <div style="display: flex; flex-direction: column;">
-                        <label style="display: flex; align-items: center; font-size: 0.8125rem; color: #1f2937;">
-                            <input type="checkbox" style="accent-color: #002fff; margin-right: 0.5rem;" id="default-address">
-                            <span>Make this my default address</span>
-                        </label>
-                    </div>
-                    <div style="display: flex; gap: 0.5rem; margin-top: 0.75rem; justify-content: flex-end;">
-                        <button type="submit" style="width: auto; max-width: 30rem; padding: 0.80rem 1.40rem; border-radius: 0.25rem; font-size: 0.90rem; cursor: pointer; transition: all 0.2s ease; background-color: #000000; color: white; border: none;" onmouseover="this.style.backgroundColor='#272727';" onmouseout="this.style.backgroundColor='#000000';">Save Address</button>
-                        <button type="button" onclick="closeModal()" style="width: auto; max-width: 30rem; padding: 0.80rem 1.40rem; border-radius: 0.25rem; font-size: 0.90rem; cursor: pointer; transition: all 0.2s ease; border: 1px solid #ffffff; color: #ffffff; background-color: gray;" onmouseover="this.style.backgroundColor='#9c9c9c';" onmouseout="this.style.backgroundColor='gray';">Cancel</button>
-                    </div>
-                </form>
+                  <div class="address-actions">
+  <button
+    class="action-button edit-btn"
+    style="
+      color: #6b7280;
+      font-size: 0.85rem;
+      margin-right: 0.75rem;
+      font-weight: 500;
+      background: none;
+      border: none;
+      cursor: pointer;
+    "
+    data-address-id="<%= address._id %>"
+    data-address='<%- JSON.stringify(address).replace(/'/g, "&#39;") %>'
+  >
+    <i class="fas fa-edit" style="margin-right: 4px;"></i> Edit
+  </button>
+</div>
+                </div>
+
+                <p style="color: #4b5563; font-size: 0.9rem; margin: 0.2rem 0">
+                  <%= address.streetAddress %>, <%= address.landMark %>, <%=
+                  address.city %>, <%= address.state %>
+                </p>
+                <p style="color: #4b5563; font-size: 0.9rem; margin: 0.2rem 0">
+                  PIN: <%= address.pincode %>
+                </p>
+                <p style="color: #4b5563; font-size: 0.9rem; margin: 0.2rem 0">
+                  Phone: <%= address.phone %>
+                </p>
+              </div>
             </div>
+          </div>
+          <% }) %> <% } else { %>
+          <p class="text-gray-500 italic">
+            No addresses found. Add a new address to get started.
+          </p>
+          <% } %>
         </div>
+      </div>
 
-        <!-- Navigation Buttons -->
-        <div style="display: flex; gap: 0.5rem; margin-top: 1.5rem; justify-content: flex-end;">
-            <a href="/cart">
-                <button style="width: 10rem; max-width: 100%; padding: 0.80rem 1rem; border-radius: 0.35rem; font-size: 0.90rem; cursor: pointer; transition: all 0.2s ease; border: 1px solid #ffffff; color: #ffffff; background-color: gray;" onmouseover="this.style.backgroundColor='#b1b1b1';" onmouseout="this.style.backgroundColor='gray';" aria-label="Back to cart">Back to Cart</button>
-            </a>
-            <button id="continueBtn" style="width: 10rem; max-width: 100%; padding: 0.80rem 1rem; border-radius: 0.35rem; font-size: 0.90rem; cursor: pointer; transition: all 0.2s ease; background-color: #000000; color: white; border: none;" onmouseover="this.style.backgroundColor='#202020';" onmouseout="this.style.backgroundColor='#000000';" aria-label="Continue to shipping">Continue</button>
+      <!-- Modal for Add/Edit Address -->
+      <div
+        id="addressModal"
+        style="
+          display: none;
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background-color: rgba(0, 0, 0, 0.5);
+          justify-content: center;
+          align-items: center;
+          z-index: 1000;
+        "
+      >
+        <div
+          style="
+            background-color: white;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+            width: 100%;
+            max-width: 40rem;
+            max-height: 90vh;
+            overflow-y: auto;
+          "
+        >
+          <h2
+            style="
+              font-size: 1.125rem;
+              font-weight: 600;
+              margin-bottom: 1rem;
+              color: #1f2937;
+            "
+            id="modalTitle"
+          >
+            Add New Address
+          </h2>
+          <form
+            style="display: flex; flex-direction: column; gap: 1rem"
+            id="address-form"
+            onsubmit="handleSubmit(event)"
+          >
+            <input type="hidden" id="address-id" />
+            <div style="display: flex; flex-direction: column">
+              <label
+                style="
+                  font-size: 0.8rem;
+                  font-weight: 500;
+                  color: #1f2937;
+                  margin-bottom: 0.25rem;
+                "
+                for="full-name"
+                >Full Name <span style="color: #ef4444">*</span></label
+              >
+              <input
+                type="text"
+                style="
+                  margin-top: 0.25rem;
+                  width: 100%;
+                  padding: 0.5rem;
+                  border: 1px solid #d1d5db;
+                  border-radius: 0.5rem;
+                  font-size: 0.9rem;
+                  transition: all 0.2s ease;
+                "
+                id="full-name"
+                placeholder="Enter your full name"
+                required
+                onfocus="this.style.borderColor='#000000'; this.style.boxShadow='0 0 0 3px rgba(124, 58, 237, 0.1)';"
+                onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none';"
+              />
+            </div>
+            <div style="display: flex; flex-direction: column">
+              <label
+                style="
+                  font-size: 0.8rem;
+                  font-weight: 500;
+                  color: #1f2937;
+                  margin-bottom: 0.25rem;
+                "
+                for="phone"
+                >Phone Number <span style="color: #ef4444">*</span></label
+              >
+              <input
+                type="tel"
+                style="
+                  margin-top: 0.25rem;
+                  width: 100%;
+                  padding: 0.5rem;
+                  border: 1px solid #d1d5db;
+                  border-radius: 0.5rem;
+                  font-size: 0.9rem;
+                  transition: all 0.2s ease;
+                "
+                id="phone"
+                placeholder="10 digit mobile number"
+                pattern="[0-9]{10}"
+                required
+                onfocus="this.style.borderColor='#000000'; this.style.boxShadow='0 0 0 3px rgba(124, 58, 237, 0.1)';"
+                onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none';"
+              />
+            </div>
+            <div style="display: flex; flex-direction: column">
+              <label
+                style="
+                  font-size: 0.8rem;
+                  font-weight: 500;
+                  color: #1f2937;
+                  margin-bottom: 0.25rem;
+                "
+                for="house"
+                >Flat, House No., Building, Company
+                <span style="color: #ef4444">*</span></label
+              >
+              <input
+                type="text"
+                style="
+                  margin-top: 0.25rem;
+                  width: 100%;
+                  padding: 0.5rem;
+                  border: 1px solid #d1d5db;
+                  border-radius: 0.5rem;
+                  font-size: 0.9rem;
+                  transition: all 0.2s ease;
+                "
+                id="house"
+                placeholder="Enter house details"
+                required
+                onfocus="this.style.borderColor='#000000'; this.style.boxShadow='0 0 0 3px rgba(124, 58, 237, 0.1)';"
+                onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none';"
+              />
+            </div>
+            <div style="display: flex; flex-direction: column">
+              <label
+                style="
+                  font-size: 0.8rem;
+                  font-weight: 500;
+                  color: #1f2937;
+                  margin-bottom: 0.25rem;
+                "
+                for="area"
+                >Area, Street, Sector, Village
+                <span style="color: #ef4444">*</span></label
+              >
+              <input
+                type="text"
+                style="
+                  margin-top: 0.25rem;
+                  width: 100%;
+                  padding: 0.5rem;
+                  border: 1px solid #d1d5db;
+                  border-radius: 0.5rem;
+                  font-size: 0.9rem;
+                  transition: all 0.2s ease;
+                "
+                id="area"
+                placeholder="Enter area details"
+                required
+                onfocus="this.style.borderColor='#000000'; this.style.boxShadow='0 0 0 3px rgba(124, 58, 237, 0.1)';"
+                onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none';"
+              />
+            </div>
+
+            <div style="display: flex; gap: 2rem; flex-wrap: wrap">
+              <div
+                style="
+                  flex: 1;
+                  min-width: 180px;
+                  display: flex;
+                  flex-direction: column;
+                "
+              >
+                <label
+                  style="
+                    font-size: 0.8rem;
+                    font-weight: 500;
+                    color: #1f2937;
+                    margin-bottom: 0.25rem;
+                  "
+                  for="pincode"
+                  >Pincode <span style="color: #ef4444">*</span></label
+                >
+                <input
+                  type="text"
+                  style="
+                    margin-top: 0.25rem;
+                    width: 100%;
+                    padding: 0.5rem;
+                    border: 1px solid #d1d5db;
+                    border-radius: 0.5rem;
+                    font-size: 0.9rem;
+                    transition: all 0.2s ease;
+                  "
+                  id="pincode"
+                  placeholder="6 digits [0-9] PIN code"
+                  pattern="[0-9]{6}"
+                  required
+                  onfocus="this.style.borderColor='#000000'; this.style.boxShadow='0 0 0 3px rgba(124, 58, 237, 0.1)';"
+                  onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none';"
+                />
+              </div>
+              <div
+                style="
+                  flex: 1;
+                  min-width: 180px;
+                  display: flex;
+                  flex-direction: column;
+                "
+              >
+                <label
+                  style="
+                    font-size: 0.8rem;
+                    font-weight: 500;
+                    color: #1f2937;
+                    margin-bottom: 0.25rem;
+                  "
+                  for="landmark"
+                  >Landmark (optional)</label
+                >
+                <input
+                  type="text"
+                  style="
+                    margin-top: 0.25rem;
+                    width: 100%;
+                    padding: 0.5rem;
+                    border: 1px solid #d1d5db;
+                    border-radius: 0.5rem;
+                    font-size: 0.9rem;
+                    transition: all 0.2s ease;
+                  "
+                  id="landmark"
+                  placeholder="near apollo hospital"
+                  onfocus="this.style.borderColor='#000000'; this.style.boxShadow='0 0 0 3px rgba(124, 58, 237, 0.1)';"
+                  onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none';"
+                />
+              </div>
+            </div>
+
+            <div style="display: flex; gap: 2rem; flex-wrap: wrap">
+              <div
+                style="
+                  flex: 1;
+                  min-width: 180px;
+                  display: flex;
+                  flex-direction: column;
+                "
+              >
+                <label
+                  for="city"
+                  style="
+                    font-size: 0.8rem;
+                    font-weight: 500;
+                    color: #1f2937;
+                    margin-bottom: 0.25rem;
+                  "
+                  >City/Town <span style="color: #ef4444">*</span></label
+                >
+                <input
+                  type="text"
+                  style="
+                    margin-top: 0.25rem;
+                    width: 100%;
+                    padding: 0.5rem;
+                    border: 1px solid #d1d5db;
+                    border-radius: 0.5rem;
+                    font-size: 0.9rem;
+                    transition: all 0.2s ease;
+                  "
+                  id="city"
+                  placeholder="Required city/town"
+                  required
+                  onfocus="this.style.borderColor='#000000'; this.style.boxShadow='0 0 0 3px rgba(124, 58, 237, 0.1);"
+                  onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none';"
+                />
+              </div>
+              <div
+                style="
+                  flex: 1;
+                  min-width: 180px;
+                  display: flex;
+                  flex-direction: column;
+                "
+              >
+                <label
+                  style="
+                    font-size: 0.8rem;
+                    font-weight: 500;
+                    color: #1f2937;
+                    margin-bottom: 0.25rem;
+                  "
+                  for="state"
+                  >State <span style="color: #ef4444">*</span></label
+                >
+                <select
+                  style="
+                    margin-top: 0.25rem;
+                    width: 100%;
+                    padding: 0.5rem;
+                    border: 1px solid #d1d5db;
+                    border-radius: 0.5rem;
+                    font-size: 0.9rem;
+                    transition: all 0.2s ease;
+                  "
+                  id="state"
+                  required
+                  onfocus="this.style.borderColor='#000000'; this.style.boxShadow='0 0 0 3px rgba(124, 58, 237, 0.1)';"
+                  onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none';"
+                >
+                  <option value="">Select your state</option>
+                  <option value="Andhra Pradesh">Andhra Pradesh</option>
+                  <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+                  <option value="Assam">Assam</option>
+                  <option value="Bihar">Bihar</option>
+                  <option value="Chhattisgarh">Chhattisgarh</option>
+                  <option value="Goa">Goa</option>
+                  <option value="Gujarat">Gujarat</option>
+                  <option value="Haryana">Haryana</option>
+                  <option value="Himachal Pradesh">Himachal Pradesh</option>
+                  <option value="Jharkhand">Jharkhand</option>
+                  <option value="Karnataka">Karnataka</option>
+                  <option value="Kerala">Kerala</option>
+                  <option value="Madhya Pradesh">Madhya Pradesh</option>
+                  <option value="Maharashtra">Maharashtra</option>
+                  <option value="Manipur">Manipur</option>
+                  <option value="Meghalaya">Meghalaya</option>
+                  <option value="Mizoram">Mizoram</option>
+                  <option value="Nagaland">Nagaland</option>
+                  <option value="Odisha">Odisha</option>
+                  <option value="Punjab">Punjab</option>
+                  <option value="Rajasthan">Rajasthan</option>
+                  <option value="Sikkim">Sikkim</option>
+                  <option value="Tamil Nadu">Tamil Nadu</option>
+                  <option value="Telangana">Telangana</option>
+                  <option value="Tripura">Tripura</option>
+                  <option value="Uttar Pradesh">Uttar Pradesh</option>
+                  <option value="Uttarakhand">Uttarakhand</option>
+                  <option value="West Bengal">West Bengal</option>
+                  <option value="Andaman and Nicobar Islands">
+                    Andaman and Nicobar Islands
+                  </option>
+                  <option value="Chandigarh">Chandigarh</option>
+                  <option value="Dadra and Nagar Haveli and Daman and Diu">
+                    Dadra and Nagar Haveli and Daman and Diu
+                  </option>
+                  <option value="Delhi">Delhi</option>
+                  <option value="Jammu and Kashmir">Jammu and Kashmir</option>
+                  <option value="Ladakh">Ladakh</option>
+                  <option value="Lakshadweep">Lakshadweep</option>
+                  <option value="Puducherry">Puducherry</option>
+                </select>
+              </div>
+            </div>
+            <div style="display: flex; flex-direction: column">
+              <label
+                style="font-size: 0.875rem; font-weight: 500; color: #1f2937"
+                >Address Type</label
+              >
+              <div style="display: flex; gap: 1rem; margin-top: 0.5rem">
+                <label
+                  style="
+                    display: flex;
+                    align-items: center;
+                    font-size: 0.8125rem;
+                  "
+                >
+                  <input
+                    type="radio"
+                    name="addressType"
+                    value="Home"
+                    style="accent-color: #002fff; margin-right: 0.5rem"
+                    checked
+                    id="type-home"
+                  />
+                  <span>Home</span>
+                </label>
+                <label
+                  style="
+                    display: flex;
+                    align-items: center;
+                    font-size: 0.8125rem;
+                  "
+                >
+                  <input
+                    type="radio"
+                    name="addressType"
+                    value="Work"
+                    style="accent-color: #002fff; margin-right: 0.5rem"
+                    id="type-work"
+                  />
+                  <span>Work</span>
+                </label>
+              </div>
+            </div>
+            <div style="display: flex; flex-direction: column">
+              <label
+                style="
+                  display: flex;
+                  align-items: center;
+                  font-size: 0.8125rem;
+                  color: #1f2937;
+                "
+              >
+                <input
+                  type="checkbox"
+                  style="accent-color: #002fff; margin-right: 0.5rem"
+                  id="default-address"
+                />
+                <span>Make this my default address</span>
+              </label>
+            </div>
+            <div
+              style="
+                display: flex;
+                gap: 0.5rem;
+                margin-top: 0.75rem;
+                justify-content: flex-end;
+              "
+            >
+              <button
+                type="submit"
+                style="
+                  width: auto;
+                  max-width: 30rem;
+                  padding: 0.8rem 1.4rem;
+                  border-radius: 0.25rem;
+                  font-size: 0.9rem;
+                  cursor: pointer;
+                  transition: all 0.2s ease;
+                  background-color: #000000;
+                  color: white;
+                  border: none;
+                "
+                onmouseover="this.style.backgroundColor='#272727';"
+                onmouseout="this.style.backgroundColor='#000000';"
+              >
+                Save Address
+              </button>
+              <button
+                type="button"
+                onclick="closeModal()"
+                style="
+                  width: auto;
+                  max-width: 30rem;
+                  padding: 0.8rem 1.4rem;
+                  border-radius: 0.25rem;
+                  font-size: 0.9rem;
+                  cursor: pointer;
+                  transition: all 0.2s ease;
+                  border: 1px solid #ffffff;
+                  color: #ffffff;
+                  background-color: gray;
+                "
+                onmouseover="this.style.backgroundColor='#9c9c9c';"
+                onmouseout="this.style.backgroundColor='gray';"
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
         </div>
+      </div>
+
+      <!-- Navigation Buttons -->
+      <div
+        style="
+          display: flex;
+          gap: 0.5rem;
+          margin-top: 1.5rem;
+          justify-content: flex-end;
+        "
+      >
+        <a href="/cart">
+          <button
+            style="
+              width: 10rem;
+              max-width: 100%;
+              padding: 0.8rem 1rem;
+              border-radius: 0.35rem;
+              font-size: 0.9rem;
+              cursor: pointer;
+              transition: all 0.2s ease;
+              border: 1px solid #ffffff;
+              color: #ffffff;
+              background-color: gray;
+            "
+            onmouseover="this.style.backgroundColor='#b1b1b1';"
+            onmouseout="this.style.backgroundColor='gray';"
+            aria-label="Back to cart"
+          >
+            Back to Cart
+          </button>
+        </a>
+        <button
+          id="continueBtn"
+          style="
+            width: 10rem;
+            max-width: 100%;
+            padding: 0.8rem 1rem;
+            border-radius: 0.35rem;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background-color: #000000;
+            color: white;
+            border: none;
+          "
+          onmouseover="this.style.backgroundColor='#202020';"
+          onmouseout="this.style.backgroundColor='#000000';"
+          aria-label="Continue to shipping"
+        >
+          Continue
+        </button>
+      </div>
     </div>
-    <%-include("../../views/partials/user/footer")%>
-    <script>
-       let currentEditingId = null;
 
+    <script>
+let currentEditingId = null;
+
+// Updated openModal function
 function openModal(isNew = true, addressData = null) {
     const modal = document.getElementById('addressModal');
     const modalTitle = document.getElementById('modalTitle');
@@ -193,17 +825,17 @@ function openModal(isNew = true, addressData = null) {
     if (isNew) {
         modalTitle.textContent = 'Add New Address';
         document.getElementById('address-form').reset();
-        document.getElementById('type-home').checked = true; // Default to Home
+        document.getElementById('type-home').checked = true;
         currentEditingId = null;
     } else if (addressData) {
         modalTitle.textContent = 'Edit Address';
         currentEditingId = addressData._id;
 
-        // Populate form fields
+        // Populate form fields with proper mapping
         document.getElementById('full-name').value = addressData.name || '';
         document.getElementById('phone').value = addressData.phone || '';
         document.getElementById('house').value = addressData.streetAddress || '';
-        document.getElementById('area').value = addressData.area || '';
+        document.getElementById('area').value = addressData.area || ''; // Map to correct field
         document.getElementById('pincode').value = addressData.pincode || '';
         document.getElementById('landmark').value = addressData.landMark || '';
         document.getElementById('city').value = addressData.city || '';
@@ -211,14 +843,66 @@ function openModal(isNew = true, addressData = null) {
         document.getElementById('default-address').checked = !!addressData.isDefault;
 
         // Set address type
-        if (addressData.addressType === 'Home') {
+        const addressType = (addressData.addressType || 'Home').toLowerCase();
+        if (addressType === 'home') {
             document.getElementById('type-home').checked = true;
-        } else if (addressData.addressType === 'Work') {
+        } else if (addressType === 'work') {
             document.getElementById('type-work').checked = true;
         }
     }
 }
 
+// Add event listeners when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle edit button clicks
+    document.querySelectorAll('.edit-btn').forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.stopPropagation(); // Prevent address item click
+            
+            try {
+                const addressData = JSON.parse(this.getAttribute('data-address'));
+                openModal(false, addressData);
+            } catch (error) {
+                console.error('Error parsing address data:', error);
+                showNotification('Error loading address data', 'error');
+            }
+        });
+    });
+
+    // Handle address item clicks (for radio selection)
+    document.querySelectorAll('.address-item').forEach(item => {
+        item.addEventListener('click', function(e) {
+            // Don't trigger if clicking edit button
+            if (e.target.closest('.edit-btn')) return;
+            
+            const index = this.getAttribute('data-index');
+            const radio = document.getElementById(`address${index}`);
+            if (radio) radio.checked = true;
+        });
+    });
+
+    // Continue button handler
+    const continueButton = document.querySelector('#continueBtn');
+    if (continueButton) {
+        continueButton.addEventListener('click', proceedToShipping);
+    }
+
+    // Form validation
+    const form = document.getElementById('address-form');
+    const inputs = form.querySelectorAll('input[required], select[required]');
+
+    inputs.forEach(input => {
+        input.addEventListener('blur', function() {
+            if (!this.value.trim()) {
+                this.style.borderColor = '#ef4444';
+            } else {
+                this.style.borderColor = '#d1d5db';
+            }
+        });
+    });
+});
+
+// Rest of your existing functions remain the same
 function closeModal() {
     const modal = document.getElementById('addressModal');
     modal.style.display = 'none';
@@ -254,7 +938,7 @@ async function handleSubmit(event) {
 
     try {
         let url, method;
-        
+
         if (currentEditingId) {
             url = `/address/update/${currentEditingId}`;
             method = 'PUT';
@@ -291,17 +975,15 @@ async function handleSubmit(event) {
     }
 }
 
-
 async function proceedToShipping() {
     const selectedAddress = document.querySelector('input[name="address"]:checked');
-    
+
     if (!selectedAddress) {
-        showNotification('Please select an address to continue', 'error');
+        showNotification('Please select an address', 'error');
         return;
     }
 
-    const addressId = selectedAddress.id.replace('address', '');
-    const addressData = getAddressData(addressId);
+    const addressId = selectedAddress.value; // Use value instead of calculating from ID
 
     try {
         const response = await fetch('/checkout/proceed-to-shipping', {
@@ -309,7 +991,7 @@ async function proceedToShipping() {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ addressId: addressData._id })
+            body: JSON.stringify({ addressId: addressId })
         });
 
         const result = await response.json();
@@ -325,47 +1007,59 @@ async function proceedToShipping() {
     }
 }
 
-function getAddressData(index) {
-    // This function should return the address data based on the index
-    // You might need to modify this based on how your addresses are rendered
-    const addresses = <%- JSON.stringify(addresses) %>;
-    return addresses[index];
-}
-
 function showNotification(message, type = 'info') {
-    // Create notification element
+    // Your existing notification function remains the same
+    let container = document.querySelector('.notification-container');
+    if (!container) {
+        container = document.createElement('div');
+        container.className = 'notification-container';
+        container.style.position = 'fixed';
+        container.style.top = '20px';
+        container.style.right = '20px';
+        container.style.display = 'flex';
+        container.style.flexDirection = 'column';
+        container.style.gap = '10px';
+        container.style.zIndex = '9999';
+        document.body.appendChild(container);
+    }
+
     const notification = document.createElement('div');
     notification.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
         padding: 1rem 1.5rem;
         border-radius: 0.5rem;
         color: white;
         font-weight: 500;
-        z-index: 9999;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        transition: all 0.3s ease;
+        max-width: 300px;
+        transition: opacity 0.3s ease, transform 0.3s ease;
+        opacity: 0;
+        transform: translateY(20px);
     `;
 
-    if (type === 'success') {
-        notification.style.backgroundColor = '#10b981';
-    } else if (type === 'error') {
-        notification.style.backgroundColor = '#ef4444';
-    } else {
-        notification.style.backgroundColor = '#3b82f6';
+    switch (type) {
+        case 'success':
+            notification.style.backgroundColor = '#16a34a';
+            break;
+        case 'error':
+            notification.style.backgroundColor = '#dc2626';
+            break;
+        case 'info':
+        default:
+            notification.style.backgroundColor = '#2563eb';
     }
 
     notification.textContent = message;
-    document.body.appendChild(notification);
+    container.appendChild(notification);
 
-    // Remove notification after 3 seconds
+    setTimeout(() => {
+        notification.style.opacity = '1';
+        notification.style.transform = 'translateY(0)';
+    }, 50);
+
     setTimeout(() => {
         notification.style.opacity = '0';
         notification.style.transform = 'translateY(-20px)';
-        setTimeout(() => {
-            document.body.removeChild(notification);
-        }, 300);
+        setTimeout(() => notification.remove(), 300);
     }, 3000);
 }
 
@@ -377,33 +1071,10 @@ document.addEventListener('click', function(event) {
     }
 });
 
-// Handle form validation
-document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('address-form');
-    const inputs = form.querySelectorAll('input[required], select[required]');
-
-    inputs.forEach(input => {
-        input.addEventListener('blur', function() {
-            if (!this.value.trim()) {
-                this.style.borderColor = '#ef4444';
-            } else {
-                this.style.borderColor = '#d1d5db';
-            }
-        });
-    });
-
-    // Update continue button click handler
-    const continueButton = document.querySelector('button[aria-label="Continue to shipping"]');
-    if (continueButton) {
-        continueButton.addEventListener('click', proceedToShipping);
-    }
-});
-
-// Validate phone number in real-time
+// Phone validation
 document.getElementById('phone').addEventListener('input', function() {
-    const phone = this.value.replace(/\D/g, ''); // Remove non-digits
-    this.value = phone.slice(0, 10); // Limit to 10 digits
-    
+    const phone = this.value.replace(/\D/g, '');
+    this.value = phone.slice(0, 10);
     if (phone.length === 10) {
         this.style.borderColor = '#10b981';
     } else {
@@ -411,17 +1082,18 @@ document.getElementById('phone').addEventListener('input', function() {
     }
 });
 
-// Validate pincode in real-time
+// Pincode validation
 document.getElementById('pincode').addEventListener('input', function() {
-    const pincode = this.value.replace(/\D/g, ''); // Remove non-digits
-    this.value = pincode.slice(0, 6); // Limit to 6 digits
-    
+    const pincode = this.value.replace(/\D/g, '');
+    this.value = pincode.slice(0, 6);
+
     if (pincode.length === 6) {
         this.style.borderColor = '#10b981';
     } else {
         this.style.borderColor = '#ef4444';
     }
 });
-    </script>
-</body>
+</script>
+  </body>
+  <%-include("../../views/partials/user/footer")%>
 </html>

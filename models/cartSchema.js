@@ -44,7 +44,7 @@ const cartSchema = new Schema({
     }
   }]
 }, {
-  timestamps: true 
+  timestamps: true
 });
 
 
@@ -56,7 +56,7 @@ cartSchema.pre('save', function (next) {
 });
 
 
-cartSchema.methods.getTotalValue = function() {
+cartSchema.methods.getTotalValue = function () {
   return this.items.reduce((total, item) => {
     if (item.status === 'Placed') {
       return total + item.totalPrice;
@@ -65,7 +65,7 @@ cartSchema.methods.getTotalValue = function() {
   }, 0);
 };
 
-cartSchema.methods.getActiveItemsCount = function() {
+cartSchema.methods.getActiveItemsCount = function () {
   return this.items.filter(item => item.status === 'Placed').length;
 };
 

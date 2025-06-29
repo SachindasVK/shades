@@ -1,599 +1,730 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Profile - SHADES</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@700&display=swap"
+      rel="stylesheet"
+    />
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-        .page-body {
-            background-color: #f3f4f6;
-        }
-        .containeer {
-            max-width: 95%; 
-            margin-left: auto; 
-            margin-right: auto;
-            display: flex; 
-            gap: 2rem;
-            padding: 10px;
-        }
-        .sidebar {
-            width: 20rem;
-            background-color: #ffffff;
-            border-radius: 0.5rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            height: fit-content;
-        }
-        .profile-header {
-            padding: 1.5rem;
-            border-bottom: 1px solid #e5e7eb;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            position: relative;
-        }
-        .profile-icon {
-            width: 3rem;
-            height: 3rem;
-            background-color: #a1a1a1;
-            border-radius: 9999px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            overflow: hidden;
-        }
-        .profile-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 9999px;
-        }
-        .profile-icon i {
-            color: #ffffff;
-            font-size: 1.125rem;
-        }
-        .greeting {
-            color: #6b7280;
-            font-size: 0.875rem;
-        }
-        .username {
-            color: #1f2937;
-            font-weight: 600;
-        }
-        .menu {
-            padding-top: 0;
-            padding-bottom: 0;
-        }
-        .menu-list {
-            margin: 0;
-        }
-        .menu-item {
-            border-bottom: 1px solid #f3f4f6;
-        }
-        .menu-link {
-            display: flex;
-            align-items: center;
-            padding: 1rem 1.5rem;
-            color: #4b5563;
-            font-size: 0.875rem;
-        }
-        .menu-link:hover {
-            background-color: #f9fafb;
-        }
-        .menu-link.active {
-            background-color: #eff6ff;
-            color: #2563eb;
-        }
-        .menu-icon {
-            width: 1.25rem;
-            margin-right: 0.75rem;
-        }
-        .logout-link {
-            display: flex;
-            align-items: center;
-            padding: 1rem 1.5rem;
-            color: #dc2626;
-            font-size: 0.875rem;
-        }
-        .logout-link:hover {
-            background-color: #fef2f2;
-        }
-        .main-content {
-            flex: 1;
-            background-color: #ffffff;
-            border-radius: 0.5rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            padding: 2rem;
-        }
-        .section-title {
-            font-size: 1.125rem;
-            font-weight: 600;
-            color: #1f2937;
-            margin-bottom: 1.5rem;
-        }
-        .profile-container {
-            width: 7rem;
-            height: 7rem;
-            border-radius: 50%;
-            background-color: #e5e7eb;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            overflow: hidden;
-            margin-bottom: 20px;
-        }
-        .profile-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 50%;
-        }
-        .default-icon {
-            font-size: 2.5rem;
-            color: #9ca3af;
-        }
-        .image-action-button {
-            position: relative;
-            display: inline-block;
-            background-color: white;
-            border: 2px solid black;
-            border-radius: 9999px;
-            padding: 6px 12px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-            cursor: pointer;
-            font-size: 0.875rem;
-            font-weight: 500;
-            color: black;
-            margin-top: 10px;
-            text-align: center;
-            opacity: 1;
-        }
-        .image-action-button:hover {
-            background-color: #f3f4f6;
-        }
-        .field-content {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-        .edit-icon {
-            font-size: 0.9rem;
-            color: black;
-            cursor: pointer;
-            margin-left: 4px;
-            transition: color 0.2s;
-        }
-        .edit-icon:hover {
-            color: #1f2937;
-        }
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(0, 0, 0, 0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-        }
-        .modal-content {
-            background: white;
-            padding: 2rem;
-            border-radius: 8px;
-            width: 90%;
-            max-width: 400px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-        }
-        .modal-header {
-            margin-bottom: 1rem;
-        }
-        .modal-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-        }
-        .modal-message {
-            font-size: 1rem;
-            color: #374151;
-            margin-bottom: 1rem;
-        }
-        .form-group {
-            margin-bottom: 1rem;
-        }
-        .form-label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-        }
-        .form-input {
-            width: 100%;
-            padding: 0.5rem;
-            border: 1px solid #d1d5db;
-            border-radius: 4px;
-            font-size: 1rem;
-        }
-        .form-input:focus {
-            outline: none;
-            border-color: #2563eb;
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-        }
-        .button-group {
-            display: flex;
-            gap: 0.5rem;
-            justify-content: flex-end;
-        }
-        .btn {
-            padding: 0.5rem 1rem;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.875rem;
-            font-weight: 500;
-        }
-        .btn-primary {
-            background-color: #2563eb;
-            color: white;
-        }
-        .btn-primary:hover {
-            background-color: #1d4ed8;
-        }
-        .btn-secondary {
-            background-color: #6b7280;
-            color: white;
-        }
-        .btn-secondary:hover {
-            background-color: #4b5563;
-        }
-        .btn-danger {
-            background-color: #ef4444;
-            color: white;
-        }
-        .btn-danger:hover {
-            background-color: #dc2626;
-        }
-        .info-item {
-            padding: 1rem;
-            border-bottom: 1px solid #e5e7eb;
-        }
-        .field-label {
-            font-weight: 600;
-            color: #374151;
-            margin-bottom: 0.5rem;
-        }
-        .field-value {
-            color: #111827;
-        }
-        .field-value-empty {
-            color: #9ca3af;
-            font-style: italic;
-        }
-        .toast {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            min-width: 250px;
-            background-color: #1f2937;
-            color: white;
-            padding: 1rem;
-            border-radius: 4px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            z-index: 2000;
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.3s ease, transform 0.3s ease;
-        }
-        .toast.show {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        .toast.success {
-            background-color: #22c55e;
-        }
-        .toast.error {
-            background-color: #ef4444;
-        }
-       
+      body {
+        font-family: "Inter", sans-serif;
+      }
+      .page-body {
+        background-color: #ffffff;
+      }
+      .containeer {
+        max-width: 95%;
+        margin-left: auto;
+        margin-right: auto;
+        display: flex;
+        padding: 1px;
+      }
+      .sidebar {
+        width: 20rem;
+        background-color: #ffffff;
+        border-radius: 0.5rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+          0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        height: fit-content;
+      }
+      .profile-header {
+        padding: 1.5rem;
+        border-bottom: 1px solid #e5e7eb;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        position: relative;
+      }
+      .profile-icon {
+        width: 3rem;
+        height: 3rem;
+        background-color: #a1a1a1;
+        border-radius: 9999px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+      }
+      .profile-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 9999px;
+      }
+      .profile-icon i {
+        color: #ffffff;
+        font-size: 1.125rem;
+      }
+      .greeting {
+        color: #6b7280;
+        font-size: 0.875rem;
+      }
+      .username {
+        color: #1f2937;
+        font-weight: 600;
+      }
+      .menu {
+        padding-top: 0;
+        padding-bottom: 0;
+      }
+      .menu-list {
+        margin: 0;
+      }
+      .menu-item {
+        border-bottom: 1px solid #f3f4f6;
+      }
+      .menu-link {
+        display: flex;
+        align-items: center;
+        padding: 1rem 1.5rem;
+        color: #4b5563;
+        font-size: 0.875rem;
+      }
+      .menu-link:hover {
+        background-color: #f9fafb;
+      }
+      .menu-link.active {
+        background-color: #eff6ff;
+        color: #2563eb;
+      }
+      .menu-icon {
+        width: 1.25rem;
+        margin-right: 0.75rem;
+      }
+      .logout-link {
+        display: flex;
+        align-items: center;
+        padding: 1rem 1.5rem;
+        color: #dc2626;
+        font-size: 0.875rem;
+      }
+      .logout-link:hover {
+        background-color: #fef2f2;
+      }
+      .main-content {
+        flex: 1;
+        background-color: #ffffff;
+        border-radius: 0.5rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+          0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        padding: 2rem;
+      }
+      .section-title {
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: #1f2937;
+        margin-bottom: 1.5rem;
+      }
+      .profile-container {
+        width: 7rem;
+        height: 7rem;
+        border-radius: 50%;
+        background-color: #e5e7eb;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 20px;
+      }
+      .profile-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
+      }
+      .default-icon {
+        font-size: 2.5rem;
+        color: #9ca3af;
+      }
+      .image-action-button {
+        position: relative;
+        display: inline-block;
+        /* background-color: white; */
+        border-radius: 9999px;  
+        padding: 6px 12px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        cursor: pointer;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: black;
+        margin-top: 5px;
+        text-align: center;
+        opacity: 1;
+      }
+      .image-action-button:hover {
+        background-color: #f3f4f6;
+      }
+      .field-content {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .edit-icon {
+        font-size: 0.9rem;
+        color: black;
+        cursor: pointer;
+        margin-left: 4px;
+        transition: color 0.2s;
+      }
+      .edit-icon:hover {
+        color: #1f2937;
+      }
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+      }
+      .modal-content {
+        background: white;
+        padding: 2rem;
+        border-radius: 8px;
+        width: 90%;
+        max-width: 400px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      }
+      .modal-header {
+        margin-bottom: 1rem;
+      }
+      .modal-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+      }
+      .modal-message {
+        font-size: 1rem;
+        color: #374151;
+        margin-bottom: 1rem;
+      }
+      .form-group {
+        margin-bottom: 1rem;
+      }
+      .form-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+      }
+      .form-input {
+        width: 100%;
+        padding: 0.5rem;
+        border: 1px solid #d1d5db;
+        border-radius: 4px;
+        font-size: 1rem;
+      }
+      .form-input:focus {
+        outline: none;
+        border-color: #2563eb;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+      }
+      .button-group {
+        display: flex;
+        gap: 0.5rem;
+        justify-content: flex-end;
+      }
+      .btn {
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.875rem;
+        font-weight: 500;
+      }
+      .btn-primary {
+        background-color: #2563eb;
+        color: white;
+      }
+      .btn-primary:hover {
+        background-color: #1d4ed8;
+      }
+      .btn-secondary {
+        background-color: #6b7280;
+        color: white;
+      }
+      .btn-secondary:hover {
+        background-color: #4b5563;
+      }
+      .btn-danger {
+        background-color: #ef4444;
+        color: white;
+      }
+      .btn-danger:hover {
+        background-color: #dc2626;
+      }
+      .info-item {
+        padding: 1rem;
+        border-bottom: 1px solid #e5e7eb;
+      }
+      .field-label {
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 0.5rem;
+      }
+      .field-value {
+        color: #111827;
+      }
+      .field-value-empty {
+        color: #9ca3af;
+        font-style: italic;
+      }
       .address-display {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
-}
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+      }
 
-.address-main {
-    line-height: 1.4;
-}
+      .address-main {
+        line-height: 1.4;
+      }
 
-.address-type-badge {
-    display: inline-block;
-    background-color: #e5e7eb;
-    color: #374151;
-    padding: 0.25rem 0.5rem;
-    border-radius: 0.375rem;
-    font-size: 0.75rem;
-    font-weight: 500;
-    text-transform: uppercase;
-}
+      .address-type-badge {
+        display: inline-block;
+        background-color: #e5e7eb;
+        color: #374151;
+        padding: 0.25rem 0.5rem;
+        border-radius: 0.375rem;
+        font-size: 0.75rem;
+        font-weight: 500;
+        text-transform: uppercase;
+      }
 
-.address-actions {
-    margin-top: 0.5rem;
-}
+      .address-actions {
+        margin-top: 0.5rem;
+      }
 
-.manage-address-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.375rem;
-    color: #2563eb;
-    text-decoration: none;
-    font-size: 0.875rem;
-    font-weight: 500;
-    padding: 0.375rem 0.75rem;
-    border: 1px solid #e5e7eb;
-    border-radius: 0.375rem;
-    transition: all 0.2s ease;
-}
+      .manage-address-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.375rem;
+        color: #2563eb;
+        text-decoration: none;
+        font-size: 0.875rem;
+        font-weight: 500;
+        padding: 0.375rem 0.75rem;
+        border: 1px solid #e5e7eb;
+        border-radius: 0.375rem;
+        transition: all 0.2s ease;
+      }
 
-.manage-address-link:hover {
-    background-color: #eff6ff;
-    border-color: #2563eb;
-    text-decoration: none;
-}
+      .manage-address-link:hover {
+        background-color: #eff6ff;
+        border-color: #2563eb;
+        text-decoration: none;
+      }
 
-.manage-address-link i {
-    font-size: 0.875rem;
-}
-        .input-field {
-            background-color: transparent;
-            border: none;
-            border-bottom: 1px solid #555;
-            color: white;
-            padding: 0.5rem 0;
-            width: 100%;
+      .manage-address-link i {
+        font-size: 0.875rem;
+      }
+      .input-field {
+        background-color: transparent;
+        border: none;
+        border-bottom: 1px solid #555;
+        color: white;
+        padding: 0.5rem 0;
+        width: 100%;
+      }
+      .input-field:focus {
+        border-bottom: 1px solid white;
+        outline: none;
+      }
+      .input-button {
+        background-color: transparent;
+        border: none;
+        color: white;
+        cursor: pointer;
+        position: absolute;
+        right: 0;
+        top: 0.5rem;
+      }
+      .font-playfair {
+        font-family: "Playfair Display", serif;
+      }
+      .dropdown-content {
+        display: none;
+      }
+      .dropdown-content.show {
+        display: block;
+      }
+      .hidden:not(.md\:flex) {
+        display: none !important;
+      }
+      @media (min-width: 768px) {
+        .hidden.md\:flex {
+          display: flex !important;
         }
-        .input-field:focus {
-            border-bottom: 1px solid white;
-            outline: none;
-        }
-        .input-button {
-            background-color: transparent;
-            border: none;
-            color: white;
-            cursor: pointer;
-            position: absolute;
-            right: 0;
-            top: 0.5rem;
-        }
-        .font-playfair {
-            font-family: 'Playfair Display', serif;
-        }
-        .dropdown-content {
-            display: none;
-        }
-        .dropdown-content.show {
-            display: block;
-        }
-        .hidden:not(.md\:flex) {
-            display: none !important;
-        }
-        @media (min-width: 768px) {
-            .hidden.md\:flex {
-                display: flex !important;
-            }
-        }
-         .shop-header {
-            background-color: white;
-            border-bottom: 1px solid var(--border-color);
-            padding: 1.5rem 0;
-            margin-bottom: 2rem;
-        }
- .breadcrumb-item+.breadcrumb-item::before {
-            content: ">";
-        }
+      }
+      .shop-header {
+        background-color: white;
+        border-bottom: 1px solid var(--border-color);
+        padding: 1.5rem 0;
+      }
+      .breadcrumb-item + .breadcrumb-item::before {
+        content: ">";
+      }
     </style>
-</head>
-<body class="page-body">
+  </head>
+  <body class="page-body">
     <!-- Header Partial -->
-  <%-include("../../views/partials/user/header")%>
- <div class="shop-header">
-        <div class="max-w-7xl mx-auto px-4">
-            <nav aria-label="breadcrumb">
-                <ol class="flex space-x-2 text-sm">
-                    <li><a href="/" class="text-blue-600 hover:underline">Home</a></li>
-                     <li><a href="/shop" class="text-blue-600 hover:underline"><span class="mx-2 text-black">></span>Shop</a></li>
-                    <li class="flex items-center"><span class="mx-2">></span><span class="text-gray-500">Profile</span></li>
-                </ol>
-            </nav>
-        </div>
+    <%-include("../../views/partials/user/header")%>
+    <div class="shop-header">
+      <div class="max-w-7xl mx-auto px-4">
+        <nav aria-label="breadcrumb">
+          <ol class="flex space-x-2 text-sm">
+            <li><a href="/" class="text-blue-600 hover:underline">Home</a></li>
+            <li>
+              <a href="/shop" class="text-blue-600 hover:underline"
+                ><span class="mx-2 text-black">></span>Shop</a
+              >
+            </li>
+            <li class="flex items-center">
+              <span class="mx-2">></span
+              ><span class="text-gray-500">Profile</span>
+            </li>
+          </ol>
+        </nav>
+      </div>
     </div>
     <!-- Profile Header (Sidebar) Partial -->
     <div class="containeer">
-        <div class="sidebar">
-            <div class="profile-header">
-                <div class="profile-icon">
-                    <% if (user.image) { %>
-                        <img src="/uploads/userProfileimages/<%= user.image %>" alt="Profile Image" class="profile-image">
-                    <% } else { %>
-                        <i class="fas fa-user" style="color: #ffffff; font-size: 1.125rem;"></i>
-                    <% } %>
-                </div>
-                <div>
-                    <div class="greeting">Hello,</div>
-                    <div class="username"><%= user.name %></div>
-                </div>
+      <div class="sidebar">
+        <div class="profile-header">
+          <div class="profile-icon">
+            <% if (user.image) { %>
+            <img
+              src="/uploads/userProfileimages/<%= user.image %>"
+              alt="Profile Image"
+              class="profile-image"
+            />
+            <% } else { %>
+            <i
+              class="fas fa-user"
+              style="color: #ffffff; font-size: 1.125rem"
+            ></i>
+            <% } %>
+          </div>
+          <div>
+            <div class="greeting">Hello,</div>
+            <div class="username"><%= user.name %></div>
+          </div>
+        </div>
+        <nav class="menu">
+          <ul class="menu-list">
+            <li class="menu-item">
+              <a href="/profile" class="menu-link active">
+                <i class="fas fa-user menu-icon"></i>
+                Profile Information
+              </a>
+            </li>
+            <li class="menu-item">
+              <a href="/orders" class="menu-link">
+                <i class="fas fa-box menu-icon"></i>
+                My orders
+              </a>
+            </li>
+            <li class="menu-item">
+              <a href="/address" class="menu-link">
+                <i class="fas fa-home menu-icon"></i>
+                Manage Addresses
+              </a>
+            </li>
+            <li class="menu-item">
+              <a href="/wallet" class="menu-link">
+                <i class="fas fa-wallet menu-icon"></i>
+                My Wallet
+              </a>
+            </li>
+            <li class="menu-item">
+              <a href="/wishlist" class="menu-link">
+                <i class="fas fa-heart menu-icon"></i>
+                My Wishlist
+              </a>
+            </li>
+            <li class="menu-item">
+              <a href="/referals" class="menu-link">
+                <i class="fas fa-users menu-icon"></i>
+                Refer Friends
+              </a>
+            </li>
+            <li class="menu-item">
+              <a href="/changepassword" class="menu-link">
+                <i class="fas fa-lock menu-icon"></i>
+                Change Password
+              </a>
+            </li>
+            <li class="menu-item">
+              <a href="/logout" class="logout-link">
+                <i class="fas fa-sign-out-alt menu-icon"></i>
+                Log out
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+
+      <!-- Main Content -->
+      <div class="main-content">
+        <h2 class="section-title">
+  <i class="fas fa-address-card mr-2 text-blue-600"></i>Account Information
+</h2>
+
+
+        <!-- Profile Image -->
+        <div style="display: flex; flex-direction: column; align-items: center">
+          <div style="position: relative; width: 120px; height: 120px">
+            <!-- Profile image circle -->
+            <div
+              style="
+                width: 100%;
+                height: 100%;
+                border-radius: 50%;
+                overflow: hidden;
+                background-color: #f0f0f0;
+              "
+            >
+              <% if (user.image) { %>
+              <img
+                id="profileImage"
+                src="/uploads/userProfileimages/<%= user.image %>"
+                alt="Profile Image"
+                style="width: 100%; height: 100%; object-fit: cover"
+              />
+              <% } else { %>
+              <i
+                id="defaultProfileIcon"
+                class="fas fa-user"
+                style="
+                  font-size: 100px;
+                  color: #ccc;
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
+                  width: 100%;
+                  height: 100%;
+                "
+              ></i>
+              <% } %>
             </div>
-            <nav class="menu">
-                <ul class="menu-list">
-                    <li class="menu-item">
-                        <a href="/profile" class="menu-link active">
-                            <i class="fas fa-user menu-icon"></i>
-                            Profile Information
-                        </a>
-                    </li>
-                    <li class="menu-item">
-                        <a href="/orders" class="menu-link">
-                            <i class="fas fa-box menu-icon"></i>
-                            My orders
-                        </a>
-                    </li>
-                    <li class="menu-item">
-                        <a href="/address" class="menu-link">
-                            <i class="fas fa-home menu-icon"></i>
-                            Manage Addresses
-                        </a>
-                    </li>
-                    <li class="menu-item">
-                        <a href="/wallet" class="menu-link">
-                            <i class="fas fa-wallet menu-icon"></i>
-                            My Wallet
-                        </a>
-                    </li>
-                    <li class="menu-item">
-                        <a href="/wishlist" class="menu-link">
-                            <i class="fas fa-heart menu-icon"></i>
-                            My Wishlist
-                        </a>
-                    </li>
-                    <li class="menu-item">
-                        <a href="/referals" class="menu-link">
-                            <i class="fas fa-users menu-icon"></i>
-                            Refer Friends
-                        </a>
-                    </li>
-                    <li class="menu-item">
-                        <a href="/changepassword" class="menu-link">
-                            <i class="fas fa-lock menu-icon"></i>
-                            Change Password
-                        </a>
-                    </li>
-                    <li class="menu-item">
-                        <a href="/logout" class="logout-link">
-                            <i class="fas fa-sign-out-alt menu-icon"></i>
-                            Log out
-                        </a>
-                    </li>
-                </ul>
-            </nav>
+            <label
+              for="imageUpload"
+              style="
+                position: absolute;
+                bottom: 5px;
+                right: 5px;
+                background: #fff;
+                border-radius: 50%;
+                padding: 6px;
+                cursor: pointer;
+                box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+              "
+            >
+              <i class="fas fa-camera" style="font-size: 16px; color: #333"></i>
+            </label>
+          </div>
+
+          <button
+            class="image-action-button"
+            onclick="toggleImageAction('<%= user._id %>', <%- user.image ? true : false %>)"
+          >
+            <span id="toggleText"><%= user.image ? 'Remove' : 'Upload' %></span>
+          </button>
+
+          <input
+            type="file"
+            id="imageUpload"
+            accept="image/*"
+            onchange="handleImageUpload(event)"
+            style="display: none"
+          />
         </div>
 
-        <!-- Main Content -->
         <div class="main-content">
-            <h2 class="section-title">Account Information</h2>
-            
-            <!-- Profile Image -->
-            <div style="display: flex; flex-direction: column; align-items: center;">
-                <div class="profile-container">
-                    <% if (user.image) { %>
-                        <img id="profileImage" class="profile-image" src="/uploads/userProfileimages/<%= user.image %>" alt="Profile Image">
-                    <% } else { %>
-                        <i id="defaultProfileIcon" class="fas fa-user default-icon"></i>
-                    <% } %>
-                </div>
-                <button class="image-action-button" onclick="toggleImageAction('<%= user._id %>', <%- user.image ? true : false %>)">
-                    <span id="toggleText"><%= user.image ? 'Remove' : 'Upload' %></span>
-                </button>
-                <input type="file" id="imageUpload" class="hidden" accept="image/*" onchange="handleImageUpload(event)">
-            </div>
+  <div
+    style="
+      border: 1px solid #e5e7eb;
+      border-radius: 0.5rem;
+      padding: 1.5rem;
+      background-color: #ffffff;
+    "
+  >
+    
 
-            <div class="account-section">
-                <div id="profileData" class="profile-data">
-                    <div class="info-item" data-field="name">
-                        <div class="field-label">Full Name</div>
-                        <div class="field-content">
-                            <span class="field-value"><%= user.name %></span>
-                            <i class="fas fa-edit edit-icon" onclick="editField('name', '<%= user.name %>')"></i>
-                        </div>
-                    </div>
-                    <div class="info-item" data-field="email">
-                        <div class="field-label">Email Address</div>
-                        <div class="field-content">
-                            <span class="field-value"><%= user.email %></span>
-                        </div>
-                    </div>
-                    <% if (user.phone) { %>
-                    <div class="info-item" data-field="phone">
-                        <div class="field-label">Phone Number</div>
-                        <div class="field-content">
-                            <span class="field-value"><%= user.phone %></span>
-                        </div>
-                    </div>
-                    <% } %>
-                    <div class="info-item" data-field="joined">
-                        <div class="field-label">Joined Date</div>
-                        <div class="field-content">
-                            <span class="field-value"><%= user.createdOn.toLocaleDateString('en-GB') %></span>
-                        </div>
-                    </div>
-                    <div class="info-item" data-field="address">
-    <div class="field-label">Default Address</div>
-    <div class="field-content">
+    <div style="display: grid; gap: 1.5rem">
+      <!-- Full Name with Edit icon beside -->
+      <div>
+        <div style="font-weight: 600; color: #374151; font-size: 0.95rem">Full Name</div>
+        <div style="display: flex; align-items: center; gap: 5.5rem; color: #4b5563; font-size: 0.9rem">
+          <span><%= user.name %></span>
+          <button
+            class="action-button"
+            style="
+              color: #6b7280;
+              font-size: 0.85rem;
+              font-weight: 500;
+              display: flex;
+              align-items: center;
+              gap: 0.25rem;
+              background: none;
+              border: none;
+              cursor: pointer;
+              padding: 0;
+            "
+            onclick="editField('name', '<%= user.name %>')"
+          >
+            <i class="fas fa-edit mr-1"></i> Edit
+          </button>
+        </div>
+      </div>
+
+      <!-- Email -->
+      <div>
+        <div style="font-weight: 600; color: #374151; font-size: 0.95rem">Email Address</div>
+        <div style="color: #4b5563; font-size: 0.9rem"><%= user.email %></div>
+      </div>
+
+      <!-- Phone -->
+      <% if (user.phone) { %>
+      <div>
+        <div style="font-weight: 600; color: #374151; font-size: 0.95rem">Phone Number</div>
+        <div style="color: #4b5563; font-size: 0.9rem"><%= user.phone %></div>
+      </div>
+      <% } %>
+
+      <!-- Joined Date -->
+      <div>
+        <div style="font-weight: 600; color: #374151; font-size: 0.95rem">Joined Date</div>
+        <div style="color: #4b5563; font-size: 0.9rem">
+          <%= user.createdOn.toLocaleDateString('en-GB') %>
+        </div>
+      </div>
+
+      <!-- Default Address -->
+      <div>
+        <div style="font-weight: 600; color: #374151; font-size: 0.95rem">Default Address</div>
         <% if (user.defaultAddress) { %>
-            <div class="address-display">
-                <div class="address-main">
-                    <span class="field-value"><%= user.defaultAddress.complete %></span>
-                </div>
-                <div class="address-type">
-                    <span class="address-type-badge"><%= user.defaultAddress.addressType %></span>
-                </div>
-            </div>
+          <div style="color: #4b5563; font-size: 0.9rem"><%= user.defaultAddress.complete %></div>
+          <div
+            style="
+              display: inline-block;
+              background-color: #dbeafe;
+              color: #1e3a8a;
+              font-size: 0.75rem;
+              padding: 2px 8px;
+              border-radius: 0.25rem;
+              margin-top: 0.3rem;
+            "
+          >
+            <i class="fas fa-map-marker-alt mr-1"></i> <%= user.defaultAddress.addressType %>
+          </div>
         <% } else { %>
-            <span class="field-value field-value-empty">No saved address was found in your account</span>
+          <div style="color: #9ca3af; font-style: italic; font-size: 0.9rem">
+            No saved address was found in your account
+          </div>
         <% } %>
-        <div class="address-actions">
-            <a href="/address" class="manage-address-link">
-                <i class="fas fa-cog"></i> Manage Addresses
-            </a>
+
+        <div style="margin-top: 0.5rem">
+          <a
+            href="/address"
+            style="
+              color: #006eff;
+              font-weight: 500;
+              font-size: 0.85rem;
+              text-decoration: underline;
+            "
+          >
+            <i class="fas fa-cog mr-1"></i> Manage Addresses
+          </a>
         </div>
+      </div>
     </div>
+  </div>
 </div>
-                </div>
-            </div>
-        </div>
+
+      </div>
     </div>
 
     <!-- Edit Modal -->
-    <div id="editModal" class="modal-overlay hidden">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title">Edit Profile</h3>
-            </div>
-            <form id="editForm">
-                <div class="form-group">
-                    <label class="form-label" id="fieldLabel">Field</label>
-                    <input type="text" id="fieldInput" class="form-input" required>
-                    <input type="hidden" id="fieldName">
-                </div>
-                <div class="button-group">
-                    <button type="button" class="btn btn-secondary" onclick="closeEditModal()">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Save</button>
-                </div>
-            </form>
-        </div>
+    <div id="editModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden z-50">
+  <div class="bg-white rounded-lg p-6 w-full max-w-md mx-4 shadow-xl">
+    <div class="flex items-center mb-4">
+      <i class="fas fa-user-edit text-blue-500 mr-3"></i>
+      <h2 class="text-lg font-semibold">Edit Profile</h2>
     </div>
+    <form id="editForm">
+      <div class="mb-4">
+        <label for="fieldInput" class="block text-sm font-medium text-gray-700 mb-1" id="fieldLabel">Field</label>
+        <input
+          type="text"
+          id="fieldInput"
+          class="w-full p-2 border rounded-md focus:ring-blue-500 focus:border-blue-500"
+          required
+        />
+        <input type="hidden" id="fieldName" />
+      </div>
+      <div class="flex justify-end space-x-3">
+        <button
+          type="button"
+          class="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400 transition-colors"
+          onclick="closeEditModal()"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+        >
+          <i class="fas fa-save mr-2"></i>Save
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
 
     <!-- Remove Image Confirmation Modal -->
-    <div id="removeImageModal" class="modal-overlay hidden">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title">Confirm Removal</h3>
-                <div class="modal-message">
-                    Are you sure you want to remove your profile image?
-                </div>
-                <div class="button-group">
-                    <button type="button" class="btn btn-secondary" onclick="closeRemoveImageModal()">Cancel</button>
-                    <button type="button" class="btn btn-danger" onclick="confirmRemoveImage()">Confirm</button>
-                </div>
-            </div>
-        </div>
+    <div id="removeImageModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden z-50">
+  <div class="bg-white rounded-lg p-6 w-full max-w-md mx-4 shadow-xl">
+    <div class="flex items-center mb-4">
+      <i class="fas fa-user-times text-red-500 mr-3"></i>
+      <h2 class="text-lg font-semibold">Confirm Removal</h2>
     </div>
+    <p class="text-sm text-gray-700 mb-4">
+      Are you sure you want to remove your profile image?
+    </p>
+    <div class="flex justify-end space-x-3">
+      <button
+        type="button"
+        class="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400 transition-colors"
+        onclick="closeRemoveImageModal()"
+      >
+        Cancel
+      </button>
+      <button
+        type="button"
+        class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
+        onclick="confirmRemoveImage()"
+      >
+        <i class="fas fa-trash-alt mr-2"></i>Confirm
+      </button>
+    </div>
+  </div>
+</div>
+
 
     <!-- Toast Container -->
     <div id="toastContainer"></div>
@@ -602,186 +733,290 @@
     <%-include("../../views/partials/user/footer")%>
 
     <script>
-        let currentEditField = '';
-        let currentUserId = '';
+      let currentEditField = "";
+      let currentUserId = "";
 
-        function showToast(message, type = 'success') {
-            const toastContainer = document.getElementById('toastContainer');
-            const toast = document.createElement('div');
-            toast.className = `toast ${type}`;
-            toast.textContent = message;
-            toastContainer.appendChild(toast);
-            setTimeout(() => {
-                toast.classList.add('show');
-            }, 100);
-            setTimeout(() => {
-                toast.classList.remove('show');
-                setTimeout(() => {
-                    toast.remove();
-                }, 300);
-            }, 3000);
-        }
-
-        function toggleImageAction(userId, hasImage) {
-            if (hasImage) {
-                currentUserId = userId;
-                const modal = document.getElementById('removeImageModal');
-                modal.classList.remove('hidden');
-            } else {
-                const imageUploadInput = document.getElementById('imageUpload');
-                if (imageUploadInput) {
-                    imageUploadInput.click();
-                } else {
-                    showToast('Image upload functionality is unavailable', 'error');
-                }
-            }
-        }
-
-        function confirmRemoveImage() {
-            fetch(`/remove-profile/${currentUserId}`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                }
-            })
-            .then(res => res.json())
-            .then(data => {
-                closeRemoveImageModal();
-                if (data.success) {
-                    showToast('Profile image removed successfully', 'success');
-                    location.reload();
-                } else {
-                    showToast(data.message || 'Failed to remove profile image', 'error');
-                }
-            })
-            .catch(err => {
-                console.error('Error removing image:', err);
-                closeRemoveImageModal();
-                showToast('Something went wrong while removing the image!', 'error');
-            });
-        }
-
-        function closeRemoveImageModal() {
-            const modal = document.getElementById('removeImageModal');
-            modal.classList.add('hidden');
-            currentUserId = '';
-        }
-
-        function handleImageUpload(event) {
-            const file = event.target.files[0];
-            if (!file) {
-                showToast('No file selected', 'error');
-                return;
-            }
-            const formData = new FormData();
-            formData.append('image', file);
-            fetch('/profile/upload', {
-                method: 'POST',
-                body: formData,
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    showToast('Profile image uploaded successfully', 'success');
-                    location.reload();
-                } else {
-                    showToast(data.message || 'Failed to upload profile image', 'error');
-                }
-            })
-            .catch(err => {
-                console.error('Upload error:', err);
-                showToast('Failed to upload profile image.', 'error');
-            });
-        }
-
-        function editField(fieldName, currentValue) {
-            currentEditField = fieldName;
-            const modal = document.getElementById('editModal');
-            const fieldLabel = document.getElementById('fieldLabel');
-            const fieldInput = document.getElementById('fieldInput');
-            const fieldNameInput = document.getElementById('fieldName');
-            fieldLabel.textContent = fieldName.charAt(0).toUpperCase() + fieldName.slice(1);
-            fieldInput.value = currentValue || '';
-            fieldNameInput.value = fieldName;
-            modal.classList.remove('hidden');
-            fieldInput.focus();
-        }
-
-        function closeEditModal() {
-            const modal = document.getElementById('editModal');
-            modal.classList.add('hidden');
-            currentEditField = '';
-        }
-
-        document.getElementById('editForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const fieldName = document.getElementById('fieldName').value;
-            const fieldValue = document.getElementById('fieldInput').value.trim();
-            if (!fieldValue) {
-                showToast(`Please enter a valid ${fieldName}`, 'error');
-                return;
-            }
-            const formData = new FormData();
-            formData.append(fieldName, fieldValue);
-            fetch(`/edit-profile/<%= user._id %>`, {
-                method: 'POST',
-                body: formData
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    const fieldElement = document.querySelector(`[data-field="${fieldName}"] .field-value`);
-                    if (fieldElement) {
-                        fieldElement.textContent = fieldValue;
+       function showToast(message, type = 'info') {
+                    let toastContainer = document.querySelector('.toast-container');
+                    if (!toastContainer) {
+                        toastContainer = document.createElement('div');
+                        toastContainer.className = 'toast-container';
+                        toastContainer.style.position = 'fixed';
+                        toastContainer.style.top = '20px';
+                        toastContainer.style.right = '20px';
+                        toastContainer.style.zIndex = '9999';
+                        toastContainer.style.display = 'flex';
+                        toastContainer.style.flexDirection = 'column';
+                        toastContainer.style.gap = '10px';
+                        document.body.appendChild(toastContainer);
                     }
-                    closeEditModal();
-                    const fieldDisplayName = fieldName.charAt(0).toUpperCase() + fieldName.slice(1);
-                    showToast(`${fieldDisplayName} updated to "${fieldValue}" successfully`, 'success');
-                } else {
-                    showToast(data.message || `Failed to update ${fieldName}`, 'error');
-                }
-            })
-            .catch(err => {
-                console.error('Update error:', err);
-                showToast(`Failed to update ${fieldName}`, 'error');
-            });
-        });
 
-        document.getElementById('editModal').addEventListener('click', function(e) {
-            if (e.target === this) {
+                    const toastId = 'toast-' + Date.now();
+                    const toast = document.createElement('div');
+
+                    // Background color and border based on type
+                    let bgColor, borderColor;
+                    switch (type) {
+                        case 'success':
+                            bgColor = '#16a34a';  // green
+                            borderColor = '#16a34a';
+                            break;
+                        case 'error':
+                            bgColor = '#dc2626';  // red
+                            borderColor = '#dc2626';
+                            break;
+                        case 'info':
+                        default:
+                            bgColor = '#2563eb';  // blue
+                            borderColor = '#2563eb';
+                    }
+
+                    // Toast styles (no slide, only fade + slight vertical shift)
+                    toast.style.cssText = `
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background-color: ${bgColor};
+        border-left: 4px solid ${borderColor};
+        color: white;
+        padding: 12px 16px;
+        border-radius: 6px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        max-width: 300px;
+        width: 100%;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.3s ease, transform 0.3s ease;
+    `;
+
+                    toast.id = toastId;
+                    toast.setAttribute('role', 'alert');
+                    toast.setAttribute('aria-live', 'assertive');
+                    toast.setAttribute('aria-atomic', 'true');
+
+                    toast.innerHTML = `
+        <div style="flex: 1; font-size: 14px;">${message}</div>
+        <button type="button" style="margin-left: 12px; background: none; border: none; color: white; font-size: 16px; cursor: pointer;" data-toast-id="${toastId}">
+            &times;
+        </button>
+    `;
+
+                    toastContainer.appendChild(toast);
+
+                    // Fade in + move up
+                    setTimeout(() => {
+                        toast.style.opacity = '1';
+                        toast.style.transform = 'translateY(0)';
+                    }, 100);
+
+                    // Close button
+                    const closeButton = toast.querySelector(`[data-toast-id="${toastId}"]`);
+                    closeButton.addEventListener('click', () => {
+                        toast.style.opacity = '0';
+                        toast.style.transform = 'translateY(20px)';
+                        setTimeout(() => toast.remove(), 300);
+                    });
+
+                    // Auto remove after 1.5s
+                    setTimeout(() => {
+                        toast.style.opacity = '0';
+                        toast.style.transform = 'translateY(20px)';
+                        setTimeout(() => toast.remove(), 300);
+                    }, 1500);
+                }
+
+      function toggleImageAction(userId, hasImage) {
+        if (hasImage) {
+          currentUserId = userId;
+          const modal = document.getElementById("removeImageModal");
+          modal.classList.remove("hidden");
+        } else {
+          const imageUploadInput = document.getElementById("imageUpload");
+          if (imageUploadInput) {
+            imageUploadInput.click();
+          } else {
+            showToast("Image upload functionality is unavailable", "error");
+          }
+        }
+      }
+
+      function confirmRemoveImage() {
+        fetch(`/remove-profile/${currentUserId}`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            closeRemoveImageModal();
+            if (data.success) {
+              showToast("Profile image removed successfully", "success");
+              location.reload();
+            } else {
+              showToast(
+                data.message || "Failed to remove profile image",
+                "error"
+              );
+            }
+          })
+          .catch((err) => {
+            console.error("Error removing image:", err);
+            closeRemoveImageModal();
+            showToast(
+              "Something went wrong while removing the image!",
+              "error"
+            );
+          });
+      }
+
+      function closeRemoveImageModal() {
+        const modal = document.getElementById("removeImageModal");
+        modal.classList.add("hidden");
+        currentUserId = "";
+      }
+
+      function handleImageUpload(event) {
+        const file = event.target.files[0];
+        if (!file) {
+          showToast("No file selected", "error");
+          return;
+        }
+        const formData = new FormData();
+        formData.append("image", file);
+        fetch("/profile/upload", {
+          method: "POST",
+          body: formData,
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.success) {
+              showToast("Profile image uploaded successfully", "success");
+              location.reload();
+            } else {
+              showToast(
+                data.message || "Failed to upload profile image",
+                "error"
+              );
+            }
+          })
+          .catch((err) => {
+            console.error("Upload error:", err);
+            showToast("Failed to upload profile image.", "error");
+          });
+      }
+
+      function editField(fieldName, currentValue) {
+        currentEditField = fieldName;
+        const modal = document.getElementById("editModal");
+        const fieldLabel = document.getElementById("fieldLabel");
+        const fieldInput = document.getElementById("fieldInput");
+        const fieldNameInput = document.getElementById("fieldName");
+        fieldLabel.textContent =
+          fieldName.charAt(0).toUpperCase() + fieldName.slice(1);
+        fieldInput.value = currentValue || "";
+        fieldNameInput.value = fieldName;
+        modal.classList.remove("hidden");
+        fieldInput.focus();
+      }
+
+      function closeEditModal() {
+        const modal = document.getElementById("editModal");
+        modal.classList.add("hidden");
+        currentEditField = "";
+      }
+
+      document
+        .getElementById("editForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+          const fieldName = document.getElementById("fieldName").value;
+          const fieldValue = document.getElementById("fieldInput").value.trim();
+          if (!fieldValue) {
+            showToast(`Please enter a valid ${fieldName}`, "error");
+            return;
+          }
+          const formData = new FormData();
+          formData.append(fieldName, fieldValue);
+          fetch(`/edit-profile/<%= user._id %>`, {
+            method: "POST",
+            body: formData,
+          })
+            .then((res) => res.json())
+            .then((data) => {
+              if (data.success) {
+                const fieldElement = document.querySelector(
+                  `[data-field="${fieldName}"] .field-value`,
+                  location.reload()
+                );
+                if (fieldElement) {
+                  fieldElement.textContent = fieldValue;
+                }
                 closeEditModal();
-            }
-        });
-
-        document.getElementById('removeImageModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeRemoveImageModal();
-            }
-        });
-
-        window.addEventListener('click', function(event) {
-            const dropdowns = document.querySelectorAll('.dropdown-content');
-            dropdowns.forEach(dropdown => {
-                if (dropdown.classList.contains('show') && !event.target.closest('.dropdown')) {
-                    dropdown.classList.remove('show');
-                }
+                const fieldDisplayName =
+                  fieldName.charAt(0).toUpperCase() + fieldName.slice(1);
+                showToast(
+                  `${fieldDisplayName} updated to "${fieldValue}"`,
+                  "success"
+                );
+              } else {
+                showToast(
+                  data.message || `Failed to update ${fieldName}`,
+                  "error"
+                );
+              }
+            })
+            .catch((err) => {
+              console.error("Update error:", err);
+              showToast(`Failed to update ${fieldName}`, "error");
             });
         });
 
-        function toggleDropdown(dropdownId) {
-            event.stopPropagation();
-            const dropdowns = document.querySelectorAll('.dropdown-content');
-            dropdowns.forEach(dropdown => {
-                if (dropdown.id !== dropdownId && dropdown.classList.contains('show')) {
-                    dropdown.classList.remove('show');
-                }
-            });
-            document.getElementById(dropdownId).classList.toggle('show');
-        }
+      document
+        .getElementById("editModal")
+        .addEventListener("click", function (e) {
+          if (e.target === this) {
+            closeEditModal();
+          }
+        });
 
-        function toggleMobileMenu() {
-            console.log('Mobile menu toggled');
-        }
+      document
+        .getElementById("removeImageModal")
+        .addEventListener("click", function (e) {
+          if (e.target === this) {
+            closeRemoveImageModal();
+          }
+        });
+
+      window.addEventListener("click", function (event) {
+        const dropdowns = document.querySelectorAll(".dropdown-content");
+        dropdowns.forEach((dropdown) => {
+          if (
+            dropdown.classList.contains("show") &&
+            !event.target.closest(".dropdown")
+          ) {
+            dropdown.classList.remove("show");
+          }
+        });
+      });
+
+      function toggleDropdown(dropdownId) {
+        event.stopPropagation();
+        const dropdowns = document.querySelectorAll(".dropdown-content");
+        dropdowns.forEach((dropdown) => {
+          if (
+            dropdown.id !== dropdownId &&
+            dropdown.classList.contains("show")
+          ) {
+            dropdown.classList.remove("show");
+          }
+        });
+        document.getElementById(dropdownId).classList.toggle("show");
+      }
+
+      function toggleMobileMenu() {
+        console.log("Mobile menu toggled");
+      }
     </script>
-</body>
+  </body>
 </html>

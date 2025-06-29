@@ -5,7 +5,6 @@ const Wallet = require('../../models/walletSchema')
 
 const viewAllOrders = async (req, res) => {
   try {
-    // Extract query parameters
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
@@ -13,7 +12,6 @@ const viewAllOrders = async (req, res) => {
     const sort = req.query.sort || 'date-desc';
     const status = req.query.status || 'all';
 
-    // Build query
     let query = {};
     if (search) {
       query.$or = [
@@ -41,10 +39,7 @@ const viewAllOrders = async (req, res) => {
       .limit(limit)
       .lean();
 
-    // Get total number of orders for pagination
     const totalOrders = await Order.countDocuments(query);
-
-    // Render the EJS template with paginated data
     res.render('ordermanagement', {
       pageTitle: 'Orders Management',
       orders,
@@ -166,7 +161,7 @@ const updateOrderStatus = async (req, res) => {
   }
 };
 
-// Helper function to process refunds
+// process refunds
 async function processRefund(userId, amount, orderId, reason) {
   try {
     let wallet = await Wallet.findOne({ userId });
@@ -238,12 +233,18 @@ const verifyReturn = async (req, res) => {
 
     // Restore product quantities
     for (const item of order.orderedItems) {
-      const product = await Product.findById(item.product);
-      if (product) {
-        product.quantity += item.quantity;
-        await product.save();
-      }
+  const product = await Product.findById(item.product);
+  if (product) {
+    product.quantity += item.quantity;
+    product.salesCount = Math.max(0, product.salesCount - item.quantity);
+    if (product.status) {
+      product.status = product.status.toLowerCase();
     }
+
+    await product.save();
+  }
+}
+
 
     // Process refund
     await processRefund(order.userId._id, order.finalAmount, orderId, 'Return verified');
@@ -277,8 +278,8 @@ const getOrderDetails = async(req,res)=>{
     console.log('Requested Order ID:', orderId);
 
        const order = await Order.findOne({ orderId })
-            .populate('userId', 'name email')  // populate name and email only
-            .populate('orderedItems.product', 'productName'); // productName only
+            .populate('userId', 'name email') 
+            .populate('orderedItems.product', 'productName'); 
 
         if (!order) {
             return res.status(404).json({ success: false, message: 'Order not found' });

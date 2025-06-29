@@ -1,7 +1,7 @@
 const Product = require('../../models/productSchema')
 const Category = require('../../models/categorySchema')
 const User = require('../../models/userSchema')
-const { log } = require('console')
+
 
 
 const productDetails = async(req,res)=>{
@@ -15,13 +15,13 @@ const productDetails = async(req,res)=>{
         const productOffer = product.productOffer||0
         const totalOffer = categoryOffer + productOffer
          if (!product) {
-            return res.redirect('/shop'); // or show 404
+            return res.redirect('/shop'); 
         }
 
           const recommendations = await Product.find({
             isDeleted: false,
             category: product.category,
-            _id: { $ne: productId } // exclude the current product
+            _id: { $ne: productId } 
         })
 
          if (userData?.isBlocked) {

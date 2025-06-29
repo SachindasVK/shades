@@ -70,7 +70,7 @@
             padding: 1rem;
             display: flex;
             flex-direction: column;
-            flex-grow: 1;
+         
         }
 
         .product-category {
@@ -113,7 +113,7 @@
 
         .discount-percentage {
             font-size: 0.75rem;
-            background-color: #2bff006c;
+            background-color: #dcfce7 ;
             color: #000000;
             padding: 0.2rem 0.5rem;
             border-radius: 20px;
@@ -301,29 +301,61 @@
                             </a>
                         </div>
                         <div class="card-body">
-                            <a href="/productDetails?id=<%= products[i]._id %>">
-                                <div class="product-category">
-                                    <%= products[i].category ? products[i].category.name : 'Eyewear' %>
-                                </div>
-                                <h3 class="product-title">
-                                    <%= products[i].productName %>
-                                </h3>
-                                <div class="product-price">
-                                    <span class="current-price">₹<%= products[i].salePrice.toLocaleString('en-IN') %>
-                                            </span>
-                                    <% if (products[i].regularPrice && products[i].regularPrice> products[i].salePrice)
-                                        { %>
-                                        <span class="original-price">₹<%=
-                                                products[i].regularPrice.toLocaleString('en-IN') %></span>
-                                        <% const discount=Math.round((products[i].regularPrice - products[i].salePrice)
-                                            / products[i].regularPrice * 100); %>
-                                            <span class="discount-percentage">
-                                                <%= discount %>% off
-                                            </span>
-                                            <% } %>
-                                </div>
-                            </a>
-                        </div>
+  <a href="/productDetails?id=<%= products[i]._id %>">
+    
+    
+    <div class="product-category text-sm text-gray-500 mb-1">
+      <%= products[i].category ? products[i].category.name : 'Eyewear' %>
+    </div>
+
+ 
+    <h3 class="product-title text-lg font-semibold text-gray-800 mb-2">
+      <%= products[i].productName %>
+    </h3>
+
+    <div class="product-price text-base">
+      <%
+        const regularPrice = products[i].regularPrice;
+        const now = new Date();
+        
+        const productOffer = (products[i].hasOffer && products[i].productOffer > 0)
+          ? products[i].productOffer
+          : 0;
+
+        //Category Offer (check with date)
+        let categoryOffer = 0;
+        if (
+          products[i].category &&
+          products[i].category.hasOffer &&
+          products[i].category.offerPercentage > 0
+        ) {
+          const start = new Date(products[i].category.offerStartDate);
+          const end = new Date(products[i].category.offerEndDate);
+
+          if (!isNaN(start) && !isNaN(end) && now >= start && now <= end) {
+            categoryOffer = products[i].category.offerPercentage;
+          }
+        }
+
+        // Use the greater offer
+        const discount = Math.max(productOffer, categoryOffer);
+        const finalPrice = Math.round(regularPrice * (1 - discount / 100));
+      %>
+
+      <% if (discount > 0) { %>
+        <!-- Discounted price -->
+        <span class="current-price text-green-600 font-bold">₹<%= finalPrice.toLocaleString('en-IN') %></span>
+        <span class="original-price text-gray-500 line-through ml-2">₹<%= regularPrice.toLocaleString('en-IN') %></span>
+        <span class="discount-percentage text-red-500 font-semibold ml-2"><%= discount %>% off</span>
+      <% } else { %>
+        <!--  No offer -->
+        <span class="current-price text-gray-800 font-semibold">₹<%= regularPrice.toLocaleString('en-IN') %></span>
+      <% } %>
+    </div>
+
+  </a>
+</div>
+
                         <div class="card-footer">
                             <button class="btn btn-add-cart add-to-cart" data-product-id="<%= products[i]._id %>">
                                 <i class="fas fa-shopping-cart"></i>Add to Cart
@@ -352,52 +384,86 @@
     </section>
 
     <!-- Best Sellers Section -->
-    <section class="py-12 bg-white">
-        <div class="container mx-auto px-4">
-            <h2 class="text-2xl font-medium mb-8 section-heading">Best-sellers for every occasion</h2>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <% for(let i=0; i < products.length && i < 4; i++) { %>
-                    <div class="product-card">
-                        <div class="product-img-container">
-                            <button class="wishlist-btn add-to-wishlist" data-product-id="<%= products[i]._id %>">
-                                <i class="far fa-heart"></i>
-                            </button>
-                            <a href="/productDetails?id=<%= products[i]._id %>">
-                                <img src="<%= products[i].productImage[0] %>" alt="<%= products[i].productName %>"
-                                    class="product-img">
-                            </a>
-                        </div>
-                        <div class="card-body">
-                            <div class="product-category">
-                                <%= products[i].category ? products[i].category.name : 'Eyewear' %>
-                            </div>
-                            <h3 class="product-title">
-                                <%= products[i].productName %>
-                            </h3>
-                            <div class="product-price">
-                                <span class="current-price">₹<%= products[i].salePrice.toLocaleString('en-IN') %></span>
-                                <% if (products[i].regularPrice && products[i].regularPrice> products[i].salePrice) { %>
-                                    <span class="original-price">₹<%= products[i].regularPrice.toLocaleString('en-IN')
-                                            %></span>
-                                    <% const discount=Math.round((products[i].regularPrice - products[i].salePrice) /
-                                        products[i].regularPrice * 100); %>
-                                        <span class="discount-percentage">
-                                            <%= discount %>% off
-                                        </span>
-                                        <% } %>
-                            </div>
-                        </div>
-                        <div class="card-footer">
-                            <button class="btn btn-add-cart add-to-cart" data-product-id="<%= products[i]._id %>">
-                                <i class="fas fa-shopping-cart"></i> Add to Cart
-                            </button>
+  <section class="py-12 bg-white">
+  <div class="container mx-auto px-4">
+    <h2 class="text-2xl font-medium mb-8 section-heading">Best-sellers for every occasion</h2>
 
-                        </div>
-                    </div>
-                    <% } %>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <% for(let i=0; i < products.length && i < 4; i++) { %>
+        <div class="product-card">
+
+          <!-- 🖼️ IMAGE & WISHLIST -->
+          <div class="product-img-container">
+            <button class="wishlist-btn add-to-wishlist" data-product-id="<%= products[i]._id %>">
+              <i class="far fa-heart"></i>
+            </button>
+            <a href="/productDetails?id=<%= products[i]._id %>">
+              <img src="<%= products[i].productImage[0] %>" alt="<%= products[i].productName %>" class="product-img">
+            </a>
+          </div>
+          <div class="card-body">
+
+            <div class="product-category">
+              <%= products[i].category ? products[i].category.name : 'Eyewear' %>
             </div>
+
+            <h3 class="product-title">
+              <%= products[i].productName %>
+            </h3>
+
+            <!-- PRICE + DISCOUNT LOGIC -->
+            <div class="product-price">
+              <%
+                const regularPrice = products[i].regularPrice;
+                const now = new Date();
+
+                // Product-level offer
+                const productOffer = (products[i].hasOffer && products[i].productOffer > 0)
+                  ? products[i].productOffer
+                  : 0;
+
+                // Category-level offer
+                let categoryOffer = 0;
+                if (
+                  products[i].category &&
+                  products[i].category.hasOffer &&
+                  products[i].category.offerPercentage > 0
+                ) {
+                  const start = new Date(products[i].category.offerStartDate);
+                  const end = new Date(products[i].category.offerEndDate);
+                  if (!isNaN(start) && !isNaN(end) && now >= start && now <= end) {
+                    categoryOffer = products[i].category.offerPercentage;
+                  }
+                }
+
+                // Final discount
+                const discount = Math.max(productOffer, categoryOffer);
+                const finalPrice = Math.round(regularPrice * (1 - discount / 100));
+              %>
+
+              <% if (discount > 0) { %>
+                <span class="current-price">₹<%= finalPrice.toLocaleString('en-IN') %></span>
+                <span class="original-price">₹<%= regularPrice.toLocaleString('en-IN') %></span>
+                <span class="discount-percentage"><%= discount %>% off</span>
+              <% } else { %>
+                <span class="current-price">₹<%= regularPrice.toLocaleString('en-IN') %></span>
+              <% } %>
+            </div>
+          </div>
+
+
+          <div class="card-footer">
+            <button class="btn btn-add-cart add-to-cart" data-product-id="<%= products[i]._id %>">
+              <i class="fas fa-shopping-cart"></i> Add to Cart
+            </button>
+          </div>
+
         </div>
-    </section>
+      <% } %>
+    </div>
+  </div>
+</section>
+
 
     <!-- Brands Section -->
     <section class="py-12 bg-white border-t border-gray-200">
@@ -698,67 +764,93 @@
             }
 
             function showToast(message, type = 'info') {
-                let toastContainer = document.querySelector('.toast-container');
-                if (!toastContainer) {
-                    toastContainer = document.createElement('div');
-                    toastContainer.className = 'toast-container';
-                    document.body.appendChild(toastContainer);
+                    let toastContainer = document.querySelector('.toast-container');
+                    if (!toastContainer) {
+                        toastContainer = document.createElement('div');
+                        toastContainer.className = 'toast-container';
+                        toastContainer.style.position = 'fixed';
+                        toastContainer.style.top = '20px';
+                        toastContainer.style.right = '20px';
+                        toastContainer.style.zIndex = '9999';
+                        toastContainer.style.display = 'flex';
+                        toastContainer.style.flexDirection = 'column';
+                        toastContainer.style.gap = '10px';
+                        document.body.appendChild(toastContainer);
+                    }
+
+                    const toastId = 'toast-' + Date.now();
+                    const toast = document.createElement('div');
+
+                    // Background color and border based on type
+                    let bgColor, borderColor;
+                    switch (type) {
+                        case 'success':
+                            bgColor = '#16a34a';  // green
+                            borderColor = '#16a34a';
+                            break;
+                        case 'error':
+                            bgColor = '#dc2626';  // red
+                            borderColor = '#dc2626';
+                            break;
+                        case 'info':
+                        default:
+                            bgColor = '#2563eb';  // blue
+                            borderColor = '#2563eb';
+                    }
+
+                    // Toast styles (no slide, only fade + slight vertical shift)
+                    toast.style.cssText = `
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background-color: ${bgColor};
+        border-left: 4px solid ${borderColor};
+        color: white;
+        padding: 12px 16px;
+        border-radius: 6px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        max-width: 300px;
+        width: 100%;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.3s ease, transform 0.3s ease;
+    `;
+
+                    toast.id = toastId;
+                    toast.setAttribute('role', 'alert');
+                    toast.setAttribute('aria-live', 'assertive');
+                    toast.setAttribute('aria-atomic', 'true');
+
+                    toast.innerHTML = `
+        <div style="flex: 1; font-size: 14px;">${message}</div>
+        <button type="button" style="margin-left: 12px; background: none; border: none; color: white; font-size: 16px; cursor: pointer;" data-toast-id="${toastId}">
+            &times;
+        </button>
+    `;
+
+                    toastContainer.appendChild(toast);
+
+                    // Fade in + move up
+                    setTimeout(() => {
+                        toast.style.opacity = '1';
+                        toast.style.transform = 'translateY(0)';
+                    }, 100);
+
+                    // Close button
+                    const closeButton = toast.querySelector(`[data-toast-id="${toastId}"]`);
+                    closeButton.addEventListener('click', () => {
+                        toast.style.opacity = '0';
+                        toast.style.transform = 'translateY(20px)';
+                        setTimeout(() => toast.remove(), 300);
+                    });
+
+                    // Auto remove after 1.5s
+                    setTimeout(() => {
+                        toast.style.opacity = '0';
+                        toast.style.transform = 'translateY(20px)';
+                        setTimeout(() => toast.remove(), 300);
+                    }, 1500);
                 }
-
-                const toastId = 'toast-' + Date.now();
-                const toast = document.createElement('div');
-                let bgClass, borderClass;
-                switch (type) {
-                    case 'success':
-                        bgClass = 'bg-green-600';
-                        borderClass = 'border-green-600';
-                        break;
-                    case 'error':
-                        bgClass = 'bg-red-600';
-                        borderClass = 'border-red-600';
-                        break;
-                    case 'info':
-                        bgClass = 'bg-blue-600';
-                        borderClass = 'border-blue-600';
-                        break;
-                    default:
-                        bgClass = 'bg-blue-600';
-                        borderClass = 'border-blue-600';
-                }
-
-                toast.className = `flex items-center text-white ${bgClass} border-l-4 ${borderClass} rounded shadow-lg p-3 mb-2 max-w-xs w-full opacity-0 transition-all duration-300 transform translate-x-full`;
-                toast.id = toastId;
-                toast.setAttribute('role', 'alert');
-                toast.setAttribute('aria-live', 'assertive');
-                toast.setAttribute('aria-atomic', 'true');
-
-                toast.innerHTML = `
-            <div class="flex-1 text-sm">${message}</div>
-            <button type="button" class="ml-2 text-white hover:text-gray-200 focus:outline-none" data-toast-id="${toastId}">
-                <i class="fas fa-times"></i>
-            </button>
-        `;
-
-                toastContainer.appendChild(toast);
-
-                setTimeout(() => {
-                    toast.classList.remove('opacity-0', 'translate-x-full');
-                    toast.classList.add('opacity-100', 'translate-x-0');
-                }, 100);
-
-                const closeButton = toast.querySelector(`[data-toast-id="${toastId}"]`);
-                closeButton.addEventListener('click', () => {
-                    toast.classList.remove('opacity-100', 'translate-x-0');
-                    toast.classList.add('opacity-0', 'translate-x-full');
-                    setTimeout(() => toast.remove(), 300);
-                });
-
-                setTimeout(() => {
-                    toast.classList.remove('opacity-100', 'translate-x-0');
-                    toast.classList.add('opacity-0', 'translate-x-full');
-                    setTimeout(() => toast.remove(), 300);
-                }, 1500);
-            }
 
             function updateCartCounter(count) {
                 const cartCounter = document.querySelector('.cart-counter');

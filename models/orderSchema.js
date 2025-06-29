@@ -3,11 +3,11 @@ const { Schema } = mongoose;
 const crypto = require('crypto');
 
 const orderSchema = new Schema({
-   orderId: {
-  type: String,
-  default: () => `ORDER${crypto.randomBytes(4).toString('hex').toUpperCase()}`,
-  unique: true
-},
+    orderId: {
+        type: String,
+        default: () => `ORDER${crypto.randomBytes(4).toString('hex').toUpperCase()}`,
+        unique: true
+    },
     userId: {
         type: Schema.Types.ObjectId,
         ref: 'User',
@@ -19,11 +19,11 @@ const orderSchema = new Schema({
             ref: 'Product',
             required: true
         },
-        productName: { 
+        productName: {
             type: String,
             required: true
         },
-        productImages: [{ 
+        productImages: [{
             type: String
         }],
         quantity: {
@@ -60,9 +60,9 @@ const orderSchema = new Schema({
         default: 50
     },
     gstAmount: {
-  type: Number,
-  required: true
-},
+        type: Number,
+        required: true
+    },
     finalAmount: {
         type: Number,
         required: true
@@ -75,6 +75,17 @@ const orderSchema = new Schema({
         type: String,
         enum: ['cod', 'online', 'wallet'],
         required: true
+    },
+    razorpayOrderId: {
+        type: String
+    },
+    paymentId: {
+        type: String
+    },
+    paymentStatus: {
+        type: String,
+        enum: ['Pending', 'Paid', 'Failed'],
+        default: 'Pending'
     },
     invoiceDate: {
         type: Date
@@ -89,8 +100,8 @@ const orderSchema = new Schema({
         type: String
     },
     cancelledAt: {
-    type: Date
-},
+        type: Date
+    },
     returnReason: {
         type: String
     },
@@ -120,8 +131,8 @@ const orderSchema = new Schema({
         type: Date,
     },
     expectedDelivery: {
-    type: Date 
-},
+        type: Date
+    },
     deliveredOn: {
         type: Date
     },
@@ -129,7 +140,7 @@ const orderSchema = new Schema({
         type: Boolean,
         default: false
     }
-},{ timestamps: true });
+}, { timestamps: true });
 
 const Order = mongoose.model('Order', orderSchema);
 module.exports = Order;

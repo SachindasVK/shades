@@ -151,7 +151,7 @@ const updateBrandStatus = async (req, res) => {
         isDeleted: false,
         deletedAt: null,
         isActive: true,
-        status: 'Available'
+        status: 'available'
       };
     } else {
       return res.status(400).json({ success: false, message: 'Invalid action' });

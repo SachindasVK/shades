@@ -19,9 +19,10 @@ router.get('/error', adminController.error);
 // General admin
 router.get('/login', adminController.loadLogin);
 router.post('/login', adminController.login);
-router.get('/dashboard', adminAuth, adminController.loadDashboard);
-router.get('/logout', adminController.logout);
-
+router.get('/dashboard',adminAuth,adminController.loadDashboard);
+router.get('/logout', adminAuth,adminController.logout);
+// view all recent Activities
+router.get('/all-recent-activities',adminAuth,adminController.viewAllRecentActivities)
 // Customer management
 router.get('/customers', adminAuth, customerController.customerInfo);
 router.get('/customers/view/:id', adminAuth, customerController.viewCustomer);

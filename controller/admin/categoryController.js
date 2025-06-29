@@ -166,6 +166,7 @@ const addCategoryOffer = async (req, res) => {
     for(const product of products){
         product.productOffer = 0
         product.salePrice = product.regularPrice
+        
         await product.save()
     }
     console.log('Offer added Successfully',category,'percentage:',percentage)
@@ -199,6 +200,7 @@ const removeCategoryOffer = async (req, res) => {
         for(const product of products){
             product.salePrice = product.regularPrice;
             product.productOffer = 0
+
             await product.save()
         }
     }
@@ -246,7 +248,7 @@ const updateCategoryStatus = async (req, res) => {
         isDeleted: false,
         deletedAt: null,
         isActive: true,
-        status: 'Available'
+        status: 'available'
       };
     } else {
       return res.status(400).json({ success: false, message: 'Invalid action' });
