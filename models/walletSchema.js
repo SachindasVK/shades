@@ -34,7 +34,7 @@ const walletSchema = new mongoose.Schema({
             },
             transactionPurpose: {
                 type: String,
-                enum: ['refund', 'add_money', 'withdraw', 'purchase'],
+                enum: ['refund', 'add_money', 'withdraw', 'purchase','referrals'],
                 required: true
             },
             description: {

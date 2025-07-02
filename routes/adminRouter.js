@@ -8,6 +8,7 @@ const brandController = require('../controller/admin/brandController')
 const bannerController = require('../controller/admin/bannerController')
 const couponController = require('../controller/admin/couponController')
 const orderController = require('../controller/admin/orderController')
+const salesReportController = require('../controller/admin/salesReportController')
 const { adminAuth } = require('../middlewares/auth');
 const multer = require("multer");
 const { brandUpload } = require('../helpers/multer');
@@ -84,5 +85,9 @@ router.get('/orders',adminAuth,orderController.viewAllOrders)
 router.patch('/orders/:orderId/status', adminAuth,orderController.updateOrderStatus);
 router.post('/orders/:orderId/verify-return',adminAuth,orderController.verifyReturn);
 router.get('/orders/:orderId', adminAuth, orderController.getOrderDetails);
+
+//Sales Report
+router.get('/sales-report', adminAuth, salesReportController.getSalesReport);
+router.get('/sales-report/download', adminAuth, salesReportController.downloadSalesReport);
 
 module.exports = router;

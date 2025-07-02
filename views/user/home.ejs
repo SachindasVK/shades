@@ -300,61 +300,63 @@
                                     class="product-img">
                             </a>
                         </div>
-                        <div class="card-body">
+                     <div class="card-body">
   <a href="/productDetails?id=<%= products[i]._id %>">
     
-    
+    <!-- Category -->
     <div class="product-category text-sm text-gray-500 mb-1">
       <%= products[i].category ? products[i].category.name : 'Eyewear' %>
     </div>
 
- 
+    <!-- Product Name -->
     <h3 class="product-title text-lg font-semibold text-gray-800 mb-2">
-      <%= products[i].productName %>
+      <%= products[i].name || products[i].productName %>
     </h3>
 
+    <!-- Rating Section -->
+    <% if (products[i].averageRating) { %>
+      <div class="product-rating text-yellow-500 mb-1">
+        <% for (let star = 1; star <= 5; star++) { %>
+          <% if (star <= Math.floor(products[i].averageRating)) { %>
+            <i class="fas fa-star"></i>
+          <% } else if (star - 0.5 <= products[i].averageRating) { %>
+            <i class="fas fa-star-half-alt"></i>
+          <% } else { %>
+            <i class="far fa-star"></i>
+          <% } %>
+        <% } %>
+        <% if (products[i].ratingCount) { %>
+          <span class="text-sm text-gray-600 ml-1">(<%= products[i].ratingCount %>)</span>
+        <% } %>
+      </div>
+    <% } %>
+
+    <!-- Price Section -->
     <div class="product-price text-base">
-      <%
-        const regularPrice = products[i].regularPrice;
-        const now = new Date();
-        
-        const productOffer = (products[i].hasOffer && products[i].productOffer > 0)
-          ? products[i].productOffer
-          : 0;
-
-        //Category Offer (check with date)
-        let categoryOffer = 0;
-        if (
-          products[i].category &&
-          products[i].category.hasOffer &&
-          products[i].category.offerPercentage > 0
-        ) {
-          const start = new Date(products[i].category.offerStartDate);
-          const end = new Date(products[i].category.offerEndDate);
-
-          if (!isNaN(start) && !isNaN(end) && now >= start && now <= end) {
-            categoryOffer = products[i].category.offerPercentage;
-          }
-        }
-
-        // Use the greater offer
-        const discount = Math.max(productOffer, categoryOffer);
-        const finalPrice = Math.round(regularPrice * (1 - discount / 100));
+      <% 
+        const regular = products[i].regularPrice;
+        const sale = products[i].price || products[i].salePrice || regular;
       %>
 
-      <% if (discount > 0) { %>
-        <!-- Discounted price -->
-        <span class="current-price text-green-600 font-bold">₹<%= finalPrice.toLocaleString('en-IN') %></span>
-        <span class="original-price text-gray-500 line-through ml-2">₹<%= regularPrice.toLocaleString('en-IN') %></span>
-        <span class="discount-percentage text-red-500 font-semibold ml-2"><%= discount %>% off</span>
-      <% } else { %>
-        <!--  No offer -->
-        <span class="current-price text-gray-800 font-semibold">₹<%= regularPrice.toLocaleString('en-IN') %></span>
+      <span class="current-price text-green-600 font-bold">
+        ₹<%= sale.toLocaleString('en-IN') %>
+      </span>
+
+      <% if (regular && sale < regular) { 
+          const discount = Math.round((regular - sale) / regular * 100);
+      %>
+        <span class="original-price text-gray-500 line-through ml-2">
+          ₹<%= regular.toLocaleString('en-IN') %>
+        </span>
+        <span class="discount-percentage text-red-500 font-semibold ml-2">
+          <%= discount %>% OFF
+        </span>
       <% } %>
     </div>
 
   </a>
 </div>
+
 
                         <div class="card-footer">
                             <button class="btn btn-add-cart add-to-cart" data-product-id="<%= products[i]._id %>">

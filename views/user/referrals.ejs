@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Refer Friends - SHADES</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@700&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      .page-body {
+        background-color: #ffffff;
+      }
+
+      .containeer {
+        max-width: 95%;
+        margin-left: auto;
+        margin-right: auto;
+        display: flex;
+        padding: 1px;
+      }
+
+      .sidebar {
+        width: 20rem;
+        background-color: #ffffff;
+        border-radius: 0.5rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+          0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        height: fit-content;
+      }
+
+      .profile-header {
+        padding: 1.5rem;
+        border-bottom: 1px solid #e5e7eb;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
+
+      .profile-icon {
+        width: 3rem;
+        height: 3rem;
+        background-color: #a1a1a1;
+        border-radius: 9999px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .profile-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 9999px;
+      }
+
+      .greeting {
+        color: #6b7280;
+        font-size: 0.875rem;
+      }
+
+      .username {
+        color: #1f2937;
+        font-weight: 600;
+      }
+
+      .menu-link {
+        display: flex;
+        align-items: center;
+        padding: 1rem 1.5rem;
+        color: #4b5563;
+        font-size: 0.875rem;
+      }
+
+      .menu-link:hover {
+        background-color: #f9fafb;
+      }
+
+      .menu-link.active {
+        background-color: #eff6ff;
+        color: #2563eb;
+      }
+
+      .menu-icon {
+        width: 1.25rem;
+        margin-right: 0.75rem;
+      }
+
+      .logout-link {
+        display: flex;
+        align-items: center;
+        padding: 1rem 1.5rem;
+        color: #dc2626;
+        font-size: 0.875rem;
+      }
+
+      .logout-link:hover {
+        background-color: #fef2f2;
+      }
+
+      .main-content {
+        flex: 1;
+        background-color: #ffffff;
+        border-radius: 0.5rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+          0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        padding: 2rem;
+        padding-top: 0px;
+      }
+
+      .section-title {
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: #1f2937;
+        margin-bottom: 1.5rem;
+      }
+
+      .referral-hero {
+  
+        color: rgb(0, 0, 0);
+        padding: 1rem;
+        border-radius: 1rem;
+        margin-bottom: 0.5rem;
+        text-align: center;
+        
+      }
+
+      .referral-code-card {
+        background: linear-gradient(135deg, #1a1a1a 0%, #333333 100%);
+        color: white;
+        padding: 1.5rem;
+        border-radius: 0.75rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .referral-code {
+        font-size: 1.5rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        background: rgba(255, 255, 255, 0.1);
+        padding: 0.75rem 1rem;
+        border-radius: 0.5rem;
+        border: 2px dashed rgba(255, 255, 255, 0.3);
+        display: inline-block;
+        margin: 1rem 0;
+      }
+
+      .btn {
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 0.875rem;
+        font-weight: 500;
+        transition: all 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .btn-primary {
+        background-color: #2563eb;
+        color: white;
+      }
+
+      .btn-primary:hover {
+        background-color: #1d4ed8;
+        transform: translateY(-1px);
+      }
+
+      .btn-secondary {
+        background-color: #ffffff;
+        color: #1f2937;
+        border: 1px solid #d1d5db;
+      }
+
+      .btn-secondary:hover {
+        background-color: #f3f4f6;
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+      }
+
+      .stats-card {
+        background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+        padding: 1.5rem;
+        border-radius: 0.75rem;
+        border: 1px solid #bae6fd;
+        text-align: center;
+      }
+
+      .stats-number {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #0369a1;
+        margin-bottom: 0.5rem;
+      }
+
+      .stats-label {
+        color: #64748b;
+        font-size: 0.875rem;
+        font-weight: 500;
+      }
+
+      .referral-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem;
+        border: 1px solid #e5e7eb;
+        border-radius: 0.5rem;
+        margin-bottom: 0.75rem;
+        transition: all 0.2s ease;
+      }
+
+      .referral-details {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
+
+      .referral-avatar {
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: 9999px;
+        background: gray;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 600;
+      }
+
+      .badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 9999px;
+        font-size: 0.75rem;
+        font-weight: 500;
+      }
+
+      .badge-success {
+        background-color: #22c55e;
+        color: white;
+      }
+
+      .badge-pending {
+        background-color: #f59e0b;
+        color: white;
+      }
+
+      .how-it-works {
+        background-color: #f8fafc;
+        padding: 2rem;
+        border-radius: 0.75rem;
+        margin-bottom: 2rem;
+      }
+
+      .step {
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .step-number {
+        width: 2rem;
+        height: 2rem;
+        background: linear-gradient(135deg, #2563eb, #3b82f6);
+        color: white;
+        border-radius: 9999px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        flex-shrink: 0;
+      }
+
+      .share-buttons {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+        margin-top: 1rem;
+      }
+
+      .share-btn {
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .share-whatsapp {
+        background-color: #25d366;
+        color: white;
+      }
+
+      .share-whatsapp:hover {
+        background-color: #128c7e;
+      }
+
+      .share-telegram {
+        background-color: #0088cc;
+        color: white;
+      }
+
+      .share-telegram:hover {
+        background-color: #006ba6;
+      }
+
+      .share-copy {
+        background-color: #374151;
+        color: white;
+      }
+
+      .share-copy:hover {
+        background-color: #1f2937;
+      }
+
+      .shop-header {
+        background-color: white;
+        padding: 1.5rem 0;
+      }
+
+      .empty-state {
+        text-align: center;
+        padding: 3rem 1rem;
+        color: #64748b;
+      }
+
+      .empty-state i {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+        color: #cbd5e1;
+      }
+    </style>
+  </head>
+
+  <body class="page-body">
+            <%-include("../../views/partials/user/header")%>
+
+    <!-- Header (assuming it exists) -->
+    <div class="shop-header">
+      <div class="max-w-7xl mx-auto px-4">
+        <nav aria-label="breadcrumb">
+          <ol class="flex space-x-2 text-sm">
+            <li><a href="/" class="text-blue-600 hover:underline">Home</a></li>
+            <li>
+              <span class="mx-2 text-black">></span>
+              <a href="/shop" class="text-blue-600 hover:underline">Shop</a>
+            </li>
+            <li>
+              <span class="mx-2">></span>
+              <span class="text-gray-500">Refer Friends</span>
+            </li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+
+    <div class="containeer">
+      <!-- Sidebar -->
+      <div class="sidebar">
+        <div class="profile-header">
+          <div class="profile-icon">
+            <% if (user.image) { %>
+            <img
+              src="/uploads/userProfileimages/<%= user.image %>"
+              alt="Profile Image"
+              class="profile-image"
+            />
+            <% } else { %>
+            <i
+              class="fas fa-user"
+              style="color: #ffffff; font-size: 1.125rem"
+            ></i>
+            <% } %>
+          </div>
+          <div>
+            <div class="greeting">Hello,</div>
+             <div class="username"><%= user.name %></div>
+          </div>
+        </div>
+        <nav class="menu">
+          <ul class="menu-list">
+            <li class="menu-item">
+              <a href="/profile" class="menu-link">
+                <i class="fas fa-user menu-icon"></i> Profile Information
+              </a>
+            </li>
+            <li class="menu-item">
+              <a href="/orders" class="menu-link">
+                <i class="fas fa-box menu-icon"></i> My Orders
+              </a>
+            </li>
+            <li class="menu-item">
+              <a href="/address" class="menu-link">
+                <i class="fas fa-home menu-icon"></i> Manage Addresses
+              </a>
+            </li>
+            <li class="menu-item">
+              <a href="/wallet" class="menu-link">
+                <i class="fas fa-wallet menu-icon"></i> My Wallet
+              </a>
+            </li>
+            <li class="menu-item">
+              <a href="/wishlist" class="menu-link">
+                <i class="fas fa-heart menu-icon"></i> My Wishlist
+              </a>
+            </li>
+            <li class="menu-item">
+              <a href="/referals" class="menu-link active">
+                <i class="fas fa-users menu-icon"></i> Refer Friends
+              </a>
+            </li>
+            <li class="menu-item">
+              <a href="/changepassword" class="menu-link">
+                <i class="fas fa-lock menu-icon"></i> Change Password
+              </a>
+            </li>
+            <li class="menu-item">
+              <a href="/logout" class="logout-link">
+                <i class="fas fa-sign-out-alt menu-icon"></i> Log out
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+
+      <!-- Main Content -->
+      <div class="main-content">
+        <!-- Hero Section -->
+        <div class="referral-hero">
+          <i class="fas fa-gift" style="font-size: 2rem; margin-bottom: 1rem;"></i>
+          <h1 style="font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem;">
+            Refer Friends & Earn Rewards
+          </h1>
+          <p style="font-size: 1rem; opacity: 0.9;">
+            Invite your friends and both of you get Rewards !
+          </p>
+        </div>
+
+      
+        <!-- Referral Code Section -->
+<div class="referral-code-card" style="background-color: #000; color: #fff; padding: 2rem; border-radius: 1rem;">
+  <!-- Horizontal Flex Row -->
+  <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem;">
+    
+    <!-- Referral Code -->
+    <div style="flex: 1; min-width: 200px;">
+      <h3 style="font-size: 1rem; font-weight: 600; margin-bottom: 0.5rem;">
+        <i class="fas fa-code mr-2"></i>Your Referral Code
+      </h3>
+      <div id="referralCode" style="font-size: 1.5rem; font-weight: bold;"><%=referralCode%></div>
+    </div>
+
+    <!-- Total Referrals -->
+    <div style="flex: 1; text-align: center; min-width: 150px;">
+      <div style="font-size: 1rem;">Total Referrals</div>
+      <div id="totalReferrals" style="font-size: 1.75rem; font-weight: bold;"><%=totalReferrals%></div>
+      
+    </div>
+
+    <!-- Total Earned -->
+    <div style="flex: 1; text-align: center; min-width: 150px;">
+      <div style="font-size: 1rem;">Total Earned</div>
+      <div id="totalEarned" style="font-size: 1.75rem; font-weight: bold;">₹<%=totalEarned%></div>
+      
+    </div>
+  </div>
+
+  <!-- Share Buttons -->
+  <div class="share-buttons" style="display: flex; gap: 1rem; flex-wrap: wrap;">
+    <button class="share-btn share-copy" onclick="copyReferralCode()">
+      <i class="fas fa-copy"></i> Copy Code
+    </button>
+    <button class="share-btn share-whatsapp" onclick="shareOnWhatsApp()">
+      <i class="fab fa-whatsapp"></i> WhatsApp
+    </button>
+    <button class="share-btn share-telegram" onclick="shareOnTelegram()">
+      <i class="fab fa-telegram"></i> Telegram
+    </button>
+  </div>
+
+  <p style="font-size: 0.875rem; margin-top: 1rem; opacity: 0.8;">
+    Share this code with friends or use the share buttons above
+  </p>
+</div>
+
+<div style="background-color: #f8fafc; padding: 1.5rem; border-radius: 0.5rem; margin-top: 2rem; margin-bottom:2rem; 4px solid #2563eb;">
+          <h4 style="font-weight: 600; margin-bottom: 0.75rem; color: #1f2937;">
+                        <i class="fas fa-lightbulb mr-2 text-yellow-500"></i>How It Works
+          </h4>
+         <p>Share your referral code with friends. When they Signup using your code, both you and your friend will receive rewards!,You will get ₹220.00 and freind will get ₹100.00.</p>
+        </div>
+
+
+       
+
+        <!-- Recent Referrals -->
+        <div>
+          <h3 class="section-title">
+            <i class="fas fa-users mr-2 text-blue-600"></i>Your Referrals
+          </h3>
+          
+          <% if (referrals.length === 0) { %>
+  <div class="empty-state">
+    <i class="fas fa-user-friends"></i>
+    <p>No referrals yet. Share your code and earn rewards!</p>
+  </div>
+<% } else { %>
+  <% referrals.forEach(r => { %>
+    <div class="referral-item">
+      <div class="referral-details">
+        <div class="profile-icon">
+            <% if (r.image) { %>
+            <img
+              src="/uploads/userProfileimages/<%= r.image %>"
+              alt="Profile Image"
+              class="profile-image"
+            />
+            <% } else { %>
+            <i
+              class="fas fa-user"
+              style="color: #ffffff; font-size: 1.125rem"
+            ></i>
+            <% } %>
+          </div>
+       
+        <div>
+          <p style="font-weight: 600;"><%= r.name %></p>
+          <p style="font-size: 0.875rem; color: #64748b;">Joined on <%= new Date(r.createdAt).toDateString() %></p>
+        </div>
+      </div>
+      <div style="text-align: right;">
+        <span class="badge badge-success">₹100 Earned</span>
+        <p style="font-size: 0.75rem; color: #64748b; margin-top: 0.25rem;">Completed</p>
+      </div>
+    </div>
+  <% }) %>
+<% } %>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer"></div>
+
+    <script>
+      // Toast notification function
+      function showToast(message, type = 'info') {
+        let toastContainer = document.querySelector('.toast-container');
+        if (!toastContainer) {
+          toastContainer = document.createElement('div');
+          toastContainer.className = 'toast-container';
+          toastContainer.style.position = 'fixed';
+          toastContainer.style.top = '20px';
+          toastContainer.style.right = '20px';
+          toastContainer.style.zIndex = '9999';
+          toastContainer.style.display = 'flex';
+          toastContainer.style.flexDirection = 'column';
+          toastContainer.style.gap = '10px';
+          document.body.appendChild(toastContainer);
+        }
+
+        const toastId = 'toast-' + Date.now();
+        const toast = document.createElement('div');
+
+        let bgColor, borderColor;
+        switch (type) {
+          case 'success':
+            bgColor = '#16a34a';
+            borderColor = '#16a34a';
+            break;
+          case 'error':
+            bgColor = '#dc2626';
+            borderColor = '#dc2626';
+            break;
+          case 'info':
+          default:
+            bgColor = '#2563eb';
+            borderColor = '#2563eb';
+        }
+
+        toast.style.cssText = `
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          background-color: ${bgColor};
+          border-left: 4px solid ${borderColor};
+          color: white;
+          padding: 12px 16px;
+          border-radius: 6px;
+          box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+          max-width: 400px;
+          width: 100%;
+          opacity: 0;
+          transform: translateY(20px);
+          transition: opacity 0.3s ease, transform 0.3s ease;
+        `;
+
+        toast.id = toastId;
+        toast.innerHTML = `
+          <div style="flex: 1; font-size: 14px;">${message}</div>
+          <button type="button" style="margin-left: 12px; background: none; border: none; color: white; font-size: 16px; cursor: pointer;" data-toast-id="${toastId}">
+            &times;
+          </button>
+        `;
+
+        toastContainer.appendChild(toast);
+
+        setTimeout(() => {
+          toast.style.opacity = '1';
+          toast.style.transform = 'translateY(0)';
+        }, 100);
+
+        const closeButton = toast.querySelector(`[data-toast-id="${toastId}"]`);
+        closeButton.addEventListener('click', () => {
+          toast.style.opacity = '0';
+          toast.style.transform = 'translateY(20px)';
+          setTimeout(() => toast.remove(), 300);
+        });
+
+        setTimeout(() => {
+          toast.style.opacity = '0';
+          toast.style.transform = 'translateY(20px)';
+          setTimeout(() => toast.remove(), 300);
+        }, 3000);
+      }
+
+      // Copy referral code to clipboard
+      function copyReferralCode() {
+        const referralCode = document.getElementById('referralCode').textContent;
+        navigator.clipboard.writeText(referralCode).then(() => {
+          showToast('Referral code copied to clipboard!', 'success');
+        }).catch(() => {
+          showToast('Failed to copy code', 'error');
+        });
+      }
+
+      // Share on WhatsApp
+      function shareOnWhatsApp() {
+        const referralCode = document.getElementById('referralCode').textContent;
+        const message = `Hey! I'm using SHADES for amazing eyewear. Use my referral code "${referralCode}" when you sign up and get ₹100! Check it out: https://shades.com/signup`;
+        const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
+        window.open(whatsappUrl, '_blank');
+      }
+
+      // Share on Telegram
+      function shareOnTelegram() {
+        const referralCode = document.getElementById('referralCode').textContent;
+        const message = `Hey! I'm using SHADES for amazing eyewear. Use my referral code "${referralCode}" when you sign up and get ₹100! Check it out: https://shades.com/signup`;
+        const telegramUrl = `https://t.me/share/url?url=https://shades.com/signup&text=${encodeURIComponent(message)}`;
+        window.open(telegramUrl, '_blank');
+      }
+
+      // Generate initials for avatar
+      function getInitials(name) {
+        return name.split(' ').map(word => word[0]).join('').toUpperCase();
+      }
+
+      // Initialize page
+      document.addEventListener('DOMContentLoaded', function() {
+        console.log('Referral page loaded');
+      });
+    </script>
+            <%-include("../../views/partials/user/footer")%>
+  </body>
+</html>

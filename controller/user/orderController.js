@@ -3,6 +3,7 @@ const Order = require('../../models/orderSchema')
 const Product = require('../../models/productSchema')
 const PDFDocument = require('pdfkit');
 const Wallet = require('../../models/walletSchema')
+const razorpay = require('../../config/razorpay')
 
 const getOrders = async (req, res) => {
     try {
@@ -446,11 +447,35 @@ const requestReturn = async (req, res) => {
     }
 };
 
+
+const getRazorpayOrder = async(req,res)=>{
+    try {
+        const orderDb = await Order.findById(req.params.orderId)
+        if(!orderDb)return res.json({success:false})
+
+     const newOrder = await razorpay.orders.create({
+      amount: orderDb.finalAmount * 100,
+      currency: "INR",
+      receipt: `retry_${orderDb._id}`
+    });
+     res.json({
+      success: true,
+      razorpayKey: process.env.RAZORPAY_KEY_ID,
+      orderId: newOrder.id,
+      amount: newOrder.amount,
+    });
+    } catch (error) {
+         console.error(error);
+    res.json({ success: false });
+    }
+}
+
 module.exports = {
     getOrders,
     getOrderDetails,
     downloadInvoice,
     cancelOrder,
     filterOrders,
-    requestReturn
+    requestReturn,
+    getRazorpayOrder
 }

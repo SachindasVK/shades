@@ -157,13 +157,14 @@
       }
 
       .btn-primary {
-        background-color: #ffffff;
-        color: #1f2937;
-        border: 1px solid #d1d5db;
+        background-color: #374151;
+        color: #ffffff;
+       
+        transition: all 0.2s ease;
       }
 
       .btn-primary:hover {
-        background-color: #f3f4f6;
+        background-color: rgb(27, 39, 56);
       }
 
       .modal-overlay {
@@ -305,7 +306,7 @@
       }
 
       .stats-card {
-        background-color: #008cff4a;
+       background: linear-gradient(135deg, #e7d955 0%, #eee48e 100%);
         padding: 1rem;
         border-radius: 0.5rem;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -321,35 +322,6 @@
         font-size: 1.25rem;
         font-weight: 600;
         color: #1f2937;
-      }
-
-      .toast {
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        min-width: 250px;
-        background-color: #1f2937;
-        color: white;
-        padding: 1rem;
-        border-radius: 4px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        z-index: 2000;
-        opacity: 0;
-        transform: translateY(20px);
-        transition: opacity 0.3s ease, transform 0.3s ease;
-      }
-
-      .toast.show {
-        opacity: 1;
-        transform: translateY(0);
-      }
-
-      .toast.success {
-        background-color: #22c55e;
-      }
-
-      .toast.error {
-        background-color: #ef4444;
       }
 
       .shop-header {
@@ -464,7 +436,7 @@
               </a>
             </li>
             <li class="menu-item">
-              <a href="/referals" class="menu-link">
+              <a href="/referrals" class="menu-link">
                 <i class="fas fa-users menu-icon"></i> Refer Friends
               </a>
             </li>
@@ -507,14 +479,14 @@
             <h3 class="section-title">Rewards</h3>
             <div>
               <h3 class="text-sm text-gray-600">Cashback Earned</h3>
-              <p class="text-lg font-semibold">₹0.00</p>
+              <p class="text-lg font-semibold"> ₹<%= totalEarned || 0%></p>
             </div>
             <div class="mt-4">
               <h3 class="text-sm text-gray-600">Total Referrals</h3>
               <p class="text-lg font-semibold">
                 <%= user.referrals ? user.referrals.length : 0 %>
               </p>
-              <a href="/referals" class="text-blue-600 hover:underline text-sm"
+              <a href="/referrals" class="text-blue-500 hover:underline text-sm"
                 >View Referral Program</a
               >
             </div>
@@ -545,12 +517,7 @@
               <option value="used">Used</option>
             </select>
 
-            <button
-              onclick="filterTransactions()"
-              class="btn btn-primary px-3 py-1 rounded text-gray-500"
-            >
-              Apply
-            </button>
+           
           </div>
         </div>
 
@@ -643,8 +610,9 @@
             min="1"
             max="250000"
           />
-          <p class="mt-2 text-sm text-gray-600 flex items-center">
-            <i class="fas fa-credit-card text-blue-600 mr-2"></i>
+          <p class="mt-2 text-sm text-gray-600 flex items-center">    
+                                        <img src="https://razorpay.com/assets/razorpay-glyph.svg" alt="Razorpay" class="h-10 w-10">
+           
             Payment Method: Razorpay
           </p>
         </div>
@@ -783,7 +751,7 @@
                           filteredTransactions = allTransactions.filter(t =>
                               t.transactionType === 'credit' &&
                               t.transactionPurpose &&
-                              t.transactionPurpose.toLowerCase().includes('reward')
+                              t.transactionPurpose.toLowerCase().includes('referrals')
                           );
                       }
 

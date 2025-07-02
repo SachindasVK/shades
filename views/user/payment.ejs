@@ -636,6 +636,8 @@
     </div>
 
     <div id="toastContainer"></div>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
         // Get dynamic data from server
@@ -767,63 +769,151 @@
 
         // Place order handler
         async function placeOrderHandler() {
-            const selectedMethodInput = document.querySelector('input[name="paymentMethod"]:checked');
-            
-            if (!selectedMethodInput) {
-                showToast('Please select a payment method', 'error');
-                return;
-            }
-            
-            const selectedMethod = selectedMethodInput.value;
-            
-            if (selectedMethod === 'cod' && !isCodEligible) {
-                showToast('Cash on Delivery is not eligible for this order', 'error');
-                return;
-            }
-            
-            if (selectedMethod === 'wallet') {
-                const summary = calculateOrderSummary();
-                if (summary.total > walletBalance) {
-                    showToast('Insufficient wallet balance', 'error');
-                    return;
-                }
-            }
-            
-            const orderData = {
+    const selectedMethodInput = document.querySelector('input[name="paymentMethod"]:checked');
+    
+    if (!selectedMethodInput) {
+        showToast('Please select a payment method', 'error');
+        return;
+    }
+    
+    const selectedMethod = selectedMethodInput.value;
+    
+    if (selectedMethod === 'cod' && !isCodEligible) {
+        showToast('Cash on Delivery is not eligible for this order', 'error');
+        return;
+    }
+    
+    if (selectedMethod === 'wallet') {
+        const summary = calculateOrderSummary();
+        if (summary.total > walletBalance) {
+            showToast('Insufficient wallet balance', 'error');
+            return;
+        }
+    }
+    
+    try {
+        showLoading(true);
+        
+        const response = await fetch('/place-order', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
                 paymentMethod: selectedMethod,
                 appliedCoupon: appliedCouponCode || null,
                 couponDiscount: appliedCouponDiscount || 0
-            };
-            
-            try {
-                showLoading(true);
-                const response = await fetch('/place-order', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(orderData)
-                });
-                
-                const result = await response.json();
-                
-                if (result.success) {
-                    showToast('Order placed successfully!', 'success');
-                    setTimeout(() => {
-                        window.location.href = result.redirectUrl || '/order-confirmation';
-                    }, 1500);
-                } else {
-                    showToast(result.message || 'Failed to place order', 'error');
-                }
-            } catch (error) {
-                console.error('Error placing order:', error);
-                showToast('Something went wrong. Please try again.', 'error');
-            } finally {
-                showLoading(false);
-            }
+            })
+        });
+        
+        const result = await response.json();
+        
+        if (!response.ok) {
+            throw new Error(result.message || 'Failed to place order');
         }
+        
+        if (result.success) {
+            if (result.paymentRequired && selectedMethod === 'online') {
+                // Handle Razorpay payment
+                await handleRazorpayPayment(result.orderId);
+            } else {
+                // Direct success for COD/Wallet
+                showToast('Order placed successfully!', 'success');
+                setTimeout(() => {
+                    window.location.href = result.redirectUrl;
+                }, 1500);
+            }
+        } else {
+            throw new Error(result.message || 'Failed to place order');
+        }
+        
+    } catch (error) {
+        console.error('Order placement error:', error);
+        showToast(error.message || 'Failed to place order', 'error');
+    } finally {
+        showLoading(false);
+    }
+}
 
-        // Utility functions
+
+
+async function handleRazorpayPayment(orderDbId) {
+    try {
+        const res = await fetch(`/payment/${orderDbId}`);
+        const data = await res.json();
+        
+        if (!data.success) {
+          return showToast('Could not initiate payment', 'error');
+        }
+        
+          const options = {
+          key: data.razorpayKey,
+          amount: data.amount,
+          currency: "INR",
+          name: "SHADES",
+          description: "Retry Payment",
+          order_id: data.orderId,
+          handler: function (response) {
+            fetch("/verify-payment", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                ...response,
+                orderDbId
+              })
+            }).then(res => res.json())
+              .then(result => {
+                if (result.success) {
+                    window.location.href = `/order-confirmation/${orderDbId}`;
+                } else {
+                  showToast('Verification Failed', 'Could not verify payment.', 'error');
+                }
+              });
+          },
+          modal: {
+            ondismiss: function () {
+              fetch('/payment-failed', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  orderDbId,
+                  reason: 'User cancelled the payment.'
+                })
+              });
+              showToast('Cancelled', 'Payment process was cancelled.', 'info');
+            }
+          },
+          theme: { color: "#000000" }
+        };
+
+        const rzp = new Razorpay(options);
+
+        rzp.on('payment.failed', function (response) {
+  fetch('/payment-failed', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      orderDbId,
+      reason: response.error.description,
+      error: response.error
+    })
+  }).then(() => {
+    setTimeout(()=>{
+window.location.href = '/orders?payment=failed';
+    },2000)
+    
+  });
+});
+
+        rzp.open();
+        
+    } catch (error) {
+        console.error('Razorpay initialization error:', error);
+        showToast('Failed to initialize payment', 'error');
+        handlePaymentFailure(orderDbId, error.message);
+    }
+}
+        
         function showToast(message, type = 'info') {
     let toastContainer = document.querySelector('.toast-container');
     if (!toastContainer) {

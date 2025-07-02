@@ -47,8 +47,8 @@ const categorySchema = new Schema({
     },
     status: {
         type: String,
-        enum: ['Available', 'Unavailable'],
-        default: 'Available'
+        enum: ['available', 'Unavailable'],
+        default: 'available'
     }
 }, { timestamps: true });
 

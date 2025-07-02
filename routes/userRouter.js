@@ -17,6 +17,7 @@ const { userUpload } = require('../helpers/multer')
 
 
 
+
 router.get('/pageNotFound', userController.pageNotFound)
 
 //sign up management
@@ -37,7 +38,7 @@ router.get('/auth/google/callback', (req, res, next) => {
     if (err || !user) {
       console.error('Google Auth error:', err || 'No user');
       req.session.errorMessage = 'Google login failed. Try again.';
-      return res.redirect('/signup');
+      return res.redirect('/login');
     }
 
     if (user.isBlocked) {
@@ -93,7 +94,8 @@ router.get('/wallet', userAuth, walletController.getWallet)
 router.post('/wallet/create-order', userAuth, walletController.createWalletRazorpayOrder);
 router.post('/wallet/verify-payment', userAuth, walletController.verifyWalletPayment);
 
-
+// referrals management
+router.get('/referrals', userAuth, walletController.getReferrals)
 //wishlist management
 router.get('/wishlist', userAuth, wishlistController.loadWishlist)
 router.post('/addtowishlist', userAuth, wishlistController.addToWishlist)
@@ -122,8 +124,9 @@ router.post('/checkout/proceed-to-payment', userAuth, checkoutController.proceed
 router.get('/payment', userAuth, checkoutController.loadPayment)
 router.post('/place-order', userAuth, checkoutController.placeOrder)
 router.get('/order-confirmation/:id', userAuth, checkoutController.confirmOrder)
-router.get('/payment/:orderId', userAuth, checkoutController.loadRazorpayPaymentPage);
+router.get('/payment/:orderId', userAuth, checkoutController.loadRazorpayPayment);
 router.post('/verify-payment', userAuth, checkoutController.verifyRazorpayPayment);
-
-
+router.post('/payment-failed',userAuth,checkoutController.paymentFailed)
+router.post('/retry-payment/:orderId',userAuth,checkoutController.loadRazorpayPayment)
+router.get('/create-razorpay-order/:orderId',userAuth,orderController.getRazorpayOrder)
 module.exports = router

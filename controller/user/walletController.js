@@ -10,21 +10,43 @@ const crypto = require('crypto');
 const getWallet = async (req, res) => {
   try {
     const userId = req.session.user;
-
     const [userDoc, wallet] = await Promise.all([
-      User.findById(userId),
+      User.findById(userId).populate('redeemedUsers'),
       Wallet.findOne({ userId })
     ]);
 
+    if (!userDoc) {
+      return res.status(404).render('page-404', {
+        isLoggedIn: false,
+        username: '',
+        message: 'User not found'
+      });
+    }
+
+    // Total referrals
+    const totalReferrals = userDoc.redeemedUsers.length;
+
+    // Cashback earned (sum of all credit transactions)
+    const totalEarned = wallet?.transactions
+  .filter(txn =>
+    txn.transactionType === 'credit' &&
+    txn.transactionPurpose === 'referrals' &&
+    txn.description.includes('Referral reward')
+  )
+  .reduce((sum, txn) => sum + txn.amount, 0);
+
+
+    // User info
     const user = {
-      name: userDoc?.name || '',
-      image: userDoc?.image || '',
+      name: userDoc.name,
+      image: userDoc.image || '',
       wallet: {
         balance: wallet?.balance || 0
       },
-      referrals: userDoc?.referrals || []
+      referrals: userDoc.redeemedUsers
     };
 
+    // Sorted transactions
     const transactions = (wallet?.transactions || []).sort(
       (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
     );
@@ -32,7 +54,10 @@ const getWallet = async (req, res) => {
     res.render('wallet', {
       user,
       transactions,
-      username: user.name
+      username: user.name,
+      isLoggedIn: true,
+      totalReferrals:totalReferrals||0,
+      totalEarned
     });
 
   } catch (err) {
@@ -40,6 +65,7 @@ const getWallet = async (req, res) => {
     res.status(500).send('Error loading wallet');
   }
 };
+
 
 
 
@@ -113,8 +139,48 @@ const verifyWalletPayment = async (req, res) => {
     res.json({ success: false });
   }
 }
+
+const getReferrals = async (req, res) => {
+  try {
+    const userId = req.session.user;
+    if (!userId) return res.redirect('/login');
+
+    const user = await User.findById(userId).populate('redeemedUsers');
+    if (!user) {
+      return res.status(404).render('page-404', {
+        isLoggedIn: false,
+        username: '',
+        message: 'User not found'
+      });
+    }
+
+    const totalReferrals = user.redeemedUsers.length;
+    const totalEarned = totalReferrals * 220;
+
+    res.render('referrals', {
+      isLoggedIn: true,
+      username: user.name,
+      referralCode: user?.referralCode ?? 'N/A',
+      totalReferrals,
+      totalEarned,
+      referrals: user.redeemedUsers
+    });
+
+  } catch (error) {
+    console.error("Error in getReferrals:", error);
+    res.status(500).render('page-500', {
+      isLoggedIn: true,
+      username: '',
+      message: 'Internal Server Error'
+    });
+  }
+};
+
+
 module.exports = {
   getWallet,
   createWalletRazorpayOrder,
-  verifyWalletPayment
+  verifyWalletPayment,
+  getReferrals
 }
+

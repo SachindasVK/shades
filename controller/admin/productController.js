@@ -271,66 +271,62 @@ const addProducts = async (req, res) => {
 
   // Add Category Offer
   const addProductOffer = async (req, res) => {
-    try {
-      const productId = req.params.id
-      const { offerPercentage } = req.body;
-      
-      // Validate inputs
-      if (!productId) {
-        return res.json({ success: false, message: "product ID is required" });
-      }
-      if (offerPercentage === undefined) {
-        return res.json({ success: false, message: "All offer details are required" });
-      }
-      
-      // Validate percentage
-      const percentage = parseFloat(offerPercentage);
-      if (isNaN(percentage) || percentage < 1 || percentage > 99) {
-        return res.json({ success: false, message: "Offer percentage must be between 1 and 99" });
-      }
-      
-      // Find category
-      const product = await Product.findById(productId);
-      if (!product) {
-        return res.status(404).json({ success: false, message: "product not found" });
-      }
+  try {
+    const productId = req.params.id;
+    const { offerPercentage } = req.body;
 
-
-      //
-      const hasProductOffer = product.productOffer > percentage;
-  if (hasProductOffer) {
-    return res.json({ success: false, message: 'Product already has a better offer' });
-  }
-
-      
-      const discountAmount = (product.regularPrice * percentage) / 100;
-      const salePrice = product.regularPrice - discountAmount;
-
-      // Update category with offer details
-      await Product.updateOne(
-        { _id: productId }, 
-        { 
-          $set: { 
-            hasOffer: true,
-            offerPercentage: percentage,
-            salePrice: salePrice,
-            productOffer: percentage
-          } 
-        }
-      );
-
-    
-      console.log('Offer added Successfully',product,'percentage:',percentage)
-      return res.json({ success: true, message: "Offer added successfully" });
-    } catch (error) {
-      console.error("Error in addProductOffer:", error);
-      return res.status(500).render('admin/error', {
-      pageTitle: 'Error',
-      message: 'Something went wrong while loading Add Product page'
-  });
-
+    // Validate inputs
+    if (!productId) {
+      return res.json({ success: false, message: "Product ID is required" });
     }
-  };
+    if (offerPercentage === undefined) {
+      return res.json({ success: false, message: "Offer details required" });
+    }
+
+    const percentage = parseFloat(offerPercentage);
+    if (isNaN(percentage) || percentage < 1 || percentage > 99) {
+      return res.json({ success: false, message: "Offer percentage must be between 1 and 99" });
+    }
+
+    const product = await Product.findById(productId).populate('category');
+    if (!product) {
+      return res.status(404).json({ success: false, message: "Product not found" });
+    }
+
+    // Set product offer
+    product.productOffer = percentage;
+    product.offerPercentage = percentage;
+    product.hasOffer = true;
+
+    // Check if category has active offer
+    const category = product.category;
+    const now = new Date();
+    let categoryOffer = 0;
+
+    if (
+      category?.hasOffer &&
+      category.offerStartDate <= now &&
+      category.offerEndDate >= now
+    ) {
+      categoryOffer = category.offerPercentage || 0;
+    }
+
+    const maxOffer = Math.max(percentage, categoryOffer);
+    const discountAmount = (product.regularPrice * maxOffer) / 100;
+    product.salePrice = product.regularPrice - discountAmount;
+
+    await product.save();
+
+    return res.json({ success: true, message: "Product offer added successfully" });
+  } catch (error) {
+    console.error("Error in addProductOffer:", error);
+    return res.status(500).render('admin/error', {
+      pageTitle: 'Error',
+      message: 'Something went wrong while adding product offer'
+    });
+  }
+};
+
 
   // Remove Product Offer
   const removeProductOffer = async (req, res) => {

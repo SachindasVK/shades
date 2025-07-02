@@ -112,7 +112,7 @@
                   <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <div class="flex justify-end space-x-2">
                       <a href="/admin/customers/view/<%= user._id %>"
-                        class="px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors">
+                        class="px-3 py-1 bg-white text-blue-800 rounded-md hover:bg-blue-100 transition-colors">
                         View
                       </a>
                       <% if (user.isBlocked === true) { %>
@@ -124,7 +124,7 @@
                           <!-- Block -->
                           <button
                             onclick="confirmAction('Are you sure you want to block this user?', '/admin/customers/block/<%= user._id %>')"
-                            class="px-3 py-1 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors">Block</button>
+                            class="px-3 py-1 text-red-600 rounded-md hover:bg-red-100 transition-colors">Block</button>
                           <% } %>
                     </div>
                   </td>

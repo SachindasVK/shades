@@ -7,9 +7,8 @@
   <title>My Orders - SHADES</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@700&display=swap"
-    rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet" />
+  
   <style>
     body {
       font-family: "Inter", sans-serif;
@@ -23,7 +22,6 @@
       margin-left: auto;
       margin-right: auto;
       display: flex;
-
       padding: 1px;
     }
 
@@ -31,8 +29,7 @@
       width: 20rem;
       background-color: #ffffff;
       border-radius: 0.5rem;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
-        0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
       height: fit-content;
     }
 
@@ -130,8 +127,7 @@
       flex: 1;
       background-color: #ffffff;
       border-radius: 0.5rem;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
-        0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
       padding: 2rem;
     }
 
@@ -172,7 +168,6 @@
       box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
     }
 
-    /* Order Item Styles */
     .order-item {
       background-color: #ffffff;
       border: 2px solid #e0d4f5;
@@ -183,8 +178,8 @@
     }
 
     .order-header {
-      background-color: #e0d4f5;
-      padding: 12px 20px;
+      background-color: #e4daf5;
+      padding: 6px 20px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -214,16 +209,45 @@
       text-decoration: underline;
     }
 
+    .retry-payment-btn {
+      color: #eb2525;
+      font-size: 0.875rem;
+      font-weight: 500;
+      background: none;
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      padding: 0;
+    }
+
+    .retry-payment-btn:hover {
+      text-decoration: underline;
+    }
+
     .order-content {
       padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .product-items {
+      display: flex;
+      flex-direction: column;
+      flex-wrap: wrap;
+      gap: 20px;
+      flex: 1;
     }
 
     .product-item {
       display: flex;
       align-items: flex-start;
       gap: 15px;
-
-      border-bottom: 1px solid #f3f4f6;
+      width: calc(50% - 10px); /* Adjust width for two items per row, subtract half the gap */
+      box-sizing: border-box;
     }
 
     .product-item:last-of-type {
@@ -236,7 +260,6 @@
       width: 150px;
       height: 100px;
       object-fit: contain;
-
       flex-shrink: 0;
     }
 
@@ -257,8 +280,9 @@
 
     .product-details-row {
       display: flex;
-      gap: 20px;
       flex-wrap: wrap;
+      width: max-content;
+      gap: 1rem;
     }
 
     .product-detail {
@@ -268,13 +292,17 @@
 
     .order-summary {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-top: 1px solid #f3f4f6;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 1rem;
+      padding-left: 20px;
+      min-width: 150px;
     }
 
     .total-section {
-      text-align: right;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
     }
 
     .total-label {
@@ -290,7 +318,9 @@
     }
 
     .status-section {
-      text-align: right;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
     }
 
     .status-label {
@@ -302,47 +332,51 @@
     .order-status {
       font-size: 0.9rem;
       font-weight: 600;
-      padding: 2px 6px;
+      padding: 1px 15px;
       border-radius: 20px;
       display: inline-block;
     }
 
     .order-status.pending {
-      color: #af6900;
+      color: #df3400;
       background-color: #ffae0028;
     }
 
     .order-status.confirmed {
       color: rgb(4, 0, 253);
-      background-color: rgba(0, 0, 255, 0.11);
+      background-color: rgba(187, 187, 255, 0.11);
     }
 
     .order-status.shipped {
       color: #0284c7;
-      background-color: #0285c723;
+      background-color: #b6e7ff23;
     }
 
     .order-status.delivered {
       color: green;
-      background-color: rgba(0, 128, 0, 0.219);
+      background-color: rgba(169, 255, 169, 0.219);
     }
 
     .order-status.return_requested {
       color: orangered;
-      background-color: rgba(255, 68, 0, 0.137);
+      background-color: rgba(255, 201, 181, 0.137);
     }
 
     .order-status.returning {
       color: orange;
-      background-color: rgba(255, 166, 0, 0.178);
+      background-color: rgba(255, 224, 168, 0.178);
     }
 
     .order-status.cancelled {
       color: red;
-      background-color: rgba(255, 0, 0, 0.171);
+      background-color: rgba(255, 170, 170, 0.171);
     }
 
-    /* Cancelled Item Styling */
+    .order-status.failed {
+      color: red;
+      background-color: rgba(255, 170, 170, 0.171);
+    }
+
     .cancelled-item {
       opacity: 0.6;
       background-color: #f9fafb;
@@ -389,10 +423,6 @@
       color: #374151;
     }
 
-   
-
-   
-
     .shop-header {
       background-color: white;
       border-bottom: 1px solid var(--border-color);
@@ -410,24 +440,37 @@
       color: #0369a1;
       background-color: rgba(3, 105, 161, 0.1);
     }
+
+    @media (max-width: 768px) {
+      .order-content {
+        flex-direction: column;
+      }
+      .product-item {
+        width: 100%; /* Stack items vertically on mobile */
+      }
+      .order-summary {
+        align-items: flex-start;
+        padding-left: 0;
+        margin-top: 1rem;
+      }
+    }
   </style>
 </head>
 
 <body class="page-body">
   <!-- Header Partial -->
   <%- include("../../views/partials/user/header") %>
-    <div class="shop-header">
-      <div class="max-w-7xl mx-auto px-4">
-        <nav aria-label="breadcrumb">
-          <ol class="flex space-x-2 text-sm">
-            <li><a href="/" class="text-blue-600 hover:underline">Home</a></li>
-            <li>
-              <a href="/shop" class="text-blue-600 hover:underline"><span class="mx-2 text-black">></span>Shop</a>
-            </li>
-            <li class="flex items-center">
-              <span class="mx-2">></span><span class="text-gray-500">Orders</span>
-            </li>
-          </ol>
+  <div class="shop-header">
+    <div class="max-w-7xl mx-auto px-4">
+      <nav aria-label="breadcrumb">
+        <ol class="flex space-x-2 text-sm">
+          <li><a href="/" class="text-blue-600 hover:underline">Home</a></li>
+          <li>
+            <a href="/shop" class="text-blue-600 hover:underline"><span class="mx-2 text-black">></span>Shop</a>
+          </li>
+          <li class="flex items-center">
+            <span class="mx-2">></span><span class="text-gray-500">Orders</span>
+          </li>
         </nav>
       </div>
     </div>
@@ -481,7 +524,7 @@
               </a>
             </li>
             <li class="menu-item">
-              <a href="/referals" class="menu-link">
+              <a href="/referrals" class="menu-link">
                 <i class="fas fa-users menu-icon"></i>
                 Refer Friends
               </a>
@@ -492,7 +535,6 @@
                 Change Password
               </a>
             </li>
-
             <li class="menu-item">
               <a href="/logout" class="logout-link">
                 <i class="fas fa-sign-out-alt menu-icon"></i>
@@ -522,15 +564,12 @@
               <option value="returning">Returning</option>
               <option value="returned">Returned</option>
               <option value="cancelled">Cancelled</option>
+              <option value="failed">Failed</option>
             </select>
           </div>
           <div>
             <label class="form-label" for="timeFilter">Filter by Time</label>
-            <select
-              id="timeFilter"
-              class="form-select"
-              onchange="applyFilters()"
-            >
+            <select id="timeFilter" class="form-select" onchange="applyFilters()">
               <option value="All">All Time</option>
               <option value="Last30Days">Last 30 Days</option>
               <option value="Last3Months">Last 3 Months</option>
@@ -539,84 +578,88 @@
           </div>
         </div>
         <div id="orderList">
-          <% if (orders && orders.length> 0) { %> <% orders.forEach((order)=>
-              { %>
-              <div class="order-item" data-id="<%= order._id %>" data-status="<%= order.status %>"
-                data-date="<%= order.createdOn %>">
+          <% if (orders && orders.length > 0) { %>
+            <% orders.forEach((order) => { %>
+              <div class="order-item" data-id="<%= order._id %>" data-status="<%= order.status %>" data-date="<%= order.createdOn %>">
                 <div class="order-header">
                   <div class="order-date">
-                    Order-Date: <%= new Date(order.createdOn).toLocaleDateString('en-GB', { day: 'numeric' ,
-                      month: 'short' , year: 'numeric' }) %>
+                    Order-Date: <%= new Date(order.createdOn).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) %>
                   </div>
                   <div class="order-id">Order Id- #<%= order.orderId %>
                   </div>
-                  <a href="/order/details/<%= order._id %>" class="view-link">View Order Details</a>
+                  <% if (order.paymentMethod === 'online' && order.status === 'failed') { %>
+                   <button type="button"
+        class="retry-payment-btn"
+        data-id="<%= order._id %>"
+        data-amount="<%= order.finalAmount * 100 %>">
+  <i class="fas fa-redo-alt" style="font-size: 0.875rem;"></i> Retry Payment
+</button>
+
+                    <% } else { %>
+                      <a href="/order/details/<%= order._id %>" class="view-link">View Order Details</a>
+                      <% } %>
                 </div>
 
                 <div class="order-content">
-                  <% if (order.orderedItems && order.orderedItems.length> 0) { %>
-                    <% order.orderedItems.forEach((item)=> { %>
-                      <div class="product-item <%= item.status === 'cancelled' ? 'cancelled-item' : '' %>">
-                        <img
-                          src="/<%= item.productImages && item.productImages[0] ? item.productImages[0] : 'default-image.jpg' %>"
-                          alt="Product Image" class="order-image" />
-                        <div class="product-info">
-                          <div class="product-name">
-                            <%= item.productName || 'Product Name' %>
-                          </div>
-                          <div class="product-details-row">
-                            <div class="product-detail">
-                              Quantity: <%= item.quantity || 1 %>
+                  <div class="product-items">
+                    <% if (order.orderedItems && order.orderedItems.length > 0) { %>
+                      <% order.orderedItems.forEach((item) => { %>
+                        <div class="product-item <%= item.status === 'cancelled' ? 'cancelled-item' : '' %>">
+                          <img src="/<%= item.productImages && item.productImages[0] ? item.productImages[0] : 'default-image.jpg' %>" alt="Product Image" class="order-image" onerror="this.src='/default-image.jpg';" />
+                          <div class="product-info">
+                            <div class="product-name">
+                              <%= item.productName || 'Product Name' %>
                             </div>
-                            <div class="product-detail">
-                              Payment Method: <%= order.paymentMethod || 'N/A' %>
-                            </div>
-                            <% if (item.status !=='cancelled' ) { %>
+                            <div class="product-details-row">
                               <div class="product-detail">
-                                Expected Delivery by: <%= order.expectedDelivery ? new
-                                  Date(order.expectedDelivery).toLocaleDateString('en-GB', { day: 'numeric' ,
-                                  month: 'short' , year: 'numeric' }) : 'TBD' %>
+                                Quantity: <%= item.quantity || 1 %>
                               </div>
-                              <% } %>
-                          </div>
-                          <% if (order.status==='cancelled' && order.cancelReason) { %>
-                            <div class="cancel-reason">
-                              Cancelled: <%= order.cancelReason %>
+                              <div class="product-detail">
+                                Payment Method: <%= order.paymentMethod || 'N/A' %>
+                              </div>
+                              <% if (item.status !== 'cancelled') { %>
+                                <div class="product-detail">
+                                  Expected Delivery by: <%= order.expectedDelivery ? new Date(order.expectedDelivery).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : 'TBD' %>
+                                </div>
+                                <% } %>
                             </div>
-
-                            <%}else if (item.status==='cancelled' && item.cancelReason) { %>
+                            <% if (order.status === 'cancelled' && order.cancelReason) { %>
                               <div class="cancel-reason">
-                                Cancelled: <%= item.cancelReason %>
+                                Cancelled: <%= order.cancelReason %>
                               </div>
-                              <% } %>
-                        </div>
-                      </div>
-                      <% }) %>
-                        <% } %>
-
-                          <div class="order-summary">
-                            <div class="total-section">
-                              <div class="total-label">Total Amount</div>
-                              <div class="total-amount">
-                                ₹<%= order.finalAmount || order.totalAmount || 0 %>
-                              </div>
-                            </div>
-                            <div class="status-section">
-                              <div class="status-label">Order Status</div>
-                              <div class="order-status <%= (order.status || '').toLowerCase() %>">
-                                <%= order.status || 'Unknown' %>
-                              </div>
-                            </div>
+                              <% } else if (item.status === 'cancelled' && item.cancelReason) { %>
+                                <div class="cancel-reason">
+                                  Cancelled: <%= item.cancelReason %>
+                                </div>
+                                <% } %>
                           </div>
+                        </div>
+                        <% }) %>
+                          <% } %>
+                  </div>
+                  <div class="order-summary">
+                    <div class="total-section">
+                      <div class="total-label">Total Amount</div>
+                      <div class="total-amount">
+                        ₹<%= order.finalAmount || order.totalAmount || 0 %>
+                      </div>
+                    </div>
+                    <div class="status-section">
+                      <div class="status-label">Order Status</div>
+                      <div class="order-status <%= (order.status || '').toLowerCase() %>">
+                        <%= order.status || 'Unknown' %>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
               <% }) %>
-                <% } else { %>
-                  <div class="no-orders">
-                    <i class="fas fa-box-open" style="font-size: 3rem; margin-bottom: 1rem; color: #d1d5db"></i>
-                    <p>No orders found.</p>
-                  </div>
-                  <% } %>
+            <% } else { %>
+              <div class="no-orders">
+                <i class="fas fa-box-open" style="font-size: 3rem; margin-bottom: 1rem; color: #d1d5db"></i>
+                <p>No orders found.</p>
+              </div>
+            <% } %>
         </div>
         <div id="pagination" class="pagination"></div>
       </div>
@@ -627,6 +670,8 @@
 
     <!-- Footer Partial -->
     <%- include("../../views/partials/user/footer") %>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
       <script>
         let allOrders = [];
@@ -634,24 +679,95 @@
         let currentPage = 1;
         const ordersPerPage = 5;
 
-        function showToast(message, type = "success") {
-          const toastContainer = document.getElementById("toastContainer");
-          const toast = document.createElement("div");
-          toast.className = `toast ${type}`;
-          toast.textContent = message;
-          toastContainer.appendChild(toast);
+       function showToast(message, type = 'info') {
+    let toastContainer = document.querySelector('.toast-container');
+    if (!toastContainer) {
+        toastContainer = document.createElement('div');
+        toastContainer.className = 'toast-container';
+        toastContainer.style.position = 'fixed';
+        toastContainer.style.top = '20px';
+        toastContainer.style.right = '20px';
+        toastContainer.style.zIndex = '9999';
+        toastContainer.style.display = 'flex';
+        toastContainer.style.flexDirection = 'column';
+        toastContainer.style.gap = '10px';
+        document.body.appendChild(toastContainer);
+    }
 
-          setTimeout(() => {
-            toast.classList.add("show");
-          }, 100);
+    const toastId = 'toast-' + Date.now();
+    const toast = document.createElement('div');
 
-          setTimeout(() => {
-            toast.classList.remove("show");
-            setTimeout(() => {
-              toast.remove();
-            }, 300);
-          }, 300);
-        }
+    // Choose colors based on toast type
+    let bgColor, borderColor;
+    switch (type) {
+        case 'success':
+            bgColor = '#16a34a';  // green
+            borderColor = '#16a34a';
+            break;
+        case 'error':
+            bgColor = '#dc2626';  // red
+            borderColor = '#dc2626';
+            break;
+        case 'info':
+        default:
+            bgColor = '#2563eb';  // blue
+            borderColor = '#2563eb';
+    }
+
+    // Apply toast styles
+    toast.style.cssText = `
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background-color: ${bgColor};
+        border-left: 4px solid ${borderColor};
+        color: white;
+        padding: 5px 16px;
+        border-radius: 5px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        max-width: 400px;
+        width: 100%;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.3s ease, transform 0.3s ease;
+    `;
+
+    toast.id = toastId;
+    toast.setAttribute('role', 'alert');
+    toast.setAttribute('aria-live', 'assertive');
+    toast.setAttribute('aria-atomic', 'true');
+
+    toast.innerHTML = `
+        <div style="flex: 1; font-size: 14px;">${message}</div>
+        <button type="button" style="margin-left: 12px; background: none; border: none; color: white; font-size: 16px; cursor: pointer;" data-toast-id="${toastId}">
+            &times;
+        </button>
+    `;
+
+    toastContainer.appendChild(toast);
+
+    // Animate toast in
+    setTimeout(() => {
+        toast.style.opacity = '1';
+        toast.style.transform = 'translateY(0)';
+    }, 100);
+
+    // Close on click
+    const closeButton = toast.querySelector(`[data-toast-id="${toastId}"]`);
+    closeButton.addEventListener('click', () => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(20px)';
+        setTimeout(() => toast.remove(), 300);
+    });
+
+    // Auto dismiss after 1.5s
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(20px)';
+        setTimeout(() => toast.remove(), 300);
+    }, 1500);
+}
+
 
         function showLoading() {
           const orderList = document.getElementById("orderList");
@@ -670,13 +786,11 @@
           try {
             showLoading();
 
-            // Build query parameters
             const params = new URLSearchParams();
             if (statusFilter !== "All") params.append("status", statusFilter);
             if (timeFilter !== "All") params.append("timeFilter", timeFilter);
             params.append("page", page);
             params.append("limit", ordersPerPage);
-
 
             const response = await fetch(`/orders?${params.toString()}`, {
               method: "GET",
@@ -724,75 +838,23 @@
             allOrders.map((o) => ({ status: o.status, date: o.date }))
           );
 
-          // Initial display
           filteredOrders = [...allOrders];
           displayOrders();
           updatePaginationControls();
         }
 
-        function applyFilters() {
-          const statusFilter = document.getElementById("statusFilter").value;
-          const timeFilter = document.getElementById("timeFilter").value;
-          const currentDate = new Date();
-
-          // Start with all orders
-          filteredOrders = [...allOrders];
-
-          // Apply status filter
-          if (statusFilter !== "All") {
-            filteredOrders = filteredOrders.filter((order) => {
-              if (!order.status) return false;
-              // Handle case variations and underscores
-              const orderStatus = order.status
-                .toLowerCase()
-                .replace(/[_\s]/g, "");
-              const filterStatus = statusFilter
-                .toLowerCase()
-                .replace(/[_\s]/g, "");
-              return orderStatus === filterStatus;
-            });
-          }
-
-          // Apply time filter
-          if (timeFilter !== "All") {
-            let cutoffDate = new Date(currentDate);
-
-            switch (timeFilter) {
-              case "Last30Days":
-                cutoffDate.setDate(currentDate.getDate() - 30);
-                break;
-              case "Last3Months":
-                cutoffDate.setMonth(currentDate.getMonth() - 3);
-                break;
-              case "Last6Months":
-                cutoffDate.setMonth(currentDate.getMonth() - 6);
-                break;
-            }
-
-            filteredOrders = filteredOrders.filter((order) => {
-              return order.date && order.date >= cutoffDate;
-            });
-          }
-
-          currentPage = 1;
-          displayOrders();
-          updatePaginationControls();
-        }
-
-        function displayOrders() {
+        function displayOrders(orders = filteredOrders) {
           const orderList = document.getElementById("orderList");
 
-          // Clear existing orders
           const existingOrders = orderList.querySelectorAll(".order-item");
           existingOrders.forEach((order) => (order.style.display = "none"));
 
-          // Remove any existing "no orders" message
           const noOrdersMsg = orderList.querySelector(".no-orders");
           if (noOrdersMsg) {
             noOrdersMsg.remove();
           }
 
-          if (filteredOrders.length === 0) {
+          if (orders.length === 0) {
             const noOrdersDiv = document.createElement("div");
             noOrdersDiv.className = "no-orders";
             noOrdersDiv.innerHTML = `
@@ -803,65 +865,137 @@
             return;
           }
 
-          // Calculate pagination
           const startIndex = (currentPage - 1) * ordersPerPage;
           const endIndex = startIndex + ordersPerPage;
-          const ordersToDisplay = filteredOrders.slice(startIndex, endIndex);
+          const ordersToDisplay = orders.slice(startIndex, endIndex);
 
-          // Show only the orders for current page
           ordersToDisplay.forEach((order) => {
             order.element.style.display = "block";
           });
         }
 
-        // function updatePaginationControls() {
-        //   const pagination = document.getElementById("pagination");
-        //   pagination.innerHTML = "";
+        function updatePaginationControls(pagination = {}) {
+          const paginationDiv = document.getElementById("pagination");
+          paginationDiv.innerHTML = "";
 
-        //   if (filteredOrders.length === 0) return;
+          if (filteredOrders.length === 0) return;
 
-        //   const totalPages = Math.ceil(filteredOrders.length / ordersPerPage);
-        //   const totalOrders = filteredOrders.length;
-        //   const startIndex = (currentPage - 1) * ordersPerPage + 1;
-        //   const endIndex = Math.min(currentPage * ordersPerPage, totalOrders);
+          const totalPages = pagination.totalPages || Math.ceil(filteredOrders.length / ordersPerPage);
+          const totalOrders = pagination.totalOrders || filteredOrders.length;
+          const startIndex = (currentPage - 1) * ordersPerPage + 1;
+          const endIndex = Math.min(currentPage * ordersPerPage, totalOrders);
 
-        //   // Previous button
-        //   const prevBtn = document.createElement("button");
-        //   prevBtn.className = `pagination-btn ${
-        //     currentPage === 1 ? "disabled" : ""
-        //   }`;
-        //   prevBtn.textContent = "Previous";
-        //   prevBtn.onclick = () => {
-        //     if (currentPage > 1) {
-        //       currentPage--;
-        //       displayOrders();
-        //       updatePaginationControls();
-        //     }
-        //   };
-        //   pagination.appendChild(prevBtn);
+          const prevBtn = document.createElement("button");
+          prevBtn.className = `pagination-btn ${currentPage === 1 ? "disabled" : ""}`;
+          prevBtn.textContent = "Previous";
+          prevBtn.onclick = () => {
+            if (currentPage > 1) {
+              applyFilters(currentPage - 1);
+            }
+          };
+          paginationDiv.appendChild(prevBtn);
 
-        //   // Next button
-        //   const nextBtn = document.createElement("button");
-        //   nextBtn.className = `pagination-btn ${
-        //     currentPage >= totalPages ? "disabled" : ""
-        //   }`;
-        //   nextBtn.textContent = "Next";
-        //   nextBtn.onclick = () => {
-        //     if (currentPage < totalPages) {
-        //       currentPage++;
-        //       displayOrders();
-        //       updatePaginationControls();
-        //     }
-        //   };
-        //   pagination.appendChild(nextBtn);
+          const nextBtn = document.createElement("button");
+          nextBtn.className = `pagination-btn ${currentPage >= totalPages ? "disabled" : ""}`;
+          nextBtn.textContent = "Next";
+          nextBtn.onclick = () => {
+            if (currentPage < totalPages) {
+              applyFilters(currentPage + 1);
+            }
+          };
+          paginationDiv.appendChild(nextBtn);
 
-        //   // Page info
-        //   const pageInfo = document.createElement("span");
-        //   pageInfo.className = "pagination-info";
-        //   pageInfo.textContent = `Showing ${startIndex}-${endIndex} of ${totalOrders} orders`;
-        //   pagination.appendChild(pageInfo);
-        // }
+          const pageInfo = document.createElement("span");
+          pageInfo.className = "pagination-info";
+          pageInfo.textContent = `Showing ${startIndex}-${endIndex} of ${totalOrders} orders`;
+          paginationDiv.appendChild(pageInfo);
+        }
+
         document.addEventListener("DOMContentLoaded", initializeOrders);
+
+
+
+        document.querySelectorAll('.retry-payment-btn').forEach(button => {
+    button.addEventListener('click', async function () {
+      const orderDbId = this.getAttribute('data-id');
+
+      try {
+        const res = await fetch(`/create-razorpay-order/${orderDbId}`);
+        const data = await res.json();
+
+        if (!data.success) {
+          return showToast('Error', 'Could not initiate payment.', 'error');
+        }
+
+        const options = {
+          key: data.razorpayKey,
+          amount: data.amount,
+          currency: "INR",
+          name: "SHADES",
+          description: "Retry Payment",
+          order_id: data.orderId,
+          handler: function (response) {
+            fetch("/verify-payment", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                ...response,
+                orderDbId
+              })
+            }).then(res => res.json())
+              .then(result => {
+                if (result.success) {
+                    window.location.href = `/order-confirmation/${orderDbId}`;
+                } else {
+                  showToast('Verification Failed', 'Could not verify payment.', 'error');
+                }
+              });
+          },
+          modal: {
+            ondismiss: function () {
+              fetch('/payment-failed', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  orderDbId,
+                  reason: 'User cancelled the payment.'
+                })
+              });
+              
+showToast('Cancelled', 'Payment process was cancelled.', 'info');
+              
+            }
+          },
+          theme: { color: "#000000" }
+        };
+
+        const rzp = new Razorpay(options);
+
+        rzp.on('payment.failed', function (response) {
+  fetch('/payment-failed', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      orderDbId,
+      reason: response.error.description,
+      error: response.error
+    })
+  }).then(() => {
+      showToast('Payment failed. Please try again.', 'error');
+    setTimeout(()=>{
+window.location.href = '/orders?payment=failed';
+    },2000)
+  });
+});
+
+        rzp.open();
+
+      } catch (err) {
+        console.error(err);
+        Swal.fire('Error', 'Something went wrong.', 'error');
+      }
+    });
+  });
       </script>
 </body>
 
