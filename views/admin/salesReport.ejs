@@ -1,492 +1,528 @@
-<%- include('../../views/partials/admin/header')%>
+<%- include('../../views/partials/admin/header') %>
 
-  <!-- Sales Report Content -->
-  <div class="p-4 sm:p-6 max-w-full overflow-hidden">
-    <!-- Page Header -->
-    <div class="mb-6">
-      <h1 class="text-2xl font-bold text-gray-900">Sales Report</h1>
-      <p class="text-gray-600">Comprehensive sales analytics and reporting</p>
-    </div>
+<!-- Sales Report Content -->
+<div class="p-4 sm:p-6 max-w-full overflow-hidden">
+  <!-- Page Header -->
+  <div class="mb-6">
+    <h1 class="text-2xl font-bold text-gray-900">Sales Report</h1>
+    <p class="text-gray-600">Comprehensive sales analytics and reporting</p>
+  </div>
 
-    <!-- Filter Section -->
-    <div class="bg-white rounded-lg shadow-sm p-4 sm:p-6 mb-6">
-      <div class="flex flex-col sm:flex-row sm:flex-wrap items-end gap-4">
-        <!-- Report Type Filter -->
-        <div class="w-full sm:flex-1 sm:min-w-[200px]">
-          <label class="block text-sm font-medium text-gray-700 mb-2">Report Type</label>
-          <select id="reportType"
-            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-            <option value="daily">Daily</option>
-            <option value="weekly">Weekly</option>
-            <option value="monthly">Monthly</option>
-            <option value="yearly">Yearly</option>
-            <option value="custom">Custom Date Range</option>
-          </select>
-        </div>
+  <!-- Filter Section -->
+  <div class="bg-white rounded-lg shadow-sm p-4 sm:p-6 mb-6">
+    <div class="flex flex-col sm:flex-row sm:flex-wrap items-end gap-4">
+      <!-- Report Type Filter -->
+      <div class="w-full sm:flex-1 sm:min-w-[200px]">
+        <label class="block text-sm font-medium text-gray-700 mb-2">Report Type</label>
+        <select id="reportType" name="reportType"
+          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+          <option value="daily" <%= reportType === 'daily' ? 'selected' : '' %>>Daily</option>
+          <option value="weekly" <%= reportType === 'weekly' ? 'selected' : '' %>>Weekly</option>
+          <option value="monthly" <%= reportType === 'monthly' ? 'selected' : '' %>>Monthly</option>
+          <option value="yearly" <%= reportType === 'yearly' ? 'selected' : '' %>>Yearly</option>
+          <option value="custom" <%= reportType === 'custom' ? 'selected' : '' %>>Custom Date Range</option>
+        </select>
+      </div>
 
-        <!-- Date From (Custom) -->
-        <div id="dateFromContainer" class="w-full sm:flex-1 sm:min-w-[150px]">
-          <label class="block text-sm font-medium text-gray-700 mb-2">From Date</label>
-          <input type="date" id="dateFrom"
-            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-        </div>
+      <!-- Date From (Custom) -->
+      <div id="dateFromContainer" class="w-full sm:flex-1 sm:min-w-[150px] <%= reportType !== 'custom' ? 'hidden' : '' %>">
+        <label class="block text-sm font-medium text-gray-700 mb-2">From Date</label>
+        <input type="date" id="dateFrom" name="dateFrom" value="<%= dateFrom || '' %>"
+          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+      </div>
 
-        <!-- Date To (Custom) -->
-        <div id="dateToContainer" class="w-full sm:flex-1 sm:min-w-[150px]">
-          <label class="block text-sm font-medium text-gray-700 mb-2">To Date</label>
-          <input type="date" id="dateTo"
-            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-        </div>
+      <!-- Date To (Custom) -->
+      <div id="dateToContainer" class="w-full sm:flex-1 sm:min-w-[150px] <%= reportType !== 'custom' ? 'hidden' : '' %>">
+        <label class="block text-sm font-medium text-gray-700 mb-2">To Date</label>
+        <input type="date" id="dateTo" name="dateTo" value="<%= dateTo || '' %>"
+          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+      </div>
 
-        <!-- Apply Filter Button -->
-        <div class="w-full sm:w-auto">
-          <button id="applyFilter"
-            class="w-full sm:w-auto px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
-            <i class="fas fa-filter mr-2"></i>Apply Filter
-          </button>
-        </div>
+      <!-- Apply Filter Button -->
+      <div class="w-full sm:w-auto">
+        <button id="applyFilter"
+          class="w-full sm:w-auto px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
+          <i class="fas fa-filter mr-2"></i>Apply Filter
+        </button>
+      </div>
 
-        <!-- Download Buttons -->
-        <div class="w-full sm:w-auto flex gap-2">
-          <button id="downloadPDF"
-            class="w-full sm:w-auto px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors">
-            <i class="fas fa-file-pdf mr-2"></i>PDF
-          </button>
-          <button id="downloadExcel"
-            class="w-full sm:w-auto px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors">
-            <i class="fas fa-file-excel mr-2"></i>Excel
-          </button>
-        </div>
+      <!-- Download Buttons -->
+      <div class="w-full sm:w-auto flex gap-2">
+        <button id="downloadPDF"
+          class="w-full sm:w-auto px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors">
+          <i class="fas fa-file-pdf mr-2"></i>PDF
+        </button>
+        <button id="downloadExcel"
+          class="w-full sm:w-auto px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors">
+          <i class="fas fa-file-excel mr-2"></i>Excel
+        </button>
       </div>
     </div>
+  </div>
 
-    <!-- Summary Cards -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6">
-      <div class="bg-white rounded-lg shadow-sm p-4 sm:p-6 border-l-4 border-blue-500">
-        <div class="flex justify-between">
-          <div>
-            <p class="text-sm font-medium text-gray-500">Overall Sales Count</p>
-            <h3 class="text-xl sm:text-2xl font-bold" id="totalSalesCount">
-              <%=totalSalesCount || 0%>
-            </h3>
-            <p class="text-xs text-blue-500 mt-1">
-              <i class="fas fa-shopping-cart mr-1"></i> Total Orders
-            </p>
-          </div>
-          <div class="h-12 w-12 rounded-full bg-blue-100 flex items-center justify-center">
-            <i class="fas fa-chart-line text-blue-500"></i>
-          </div>
+  <!-- Summary Cards -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6">
+    <div class="bg-white rounded-lg shadow-sm p-4 sm:p-6 border-l-4 border-blue-500">
+      <div class="flex justify-between">
+        <div>
+          <p class="text-sm font-medium text-gray-500">Overall Sales Count</p>
+          <h3 class="text-xl sm:text-2xl font-bold" id="totalSalesCount">
+            <%= totalSalesCount || 0 %>
+          </h3>
+          <p class="text-xs text-blue-500 mt-1">
+            <i class="fas fa-shopping-cart mr-1"></i> Total Orders
+          </p>
         </div>
-      </div>
-
-      <div class="bg-white rounded-lg shadow-sm p-4 sm:p-6 border-l-4 border-green-500">
-        <div class="flex justify-between">
-          <div>
-            <p class="text-sm font-medium text-gray-500">Order Amount</p>
-            <h3 class="text-xl sm:text-2xl font-bold" id="totalOrderAmount">
-              ₹<%=(totalOrderAmount || 0).toLocaleString('en-IN')%>
-            </h3>
-            <p class="text-xs text-green-500 mt-1">
-              <i class="fas fa-rupee-sign mr-1"></i> Gross Revenue
-            </p>
-          </div>
-          <div class="h-12 w-12 rounded-full bg-green-100 flex items-center justify-center">
-            <i class="fas fa-dollar-sign text-green-500"></i>
-          </div>
-        </div>
-      </div>
-
-      <div class="bg-white rounded-lg shadow-sm p-4 sm:p-6 border-l-4 border-yellow-500">
-        <div class="flex justify-between">
-          <div>
-            <p class="text-sm font-medium text-gray-500">Total Discount</p>
-            <h3 class="text-xl sm:text-2xl font-bold" id="totalDiscount">
-              ₹<%=(totalDiscount || 0).toLocaleString('en-IN')%>
-            </h3>
-            <p class="text-xs text-yellow-600 mt-1">
-              <i class="fas fa-tags mr-1"></i> Discounts Given
-            </p>
-          </div>
-          <div class="h-12 w-12 rounded-full bg-yellow-100 flex items-center justify-center">
-            <i class="fas fa-percentage text-yellow-500"></i>
-          </div>
-        </div>
-      </div>
-
-      <div class="bg-white rounded-lg shadow-sm p-4 sm:p-6 border-l-4 border-purple-500">
-        <div class="flex justify-between">
-          <div>
-            <p class="text-sm font-medium text-gray-500">Net Sales</p>
-            <h3 class="text-xl sm:text-2xl font-bold" id="netSales">
-              ₹<%=((totalOrderAmount || 0) - (totalDiscount || 0)).toLocaleString('en-IN')%>
-            </h3>
-            <p class="text-xs text-purple-500 mt-1">
-              <i class="fas fa-chart-bar mr-1"></i> After Discounts
-            </p>
-          </div>
-          <div class="h-12 w-12 rounded-full bg-purple-100 flex items-center justify-center">
-            <i class="fas fa-calculator text-purple-500"></i>
-          </div>
+        <div class="h-12 w-12 rounded-full bg-blue-100 flex items-center justify-center">
+          <i class="fas fa-chart-line text-blue-500"></i>
         </div>
       </div>
     </div>
 
-    <!-- Sales Report Table -->
-    <div class="bg-white rounded-lg shadow-sm overflow-hidden">
-      <div class="px-4 sm:px-6 py-4 flex justify-between items-center border-b border-gray-200">
-        <h3 class="text-lg font-semibold">Sales Report</h3>
-        <div class="text-sm text-gray-500">
-          <span id="reportPeriodText">All Time</span>
+    <div class="bg-white rounded-lg shadow-sm p-4 sm:p-6 border-l-4 border-green-500">
+      <div class="flex justify-between">
+        <div>
+          <p class="text-sm font-medium text-gray-500">Order Amount</p>
+          <h3 class="text-xl sm:text-2xl font-bold" id="totalOrderAmount">
+            ₹<%= (totalOrderAmount || 0).toLocaleString('en-IN') %>
+          </h3>
+          <p class="text-xs text-green-500 mt-1">
+            <i class="fas fa-rupee-sign mr-1"></i> Gross Revenue
+          </p>
+        </div>
+        <div class="h-12 w-12 rounded-full bg-green-100 flex items-center justify-center">
+          <i class="fas fa-dollar-sign text-green-500"></i>
         </div>
       </div>
+    </div>
 
-      <div class="overflow-x-auto">
-        <table class="w-full divide-y divide-gray-200">
-          <thead class="bg-gray-50">
-            <tr>
-              <th scope="col"
-                class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Order ID
-              </th>
-              <th scope="col"
-                class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Date
-              </th>
-              <th scope="col"
-                class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Product Name
-              </th>
-              <th scope="col"
-                class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Customer
-              </th>
-              <th scope="col"
-                class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Payment Method
-              </th>
-              <th scope="col"
-                class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Status
-              </th>
-              <th scope="col"
-                class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Discount
-              </th>
-              <th scope="col"
-                class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Total
-              </th>
-            </tr>
-          </thead>
-          <tbody id="salesTableBody" class="bg-white divide-y divide-gray-200">
-            <% if (typeof salesData !=='undefined' && salesData.length> 0) { %>
-              <% salesData.forEach(sale=> { %>
-                <tr>
-                  <td class="px-3 sm:px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    #<%= sale.orderId %>
-                  </td>
-                  <td class="px-3 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    <%= new Date(sale.createdAt).toLocaleDateString('en-GB') %>
-                  </td>
-                  <td class="px-3 sm:px-6 py-4 text-sm text-gray-900">
-                    <% if (sale.orderedItems && sale.orderedItems.length> 0) { %>
-                      <%= sale.orderedItems[0].productName %>
-                        <% if (sale.orderedItems.length> 1) { %>
-                          <span class="text-xs text-gray-500">(+<%= sale.orderedItems.length - 1 %> more)</span>
-                          <% } %>
-                            <% } else { %>
-                              N/A
-                              <% } %>
-                  </td>
-                  <td class="px-3 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    <%= sale.userId?.name || 'Guest' %>
-                      <div class="text-xs text-gray-500">
-                        <%= sale.userId?.email || 'N/A' %>
-                      </div>
-                  </td>
-                  <td class="px-3 sm:px-6 py-4 whitespace-nowrap">
-                    <span class="px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800 uppercase">
-                      <%= sale.paymentMethod || 'N/A' %>
-                    </span>
-                  </td>
-                  <td class="px-3 sm:px-6 py-4 whitespace-nowrap">
-                    <% if (sale.status==='delivered' ) { %>
-                      <span
-                        class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                        Delivered
-                      </span>
-                      <% } else if (sale.status==='cancelled' ) { %>
-                        <span
-                          class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
-                          Cancelled
-                        </span>
-                        <% } else if (sale.status==='shipped' ) { %>
-                          <span
-                            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-100 text-purple-800">
-                            Shipped
-                          </span>
-                          <% } else if (sale.status==='confirmed' ) { %>
-                            <span
-                              class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
-                              Confirmed
-                            </span>
-                            <% } else { %>
-                              <span
-                                class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
-                                <%= sale.status || 'Pending' %>
-                              </span>
-                              <% } %>
-                  </td>
-                  <td class="px-3 sm:px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    ₹<%= (sale.discount || 0).toFixed(2) %>
-                  </td>
-                  <td class="px-3 sm:px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    ₹<%= sale.finalAmount.toFixed(2) %>
-                  </td>
-                </tr>
-                <% }) %>
-                  <% } else { %>
-                    <tr>
-                      <td colspan="8" class="px-6 py-12 text-center text-gray-500">
-                        <div class="flex flex-col items-center">
-                          <i class="fas fa-chart-line text-4xl text-gray-300 mb-4"></i>
-                          <p class="text-lg font-medium">No sales data found</p>
-                          <p class="text-sm">Try adjusting your filter criteria</p>
-                        </div>
-                      </td>
-                    </tr>
+    <div class="bg-white rounded-lg shadow-sm p-4 sm:p-6 border-l-4 border-yellow-500">
+      <div class="flex justify-between">
+        <div>
+          <p class="text-sm font-medium text-gray-500">Total Discount</p>
+          <h3 class="text-xl sm:text-2xl font-bold" id="totalDiscount">
+            ₹<%= (totalDiscount || 0).toLocaleString('en-IN') %>
+          </h3>
+          <p class="text-xs text-yellow-600 mt-1">
+            <i class="fas fa-tags mr-1"></i> Discounts Given
+          </p>
+        </div>
+        <div class="h-12 w-12 rounded-full bg-yellow-100 flex items-center justify-center">
+          <i class="fas fa-percentage text-yellow-500"></i>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-sm p-4 sm:p-6 border-l-4 border-purple-500">
+      <div class="flex justify-between">
+        <div>
+          <p class="text-sm font-medium text-gray-500">Net Sales</p>
+          <h3 class="text-xl sm:text-2xl font-bold" id="netSales">
+            ₹<%= ((totalOrderAmount || 0) - (totalDiscount || 0)).toLocaleString('en-IN') %>
+          </h3>
+          <p class="text-xs text-purple-500 mt-1">
+            <i class="fas fa-chart-bar mr-1"></i> After Discounts
+          </p>
+        </div>
+        <div class="h-12 w-12 rounded-full bg-purple-100 flex items-center justify-center">
+          <i class="fas fa-calculator text-purple-500"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sales Report Table -->
+  <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+    <div class="px-4 sm:px-6 py-4 flex justify-between items-center border-b border-gray-200">
+      <h3 class="text-lg font-semibold">Sales Report</h3>
+      <div class="text-sm text-gray-500">
+        <span id="reportPeriodText">All Time</span>
+      </div>
+    </div>
+
+    <div class="overflow-x-auto">
+      <table class="w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th scope="col"
+              class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Order ID
+            </th>
+            <th scope="col"
+              class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Date
+            </th>
+            <th scope="col"
+              class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Product Name
+            </th>
+            <th scope="col"
+              class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Customer
+            </th>
+            <th scope="col"
+              class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Payment Method
+            </th>
+            <th scope="col"
+              class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Status
+            </th>
+            <th scope="col"
+              class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Discount
+            </th>
+            <th scope="col"
+              class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Total
+            </th>
+          </tr>
+        </thead>
+        <tbody id="salesTableBody" class="bg-white divide-y divide-gray-200">
+          <% if (salesData && salesData.length > 0) { %>
+            <% salesData.forEach(sale => { %>
+              <tr>
+                <td class="px-3 sm:px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                  #<%= sale.orderId %>
+                </td>
+                <td class="px-3 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <%= new Date(sale.createdAt).toLocaleDateString('en-GB') %>
+                </td>
+                <td class="px-3 sm:px-6 py-4 text-sm text-gray-900">
+                  <% if (sale.orderedItems && sale.orderedItems.length > 0) { %>
+                    <%= sale.orderedItems[0].productName %>
+                    <% if (sale.orderedItems.length > 1) { %>
+                      <span class="text-xs text-gray-500">(+<%= sale.orderedItems.length - 1 %> more)</span>
                     <% } %>
-          </tbody>
-        </table>
-      </div>
+                  <% } else { %>
+                    N/A
+                  <% } %>
+                </td>
+                <td class="px-3 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <%= sale.userId?.name || 'Guest' %>
+                  <div class="text-xs text-gray-500">
+                    <%= sale.userId?.email || 'N/A' %>
+                  </div>
+                </td>
+                <td class="px-3 sm:px-6 py-4 whitespace-nowrap">
+                  <span class="px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800 uppercase">
+                    <%= sale.paymentMethod || 'N/A' %>
+                  </span>
+                </td>
+                <td class="px-3 sm:px-6 py-4 whitespace-nowrap">
+                  <% if (sale.status === 'delivered') { %>
+                    <span
+                      class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                      Delivered
+                    </span>
+                  <% } else if (sale.status === 'cancelled') { %>
+                    <span
+                      class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                      Cancelled
+                    </span>
+                  <% } else if (sale.status === 'shipped') { %>
+                    <span
+                      class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-100 text-purple-800">
+                      Shipped
+                    </span>
+                  <% } else if (sale.status === 'confirmed') { %>
+                    <span
+                      class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                      Confirmed
+                    </span>
+                  <% } else { %>
+                    <span
+                      class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                      <%= sale.status || 'Pending' %>
+                    </span>
+                  <% } %>
+                </td>
+                <td class="px-3 sm:px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                  ₹<%= (sale.discount || 0).toFixed(2) %>
+                </td>
+                <td class="px-3 sm:px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                  ₹<%= sale.finalAmount.toFixed(2) %>
+                </td>
+              </tr>
+            <% }) %>
+          <% } else { %>
+            <tr>
+              <td colspan="8" class="px-6 py-12 text-center text-gray-500">
+                <div class="flex flex-col items-center">
+                  <i class="fas fa-chart-line text-4xl text-gray-300 mb-4"></i>
+                  <p class="text-lg font-medium">No sales data found</p>
+                  <p class="text-sm">Try adjusting your filter criteria</p>
+                </div>
+              </td>
+            </tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
 
-      <!-- Pagination -->
-      <div class="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
-        <div class="flex-1 flex flex-col sm:flex-row sm:items-center sm:justify-between">
-          <div class="mb-2 sm:mb-0">
-            <p class="text-sm text-gray-700">
-              Showing <span class="font-medium">1</span> to <span class="font-medium">10</span> of
-              <span class="font-medium">20</span> results
-            </p>
-          </div>
-          <div>
-            <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
-              <a href="#"
-                class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
-                <i class="fas fa-chevron-left"></i>
+    <!-- Pagination -->
+    <div class="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
+      <div class="flex-1 flex flex-col sm:flex-row sm:items-center sm:justify-between">
+        <div class="mb-2 sm:mb-0">
+          <p class="text-sm text-gray-700">
+            Showing
+            <span class="font-medium"><%= (page - 1) * limit + 1 %></span> to
+            <span class="font-medium"><%= Math.min(page * limit, totalSalesCount) %></span> of
+            <span class="font-medium"><%= totalSalesCount %></span> results
+          </p>
+        </div>
+        <div>
+          <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+            <!-- Previous Button -->
+            <a href="<%= page > 1 ? `/admin/sales-report?page=${page - 1}&reportType=${reportType}${reportType === 'custom' ? `&dateFrom=${dateFrom}&dateTo=${dateTo}` : ''}` : '#' %>"
+              class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 <%= page === 1 ? 'cursor-not-allowed' : '' %>">
+              <i class="fas fa-chevron-left"></i>
+            </a>
+            <!-- Page Numbers -->
+            <% 
+              const totalPages = Math.ceil(totalSalesCount / limit);
+              const maxPagesToShow = 5;
+              let startPage = Math.max(1, page - Math.floor(maxPagesToShow / 2));
+              let endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
+              if (endPage - startPage + 1 < maxPagesToShow) {
+                startPage = Math.max(1, endPage - maxPagesToShow + 1);
+              }
+              for (let i = startPage; i <= endPage; i++) { 
+            %>
+              <a href="/admin/sales-report?page=<%= i %>&reportType=<%= reportType %><%= reportType === 'custom' ? `&dateFrom=${dateFrom}&dateTo=${dateTo}` : '' %>"
+                class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium <%= i === page ? 'bg-blue-50 text-blue-600' : 'text-gray-700 hover:bg-gray-50' %>">
+                <%= i %>
               </a>
-              <a href="#"
-                class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">1</a>
-              <a href="#"
-                class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-blue-50 text-sm font-medium text-blue-600">2</a>
-              <a href="#"
-                class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">3</a>
-              <a href="#"
-                class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
-                <i class="fas fa-chevron-right"></i>
-              </a>
-            </nav>
-          </div>
+            <% } %>
+            <!-- Next Button -->
+            <a href="<%= page < totalPages ? `/admin/sales-report?page=${page + 1}&reportType=${reportType}${reportType === 'custom' ? `&dateFrom=${dateFrom}&dateTo=${dateTo}` : ''}` : '#' %>"
+              class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 <%= page === totalPages ? 'cursor-not-allowed' : '' %>">
+              <i class="fas fa-chevron-right"></i>
+            </a>
+          </nav>
         </div>
       </div>
     </div>
   </div>
+</div>
 
-  <!-- Loading Overlay -->
-  <div id="loadingOverlay" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden z-50">
-    <div class="bg-white rounded-lg p-6 flex items-center space-x-3" role="status" aria-live="polite">
-      <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
-      <span class="text-gray-700">Loading report...</span>
-    </div>
+<!-- Loading Overlay -->
+<div id="loadingOverlay" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden z-50">
+  <div class="bg-white rounded-lg p-6 flex items-center space-x-3" role="status" aria-live="polite">
+    <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
+    <span class="text-gray-700">Loading report...</span>
   </div>
+</div>
 
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      const reportTypeSelect = document.getElementById('reportType');
-      const dateFromContainer = document.getElementById('dateFromContainer');
-      const dateToContainer = document.getElementById('dateToContainer');
-      const dateFromInput = document.getElementById('dateFrom');
-      const dateToInput = document.getElementById('dateTo');
-      const applyFilterBtn = document.getElementById('applyFilter');
-      const downloadPDFBtn = document.getElementById('downloadPDF');
-      const downloadExcelBtn = document.getElementById('downloadExcel');
-      const loadingOverlay = document.getElementById('loadingOverlay');
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const reportTypeSelect = document.getElementById('reportType');
+    const dateFromContainer = document.getElementById('dateFromContainer');
+    const dateToContainer = document.getElementById('dateToContainer');
+    const dateFromInput = document.getElementById('dateFrom');
+    const dateToInput = document.getElementById('dateTo');
+    const applyFilterBtn = document.getElementById('applyFilter');
+    const downloadPDFBtn = document.getElementById('downloadPDF');
+    const downloadExcelBtn = document.getElementById('downloadExcel');
+    const loadingOverlay = document.getElementById('loadingOverlay');
 
-      // Toggle date inputs visibility based on report type
-      function toggleDateInputs() {
-        const isCustom = reportTypeSelect.value === 'custom';
-        dateFromContainer.classList.toggle('hidden', !isCustom);
-        dateToContainer.classList.toggle('hidden', !isCustom);
-      }
+    // Toggle date inputs visibility based on report type
+    function toggleDateInputs() {
+      const isCustom = reportTypeSelect.value === 'custom';
+      dateFromContainer.classList.toggle('hidden', !isCustom);
+      dateToContainer.classList.toggle('hidden', !isCustom);
+    }
 
-      // Set default dates
+    // Set default dates if not provided
+    if (!dateFromInput.value || !dateToInput.value) {
       const today = new Date();
       const lastMonth = new Date(today.getFullYear(), today.getMonth() - 1, today.getDate());
       dateFromInput.value = lastMonth.toISOString().split('T')[0];
       dateToInput.value = today.toISOString().split('T')[0];
+    }
 
-      // Initial toggle
-      toggleDateInputs();
+    // Initial toggle
+    toggleDateInputs();
 
-      // Report type change handler
-      reportTypeSelect.addEventListener('change', toggleDateInputs);
+    // Report type change handler
+    reportTypeSelect.addEventListener('change', toggleDateInputs);
 
-      // Apply filter function
-      applyFilterBtn.addEventListener('click', function () {
-        const reportType = reportTypeSelect.value;
-        const dateFrom = dateFromInput.value;
-        const dateTo = dateToInput.value;
+    // Apply filter function
+    applyFilterBtn.addEventListener('click', function () {
+      const reportType = reportTypeSelect.value;
+      const dateFrom = dateFromInput.value;
+      const dateTo = dateToInput.value;
 
-        // Validate dates for custom range
-        if (reportType === 'custom' && (!dateFrom || !dateTo)) {
+      // Validate dates for custom range
+      if (reportType === 'custom') {
+        if (!dateFrom || !dateTo) {
           showToast('Please select both start and end dates for custom range.', 'error');
           return;
         }
-
-        // Show loading
-        loadingOverlay.classList.remove('hidden');
-
-        // Build filter params
-        const params = new URLSearchParams({
-          reportType: reportType
-        });
-
-        if (reportType === 'custom') {
-          if (dateFrom) params.append('dateFrom', dateFrom);
-          if (dateTo) params.append('dateTo', dateTo);
-        }
-
-        // Redirect to filtered page
-        window.location.href = `/admin/sales-report?${params.toString()}`;
-      });
-
-      // Download PDF
-      downloadPDFBtn.addEventListener('click', function () {
-        const reportType = reportTypeSelect.value;
-        const dateFrom = dateFromInput.value;
-        const dateTo = dateToInput.value;
-
-        if (reportType === 'custom' && (!dateFrom || !dateTo)) {
-          showToast('Please select both start and end dates for custom range.', 'error');
+        if (new Date(dateTo) < new Date(dateFrom)) {
+          showToast('End date cannot be earlier than start date.', 'error');
           return;
-        }
-
-        const params = new URLSearchParams({
-          reportType: reportType,
-          format: 'pdf'
-        });
-
-        if (reportType === 'custom') {
-          if (dateFrom) params.append('dateFrom', dateFrom);
-          if (dateTo) params.append('dateTo', dateTo);
-        }
-
-        loadingOverlay.classList.remove('hidden');
-
-        const link = document.createElement('a');
-        link.href = `/admin/sales-report/download?${params.toString()}`;
-        link.download = `sales_report_${reportType}_${new Date().toISOString().split('T')[0]}.pdf`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-
-        setTimeout(() => {
-          loadingOverlay.classList.add('hidden');
-        }, 2000);
-      });
-
-      // Download Excel
-      downloadExcelBtn.addEventListener('click', function () {
-        const reportType = reportTypeSelect.value;
-        const dateFrom = dateFromInput.value;
-        const dateTo = dateToInput.value;
-
-        if (reportType === 'custom' && (!dateFrom || !dateTo)) {
-          showToast('Please select both start and end dates for custom range.', 'error');
-          return;
-        }
-
-        const params = new URLSearchParams({
-          reportType: reportType,
-          format: 'excel'
-        });
-
-        if (reportType === 'custom') {
-          if (dateFrom) params.append('dateFrom', dateFrom);
-          if (dateTo) params.append('dateTo', dateTo);
-        }
-
-        loadingOverlay.classList.remove('hidden');
-
-        const link = document.createElement('a');
-        link.href = `/admin/sales-report/download?${params.toString()}`;
-        link.download = `sales_report_${reportType}_${new Date().toISOString().split('T')[0]}.xlsx`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-
-        setTimeout(() => {
-          loadingOverlay.classList.add('hidden');
-        }, 2000);
-      });
-
-      // Update report period text based on filter
-      function updateReportPeriodText() {
-        const reportType = reportTypeSelect.value;
-        const reportPeriodText = document.getElementById('reportPeriodText');
-
-        switch (reportType) {
-          case 'daily':
-            reportPeriodText.textContent = 'Today';
-            break;
-          case 'weekly':
-            reportPeriodText.textContent = 'This Week';
-            break;
-          case 'monthly':
-            reportPeriodText.textContent = 'This Month';
-            break;
-          case 'yearly':
-            reportPeriodText.textContent = 'This Year';
-            break;
-          case 'custom':
-            if (dateFromInput.value && dateToInput.value) {
-              reportPeriodText.textContent = `${dateFromInput.value} to ${dateToInput.value}`;
-            } else {
-              reportPeriodText.textContent = 'Custom Range';
-            }
-            break;
-          default:
-            reportPeriodText.textContent = 'All Time';
         }
       }
 
-      // Update period text on change
-      reportTypeSelect.addEventListener('change', updateReportPeriodText);
-      dateFromInput.addEventListener('change', updateReportPeriodText);
-      dateToInput.addEventListener('change', updateReportPeriodText);
+      // Show loading
+      loadingOverlay.classList.remove('hidden');
 
-      // Initialize period text
-      updateReportPeriodText();
+      // Build filter params
+      const params = new URLSearchParams({
+        reportType: reportType,
+        page: 1 // Reset to first page on filter apply
+      });
 
-      // Toast notification function
-      function showToast(message, type = 'info') {
-        const toast = document.createElement('div');
-        toast.className = `fixed top-4 right-4 px-6 py-3 rounded-lg shadow-lg z-50 ${type === 'success' ? 'bg-green-500' :
-            type === 'error' ? 'bg-red-500' :
-              type === 'warning' ? 'bg-yellow-500' : 'bg-blue-500'
-          } text-white`;
-        toast.textContent = message;
-
-        document.body.appendChild(toast);
-
-        setTimeout(() => {
-          toast.classList.add('opacity-0');
-          setTimeout(() => toast.remove(), 300);
-        }, 3000);
+      if (reportType === 'custom') {
+        if (dateFrom) params.append('dateFrom', dateFrom);
+        if (dateTo) params.append('dateTo', dateTo);
       }
 
-      window.showToast = showToast;
+      // Redirect to filtered page
+      window.location.href = `/admin/sales-report?${params.toString()}`;
     });
-  </script>
 
-  <%- include('../../views/partials/admin/footer')%>
+    // Download PDF
+    downloadPDFBtn.addEventListener('click', function () {
+      const reportType = reportTypeSelect.value;
+      const dateFrom = dateFromInput.value;
+      const dateTo = dateToInput.value;
+
+      if (reportType === 'custom') {
+        if (!dateFrom || !dateTo) {
+          showToast('Please select both start and end dates for custom range.', 'error');
+          return;
+        }
+        if (new Date(dateTo) < new Date(dateFrom)) {
+          showToast('End date cannot be earlier than start date.', 'error');
+          return;
+        }
+      }
+
+      const params = new URLSearchParams({
+        reportType: reportType,
+        format: 'pdf'
+      });
+
+      if (reportType === 'custom') {
+        if (dateFrom) params.append('dateFrom', dateFrom);
+        if (dateTo) params.append('dateTo', dateTo);
+      }
+
+      loadingOverlay.classList.remove('hidden');
+
+      const link = document.createElement('a');
+      link.href = `/admin/sales-report/download?${params.toString()}`;
+      link.download = `sales_report_${reportType}_${new Date().toISOString().split('T')[0]}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      setTimeout(() => {
+        loadingOverlay.classList.add('hidden');
+      }, 2000);
+    });
+
+    // Download Excel
+    downloadExcelBtn.addEventListener('click', function () {
+      const reportType = reportTypeSelect.value;
+      const dateFrom = dateFromInput.value;
+      const dateTo = dateToInput.value;
+
+      if (reportType === 'custom') {
+        if (!dateFrom || !dateTo) {
+          showToast('Please select both start and end dates for custom range.', 'error');
+          return;
+        }
+        if (new Date(dateTo) < new Date(dateFrom)) {
+          showToast('End date cannot be earlier than start date.', 'error');
+          return;
+        }
+      }
+
+      const params = new URLSearchParams({
+        reportType: reportType,
+        format: 'excel'
+      });
+
+      if (reportType === 'custom') {
+        if (dateFrom) params.append('dateFrom', dateFrom);
+        if (dateTo) params.append('dateTo', dateTo);
+      }
+
+      loadingOverlay.classList.remove('hidden');
+
+      const link = document.createElement('a');
+      link.href = `/admin/sales-report/download?${params.toString()}`;
+      link.download = `sales_report_${reportType}_${new Date().toISOString().split('T')[0]}.xlsx`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      setTimeout(() => {
+        loadingOverlay.classList.add('hidden');
+      }, 2000);
+    });
+
+    // Update report period text based on filter
+    function updateReportPeriodText() {
+      const reportType = reportTypeSelect.value;
+      const reportPeriodText = document.getElementById('reportPeriodText');
+
+      switch (reportType) {
+        case 'daily':
+          reportPeriodText.textContent = 'Today';
+          break;
+        case 'weekly':
+          reportPeriodText.textContent = 'This Week';
+          break;
+        case 'monthly':
+          reportPeriodText.textContent = 'This Month';
+          break;
+        case 'yearly':
+          reportPeriodText.textContent = 'This Year';
+          break;
+        case 'custom':
+          if (dateFromInput.value && dateToInput.value) {
+            reportPeriodText.textContent = `${new Date(dateFromInput.value).toLocaleDateString('en-GB')} to ${new Date(dateToInput.value).toLocaleDateString('en-GB')}`;
+          } else {
+            reportPeriodText.textContent = 'Custom Range';
+          }
+          break;
+        default:
+          reportPeriodText.textContent = 'All Time';
+      }
+    }
+
+    // Update period text on change
+    reportTypeSelect.addEventListener('change', updateReportPeriodText);
+    dateFromInput.addEventListener('change', updateReportPeriodText);
+    dateToInput.addEventListener('change', updateReportPeriodText);
+
+    // Initialize period text
+    updateReportPeriodText();
+
+    // Toast notification function
+    function showToast(message, type = 'info') {
+      const toast = document.createElement('div');
+      toast.className = `fixed top-4 right-4 px-6 py-3 rounded-lg shadow-lg z-50 ${
+        type === 'success' ? 'bg-green-500' :
+        type === 'error' ? 'bg-red-500' :
+        type === 'warning' ? 'bg-yellow-500' : 'bg-blue-500'
+      } text-white`;
+      toast.textContent = message;
+
+      document.body.appendChild(toast);
+
+      setTimeout(() => {
+        toast.classList.add('opacity-0');
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
+
+    window.showToast = showToast;
+  });
+</script>
+
+<%- include('../../views/partials/admin/footer') %>

@@ -547,6 +547,40 @@
             </div>
         </div>
 
+
+         <% if (recommendations && recommendations.length > 0) { %>
+                <div class="relative mt-8">
+                    <h4 class="text-xl font-semibold mb-4">YOU MAY ALSO LIKE</h4>
+                    <button class="scroll-btn left" id="scrollLeft" aria-label="Scroll left">
+                     
+                    </button>
+                   
+                    <div class="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory" id="recommendationsContainer" style="scrollbar-width: none; -ms-overflow-style: none;">
+                        <% recommendations.slice(0, 6).forEach(rec => { %>
+                            <div class="flex-none w-80 lg:w-96 bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all snap-start h-80">
+                                <a href="/productDetails?id=<%= rec._id%>" aria-label="View <%= rec.name || rec.productName %>">
+                                    <img src="<%= rec.productImage?.[0] || rec.images?.[0] || '/images/default-product.jpg' %>" class="recommendation-img" alt="<%= rec.name || rec.productName %>">
+                                </a>
+                                <div class="p-3">
+                                    <a href="/productDetails?id=<%= rec._id%>" aria-label="View <%= rec.name || rec.productName %>">
+                                        <h6 class="text-lg font-semibold mb-1 truncate"><%= rec.name || rec.productName %></h6>
+                                        <div class="flex items-baseline">
+                                            <span class="text-lg font-bold">₹<%= (rec.price || rec.salePrice).toLocaleString('en-IN') %></span>
+                                            <% if (rec.regularPrice && rec.regularPrice > (rec.price || rec.salePrice)) { %>
+                                                <span class="text-sm text-gray-500 line-through ml-2">₹<%= rec.regularPrice.toLocaleString('en-IN') %></span>
+                                                <% const discount = Math.round((rec.regularPrice - (rec.price || rec.salePrice)) / rec.regularPrice * 100); %>
+                                                <span class="text-sm bg-green-100 text-black px-2  rounded-full ml-2 font-semibold"><%= discount %>% off</span>
+                                            <% } %>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        <% }); %>
+                    </div>
+                </div>
+            <% } %>
+        
+
         <!-- Remove Cart Item Confirmation Modal -->
         <div id="removeCartModal"
             class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden z-50">
@@ -956,8 +990,8 @@
         align-items: center;
         justify-content: space-between;
         min-width: 200px;
-        padding: 1rem 1rem;
-        border-radius: 0.5rem;
+        padding: 8px 16px;
+        border-radius: 5px;
         color: white;
         font-weight: 500;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -969,7 +1003,7 @@
                 // Background color by type
                 switch (type) {
                     case 'success':
-                        toast.style.backgroundColor = '#16a34a'; // green
+                        toast.style.backgroundColor = '#15803d'; // green
                         break;
                     case 'error':
                         toast.style.backgroundColor = '#ef4444'; // red

@@ -171,7 +171,6 @@ const loadHomepage = async (req, res) => {
       isDeleted: false,
       category: { $in: categories.map(category => category._id) }
     }).populate('category'); // populate to load category data
-
     productData.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     productData = productData.slice(0, 12);
 

@@ -4,45 +4,45 @@ const User = require('../../models/userSchema')
 
 
 
-const productDetails = async(req,res)=>{
+const productDetails = async (req, res) => {
     try {
         const userId = req.session.user
         const userData = await User.findById(userId)
         const productId = req.query.id
-        const product = await Product.findById(productId).populate('category')
+        const product = await Product.findById(productId).populate('category').populate('brand')
         const findCategory = product.category
-        const categoryOffer = findCategory ?.categoryOffer||0
-        const productOffer = product.productOffer||0
+        const categoryOffer = findCategory?.categoryOffer || 0
+        const productOffer = product.productOffer || 0
         const totalOffer = categoryOffer + productOffer
-         if (!product) {
-            return res.redirect('/shop'); 
+        if (!product) {
+            return res.redirect('/shop');
         }
 
-          const recommendations = await Product.find({
+        const recommendations = await Product.find({
             isDeleted: false,
             category: product.category,
-            _id: { $ne: productId } 
+            _id: { $ne: productId }
         })
 
-         if (userData?.isBlocked) {
-    req.session.destroy(err => {
-      if (err) console.log('Session destroy error:', err);
-      return res.redirect('/login');
-    });
-    return;
-  }        
-        res.render('productDetails',{
+        if (userData?.isBlocked) {
+            req.session.destroy(err => {
+                if (err) console.log('Session destroy error:', err);
+                return res.redirect('/login');
+            });
+            return;
+        }
+        res.render('productDetails', {
             isLoggedIn: req.session.user,
-      user: userData,
-      username: userData ? userData.name : null,
-            product:product,
-            quantity:product.quantity,
-            totalOffer:totalOffer,
-            category:findCategory,
-            recommendations 
+            user: userData,
+            username: userData ? userData.name : null,
+            product: product,
+            quantity: product.quantity,
+            totalOffer: totalOffer,
+            category: findCategory,
+            recommendations
         })
     } catch (error) {
-        console.error('error for fetching product details',error)
+        console.error('error for fetching product details', error)
         res.redirect('/pageNotFound')
     }
 }

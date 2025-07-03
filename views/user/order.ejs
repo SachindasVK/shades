@@ -93,7 +93,7 @@
       display: flex;
       align-items: center;
       padding: 1rem 1.5rem;
-      color: #4b5563;
+      color: #000000;
       font-size: 0.875rem;
     }
 
@@ -246,7 +246,7 @@
       display: flex;
       align-items: flex-start;
       gap: 15px;
-      width: calc(50% - 10px); /* Adjust width for two items per row, subtract half the gap */
+      width: calc(50% - 10px);
       box-sizing: border-box;
     }
 
@@ -446,7 +446,7 @@
         flex-direction: column;
       }
       .product-item {
-        width: 100%; /* Stack items vertically on mobile */
+        width: 100%;
       }
       .order-summary {
         align-items: flex-start;
@@ -471,7 +471,7 @@
           <li class="flex items-center">
             <span class="mx-2">></span><span class="text-gray-500">Orders</span>
           </li>
-        </nav>
+        </ol>
       </div>
     </div>
     <div class="container">
@@ -554,7 +554,7 @@
         <div class="filter-group">
           <div>
             <label class="form-label" for="statusFilter">Filter by Status</label>
-            <select id="statusFilter" class="form-select" onchange="applyFilters()">
+            <select id="statusFilter" class="form-select" onchange="applyFilters(1)">
               <option value="All">All Statuses</option>
               <option value="pending">Pending</option>
               <option value="confirmed">Confirmed</option>
@@ -569,7 +569,7 @@
           </div>
           <div>
             <label class="form-label" for="timeFilter">Filter by Time</label>
-            <select id="timeFilter" class="form-select" onchange="applyFilters()">
+            <select id="timeFilter" class="form-select" onchange="applyFilters(1)">
               <option value="All">All Time</option>
               <option value="Last30Days">Last 30 Days</option>
               <option value="Last3Months">Last 3 Months</option>
@@ -587,17 +587,24 @@
                   </div>
                   <div class="order-id">Order Id- #<%= order.orderId %>
                   </div>
-                  <% if (order.paymentMethod === 'online' && order.status === 'failed') { %>
-                   <button type="button"
-        class="retry-payment-btn"
-        data-id="<%= order._id %>"
-        data-amount="<%= order.finalAmount * 100 %>">
-  <i class="fas fa-redo-alt" style="font-size: 0.875rem;"></i> Retry Payment
-</button>
+                 <%
+  const retryTimeLimit = 1 * 60 * 1000; // 15 minutes
+  const orderCreatedTime = new Date(order.createdOn).getTime();
+  const currentTime = Date.now();
+  const isRetryAllowed = currentTime - orderCreatedTime <= retryTimeLimit;
+%>
 
-                    <% } else { %>
-                      <a href="/order/details/<%= order._id %>" class="view-link">View Order Details</a>
-                      <% } %>
+<% if (order.paymentMethod === 'online' && order.status === 'failed') { %>
+  <% if (isRetryAllowed) { %>
+    <button type="button" class="retry-payment-btn" data-id="<%= order._id %>" data-amount="<%= order.finalAmount * 100 %>">
+      <i class="fas fa-redo-alt" style="font-size: 0.875rem;"></i> Retry Payment
+    </button>
+  <% } %>
+  <span class="payment-failed-tag">Payment Failed</span>
+<% } else { %>
+  <a href="/order/details/<%= order._id %>" class="view-link">View Order Details</a>
+<% } %>
+
                 </div>
 
                 <div class="order-content">
@@ -670,333 +677,361 @@
 
     <!-- Footer Partial -->
     <%- include("../../views/partials/user/footer") %>
-<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-      <script>
-        let allOrders = [];
-        let filteredOrders = [];
-        let currentPage = 1;
-        const ordersPerPage = 5;
+    <script>
+      let currentPage = 1;
+      const ordersPerPage = 5;
 
-       function showToast(message, type = 'info') {
-    let toastContainer = document.querySelector('.toast-container');
-    if (!toastContainer) {
-        toastContainer = document.createElement('div');
-        toastContainer.className = 'toast-container';
-        toastContainer.style.position = 'fixed';
-        toastContainer.style.top = '20px';
-        toastContainer.style.right = '20px';
-        toastContainer.style.zIndex = '9999';
-        toastContainer.style.display = 'flex';
-        toastContainer.style.flexDirection = 'column';
-        toastContainer.style.gap = '10px';
-        document.body.appendChild(toastContainer);
-    }
+      function showToast(message, type = 'info') {
+        let toastContainer = document.querySelector('.toast-container') || document.getElementById('toastContainer');
+        if (!toastContainer) {
+          toastContainer = document.createElement('div');
+          toastContainer.className = 'toast-container';
+          toastContainer.style.position = 'fixed';
+          toastContainer.style.top = '20px';
+          toastContainer.style.right = '20px';
+          toastContainer.style.zIndex = '9999';
+          toastContainer.style.display = 'flex';
+          toastContainer.style.flexDirection = 'column';
+          toastContainer.style.gap = '10px';
+          document.body.appendChild(toastContainer);
+        }
 
-    const toastId = 'toast-' + Date.now();
-    const toast = document.createElement('div');
+        const toastId = 'toast-' + Date.now();
+        const toast = document.createElement('div');
 
-    // Choose colors based on toast type
-    let bgColor, borderColor;
-    switch (type) {
-        case 'success':
-            bgColor = '#16a34a';  // green
-            borderColor = '#16a34a';
+        let bgColor, borderColor;
+        switch (type) {
+          case 'success':
+            bgColor = '#15803d';
+            borderColor = '#15803d';
             break;
-        case 'error':
-            bgColor = '#dc2626';  // red
+          case 'error':
+            bgColor = '#dc2626';
             borderColor = '#dc2626';
             break;
-        case 'info':
-        default:
-            bgColor = '#2563eb';  // blue
+          case 'info':
+          default:
+            bgColor = '#2563eb';
             borderColor = '#2563eb';
-    }
-
-    // Apply toast styles
-    toast.style.cssText = `
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        background-color: ${bgColor};
-        border-left: 4px solid ${borderColor};
-        color: white;
-        padding: 5px 16px;
-        border-radius: 5px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        max-width: 400px;
-        width: 100%;
-        opacity: 0;
-        transform: translateY(20px);
-        transition: opacity 0.3s ease, transform 0.3s ease;
-    `;
-
-    toast.id = toastId;
-    toast.setAttribute('role', 'alert');
-    toast.setAttribute('aria-live', 'assertive');
-    toast.setAttribute('aria-atomic', 'true');
-
-    toast.innerHTML = `
-        <div style="flex: 1; font-size: 14px;">${message}</div>
-        <button type="button" style="margin-left: 12px; background: none; border: none; color: white; font-size: 16px; cursor: pointer;" data-toast-id="${toastId}">
-            &times;
-        </button>
-    `;
-
-    toastContainer.appendChild(toast);
-
-    // Animate toast in
-    setTimeout(() => {
-        toast.style.opacity = '1';
-        toast.style.transform = 'translateY(0)';
-    }, 100);
-
-    // Close on click
-    const closeButton = toast.querySelector(`[data-toast-id="${toastId}"]`);
-    closeButton.addEventListener('click', () => {
-        toast.style.opacity = '0';
-        toast.style.transform = 'translateY(20px)';
-        setTimeout(() => toast.remove(), 300);
-    });
-
-    // Auto dismiss after 1.5s
-    setTimeout(() => {
-        toast.style.opacity = '0';
-        toast.style.transform = 'translateY(20px)';
-        setTimeout(() => toast.remove(), 300);
-    }, 1500);
-}
-
-
-        function showLoading() {
-          const orderList = document.getElementById("orderList");
-          orderList.innerHTML = `
-        <div style="text-align: center; padding: 2rem;">
-            <i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: #6b7280;"></i>
-            <p style="margin-top: 1rem; color: #6b7280;">Loading orders...</p>
-        </div>
-    `;
         }
 
-        async function applyFilters(page = 1) {
-          const statusFilter = document.getElementById("statusFilter").value;
-          const timeFilter = document.getElementById("timeFilter").value;
+        toast.style.cssText = `
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          background-color: ${bgColor};
+          border-left: 4px solid ${borderColor};
+          color: white;
+          padding: 8px 16px;
+          border-radius: 5px;
+          box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+          max-width: 400px;
+          width: 100%;
+          opacity: 0;
+          transform: translateY(20px);
+          transition: opacity 0.3s ease, transform 0.3s ease;
+        `;
 
-          try {
-            showLoading();
+        toast.id = toastId;
+        toast.setAttribute('role', 'alert');
+        toast.setAttribute('aria-live', 'assertive');
+        toast.setAttribute('aria-atomic', 'true');
 
-            const params = new URLSearchParams();
-            if (statusFilter !== "All") params.append("status", statusFilter);
-            if (timeFilter !== "All") params.append("timeFilter", timeFilter);
-            params.append("page", page);
-            params.append("limit", ordersPerPage);
+        toast.innerHTML = `
+          <div style="flex: 1; font-size: 14px;">${message}</div>
+          <button type="button" style="margin-left: 12px; background: none; border: none; color: white; font-size: 16px; cursor: pointer;" data-toast-id="${toastId}">
+            ×
+          </button>
+        `;
 
-            const response = await fetch(`/orders?${params.toString()}`, {
-              method: "GET",
-              headers: {
-                Accept: "application/json",
-                "X-Requested-With": "XMLHttpRequest",
-              },
-            });
+        toastContainer.appendChild(toast);
 
-            if (!response.ok) {
-              throw new Error("Failed to fetch orders");
-            }
+        setTimeout(() => {
+          toast.style.opacity = '1';
+          toast.style.transform = 'translateY(0)';
+        }, 100);
 
-            const data = await response.json();
+        const closeButton = toast.querySelector(`[data-toast-id="${toastId}"]`);
+        closeButton.addEventListener('click', () => {
+          toast.style.opacity = '0';
+          toast.style.transform = 'translateY(20px)';
+          setTimeout(() => toast.remove(), 300);
+        });
 
-            if (data.success) {
-              currentPage = page;
-              displayOrders(data.orders);
-              updatePaginationControls(data.pagination);
-            } else {
-              showToast("Error loading orders", "error");
-            }
-          } catch (error) {
-            console.error("Filter error:", error);
-            showToast("Error loading orders", "error");
-            displayNoOrders();
-          }
-        }
-
-        function initializeOrders() {
-          const orderItems = document.querySelectorAll(".order-item");
-          allOrders = Array.from(orderItems).map((item) => {
-            const dateStr = item.getAttribute("data-date");
-            const status = item.getAttribute("data-status");
-
-            return {
-              element: item,
-              status: status ? status.trim() : "",
-              date: dateStr ? new Date(dateStr) : new Date(),
-            };
-          });
-
-          console.log(
-            "Initialized orders:",
-            allOrders.map((o) => ({ status: o.status, date: o.date }))
-          );
-
-          filteredOrders = [...allOrders];
-          displayOrders();
-          updatePaginationControls();
-        }
-
-        function displayOrders(orders = filteredOrders) {
-          const orderList = document.getElementById("orderList");
-
-          const existingOrders = orderList.querySelectorAll(".order-item");
-          existingOrders.forEach((order) => (order.style.display = "none"));
-
-          const noOrdersMsg = orderList.querySelector(".no-orders");
-          if (noOrdersMsg) {
-            noOrdersMsg.remove();
-          }
-
-          if (orders.length === 0) {
-            const noOrdersDiv = document.createElement("div");
-            noOrdersDiv.className = "no-orders";
-            noOrdersDiv.innerHTML = `
-                    <i class="fas fa-search" style="font-size: 3rem; margin-bottom: 1rem; color: #d1d5db;"></i>
-                    <p>No orders match the selected filters.</p>
-                `;
-            orderList.appendChild(noOrdersDiv);
-            return;
-          }
-
-          const startIndex = (currentPage - 1) * ordersPerPage;
-          const endIndex = startIndex + ordersPerPage;
-          const ordersToDisplay = orders.slice(startIndex, endIndex);
-
-          ordersToDisplay.forEach((order) => {
-            order.element.style.display = "block";
-          });
-        }
-
-        function updatePaginationControls(pagination = {}) {
-          const paginationDiv = document.getElementById("pagination");
-          paginationDiv.innerHTML = "";
-
-          if (filteredOrders.length === 0) return;
-
-          const totalPages = pagination.totalPages || Math.ceil(filteredOrders.length / ordersPerPage);
-          const totalOrders = pagination.totalOrders || filteredOrders.length;
-          const startIndex = (currentPage - 1) * ordersPerPage + 1;
-          const endIndex = Math.min(currentPage * ordersPerPage, totalOrders);
-
-          const prevBtn = document.createElement("button");
-          prevBtn.className = `pagination-btn ${currentPage === 1 ? "disabled" : ""}`;
-          prevBtn.textContent = "Previous";
-          prevBtn.onclick = () => {
-            if (currentPage > 1) {
-              applyFilters(currentPage - 1);
-            }
-          };
-          paginationDiv.appendChild(prevBtn);
-
-          const nextBtn = document.createElement("button");
-          nextBtn.className = `pagination-btn ${currentPage >= totalPages ? "disabled" : ""}`;
-          nextBtn.textContent = "Next";
-          nextBtn.onclick = () => {
-            if (currentPage < totalPages) {
-              applyFilters(currentPage + 1);
-            }
-          };
-          paginationDiv.appendChild(nextBtn);
-
-          const pageInfo = document.createElement("span");
-          pageInfo.className = "pagination-info";
-          pageInfo.textContent = `Showing ${startIndex}-${endIndex} of ${totalOrders} orders`;
-          paginationDiv.appendChild(pageInfo);
-        }
-
-        document.addEventListener("DOMContentLoaded", initializeOrders);
-
-
-
-        document.querySelectorAll('.retry-payment-btn').forEach(button => {
-    button.addEventListener('click', async function () {
-      const orderDbId = this.getAttribute('data-id');
-
-      try {
-        const res = await fetch(`/create-razorpay-order/${orderDbId}`);
-        const data = await res.json();
-
-        if (!data.success) {
-          return showToast('Error', 'Could not initiate payment.', 'error');
-        }
-
-        const options = {
-          key: data.razorpayKey,
-          amount: data.amount,
-          currency: "INR",
-          name: "SHADES",
-          description: "Retry Payment",
-          order_id: data.orderId,
-          handler: function (response) {
-            fetch("/verify-payment", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                ...response,
-                orderDbId
-              })
-            }).then(res => res.json())
-              .then(result => {
-                if (result.success) {
-                    window.location.href = `/order-confirmation/${orderDbId}`;
-                } else {
-                  showToast('Verification Failed', 'Could not verify payment.', 'error');
-                }
-              });
-          },
-          modal: {
-            ondismiss: function () {
-              fetch('/payment-failed', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                  orderDbId,
-                  reason: 'User cancelled the payment.'
-                })
-              });
-              
-showToast('Cancelled', 'Payment process was cancelled.', 'info');
-              
-            }
-          },
-          theme: { color: "#000000" }
-        };
-
-        const rzp = new Razorpay(options);
-
-        rzp.on('payment.failed', function (response) {
-  fetch('/payment-failed', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      orderDbId,
-      reason: response.error.description,
-      error: response.error
-    })
-  }).then(() => {
-      showToast('Payment failed. Please try again.', 'error');
-    setTimeout(()=>{
-window.location.href = '/orders?payment=failed';
-    },2000)
-  });
-});
-
-        rzp.open();
-
-      } catch (err) {
-        console.error(err);
-        Swal.fire('Error', 'Something went wrong.', 'error');
+        setTimeout(() => {
+          toast.style.opacity = '0';
+          toast.style.transform = 'translateY(20px)';
+          setTimeout(() => toast.remove(), 300);
+        }, 1500);
       }
-    });
-  });
-      </script>
+
+     
+
+      async function applyFilters(page = 1) {
+        const statusFilter = document.getElementById("statusFilter").value;
+        const timeFilter = document.getElementById("timeFilter").value;
+
+        try {
+          const params = new URLSearchParams();
+          if (statusFilter !== "All") params.append("status", statusFilter);
+          if (timeFilter !== "All") params.append("timeFilter", timeFilter);
+          params.append("page", page);
+          params.append("limit", ordersPerPage);
+
+          const response = await fetch(`/orders?${params.toString()}`, {
+            method: "GET",
+            headers: {
+              Accept: "application/json",
+              "X-Requested-With": "XMLHttpRequest",
+            },
+          });
+
+          if (!response.ok) {
+            throw new Error("Failed to fetch orders");
+          }
+
+          const data = await response.json();
+
+          if (data.success) {
+            currentPage = page;
+            renderOrders(data.orders);
+            updatePaginationControls(data.pagination);
+            // Scroll to top of the page
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          } else {
+            showToast("Error loading orders", "error");
+            renderNoOrders();
+          }
+        } catch (error) {
+          console.error("Filter error:", error);
+          showToast("Error loading orders", "error");
+          renderNoOrders();
+        }
+      }
+
+      function renderOrders(orders) {
+        const orderList = document.getElementById("orderList");
+        orderList.innerHTML = "";
+
+        if (!orders || orders.length === 0) {
+          renderNoOrders();
+          return;
+        }
+
+        orders.forEach((order) => {
+          const orderElement = document.createElement("div");
+          orderElement.className = "order-item";
+          orderElement.setAttribute("data-id", order._id);
+          orderElement.setAttribute("data-status", order.status);
+          orderElement.setAttribute("data-date", order.createdOn);
+
+          const formattedDate = new Date(order.createdOn).toLocaleDateString('en-GB', {
+            day: 'numeric',
+            month: 'short',
+            year: 'numeric'
+          });
+
+          const expectedDelivery = order.expectedDelivery
+            ? new Date(order.expectedDelivery).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
+            : 'TBD';
+
+          let actionButton = '';
+          if (order.paymentMethod === 'online' && order.status === 'failed') {
+            actionButton = `
+              <button type="button" class="retry-payment-btn" data-id="${order._id}" data-amount="${order.finalAmount * 100}">
+                <i class="fas fa-redo-alt" style="font-size: 0.875rem;"></i> Retry Payment
+              </button>
+            `;
+          } else {
+            actionButton = `<a href="/order/details/${order._id}" class="view-link">View Order Details</a>`;
+          }
+
+          orderElement.innerHTML = `
+            <div class="order-header">
+              <div class="order-date">Order-Date: ${formattedDate}</div>
+              <div class="order-id">Order Id- #${order.orderId}</div>
+              ${actionButton}
+            </div>
+            <div class="order-content">
+              <div class="product-items">
+                ${order.orderedItems.map(item => `
+                  <div class="product-item ${item.status === 'cancelled' ? 'cancelled-item' : ''}">
+                    <img src="/${item.productImages && item.productImages[0] ? item.productImages[0] : 'default-image.jpg'}" alt="Product Image" class="order-image" onerror="this.src='/default-image.jpg';" />
+                    <div class="product-info">
+                      <div class="product-name">${item.productName || 'Product Name'}</div>
+                      <div class="product-details-row">
+                        <div class="product-detail">Quantity: ${item.quantity || 1}</div>
+                        <div class="product-detail">Payment Method: ${order.paymentMethod || 'N/A'}</div>
+                        ${item.status !== 'cancelled' ? `<div class="product-detail">Expected Delivery by: ${expectedDelivery}</div>` : ''}
+                      </div>
+                      ${order.status === 'cancelled' && order.cancelReason ? `<div class="cancel-reason">Cancelled: ${order.cancelReason}</div>` : 
+                        item.status === 'cancelled' && item.cancelReason ? `<div class="cancel-reason">Cancelled: ${item.cancelReason}</div>` : ''}
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+              <div class="order-summary">
+                <div class="total-section">
+                  <div class="total-label">Total Amount</div>
+                  <div class="total-amount">₹${order.finalAmount || order.totalAmount || 0}</div>
+                </div>
+                <div class="status-section">
+                  <div class="status-label">Order Status</div>
+                  <div class="order-status ${order.status.toLowerCase()}">${order.status || 'Unknown'}</div>
+                </div>
+              </div>
+            </div>
+          `;
+
+          orderList.appendChild(orderElement);
+        });
+
+        // Re-attach event listeners for retry payment buttons
+        attachRetryPaymentListeners();
+      }
+
+      function renderNoOrders() {
+        const orderList = document.getElementById("orderList");
+        orderList.innerHTML = `
+          <div class="no-orders">
+            <i class="fas fa-box-open" style="font-size: 3rem; margin-bottom: 1rem; color: #d1d5db"></i>
+            <p>No orders found.</p>
+          </div>
+        `;
+        document.getElementById("pagination").innerHTML = "";
+      }
+
+      function updatePaginationControls(pagination) {
+        const paginationDiv = document.getElementById("pagination");
+        paginationDiv.innerHTML = "";
+
+        if (!pagination || !pagination.totalOrders) {
+          return;
+        }
+
+        const totalPages = pagination.totalPages || 1;
+        const totalOrders = pagination.totalOrders || 0;
+        const startIndex = (currentPage - 1) * ordersPerPage + 1;
+        const endIndex = Math.min(currentPage * ordersPerPage, totalOrders);
+
+        // Previous Button
+        const prevBtn = document.createElement("button");
+        prevBtn.className = `pagination-btn ${currentPage === 1 ? "disabled" : ""}`;
+        prevBtn.textContent = "Previous";
+        prevBtn.onclick = () => {
+          if (currentPage > 1) {
+            applyFilters(currentPage - 1);
+          }
+        };
+        paginationDiv.appendChild(prevBtn);
+
+        // Next Button
+        const nextBtn = document.createElement("button");
+        nextBtn.className = `pagination-btn ${currentPage >= totalPages ? "disabled" : ""}`;
+        nextBtn.textContent = "Next";
+        nextBtn.onclick = () => {
+          if (currentPage < totalPages) {
+            applyFilters(currentPage + 1);
+          }
+        };
+        paginationDiv.appendChild(nextBtn);
+
+        // Page Info
+        const pageInfo = document.createElement("span");
+        pageInfo.className = "pagination-info";
+        pageInfo.textContent = `Showing ${startIndex}-${endIndex} of ${totalOrders} orders`;
+        paginationDiv.appendChild(pageInfo);
+      }
+
+      function attachRetryPaymentListeners() {
+        document.querySelectorAll('.retry-payment-btn').forEach(button => {
+          button.addEventListener('click', async function () {
+            const orderDbId = this.getAttribute('data-id');
+
+            try {
+              const res = await fetch(`/create-razorpay-order/${orderDbId}`);
+              const data = await res.json();
+
+              if (!data.success) {
+                return showToast('Could not initiate payment.', 'error');
+              }
+
+              const options = {
+                key: data.razorpayKey,
+                amount: data.amount,
+                currency: "INR",
+                name: "SHADES",
+                description: "Retry Payment",
+                order_id: data.orderId,
+                handler: function (response) {
+                  fetch("/verify-payment", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                      ...response,
+                      orderDbId
+                    })
+                  }).then(res => res.json())
+                    .then(result => {
+                      if (result.success) {
+                        window.location.href = `/order-confirmation/${orderDbId}`;
+                      } else {
+                        showToast('Could not verify payment.', 'error');
+                      }
+                    });
+                },
+                modal: {
+                  ondismiss: function () {
+                    fetch('/payment-failed', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({
+                        orderDbId,
+                        reason: 'User cancelled the payment.'
+                      })
+                    });
+                    showToast('Payment process was cancelled.', 'info');
+                  }
+                },
+                theme: { color: "#000000" }
+              };
+
+              const rzp = new Razorpay(options);
+
+              rzp.on('payment.failed', function (response) {
+                fetch('/payment-failed', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    orderDbId,
+                    reason: response.error.description,
+                    error: response.error
+                  })
+                }).then(() => {
+                  showToast('Payment failed. Please try again.', 'error');
+                  setTimeout(() => {
+                    window.location.href = '/orders?payment=failed';
+                  }, 2000);
+                });
+              });
+
+              rzp.open();
+            } catch (err) {
+              console.error(err);
+              showToast('Something went wrong.', 'error');
+            }
+          });
+        });
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        applyFilters(1); 
+        attachRetryPaymentListeners(); 
+      });
+    </script>
 </body>
 
 </html>

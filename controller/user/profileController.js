@@ -191,7 +191,6 @@ const resendOtp = async (req, res) => {
 };
 const postNewPassword = async (req, res) => {
   try {
-    console.log("Request Body:", req.body);
     const { newPassword, confirmPassword } = req.body;
     console.log("new password", newPassword, "confirm:", confirmPassword);
 
@@ -216,7 +215,6 @@ const postNewPassword = async (req, res) => {
     }
 
     const passwordHash = await securePassword(newPassword);
-    console.log('password hashed!', passwordHash);
 
     const updateResult = await User.updateOne({ email }, { $set: { password: passwordHash } });
     if (updateResult.modifiedCount === 0) {
@@ -241,7 +239,6 @@ const postNewPassword = async (req, res) => {
     try {
         const userId = req.session.user;
         const userData = await User.findById(userId);
-        
         if (!userData) {
             return res.redirect('/login');
         }

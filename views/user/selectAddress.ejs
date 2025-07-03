@@ -207,7 +207,8 @@
                 <div
                   style="
                     display: flex;
-                    justify-content: space-between;
+                    justify-content: start;
+                    gap: 20px;
                     align-items: center;
                     margin-bottom: 0.5rem;
                   "
@@ -222,21 +223,29 @@
                     >
                       <%= address.name %>
                     </span>
-
-                    <span
-                      class="address-type-badge"
-                      style="
+ <% if (address.addressType==='Home' ) { %>
+                          <span class="address-type-badge" style="
+                        margin-left: 0.5rem;
+                        background-color: #dbeafe;
+                        color: #1e3a8a;
+                        font-size: 0.75rem;
+                        padding: 2px 8px;
+                        border-radius: 0.25rem;
+                      ">
+                            <i class="fas fa-home mr-1"></i> HOME
+                          </span>
+                          <% } else { %>
+                            <span class="address-type-badge" style="
                         margin-left: 0.5rem;
                         background-color: #d1fae5;
                         color: #065f46;
                         font-size: 0.75rem;
                         padding: 2px 8px;
                         border-radius: 0.25rem;
-                      "
-                    >
-                      <i class="fas fa-briefcase mr-1"></i> <%=
-                      address.addressType.toUpperCase() %>
-                    </span>
+                      ">
+                              <i class="fas fa-briefcase mr-1"></i> WORK
+                            </span>
+                            <% } %>
 
                     <% if (address.isDefault) { %>
                     <span
@@ -671,7 +680,7 @@
                     checked
                     id="type-home"
                   />
-                  <span>Home</span>
+                  <span><i class="fas fa-home mr-1"></i>Home</span>
                 </label>
                 <label
                   style="
@@ -687,7 +696,7 @@
                     style="accent-color: #002fff; margin-right: 0.5rem"
                     id="type-work"
                   />
-                  <span>Work</span>
+                  <span><i class="fas fa-briefcase mr-1"></i>Work</span>
                 </label>
               </div>
             </div>
@@ -1025,8 +1034,8 @@ function showNotification(message, type = 'info') {
 
     const notification = document.createElement('div');
     notification.style.cssText = `
-        padding: 1rem 1.5rem;
-        border-radius: 0.5rem;
+        padding: 8px 16px;
+        border-radius: 5px;
         color: white;
         font-weight: 500;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -1038,7 +1047,7 @@ function showNotification(message, type = 'info') {
 
     switch (type) {
         case 'success':
-            notification.style.backgroundColor = '#16a34a';
+            notification.style.backgroundColor = '#15803d';
             break;
         case 'error':
             notification.style.backgroundColor = '#dc2626';

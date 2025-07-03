@@ -9,7 +9,7 @@ const getSalesReport = async (req, res) => {
 
     // Build date filter based on reportType
    let dateFilter = {
-  status: { $in: ["delivered", "cancelled","returned"] }
+  status: "delivered"
 };
 
     const now = new Date();
@@ -162,6 +162,7 @@ const getSalesReport = async (req, res) => {
       reportType,
       dateFrom,
       dateTo,
+      page:pageNum
     });
 
   } catch (error) {

@@ -44,10 +44,23 @@ const getCart = async (req, res) => {
     }));
 
     const user = await User.findById(userId);
+    let recommendations = [];
+    if (cart.items.length > 0) {
+      const firstItem = cart.items[0];
+      const productId = firstItem.productId._id;
+      const categoryId = firstItem.productId.category._id;
+
+      recommendations = await Product.find({
+        isDeleted: false,
+        category: categoryId,
+        _id: { $ne: productId },
+      })
+    }
 
     res.render("cart", {
       username: user.name,
       cartItems,
+      recommendations
     });
   } catch (error) {
     console.log("Error in getCart:", error);

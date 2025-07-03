@@ -77,7 +77,7 @@ const loadDashboard = async (req, res) => {
             const result = await Order.aggregate([
                 {
                     $match: {
-                        status: { $in: ['confirmed', 'delivered'] }
+                        status: { $in: ['delivered'] }
                     }
                 },
                 {
