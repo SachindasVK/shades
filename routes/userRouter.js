@@ -89,6 +89,7 @@ router.get('/order/invoice/:id', userAuth, orderController.downloadInvoice)
 router.put('/order/cancel/:orderId', userAuth, orderController.cancelOrder)
 router.put('/order/cancel-item/:itemId',userAuth, orderController.cancelSingleItem)
 router.post('/order/:orderId/return', userAuth, orderController.requestReturn)
+// router.put('/order/return-item/:itemId',userAuth,orderController.returnOrderItem)
 
 //wallet management
 router.get('/wallet', userAuth, walletController.getWallet)
@@ -102,12 +103,7 @@ router.get('/wishlist', userAuth, wishlistController.loadWishlist)
 router.post('/addtowishlist', userAuth, wishlistController.addToWishlist)
 router.delete('/wishlist/remove/:id', userAuth, wishlistController.removeFromWishlist)
 router.post('/wishlist/status', userAuth, wishlistController.getWishlistStatus)
-
-//address management
-router.get('/address', userAuth, addressController.getAddress)
-router.post('/address/add', userAuth, addressController.addAddress)
-router.put('/address/update/:id', userAuth, addressController.updateAddress)
-router.delete('/address/delete/:id', userAuth, addressController.deleteAddress)
+router.get('/wishlist/count',userAuth, wishlistController.wishlistCount)
 
 //Cart management
 router.get('/cart', userAuth, cartController.getCart)
@@ -115,6 +111,13 @@ router.post('/cart/add', userAuth, cartController.addToCart)
 router.post('/cart/remove', userAuth, cartController.removeCart)
 router.post('/cart/update-quantity', userAuth, cartController.updateQuantity);
 router.post('/cart/status', userAuth, cartController.getCartStatus)
+router.get('/cart/count',userAuth,cartController.cartCount)
+
+//address management
+router.get('/address', userAuth, addressController.getAddress)
+router.post('/address/add', userAuth, addressController.addAddress)
+router.put('/address/update/:id', userAuth, addressController.updateAddress)
+router.delete('/address/delete/:id', userAuth, addressController.deleteAddress)
 
 //checkout management
 router.get('/select-address', userAuth, checkoutController.getSelectAddress)

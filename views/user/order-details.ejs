@@ -288,6 +288,8 @@
                             <% if (item.cancelReason) { %>
                                 <p class="text-xs text-gray-400 mt-1">Reason: <%= item.cancelReason %></p>
                             <% } %>
+
+                            <!-- cancel item -->
                         <% } else if ((order.status === 'pending' || order.status === 'confirmed') && item.status !== 'cancelled') { %>
                             <%if(order.orderedItems.length>1){%>
                             <button class="cancel-item-btn text-red-600 text-xs hover:underline font-medium px-2 py-1 rounded hover:bg-red-50 transition-colors"
@@ -296,7 +298,17 @@
                                 <i class="fas fa-times mr-1"></i> Cancel Item
                             </button>
                             <%}%>
-                        <% } %>
+
+                            <!-- return item -->
+                        <% }else if ((order.status === 'delivered') && item.status !== 'cancelled') { %>
+                            <%if(order.orderedItems.length>1){%>
+                            <button class="return-item-btn text-yellow-600 text-xs hover:underline font-medium px-2 py-1 rounded hover:bg-yellow-50 transition-colors"
+                                data-item-id="<%= item._id %>"
+                                data-item-name="<%= item.productName %>">
+                                <i class="fas fa-undo mr-1"></i> Return item
+                            </button>
+                            <%}%>
+                            <%}%>
                     </div>
                 </div>
             <% }); %>
@@ -526,6 +538,45 @@
         </div>
     </div>
 
+<!-- return item -->
+    <div id="returnItemModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden z-50">
+    <div class="bg-white rounded-lg p-6 w-full max-w-md mx-4 shadow-xl">
+        <div class="flex items-center mb-4">
+            <i class="fas fa-undo text-yellow-600 mr-3"></i>
+            <h2 class="text-lg font-semibold">Return Order</h2>
+             
+        </div>
+        
+        <p class="text-sm text-gray-700 mb-4">Please tell us why you want to return this item:</p>
+        <p id="returnItemName" class="text-sm font-medium text-gray-900 mb-4"></p>
+        <!-- Changed form to div to handle with JavaScript -->
+        <div id="returnForm">
+            <div class="mb-4">
+                <label for="returnItemReason" class="block text-sm font-medium text-gray-700 mb-2">Reason for return *</label>
+                <select id="returnItemReason" name="returnItemReason" class="w-full p-2 border rounded-md focus:ring-yellow-500 focus:border-yellow-500" required>
+                    <option value="">Select a reason</option>
+                    <option value="Product damaged">Product damaged</option>
+                    <option value="Wrong item delivered">Wrong item delivered</option>
+                    <option value="Item doesn't match description">Item doesn't match description</option>
+                    <option value="Quality not as expected">Quality not as expected</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+            <div id="otherReturnItemReasonDiv" class="mb-4 hidden">
+                <textarea name="otherReturnItemReason" id="otherReturnItemReason" class="w-full p-2 border rounded-md" rows="3" placeholder="Please specify your reason"></textarea>
+            </div>
+            <div class="flex justify-end space-x-3">
+                <button type="button" id="close-return-item-btn" class="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400">Cancel</button>
+              
+                <button type="button" id="confirmReturnItemBtn" class="px-4 py-2 bg-yellow-600 text-white rounded hover:bg-yellow-700" 
+                        data-item-id="">
+                    <i class="fas fa-undo mr-2"></i>Confirm Return
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
     <!-- Cancel Item Modal -->
     <div id="cancelItemModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden z-50">
         <div class="bg-white rounded-lg p-6 w-full max-w-md mx-4 shadow-xl">
@@ -561,6 +612,8 @@
         </div>
     </div>
 
+    <!-- return item modal -->
+     
     <script>
         // Toast notification function
        function showToast(message, type = 'info') {
@@ -752,6 +805,99 @@
             cancelOrderModal.classList.add('hidden');
             resetOrderModal();
         });
+
+
+        // return item modal logic
+         const returnItemButtons = document.querySelectorAll('.return-item-btn');
+        const returnItemModal = document.getElementById('returnItemModal');
+        const closeReturnItemModalBtn = document.getElementById('close-return-item-btn');
+        const confirmReturnItemBtn = document.getElementById('confirmReturnItemBtn');
+        const returnItemReasonSelect = document.getElementById('returnItemReason');
+const otherReturnItemReasonDiv = document.getElementById('otherReturnItemReasonDiv');
+        const otherReturnItemReasonTextarea = document.getElementById('otherReturnItemReason');
+         const returnItemNameDisplay = document.getElementById('returnItemName');
+        
+        if (confirmReturnItemBtn) {
+            confirmReturnItemBtn.setAttribute('data-original-text', confirmReturnItemBtn.innerHTML);
+        }
+ returnItemButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const itemId = button.getAttribute('data-item-id');
+                const returnItemName = button.getAttribute('data-item-name');
+                confirmReturnItemBtn.setAttribute('data-item-id', itemId);
+                returnItemNameDisplay.textContent = returnItemName;
+                returnItemModal.classList.remove('hidden');
+            });
+        });
+
+            closeReturnItemModalBtn?.addEventListener('click', () => {
+            returnItemModal.classList.add('hidden');
+            resetReturnItemModal();
+        });
+returnItemReasonSelect?.addEventListener('change', () => {
+            if (returnItemReasonSelect.value === 'Other') {
+                otherReturnItemReasonDiv.classList.remove('hidden');
+            } else {
+                otherReturnItemReasonDiv.classList.add('hidden');
+            }
+        });
+
+            function resetReturnItemModal() {
+            returnItemReasonSelect.value = '';
+            otherReturnItemReasonDiv.classList.add('hidden');
+            otherReturnItemReasonTextarea.value = '';
+        }
+ confirmReturnItemBtn?.addEventListener('click', async () => {
+            const itemId = confirmReturnItemBtn.getAttribute('data-item-id');
+            let returnItemReason = returnItemReasonSelect.value.trim();
+
+            if (!returnItemReason) {
+                showToast('Please select a reason for return', 'error');
+                return;
+            }
+
+            if (returnItemReason === 'Other') {
+                const otherReason = otherReturnItemReasonTextarea.value.trim();
+                if (!otherReason) {
+                    showToast('Please specify the reason for return', 'error');
+                    return;
+                }
+                returnItemReason = otherReason;
+            }
+
+            setButtonLoading(confirmReturnItemBtn, true);
+
+            try {
+                const response = await fetch(`/order/return-item/${itemId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ returnItemReason })
+                });
+
+                const result = await response.json();
+                
+                if (response.ok && result.success) {
+                    showToast('return item successfully. Refund will be processed within 5-7 business days', 'success');
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 2000);
+                } else {
+                    showToast(result.message || 'Failed to cancel item. Please try again.', 'error');
+                }
+            } catch (err) {
+                console.error('Error cancelling item:', err);
+                showToast('Something went wrong. Please try again later.', 'error');
+            } finally {
+                setButtonLoading(confirmReturnItemBtn, false);
+            }
+
+            returnItemModal.classList.add('hidden');
+            resetReturnItemModal();
+        });
+
+
 
         // Cancel Item Modal Logic
         const cancelItemButtons = document.querySelectorAll('.cancel-item-btn');

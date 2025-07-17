@@ -278,9 +278,35 @@ const getWishlistStatus = async (req, res) => {
   }
 };
 
+const wishlistCount = async (req, res) => {
+  try {
+    const userId = req.session.user;
+    console.log('User in session:', userId);
+
+    if (!userId) {
+      return res.json({ count: 0 });
+    }
+
+    const wishlist = await Wishlist.findOne({ userId });
+    console.log('wishlist:', wishlist);
+
+    const count = wishlist ? wishlist.products.length : 0;
+
+    console.log('wishlist Count:', count);
+
+    res.json({ count });
+  } catch (error) {
+    console.error('Error fetching wishlist count:', error);
+    res.status(500).json({ count: 0 });
+  }
+};
+
+
+
 module.exports = {
   loadWishlist,
   addToWishlist,
   removeFromWishlist,
   getWishlistStatus,
+  wishlistCount
 };

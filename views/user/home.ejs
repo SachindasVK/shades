@@ -663,7 +663,7 @@
 
                             // Update cart counter
                             updateCartCounter(data.cartCount);
-
+                            window.updateCartBadge(); 
                             // Change button to "Go to Cart"
                             if (button) {
                                 button.innerHTML = '<i class="fas fa-shopping-cart"></i> Go to Cart';
@@ -730,12 +730,9 @@
                     })
                     .then(data => {
                         if (data.success) {
-                            // if (wasActive) {
-                            //     showToast('Product removed from wishlist!', 'info');
-                            // } else {
-                            //     showToast('Product added to wishlist!', 'success');
-                            // }
+                           
                             updateWishlistCounter(data.wishlistCount);
+                            window.updateWishlistBadge(); 
                         } else {
                             button.innerHTML = originalHTML;
                             if (wasActive) button.classList.add('active');

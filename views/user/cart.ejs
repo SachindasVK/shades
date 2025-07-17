@@ -1045,6 +1045,8 @@ async function confirmRemoveCartItem() {
             if (removedItem) {
                 removedItem.remove();
             }
+ // Update header cart badge without reload
+    window.updateCartBadge();
 
             // Update order summary after removal
             updateOrderSummary();
@@ -1101,6 +1103,8 @@ async function moveToWishlist(productId, event) {
 
                 // Update order summary after removal
                 updateOrderSummary();
+                 window.updateWishlistBadge(); 
+                 window.updateCartBadge()
                 showToast('Item moved to wishlist', 'success');
             } else {
                 showToast('Added to wishlist but failed to remove from cart', 'warning');

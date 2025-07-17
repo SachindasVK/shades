@@ -1047,6 +1047,9 @@
                             if (data.success) {
                                 showToast('Product added to cart!', 'success');
                                 updateCartCounter(data.cartCount);
+                                 // Update header cart badge without reload
+    window.updateCartBadge();
+
                                 if (button) {
                                     button.innerHTML = '<i class="fas fa-shopping-cart"></i> Go to Cart';
                                     button.classList.add('bg-black');
@@ -1107,6 +1110,8 @@
                         .then(data => {
                             if (data.success) {
                                 updateWishlistCounter(data.wishlistCount);
+ window.updateWishlistBadge(); 
+                                
                             } else {
                                 button.innerHTML = originalHTML;
                                 if (wasActive) button.classList.add('active');

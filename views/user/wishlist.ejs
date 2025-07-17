@@ -688,6 +688,7 @@
                     `.wishlist-item[data-id="${currentWishlistItemId}"]`
                   )
                   .remove();
+                   window.updateWishlistBadge()
                 if (!document.querySelector(".wishlist-item")) {
                   document.getElementById("wishlist").innerHTML = `
     <div class="empty-wishlist text-center py-8">
@@ -747,6 +748,8 @@
               if (data.success) {
                 showToast("Product added to cart!", "success");
                 updateCartCounter(data.cartCount);
+                window.updateCartBadge()
+              
 
                 // Remove from Wishlist after Cart Add Success
                 fetch(`/wishlist/remove/${productId}`, {
@@ -757,6 +760,7 @@
                   .then((res) => res.json())
                   .then((wishlistData) => {
                     if (wishlistData.success) {
+                       window.updateWishlistBadge()
                       const removedItem = document.querySelector(
                         `.wishlist-item[data-id="${productId}"]`
                       );
@@ -764,8 +768,20 @@
 
                       const wishlistItems = document.querySelectorAll(".wishlist-item");
                       if (wishlistItems.length === 0) {
-                        document.getElementById("wishlist").innerHTML =
-                          '<p class="text-gray-500 italic">Your wishlist is empty. Start adding products to your wishlist!</p>';
+                        document.getElementById("wishlist").innerHTML = `
+    <div class="empty-wishlist text-center py-8">
+      <i class="fas fa-box-open text-gray-400 text-6xl mb-4"></i>
+      <p class="text-gray-500 text-lg mb-4 italic">
+        Your wishlist is empty. Start adding products to your wishlist!
+      </p>
+      <a
+        href="/shop"
+        class="inline-block bg-white text-black font-semibold text-sm uppercase tracking-wide px-4 py-1 rounded-md hover:bg-gray-200 transition duration-200"
+      >
+        <i class="fas fa-shopping-bag mr-2"></i> Go to Shop
+      </a>
+    </div>
+  `;
                       }
                     } else {
                       showToast(

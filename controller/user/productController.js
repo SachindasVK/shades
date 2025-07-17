@@ -1,5 +1,4 @@
 const Product = require('../../models/productSchema')
-const Category = require('../../models/categorySchema')
 const User = require('../../models/userSchema')
 
 
@@ -10,14 +9,11 @@ const productDetails = async (req, res) => {
         const userData = await User.findById(userId)
         const productId = req.query.id
         const product = await Product.findById(productId).populate('category').populate('brand')
-        const findCategory = product.category
-        const categoryOffer = findCategory?.categoryOffer || 0
-        const productOffer = product.productOffer || 0
-        const totalOffer = categoryOffer + productOffer
+     
         if (!product) {
             return res.redirect('/shop');
         }
-
+        
         const recommendations = await Product.find({
             isDeleted: false,
             category: product.category,
@@ -37,8 +33,6 @@ const productDetails = async (req, res) => {
             username: userData ? userData.name : null,
             product: product,
             quantity: product.quantity,
-            totalOffer: totalOffer,
-            category: findCategory,
             recommendations
         })
     } catch (error) {

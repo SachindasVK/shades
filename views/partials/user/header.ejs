@@ -99,20 +99,30 @@
           </div>
         </div>
 <!-- Wishlist Icon (add this right before or after your shopping cart) -->
- <a href="/wishlist">
-<button class="text-gray-600 hover:text-black transition duration-200 ease-in-out p-1 relative">
-  <i class="fas fa-heart h-5 w-5"></i>
-</button>
+ <a href="/wishlist" class="relative">
+  <button class="text-gray-600 hover:text-black transition duration-200 ease-in-out p-1 relative">
+    <i class="fas fa-heart h-5 w-5"></i>
 
- </a>
+     <span id="wishlist-badge"
+      class="absolute -top-1 -right-1 bg-red-600 text-white text-xs h-4 w-4 rounded-full hidden flex items-center justify-center">
+</span>
+  </button>
+</a>
+
 
          <!-- Shopping Cart -->
-          <a href="/cart">
-<button class="text-gray-600 hover:text-black transition duration-200 ease-in-out p-1 relative">
-          <i class="fas fa-shopping-cart h-5 w-5"></i>
-        </button>
+      <a href="/cart" class="relative inline-block">
+  <button class="text-gray-600 hover:text-black transition duration-200 ease-in-out p-1">
+    <i class="fas fa-shopping-cart h-5 w-5"></i>
 
-          </a>
+    <!-- Dynamic badge -->
+   <span id="cart-count-badge"
+      class="absolute -top-1 -right-1 bg-red-600 text-white text-xs h-4 w-4 rounded-full hidden flex items-center justify-center">
+</span>
+
+  </button>
+</a>
+
         
         
         <!-- User Account Dropdown (Click Version) -->
@@ -221,4 +231,74 @@
       // Mobile menu implementation goes here
       console.log('Mobile menu toggled');
     }
+
+    async function updateCartBadge() {
+    try {
+      const res = await fetch('/cart/count');
+      const data = await res.json();
+
+      const badge = document.getElementById('cart-count-badge');
+      if (data.count > 0) {
+        badge.textContent = data.count;
+        badge.classList.remove('hidden');
+      } else {
+        badge.classList.add('hidden');
+      }
+    } catch (err) {
+      console.error('Error updating cart badge:', err);
+    }
+  }
+
+  // Initial call when page loads
+  updateCartBadge();
+
+  // Optional: expose to call after "Add to Cart"
+  window.updateCartBadge = updateCartBadge;
+
+  function updateCartCounter(count) {
+  const badge = document.getElementById('cart-count-badge');
+  if (count > 0) {
+    badge.textContent = count;
+    badge.classList.remove('hidden');
+  } else {
+    badge.classList.add('hidden');
+  }
+}
+
+
+async function updateWishlistBadge() {
+    try {
+      const res = await fetch('/wishlist/count');
+      const data = await res.json();
+
+      const badge = document.getElementById('wishlist-badge');
+      if (data.count > 0) {
+        badge.textContent = data.count;
+        badge.classList.remove('hidden');
+      } else {
+        badge.classList.add('hidden');
+      }
+    } catch (err) {
+      console.error('Error updating Wishlist badge:', err);
+    }
+  }
+
+  // Initial call when page loads
+  updateWishlistBadge();
+
+  // expose to call after "Add to Wishlist"
+  window.updateWishlistBadge = updateWishlistBadge;
+
+  function updateWishlistCounter(count) {
+  const badge = document.getElementById('wishlist-badge');
+  if (count > 0) {
+    badge.textContent = count;
+    badge.classList.remove('hidden');
+  } else {
+    badge.classList.add('hidden');
+  }
+}
+
+
+
   </script>
