@@ -481,7 +481,7 @@
                             <a href="/select-address">Change</a>
                         </div>
                         <p>
-                            <%= address.streetAddress %>, <%= address.area %>, <%= address.city %>, <%= address.state %> - <%= address.pincode %>
+                            <%= address.flat %>, <%= address.area %>, <%= address.city %>, <%= address.state %> - <%= address.pincode %>
                         </p>
                     </div>
 
@@ -562,17 +562,23 @@
                     </div>
                     <div id="applied-coupon-container"></div>
                     <div class="available-coupons-list">
-                        <% if (coupons && coupons.length > 0) { %>
+                         <% if (coupons && coupons.length > 0) { %>
                             <% coupons.forEach(coupon => { %>
                                 <div class="available-coupons">
                                     <div class="coupon-info">
                                         <div class="code"><%= coupon.name %></div>
-                                        <div class="discount">Get Instant Discount ₹<%= coupon.offerPrice %></div>
+                                        <div class="discount">
+  Get <%= coupon.discountPercentage %>% off up to ₹<%= coupon.maxDiscount %>
+</div>
+
                                         <div class="condition">Valid on orders above ₹<%= coupon.minimumPrice %></div>
                                     </div>
-                                    <button class="applyCouponBtn" data-code="<%= coupon.name %>" 
-                                            data-discount="<%= coupon.offerPrice %>" 
-                                            data-minprice="<%= coupon.minimumPrice %>">APPLY</button>
+                                   <button class="applyCouponBtn" 
+        data-code="<%= coupon.name %>" 
+        data-discount-percentage="<%= coupon.discountPercentage %>" 
+        data-max-discount="<%= coupon.maxDiscount %>" 
+        data-minprice="<%= coupon.minimumPrice %>">APPLY</button>
+
                                 </div>
                             <% }) %>
                         <% } else { %>
@@ -582,53 +588,66 @@
                     
                     <div id="order-summary-items">
                         <% if (cartItems && cartItems.length > 0) { %>
-                            <% 
-                                let subtotal = 0;
-                                cartItems.forEach(item => {
-                                    subtotal += (item.productId.salePrice || item.productId.regularPrice || 0) * item.quantity;
-                                });
-                                let discount = subtotal > 1500 ? 200 : 0;
-                                let deliveryCharge = subtotal > 2000 ? 0 : 50;
-                                let gst = Math.round(subtotal * 0.18);
-                                let total = subtotal + deliveryCharge + gst - discount;
-                            %>
-                            <div class="summary-item">
-                                <span>Subtotal (<%= cartItems.length %> items)</span>
-                                <span id="subtotal-amount">₹<%= subtotal.toLocaleString('en-IN') %></span>
-                            </div>
-                            <div class="summary-item discount">
-                                <span>Discount</span>
-                                <span id="discount-amount">- ₹<%= discount.toLocaleString('en-IN') %></span>
-                            </div>
-                            <div class="summary-item">
-                                <span>Delivery Charge</span>
-                                <span id="delivery-charge">
-                                    <% if (deliveryCharge === 0) { %>
-                                        <span style="text-decoration: line-through; color: rgb(255, 38, 38);">₹50</span>
-                                          FREE DELIVERY
-                                    <% } else { %>
-                                        ₹<%= deliveryCharge.toLocaleString('en-IN') %>
-                                    <% } %>
-                                </span>
-                            </div>
-                            <div class="summary-item">
-                                <span>GST (18%)</span>
-                                <span id="gst-amount">₹<%= gst.toLocaleString('en-IN') %></span>
-                            </div>
-                            <div class="summary-item total">
-                                <span>TOTAL</span>
-                                <span id="total-amount">₹<%= total.toLocaleString('en-IN') %></span>
-                            </div>
-                        <% } else { %>
-                            <div class="summary-item">
-                                <span>Subtotal (0 items)</span>
-                                <span>₹0</span>
-                            </div>
-                            <div class="summary-item total">
-                                <span>TOTAL</span>
-                                <span>₹0</span>
-                            </div>
-                        <% } %>
+    <% 
+        let subtotal = 0;
+        cartItems.forEach(item => {
+            subtotal += (item.productId.salePrice || item.productId.regularPrice || 0) * item.quantity;
+        });
+
+        let discount = subtotal > 1500 ? 200 : 0; // auto discount
+        let couponDiscount = 0; // start with 0 — update this from JS dynamically
+        let deliveryCharge = subtotal > 2000 ? 0 : 50;
+        let gst = Math.round(subtotal * 0.18);
+        let total = subtotal + deliveryCharge + gst - discount - couponDiscount;
+    %>
+
+    <div class="summary-item">
+        <span>Subtotal (<%= cartItems.length %> items)</span>
+        <span id="subtotal-amount">₹<%= subtotal.toLocaleString('en-IN') %></span>
+    </div>
+
+    <div class="summary-item discount">
+        <span>Discount</span>
+        <span id="discount-amount">- ₹<%= discount.toLocaleString('en-IN') %></span>
+    </div>
+
+    <div class="summary-item discount">
+        <span>Coupon Discount</span>
+        <span id="coupon-discount">- ₹<%= couponDiscount.toLocaleString('en-IN') %></span>
+    </div>
+
+    <div class="summary-item">
+        <span>Delivery Charge</span>
+        <span id="delivery-charge">
+            <% if (deliveryCharge === 0) { %>
+                <span style="text-decoration: line-through; color: rgb(255, 38, 38);">₹50</span>
+                FREE DELIVERY
+            <% } else { %>
+                ₹<%= deliveryCharge.toLocaleString('en-IN') %>
+            <% } %>
+        </span>
+    </div>
+
+    <div class="summary-item">
+        <span>GST (18%)</span>
+        <span id="gst-amount">₹<%= gst.toLocaleString('en-IN') %></span>
+    </div>
+
+    <div class="summary-item total">
+        <span>TOTAL</span>
+        <span id="total-amount">₹<%= total.toLocaleString('en-IN') %></span>
+    </div>
+<% } else { %>
+    <div class="summary-item">
+        <span>Subtotal (0 items)</span>
+        <span>₹0</span>
+    </div>
+    <div class="summary-item total">
+        <span>TOTAL</span>
+        <span>₹0</span>
+    </div>
+<% } %>
+
                     </div>
                     
                     <button id="placeOrderButton" class="place-order-btn">Place Order</button>
@@ -662,12 +681,12 @@
             }
             
             let baseDiscount = subtotal > 1500 ? 200 : 0;
-            let totalDiscount = baseDiscount + appliedCouponDiscount;
+            let CouponDiscount = appliedCouponDiscount;
             let deliveryCharge = subtotal > 2000 ? 0 : 50;
             let gst = Math.round(subtotal * 0.18);
-            let total = subtotal + deliveryCharge + gst - totalDiscount;
+            let total = subtotal + deliveryCharge + gst - (baseDiscount + CouponDiscount);
             
-            return { subtotal, totalDiscount, deliveryCharge, gst, total };
+            return { subtotal, baseDiscount,CouponDiscount, deliveryCharge, gst, total };
         }
 
         // Update order summary display
@@ -678,7 +697,10 @@
                 document.getElementById('subtotal-amount').textContent = `₹${summary.subtotal.toLocaleString('en-IN')}`;
             }
             if (document.getElementById('discount-amount')) {
-                document.getElementById('discount-amount').textContent = `- ₹${summary.totalDiscount.toLocaleString('en-IN')}`;
+                document.getElementById('discount-amount').textContent = `- ₹${summary.baseDiscount.toLocaleString('en-IN')}`;
+            }
+            if(document.getElementById('coupon-discount')){
+                document.getElementById('coupon-discount').textContent= `- ₹${summary.CouponDiscount.toLocaleString('en-IN')}`;
             }
             if (document.getElementById('gst-amount')) {
                 document.getElementById('gst-amount').textContent = `₹${summary.gst.toLocaleString('en-IN')}`;

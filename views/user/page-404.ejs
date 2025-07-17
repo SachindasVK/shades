@@ -5,239 +5,86 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>404 - Page Not Found</title>
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f5f5f5;
-            margin: 0;
-            padding: 0;
+        /*======================
+            404 page
+        =======================*/
+        .page_404 {
+            background: #fff;
+            font-family: 'Arvo', serif;
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            overflow: hidden;
         }
-        
-        .container {
-            text-align: center;
-            max-width: 800px;
-            padding: 20px;
-            position: relative;
+
+        .page_404 img {
+            width: 100%;
         }
-        
-        .sunglasses {
-            position: relative;
-            width: 400px;
-            height: 200px;
-            margin: 0 auto 30px;
+
+        .four_zero_four_bg {
+            background-image: url(https://cdn.dribbble.com/users/285475/screenshots/2083086/dribbble_1.gif);
+            height: 300px;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: contain;
         }
-        
-        .lens {
-            position: absolute;
-            width: 150px;
-            height: 100px;
-            background: #333;
-            border-radius: 50%;
-            top: 50px;
-        }
-        
-        .lens-left {
-            left: 40px;
-            transform: rotate(-10deg);
-        }
-        
-        .lens-right {
-            right: 40px;
-            transform: rotate(10deg);
-        }
-        
-        .bridge {
-            position: absolute;
-            width: 60px;
-            height: 10px;
-            background: #333;
-            top: 90px;
-            left: 170px;
-        }
-        
-        .temple-left {
-            position: absolute;
-            width: 120px;
-            height: 8px;
-            background: #333;
-            top: 85px;
-            left: 30px;
-            transform: rotate(-20deg);
-            transform-origin: right center;
-        }
-        
-        .temple-right {
-            position: absolute;
-            width: 120px;
-            height: 8px;
-            background: #333;
-            top: 85px;
-            right: 30px;
-            transform: rotate(20deg);
-            transform-origin: left center;
-        }
-        
-        /* Cracks */
-        .crack {
-            position: absolute;
-            background: #f5f5f5;
-            width: 3px;
-            height: 60px;
-            transform-origin: center bottom;
-        }
-        
-        .crack1 {
-            top: 50px;
-            left: 100px;
-            transform: rotate(30deg);
-        }
-        
-        .crack2 {
-            top: 60px;
-            left: 120px;
-            transform: rotate(-15deg);
-            height: 40px;
-        }
-        
-        .crack3 {
-            top: 65px;
-            right: 70px;
-            transform: rotate(45deg);
-            height: 50px;
-        }
-        
-        .broken-piece {
-            position: absolute;
-            width: 25px;
-            height: 25px;
-            background: #333;
-            border-radius: 5px;
-            animation: fall 3s ease-in infinite;
-        }
-        
-        .piece1 {
-            top: 150px;
-            left: 160px;
-            animation-delay: 0.5s;
-        }
-        
-        .piece2 {
-            top: 150px;
-            right: 160px;
-            animation-delay: 1.2s;
-        }
-        
-        @keyframes fall {
-            0% {
-                transform: translateY(-10px) rotate(0deg);
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(200px) rotate(360deg);
-                opacity: 0;
-            }
-        }
-        
-        .text-404 {
-            font-size: 120px;
-            font-weight: bold;
-            margin: 0;
+
+        .four_zero_four_bg h1 {
+            font-size: 100px;
             color: #333;
-            position: relative;
-            animation: shake 0.5s ease-in-out 1;
+            text-align: center;
         }
-        
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            20%, 60% { transform: translateX(-15px); }
-            40%, 80% { transform: translateX(15px); }
+
+        .contant_box_404 {
+            margin-top: -100px;
+            text-align: center;
         }
-        
-        .message {
-            font-size: 24px;
-            color: #555;
-            margin-bottom: 30px;
+
+        .contant_box_404 h3 {
+            font-size: 40px;
+            color: #333;
         }
-        
-        .submessage {
+
+        .contant_box_404 p {
             font-size: 18px;
-            color: #777;
-            margin-bottom: 30px;
+            color: #666;
+            margin: 20px 0;
         }
-        
-        .home-button {
+
+        .link_404 {
+            color: #fff !important;
+            padding: 10px 20px;
+            background: #39ac31;
+            margin: 20px 0;
             display: inline-block;
-            padding: 12px 30px;
-            background-color: #333;
-            color: white;
             text-decoration: none;
-            border-radius: 30px;
-            font-weight: bold;
-            transition: all 0.3s ease;
-            border: none;
+            border-radius: 5px;
             font-size: 16px;
-            cursor: pointer;
         }
-        
-        .home-button:hover {
-            background-color: #555;
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+
+        .link_404:hover {
+            background: #2e8b27;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="sunglasses">
-            <div class="lens lens-left">
-                <div class="crack crack1"></div>
-                <div class="crack crack2"></div>
+    <section class="page_404">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="col-sm-10 col-sm-offset-1 text-center">
+                        <div class="four_zero_four_bg">
+                            <h1>404</h1>
+                        </div>
+                        <div class="contant_box_404">
+                            <h3>Looks like you're lost</h3>
+                            <p>The page you are looking for is not available!</p>
+                            <a href="/" class="link_404">Go to Home</a>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="lens lens-right">
-                <div class="crack crack3"></div>
-            </div>
-            <div class="bridge"></div>
-            <div class="temple-left"></div>
-            <div class="temple-right"></div>
-            <div class="broken-piece piece1"></div>
-            <div class="broken-piece piece2"></div>
         </div>
-        
-        <h1 class="text-404">404</h1>
-        <p class="message">Oops! Looks like these glasses couldn't find your page.</p>
-        <p class="submessage">The page you're looking for might have been removed, renamed, or is temporarily unavailable.</p>
-        
-        <a href="/" class="home-button">Back to Home</a>
-    </div>
-    
-    <script>
-        // Add some random additional cracks when page loads
-        document.addEventListener('DOMContentLoaded', function() {
-            const lenses = document.querySelectorAll('.lens');
-            
-            lenses.forEach(lens => {
-                // Add 2-3 additional random cracks per lens
-                const crackCount = Math.floor(Math.random() * 2) + 2;
-                
-                for(let i = 0; i < crackCount; i++) {
-                    const crack = document.createElement('div');
-                    crack.classList.add('crack');
-                    
-                    // Random positioning
-                    crack.style.top = Math.floor(Math.random() * 80) + 10 + 'px';
-                    crack.style.left = Math.floor(Math.random() * 100) + 20 + 'px';
-                    crack.style.height = Math.floor(Math.random() * 40) + 20 + 'px';
-                    crack.style.transform = `rotate(${Math.floor(Math.random() * 360)}deg)`;
-                    crack.style.width = Math.floor(Math.random() * 2) + 2 + 'px';
-                    
-                    lens.appendChild(crack);
-                }
-            });
-        });
-    </script>
+    </section>
 </body>
 </html>

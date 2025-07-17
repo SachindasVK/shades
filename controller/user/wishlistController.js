@@ -26,7 +26,7 @@ const loadWishlist = async (req, res) => {
       _id: { $in: productIds },
       isDeleted: false,
       isActive: true,
-    }).populate("category");
+    }).populate("category").populate('brand');
 
     const validProductIds = products.map((product) => product._id.toString());
 

@@ -41,10 +41,10 @@ const getCoupon = async(req,res)=>{
 const createCoupon = async (req, res) => {
     try {
         console.log('Coupon form submitted:', req.body); 
-        const { name, startDate, endDate, offerPrice, minimumPrice } = req.body;
+        const { name, startDate, endDate, discountPercentage, maxDiscount, minimumPrice } = req.body;
 
         // Input validation
-        if (!name || !startDate || !endDate || !offerPrice || !minimumPrice) {
+        if (!name || !startDate || !endDate || !discountPercentage || !maxDiscount || !minimumPrice) {
             return res.status(400).json({
                 success: false,
                 message: 'All fields are required'
@@ -59,15 +59,22 @@ const createCoupon = async (req, res) => {
             });
         }
 
-        // Validation: Offer price should be positive
-        if (parseFloat(offerPrice) <= 0) {
+        // Validation: Discount percentage should be positive and <= 100
+        if (parseFloat(discountPercentage) <= 0 || parseFloat(discountPercentage) > 100) {
             return res.status(400).json({
                 success: false,
-                message: 'Offer price must be greater than 0'
+                message: 'Discount percentage must be between 1 and 100'
             });
         }
 
-        // Validation: Minimum price should be positive
+        // Validation: Max discount and min price should be positive
+        if (parseFloat(maxDiscount) <= 0) {
+            return res.status(400).json({
+                success: false,
+                message: 'Max discount must be greater than 0'
+            });
+        }
+
         if (parseFloat(minimumPrice) <= 0) {
             return res.status(400).json({
                 success: false,
@@ -75,7 +82,7 @@ const createCoupon = async (req, res) => {
             });
         }
 
-        // Check if coupon with same name already exists (case-insensitive)
+        // Check if coupon name already exists
         const existingCoupon = await Coupon.findOne({ 
             name: { $regex: new RegExp(`^${name}$`, 'i') }
         });
@@ -92,7 +99,8 @@ const createCoupon = async (req, res) => {
             name: name.trim(),
             createdOn: new Date(startDate),
             expireOn: new Date(endDate),
-            offerPrice: parseFloat(offerPrice),
+            discountPercentage: parseFloat(discountPercentage),
+            maxDiscount: parseFloat(maxDiscount),
             minimumPrice: parseFloat(minimumPrice),
             isDeleted: false
         });
@@ -117,10 +125,10 @@ const createCoupon = async (req, res) => {
 const updateCoupon = async (req, res) => {
     try {
         const couponId = req.params.id;
-        const { name, startDate, endDate, offerPrice, minimumPrice } = req.body;
+        const { name, startDate, endDate, discountPercentage, maxDiscount, minimumPrice } = req.body;
 
         // Input validation
-        if (!name || !startDate || !endDate || !offerPrice || !minimumPrice) {
+        if (!name || !startDate || !endDate || !discountPercentage || !maxDiscount || !minimumPrice) {
             return res.status(400).json({
                 success: false,
                 message: 'All fields are required'
@@ -135,15 +143,22 @@ const updateCoupon = async (req, res) => {
             });
         }
 
-        // Validation: Offer price should be positive
-        if (parseFloat(offerPrice) <= 0) {
+        // Validation: Discount % between 1 and 100
+        if (parseFloat(discountPercentage) <= 0 || parseFloat(discountPercentage) > 100) {
             return res.status(400).json({
                 success: false,
-                message: 'Offer price must be greater than 0'
+                message: 'Discount percentage must be between 1 and 100'
             });
         }
 
-        // Validation: Minimum price should be positive
+        // Validation: maxDiscount and minimumPrice should be > 0
+        if (parseFloat(maxDiscount) <= 0) {
+            return res.status(400).json({
+                success: false,
+                message: 'Max discount must be greater than 0'
+            });
+        }
+
         if (parseFloat(minimumPrice) <= 0) {
             return res.status(400).json({
                 success: false,
@@ -160,12 +175,12 @@ const updateCoupon = async (req, res) => {
             });
         }
 
-        // Check if another coupon with same name exists (excluding current coupon)
-        const duplicateCoupon = await Coupon.findOne({ 
+        // Check for duplicate coupon name
+        const duplicateCoupon = await Coupon.findOne({
             _id: { $ne: couponId },
             name: { $regex: new RegExp(`^${name}$`, 'i') }
         });
-        
+
         if (duplicateCoupon) {
             return res.status(409).json({
                 success: false,
@@ -180,7 +195,8 @@ const updateCoupon = async (req, res) => {
                 name: name.trim(),
                 createdOn: new Date(startDate),
                 expireOn: new Date(endDate),
-                offerPrice: parseFloat(offerPrice),
+                discountPercentage: parseFloat(discountPercentage),
+                maxDiscount: parseFloat(maxDiscount),
                 minimumPrice: parseFloat(minimumPrice)
             },
             { new: true, runValidators: true }
@@ -191,6 +207,7 @@ const updateCoupon = async (req, res) => {
             message: 'Coupon updated successfully',
             data: updatedCoupon
         });
+
     } catch (error) {
         console.error('Update coupon error:', error);
         return res.status(500).json({
@@ -199,6 +216,7 @@ const updateCoupon = async (req, res) => {
         });
     }
 };
+
 
 
 const toggleCouponStatus = async (req, res) => {

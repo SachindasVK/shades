@@ -207,68 +207,48 @@ async function processRefund(userId, amount, orderId, reason) {
 
 
 const verifyReturn = async (req, res) => {
-  const { orderId } = req.params;
-
   try {
-    const order = await Order.findOne({ orderId }).populate('userId');
-    
+    const { orderId } = req.params;
+    const { action, reason } = req.body;
+
+    const order = await Order.findOne({ orderId });
     if (!order) {
-      return res.status(404).json({
-        success: false,
-        message: 'Order not found'
-      });
+      return res.status(404).json({ success: false, message: 'Order not found' });
     }
 
     if (order.status !== 'return_requested') {
-      return res.status(400).json({
-        success: false,
-        message: 'Order is not in return requested status'
-      });
+      return res.status(400).json({ success: false, message: 'Return request is not pending' });
     }
 
-    // Update order status to returned
-    order.status = 'returned';
-    order.requestStatus = 'approved';
-    order.updatedOn = Date.now();
+    if (action === 'accept') {
+      order.status = 'returning';
+      order.requestStatus = 'approved';
+      order.updatedOn = new Date();
 
-    // Restore product quantities
-    for (const item of order.orderedItems) {
-  const product = await Product.findById(item.product);
-  if (product) {
-    product.quantity += item.quantity;
-    product.salesCount = Math.max(0, product.salesCount - item.quantity);
-    if (product.status) {
-      product.status = product.status.toLowerCase();
+    } else if (action === 'reject') {
+      if (!reason || reason.trim() === '') {
+        return res.status(400).json({ success: false, message: 'Rejection reason is required' });
+      }
+
+      order.status = 'return_rejected'; 
+      order.requestStatus = 'rejected';
+      order.rejectionCategory = 'Admin Rejection';
+      order.rejectionReason = reason;
+      order.updatedOn = new Date();
+
+    } else {
+      return res.status(400).json({ success: false, message: 'Invalid action' });
     }
-
-    await product.save();
-  }
-}
-
-
-    // Process refund
-    await processRefund(order.userId._id, order.finalAmount, orderId, 'Return verified');
 
     await order.save();
+    return res.status(200).json({ success: true, message: `Return ${action}ed successfully` });
 
-    return res.status(200).json({
-      success: true,
-      message: 'Return verified and refund processed successfully',
-      order: {
-        orderId: order.orderId,
-        status: order.status,
-        refundAmount: order.finalAmount
-      }
-    });
-
-  } catch (error) {
-    console.error('Error verifying return:', error);
-    return res.status(500).json({
-      success: false,
-      message: 'Server error while verifying return'
-    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ success: false, message: 'Server error' });
   }
 };
+
 
 
 const getOrderDetails = async(req,res)=>{

@@ -40,11 +40,14 @@ const orderSchema = new Schema({
         },
         status: {
             type: String,
-            enum: ['pending', 'confirmed', 'shipped', 'delivered', 'cancelled', 'return_requested', 'returning', 'returned','failed'],
+            enum: ['pending', 'confirmed', 'shipped', 'delivered', 'cancelled', 'return_requested', 'returning', 'returned', 'failed'],
             default: 'pending'
         },
         cancelReason: {
             type: String
+        },
+        cancelledAt: {
+            type: Date
         }
     }],
     totalPrice: {
@@ -84,16 +87,25 @@ const orderSchema = new Schema({
     },
     paymentStatus: {
         type: String,
-        enum: ['Pending', 'Paid', 'Failed'],
+        enum: ['Pending', 'Paid', 'Failed', 'Refunded'],
         default: 'Pending'
     },
+    refundAmount: {
+        type: Number,
+        default: 0
+    },
+
+    refundedAt: {
+        type: Date
+    },
+
     invoiceDate: {
         type: Date
     },
     status: {
         type: String,
         required: true,
-        enum: ['pending', 'confirmed', 'shipped', 'delivered', 'cancelled', 'return_requested', 'returning', 'returned','failed'],
+        enum: ['pending', 'confirmed', 'shipped', 'delivered', 'cancelled', 'return_requested', 'returning', 'returned', 'failed','return_rejected'],
         default: 'pending'
     },
     cancelReason: {
@@ -139,6 +151,13 @@ const orderSchema = new Schema({
     couponApplied: {
         type: Boolean,
         default: false
+    },
+    couponCode: {
+        type: String
+    },
+    couponDiscount: {
+        type: Number,
+        default: 0
     }
 }, { timestamps: true });
 

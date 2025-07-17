@@ -25,11 +25,14 @@
             font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             line-height: 1.6;
         }
-   .btn-add-cart:disabled, .btn-add-cart.loading {
+
+        .btn-add-cart:disabled,
+        .btn-add-cart.loading {
             background-color: #6c757d;
             cursor: not-allowed;
             transform: none !important;
         }
+
         .shop-header {
             background-color: white;
             padding: 1.5rem 0;
@@ -286,6 +289,7 @@
             font-size: 0.75rem;
             color: #6c757d;
             margin-bottom: 0.4rem;
+            text-transform: uppercase;
         }
 
         .product-title {
@@ -386,25 +390,28 @@
             border: 1px solid var(--border-color);
             background-color: white;
             cursor: pointer;
+            transition: all 0.2s ease;
         }
 
-        .page-link:hover {
-            background-color: #e9ecef;
+        .page-link:hover:not(.disabled):not(.active) {
+
             color: var(--text-color);
             border-color: var(--border-color);
         }
 
-        .page-item.disabled .page-link {
-            color: #6c757d;
-            background-color: transparent;
-            cursor: not-allowed;
+        .page-item.active .page-link {
+            background-color: var(--primary-color);
+            color: white !important;
+            border-color: var(--primary-color);
         }
 
-        .page-text {
-            color: var(--text-color);
-            font-size: 1rem;
-            margin: 0 1rem;
+        .page-item.disabled .page-link {
+            color: #b9b9b9;
+            background-color: transparent;
+            cursor: not-allowed;
+            pointer-events: none;
         }
+
 
         .btn-filter {
             background-color: var(--primary-color);
@@ -452,6 +459,7 @@
         }
 
         @media (max-width: 767.98px) {
+
             .search-input,
             .sort-select {
                 height: 40px;
@@ -490,9 +498,15 @@
             <div class="max-w-7xl mx-auto px-4">
                 <nav aria-label="breadcrumb">
                     <ol class="flex space-x-2 text-sm">
-                        <li><a href="/" class="text-blue-600 hover:underline">Home</a></li>
-                        <li class="flex items-center"><span class="mx-2">></span><span class="text-gray-500">Shop</span>
-                        </li>
+                        <li><a href="/" class="text-black hover:underline text-xs"><i class="fas fa-home"></i> Home</a></li>
+                        <li class="flex items-center"><span class="mx-2"><svg
+                                    class="h-5 w-5 text-gray-500 rtl:rotate-180" aria-hidden="true"
+                                    xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
+                                    viewBox="0 0 24 24">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                        stroke-width="2" d="m9 5 7 7-7 7"></path>
+                                </svg>
+                            </span><span class="text-gray-500 text-xs">All</span></li>
                     </ol>
                 </nav>
             </div>
@@ -519,7 +533,7 @@
                     <div class="relative">
                         <i class="fas fa-sort-amount-down sort-icon"></i>
                         <select name="sort by" id="sortSelect" class="sort-select w-full">
-                            <option value disabled selected>sort by</option>
+                            <option value="" disabled>Sort by</option>
                             <option value="new" <%=filters.sort==='new' ? 'selected' : '' %>>New Arrivals</option>
                             <option value="featured" <%=filters.sort==='featured' ? 'selected' : '' %>>Featured</option>
                             <option value="price-asc" <%=filters.sort==='price-asc' ? 'selected' : '' %>>Price: Low to
@@ -552,16 +566,17 @@
                                     <div class="filter-group">
                                         <h5>Categories</h5>
                                         <div class="form-check">
-                                            <input class="form-check-input category-filter" type="radio" name="category"
-                                                id="categoryAll" value="all" <%=filters.category==='all' ? 'checked'
-                                                : '' %>>
+                                            <input class="form-check-input category-filter" type="checkbox"
+                                                name="category" id="categoryAll" value="all"
+                                                <%=filters.category.includes('all') ? 'checked' : '' %>>
                                             <label class="form-check-label" for="categoryAll">All Categories</label>
                                         </div>
                                         <% category.forEach(function(cat) { %>
                                             <div class="form-check">
-                                                <input class="form-check-input category-filter" type="radio"
+                                                <input class="form-check-input category-filter" type="checkbox"
                                                     name="category" id="category<%= cat._id %>" value="<%= cat._id %>"
-                                                    <%=filters.category===cat._id.toString() ? 'checked' : '' %>>
+                                                    <%=filters.category.includes(cat._id.toString()) ? 'checked' : ''
+                                                    %>>
                                                 <label class="form-check-label" for="category<%= cat._id %>">
                                                     <%= cat.name %>
                                                 </label>
@@ -594,17 +609,18 @@
                                     </div>
                                     <!-- Brand Filter -->
                                     <div class="filter-group">
-                                        <h5>Brands</h5>
+                                        <h5>Bricks</h5>
                                         <div class="form-check">
-                                            <input class="form-check-input brand-filter" type="radio" name="brand"
-                                                id="brandAll" value="all" <%=filters.brand==='all' ? 'checked' : '' %>>
+                                            <input class="form-check-input brand-filter" type="checkbox" name="brand"
+                                                id="brandAll" value="all" <%=filters.brand.includes('all') ? 'checked'
+                                                : '' %>>
                                             <label class="form-check-label" for="brandAll">All Brands</label>
                                         </div>
                                         <% brand.forEach(function(b) { %>
                                             <div class="form-check">
-                                                <input class="form-check-input brand-filter" type="radio" name="brand"
-                                                    id="brand<%= b._id %>" value="<%= b._id %>"
-                                                    <%=filters.brand===b._id.toString() ? 'checked' : '' %>>
+                                                <input class="form-check-input brand-filter" type="checkbox"
+                                                    name="brand" id="brand<%= b._id %>" value="<%= b._id %>"
+                                                    <%=filters.brand.includes(b._id.toString()) ? 'checked' : '' %>>
                                                 <label class="form-check-label" for="brand<%= b._id %>">
                                                     <%= b.name %>
                                                 </label>
@@ -659,7 +675,19 @@
                                         <div class="card-body">
                                             <a href="/productDetails?id=<%= product._id %>">
                                                 <div class="product-category">
-                                                    <%= product.category ? product.category.name : 'All Categories' %>
+                                                </div>
+                                                <div
+                                                    class="product-category text-xs text-gray-500 mb-1 flex justify-between items-center">
+                                                    <span>
+                                                        <%=product.brand?product.brand.name : 'Eyewear' %>
+                                                    </span>
+                                                    <div class="text-yellow-500 text-[10px] flex ml-2">
+                                                        <i class="fas fa-star mr-[1px]"></i>
+                                                        <i class="fas fa-star mr-[1px]"></i>
+                                                        <i class="fas fa-star mr-[1px]"></i>
+                                                        <i class="fas fa-star mr-[1px]"></i>
+                                                        <i class="fas fa-star-half-alt"></i>
+                                                    </div>
                                                 </div>
                                                 <h3 class="product-title">
                                                     <%= product.name || product.productName %>
@@ -704,16 +732,17 @@
                                         </div>
                                         <div class="card-footer">
                                             <%if(product.quantity===0){%>
-                                            <button class="btn btn-add-cart add-to-cart"
-                                                data-product-id="<%= product._id %>" <%= product.quantity === 0 ? 'disabled' : '' %> >
-                                                 <i class="fas fa-times-circle mr-2"></i>Out of stock
-                                            </button>
-                                            <%}else{%>
-                                                 <button class="btn btn-add-cart add-to-cart"
-                                                data-product-id="<%= product._id %>">
-                                                <i class="fas fa-shopping-cart"></i> Add to Cart
-                                            </button>
-                                                <%}%>
+                                                <button class="btn btn-add-cart add-to-cart"
+                                                    data-product-id="<%= product._id %>" <%=product.quantity===0
+                                                    ? 'disabled' : '' %> >
+                                                    <i class="fas fa-times-circle mr-2"></i>Out of stock
+                                                </button>
+                                                <%}else{%>
+                                                    <button class="btn btn-add-cart add-to-cart"
+                                                        data-product-id="<%= product._id %>">
+                                                        <i class="fas fa-shopping-cart"></i> Add to Cart
+                                                    </button>
+                                                    <%}%>
                                         </div>
                                     </div>
                                     <% }); %>
@@ -724,21 +753,69 @@
                                     <div class="pagination-container flex justify-center items-center mt-10">
                                         <nav aria-label="Page navigation">
                                             <ul class="flex items-center space-x-2">
+                                                <!-- Previous Button -->
                                                 <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
-                                                    <a class="page-link" href="/shop?page=<%= currentPage - 1 %>"
-                                                        aria-label="Previous" data-scroll-to-top>
+                                                    <a class="page-link" href="#" data-page="<%= currentPage - 1 %>"
+                                                        aria-label="Previous" <%=currentPage===1
+                                                        ? 'aria-disabled="true"' : '' %>>
                                                         <i class="fas fa-chevron-left"></i>
                                                     </a>
                                                 </li>
-                                                <li class="page-item">
-                                                    <span class="page-text">Page <%= currentPage %> of <%= totalPages %></span>
-                                                </li>
-                                                <li class="page-item <%= currentPage === totalPages ? 'disabled' : '' %>">
-                                                    <a class="page-link" href="/shop?page=<%= currentPage + 1 %>"
-                                                        aria-label="Next" data-scroll-to-top>
-                                                        <i class="fas fa-chevron-right"></i>
-                                                    </a>
-                                                </li>
+                                                <!-- Page Numbers -->
+                                                <% const maxVisiblePages=5; let startPage=Math.max(1, currentPage -
+                                                    Math.floor(maxVisiblePages / 2)); let endPage=Math.min(totalPages,
+                                                    startPage + maxVisiblePages - 1); if (endPage - startPage + 1 <
+                                                    maxVisiblePages) { startPage=Math.max(1, endPage - maxVisiblePages +
+                                                    1); } %>
+                                                    <% if (startPage> 1) { %>
+                                                        <li class="page-item">
+                                                            <a class="page-link" href="#" data-page="1">1</a>
+                                                        </li>
+                                                        <% if (startPage> 2) { %>
+                                                            <li class="page-item">
+                                                                <span class="page-link">...</span>
+                                                            </li>
+                                                            <% } %>
+                                                                <% } %>
+                                                                    <% for (let i=startPage; i <=endPage; i++) { %>
+                                                                        <li
+                                                                            class="page-item <%= currentPage === i ? 'active' : '' %>">
+                                                                            <a class="page-link" href="#"
+                                                                                data-page="<%= i %>" <%=currentPage===i
+                                                                                ? 'aria-current="page"' : '' %>>
+                                                                                <%= i %>
+                                                                            </a>
+                                                                        </li>
+                                                                        <% } %>
+                                                                            <% if (endPage < totalPages) { %>
+                                                                                <% if (endPage < totalPages - 1) { %>
+                                                                                    <li class="page-item">
+                                                                                        <span
+                                                                                            class="page-link">...</span>
+                                                                                    </li>
+                                                                                    <% } %>
+                                                                                        <li class="page-item">
+                                                                                            <a class="page-link"
+                                                                                                href="#"
+                                                                                                data-page="<%= totalPages %>">
+                                                                                                <%= totalPages %>
+                                                                                            </a>
+                                                                                        </li>
+                                                                                        <% } %>
+                                                                                            <!-- Next Button -->
+                                                                                            <li
+                                                                                                class="page-item <%= currentPage === totalPages ? 'disabled' : '' %>">
+                                                                                                <a class="page-link"
+                                                                                                    href="#"
+                                                                                                    data-page="<%= currentPage + 1 %>"
+                                                                                                    aria-label="Next"
+                                                                                                    <%=currentPage===totalPages
+                                                                                                    ? 'aria-disabled="true"'
+                                                                                                    : '' %>>
+                                                                                                    <i
+                                                                                                        class="fas fa-chevron-right"></i>
+                                                                                                </a>
+                                                                                            </li>
                                             </ul>
                                         </nav>
                                     </div>
@@ -749,18 +826,19 @@
 
         <script>
             document.addEventListener('DOMContentLoaded', function () {
-                initializeCartButtons()
+                initializeCartButtons();
                 initializeWishlistButtons();
 
+                // Sort handling
                 const sortSelect = document.getElementById('sortSelect');
                 sortSelect.addEventListener('change', function () {
-                    const url = new URL(window.location.href);
-                    const params = new URLSearchParams(url.search);
+                    const queryString = buildQueryString(1); // Reset to page 1 when sorting
+                    const params = new URLSearchParams(queryString);
                     params.set('sort', this.value);
-                    params.set('page', '1');
-                    window.location.href = `${url.pathname}?${params.toString()}`;
+                    window.location.href = `/shop?${params.toString()}`;
                 });
 
+                // Search handling
                 const clearSearchBtn = document.getElementById('clearSearch');
                 if (clearSearchBtn) {
                     clearSearchBtn.addEventListener('click', function () {
@@ -776,35 +854,101 @@
                     }
                 });
 
-                // Scroll to top on pagination click
-                document.querySelectorAll('[data-scroll-to-top]').forEach(link => {
+                // Category and Brand filter handling
+                const categoryAll = document.getElementById('categoryAll');
+                const brandAll = document.getElementById('brandAll');
+                const categoryCheckboxes = document.querySelectorAll('.category-filter:not(#categoryAll)');
+                const brandCheckboxes = document.querySelectorAll('.brand-filter:not(#brandAll)');
+
+                categoryAll.addEventListener('change', function () {
+                    if (this.checked) {
+                        categoryCheckboxes.forEach(cb => cb.checked = false);
+                    }
+                });
+
+                brandAll.addEventListener('change', function () {
+                    if (this.checked) {
+                        brandCheckboxes.forEach(cb => cb.checked = false);
+                    }
+                });
+
+                categoryCheckboxes.forEach(cb => {
+                    cb.addEventListener('change', function () {
+                        if (this.checked) {
+                            categoryAll.checked = false;
+                        }
+                    });
+                });
+
+                brandCheckboxes.forEach(cb => {
+                    cb.addEventListener('change', function () {
+                        if (this.checked) {
+                            brandAll.checked = false;
+                        }
+                    });
+                });
+
+                // Build query string with all filter parameters
+                function buildQueryString(page) {
+                    const params = new URLSearchParams(window.location.search);
+                    params.set('page', page);
+
+                    // Ensure sort parameter is included
+                    if (sortSelect.value && sortSelect.value !== 'sort by') {
+                        params.set('sort', sortSelect.value);
+                    }
+
+                    // Preserve search input
+                    if (searchInput.value) {
+                        params.set('search', searchInput.value);
+                    }
+
+                    // Preserve category filters
+                    const categoryCheckboxes = document.querySelectorAll('.category-filter:checked:not(#categoryAll)');
+                    const categories = Array.from(categoryCheckboxes).map(cb => cb.value);
+                    if (categories.length > 0) {
+                        params.set('category', categories.join(','));
+                    } else if (document.getElementById('categoryAll').checked) {
+                        params.set('category', 'all');
+                    }
+
+                    // Preserve brand filters
+                    const brandCheckboxes = document.querySelectorAll('.brand-filter:checked:not(#brandAll)');
+                    const brands = Array.from(brandCheckboxes).map(cb => cb.value);
+                    if (brands.length > 0) {
+                        params.set('brand', brands.join(','));
+                    } else if (document.getElementById('brandAll').checked) {
+                        params.set('brand', 'all');
+                    }
+
+                    // Preserve price range
+                    const minPrice = document.getElementById('minPrice').value;
+                    const maxPrice = document.getElementById('maxPrice').value;
+                    if (minPrice) params.set('minPrice', minPrice);
+                    if (maxPrice) params.set('maxPrice', maxPrice);
+
+                    return params.toString();
+                }
+
+                // Pagination handling
+                document.querySelectorAll('.page-link').forEach(link => {
                     link.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        if (this.parentElement.classList.contains('disabled') ||
+                            this.parentElement.classList.contains('active') ||
+                            this.textContent === '...') {
+                            return;
+                        }
+
+                        const page = parseInt(this.getAttribute('data-page'));
+                        if (isNaN(page)) return;
+
+                        window.location.href = `/shop?${buildQueryString(page)}`;
                         window.scrollTo({ top: 0, behavior: 'smooth' });
                     });
                 });
 
-                // Add to cart
-                const addToCartButtons = document.querySelectorAll('.add-to-cart');
-                addToCartButtons.forEach(button => {
-                    button.addEventListener('click', function (e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        const productId = this.getAttribute('data-product-id');
-                        addToCart(productId, this);
-                    });
-                });
-
-                const wishlistButtons = document.querySelectorAll('.add-to-wishlist');
-                wishlistButtons.forEach(button => {
-                    button.addEventListener('click', function (e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        if (this.disabled) return;
-                        const productId = this.getAttribute('data-product-id');
-                        toggleWishlist(productId, this);
-                    });
-                });
-
+                // Cart handling
                 function initializeCartButtons() {
                     const cartButtons = document.querySelectorAll('.add-to-cart');
                     const productIds = Array.from(cartButtons).map(btn => btn.getAttribute('data-product-id')).filter(Boolean);
@@ -840,6 +984,7 @@
                         .catch(err => console.error('Cart status error:', err));
                 }
 
+                // Wishlist handling
                 function initializeWishlistButtons() {
                     const wishlistButtons = document.querySelectorAll('.add-to-wishlist');
                     const productIds = Array.from(wishlistButtons).map(btn => btn.getAttribute('data-product-id')).filter(Boolean);
@@ -901,16 +1046,12 @@
                         .then(data => {
                             if (data.success) {
                                 showToast('Product added to cart!', 'success');
-
                                 updateCartCounter(data.cartCount);
-
                                 if (button) {
                                     button.innerHTML = '<i class="fas fa-shopping-cart"></i> Go to Cart';
                                     button.classList.add('bg-black');
-
                                     const newButton = button.cloneNode(true);
                                     button.parentNode.replaceChild(newButton, button);
-
                                     newButton.addEventListener('click', () => {
                                         window.location.href = '/cart';
                                     });
@@ -970,7 +1111,6 @@
                                 button.innerHTML = originalHTML;
                                 if (wasActive) button.classList.add('active');
                                 else button.classList.remove('active');
-
                                 if (data.message?.includes('login')) {
                                     showToast('Please login to manage wishlist', 'error');
                                     setTimeout(() => window.location.href = '/login', 2000);
@@ -989,9 +1129,7 @@
                             else button.classList.remove('active');
                             showToast('Please login & try again.', 'error');
                             if (error) {
-                                setTimeout(() => {
-                                    window.location.href = '/login';
-                                }, 2000);
+                                setTimeout(() => window.location.href = '/login', 2000);
                             }
                         })
                         .finally(() => {
@@ -1034,21 +1172,21 @@
                     }
 
                     toast.style.cssText = `
-                        display: flex;
-                        align-items: center;
-                        justify-content: space-between;
-                        background-color: ${bgColor};
-                        border-left: 4px solid ${borderColor};
-                        color: white;
-                        padding: 8px 16px;
-                        border-radius: 5px;
-                        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-                        max-width: 400px;
-                        width: 100%;
-                        opacity: 0;
-                        transform: translateY(20px);
-                        transition: opacity 0.3s ease, transform 0.3s ease;
-                    `;
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    background-color: ${bgColor};
+                    border-left: 4px solid ${borderColor};
+                    color: white;
+                    padding: 8px 16px;
+                    border-radius: 5px;
+                    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+                    max-width: 400px;
+                    width: 100%;
+                    opacity: 0;
+                    transform: translateY(20px);
+                    transition: opacity 0.3s ease, transform 0.3s ease;
+                `;
 
                     toast.id = toastId;
                     toast.setAttribute('role', 'alert');
@@ -1056,11 +1194,11 @@
                     toast.setAttribute('aria-atomic', 'true');
 
                     toast.innerHTML = `
-                        <div style="flex: 1; font-size: 14px;">${message}</div>
-                        <button type="button" style="margin-left: 12px; background: none; border: none; color: white; font-size: 16px; cursor: pointer;" data-toast-id="${toastId}">
-                            ×
-                        </button>
-                    `;
+                    <div style="flex: 1; font-size: 14px;">${message}</div>
+                    <button type="button" style="margin-left: 12px; background: none; border: none; color: white; font-size: 16px; cursor: pointer;" data-toast-id="${toastId}">
+                        ×
+                    </button>
+                `;
 
                     toastContainer.appendChild(toast);
 
@@ -1098,6 +1236,29 @@
                         wishlistCounter.classList.toggle('d-none', count <= 0);
                     }
                 }
+
+                // Add to cart
+                const addToCartButtons = document.querySelectorAll('.add-to-cart');
+                addToCartButtons.forEach(button => {
+                    button.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        const productId = this.getAttribute('data-product-id');
+                        addToCart(productId, this);
+                    });
+                });
+
+                // Wishlist buttons
+                const wishlistButtons = document.querySelectorAll('.add-to-wishlist');
+                wishlistButtons.forEach(button => {
+                    button.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        if (this.disabled) return;
+                        const productId = this.getAttribute('data-product-id');
+                        toggleWishlist(productId, this);
+                    });
+                });
             });
         </script>
         <%- include("../../views/partials/user/footer") %>

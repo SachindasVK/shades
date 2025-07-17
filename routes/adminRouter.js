@@ -5,7 +5,6 @@ const customerController = require('../controller/admin/customerController');
 const categoryController = require('../controller/admin/categoryController');
 const productController = require('../controller/admin/productController');
 const brandController = require('../controller/admin/brandController')
-const bannerController = require('../controller/admin/bannerController')
 const couponController = require('../controller/admin/couponController')
 const orderController = require('../controller/admin/orderController')
 const salesReportController = require('../controller/admin/salesReportController')
@@ -21,6 +20,8 @@ router.get('/error', adminController.error);
 router.get('/login', adminController.loadLogin);
 router.post('/login', adminController.login);
 router.get('/dashboard',adminAuth,adminController.loadDashboard);
+router.get('/sales-chart',adminAuth,adminController.getSalesChart)
+router.get('/top-sales-chart',adminAuth,adminController.getTopSalesData)
 router.get('/logout', adminAuth,adminController.logout);
 // view all recent Activities
 router.get('/all-recent-activities',adminAuth,adminController.viewAllRecentActivities)
@@ -68,9 +69,6 @@ router.post('/editProduct/:id', adminAuth, upload.fields([
     { name: 'image4', maxCount: 1 }
 ]), productController.editProduct);
 
-
-//banner management
-router.get('/banners',adminAuth,bannerController.getBannerpage)
 
 //coupen management
 router.get('/coupons',adminAuth,couponController.getCoupon)

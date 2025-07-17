@@ -47,11 +47,11 @@ const categoryInfo = async (req, res) => {
 // Add Category
 const addCategory = async (req, res) => {
     try {
-        const { name, shape, description } = req.body;
+        const { name, description } = req.body;
        
          //name validation
     const trimmedName = name.trim()
-    const trimmedShape = shape.trim()
+
     if (!trimmedName || trimmedName.length === 0) {
       console.log("Invalid input: name is empty or contains only whitespace")
       return res.status(400).json({
@@ -60,13 +60,7 @@ const addCategory = async (req, res) => {
          })
     }
 
-     if (!trimmedShape || trimmedShape.length === 0) {
-      console.log("Invalid input: shape Field is empty or contains only whitespace")
-      return res.status(400).json({
-         success: false,
-         message: "Category shape cannot be empty"
-         })
-    }
+    
       // Check if category with the same name already exists
     const existingCategory = await Category.findOne({ name: new RegExp(`^${trimmedName}$`, "i") })
      if (existingCategory) {
@@ -91,7 +85,6 @@ const addCategory = async (req, res) => {
         // Create new category
         const newCategory = new Category({ 
             name: trimmedName, 
-            shape,
             description
         })
         const savedCategory = await newCategory.save()
@@ -157,7 +150,7 @@ const addCategoryOffer = async (req, res) => {
         ? Math.max(productOffer, percentage)
         : productOffer;
 
-      const discount = (product.regularPrice * maxOffer) / 100;
+     const discount = Math.floor((product.regularPrice * maxOffer) / 100);
 
       product.salePrice = product.regularPrice - discount;
 
@@ -268,8 +261,8 @@ const updateCategoryStatus = async (req, res) => {
 const editCategory = async (req, res) => {
   try {
     const categoryId = req.params.id
-    const { name, description,shape } = req.body
-    const updatedCategory = await Category.findByIdAndUpdate(categoryId, { name, description,shape }, { new: true })
+    const { name, description } = req.body
+    const updatedCategory = await Category.findByIdAndUpdate(categoryId, { name, description }, { new: true })
     if (!updatedCategory) {
       return res.status(404).json({ success: false, message: "Category not found" })
     }

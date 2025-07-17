@@ -16,7 +16,7 @@ const logout = async (req, res) => {
 
             // Clear the cookie to avoid session traces
             res.clearCookie('connect.sid'); // depends on your session cookie name
-
+            console.log('logout success')
 
             res.redirect('/admin/login');
         });
@@ -150,13 +150,13 @@ const loadDashboard = async (req, res) => {
             });
 
             const stockAddedProducts = await Product.find({ quantity: { $gt: 0 } })
-                .sort({ updatedAt: -1 })
+                .sort({ createdAt: -1 })
                 .limit(1)
                 .lean();
             stockAddedProducts.forEach(product => {
                 recentActivities.push({
                     type: 'stockAdded',
-                    time: product.updatedAt,
+                    time: product.createdAt,
                     productName: product.productName,
                     quantity: product.quantity
                 });
@@ -273,12 +273,257 @@ const viewAllRecentActivities = async (req, res) => {
     }
 };
 
+const getSalesChart = async (req, res) => {
+  try {
+    const filter = req.query.filter || 'monthly';
+    const now = new Date();
+    const match = {
+      status: { $in: ['delivered', 'confirmed'] },
+    };
 
+    let groupStage = {};
+    if (filter === 'daily') {
+      const past7Days = new Date();
+      past7Days.setDate(now.getDate() - 6);
+      match.createdAt = { $gte: past7Days };
+      groupStage = {
+        _id: { $dateToString: { format: '%d-%m', date: '$createdAt' } },
+        total: { $sum: '$finalAmount' },
+      };
+    } else if (filter === 'weekly') {
+      const past30Days = new Date();
+      past30Days.setDate(now.getDate() - 30);
+      match.createdAt = { $gte: past30Days };
+      groupStage = {
+        _id: { $isoWeek: '$createdAt' },
+        total: { $sum: '$finalAmount' },
+      };
+    } else if (filter === 'monthly') {
+      groupStage = {
+        _id: { $month: '$createdAt' },
+        total: { $sum: '$finalAmount' },
+      };
+    } else if (filter === 'yearly') {
+      groupStage = {
+        _id: { $year: '$createdAt' },
+        total: { $sum: '$finalAmount' },
+      };
+    }
+
+    const sales = await Order.aggregate([
+      { $match: match },
+      { $group: groupStage },
+      { $sort: { _id: 1 } },
+    ]);
+
+    res.json({ success: true, data: sales });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: 'Failed to load chart' });
+  }
+};
+
+
+
+
+const getTopSalesData = async (req, res) => {
+  try {
+    const filter = req.query.filter || 'product';
+    console.log('Filter received:', filter); // Debug log
+
+    let pipeline = [];
+
+    // Base match stage - only count from confirmed/delivered orders
+    const matchStage = {
+      $match: {
+        status: { $in: ['delivered', 'confirmed'] }
+      }
+    };
+
+    if (filter === 'product') {
+      pipeline = [
+        matchStage,
+        { $unwind: '$orderedItems' },
+        {
+          $group: {
+            _id: '$orderedItems.productId',
+            totalSold: { $sum: '$orderedItems.quantity' }
+          }
+        },
+        {
+          $lookup: {
+            from: 'products',
+            localField: '_id',
+            foreignField: '_id',
+            as: 'product'
+          }
+        },
+        { $unwind: '$product' },
+        {
+          $match: {
+            'product.isDeleted': { $ne: true },
+            'product.isActive': { $ne: false }
+          }
+        },
+        {
+          $project: {
+            name: { 
+              $cond: {
+                if: { $or: [{ $eq: ['$product.productName', null] }, { $eq: ['$product.productName', ''] }] },
+                then: 'Unnamed Product',
+                else: '$product.productName'
+              }
+            },
+            totalSold: 1
+          }
+        },
+        { $sort: { totalSold: -1 } },
+        { $limit: 10 }
+      ];
+    } else if (filter === 'category') {
+      pipeline = [
+        matchStage,
+        { $unwind: '$orderedItems' },
+        {
+          $lookup: {
+            from: 'products',
+            localField: 'orderedItems.productId',
+            foreignField: '_id',
+            as: 'product'
+          }
+        },
+        { $unwind: '$product' },
+        {
+          $match: {
+            'product.isDeleted': { $ne: true },
+            'product.isActive': { $ne: false }
+          }
+        },
+        {
+          $group: {
+            _id: '$product.category',
+            totalSold: { $sum: '$orderedItems.quantity' }
+          }
+        },
+        {
+          $lookup: {
+            from: 'categories',
+            localField: '_id',
+            foreignField: '_id',
+            as: 'category'
+          }
+        },
+        { $unwind: '$category' },
+        {
+          $match: {
+            'category.isDeleted': { $ne: true },
+            'category.isActive': { $ne: false }
+          }
+        },
+        {
+          $project: {
+            name: { 
+              $cond: {
+                if: { $or: [{ $eq: ['$category.name', null] }, { $eq: ['$category.name', ''] }] },
+                then: 'Unnamed Category',
+                else: '$category.name'
+              }
+            },
+            totalSold: 1
+          }
+        },
+        { $sort: { totalSold: -1 } },
+        { $limit: 10 }
+      ];
+    } else if (filter === 'brand') {
+      pipeline = [
+        matchStage,
+        { $unwind: '$orderedItems' },
+        {
+          $lookup: {
+            from: 'products',
+            localField: 'orderedItems.productId',
+            foreignField: '_id',
+            as: 'product'
+          }
+        },
+        { $unwind: '$product' },
+        {
+          $match: {
+            'product.isDeleted': { $ne: true },
+            'product.isActive': { $ne: false }
+          }
+        },
+        {
+          $group: {
+            _id: '$product.brand',
+            totalSold: { $sum: '$orderedItems.quantity' }
+          }
+        },
+        {
+          $lookup: {
+            from: 'brands',
+            localField: '_id',
+            foreignField: '_id',
+            as: 'brand'
+          }
+        },
+        { $unwind: '$brand' },
+        {
+          $match: {
+            'brand.isDeleted': { $ne: true },
+            'brand.isActive': { $ne: false }
+          }
+        },
+        {
+          $project: {
+            name: { 
+              $cond: {
+                if: { $or: [{ $eq: ['$brand.name', null] }, { $eq: ['$brand.name', ''] }] },
+                then: 'Unnamed Brand',
+                else: '$brand.name'
+              }
+            },
+            totalSold: 1
+          }
+        },
+        { $sort: { totalSold: -1 } },
+        { $limit: 10 }
+      ];
+    }
+
+    console.log('Pipeline:', JSON.stringify(pipeline, null, 2)); // Debug log
+
+    const result = await Order.aggregate(pipeline);
+    console.log("Top Sales Chart Result:", result); // Debug log
+
+    // If no results, return empty array with success
+    if (!result || result.length === 0) {
+      console.log('No data found for filter:', filter);
+      return res.json({ 
+        success: true, 
+        data: [],
+        message: `No ${filter} sales data found`
+      });
+    }
+
+    res.json({ success: true, data: result });
+  } catch (error) {
+    console.error('Error in getTopSalesData:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Chart data error',
+      error: error.message 
+    });
+  }
+};
 module.exports = {
     loadLogin,
     login,
     loadDashboard,
     error,
     logout,
-    viewAllRecentActivities
+    viewAllRecentActivities,
+    getSalesChart,
+    getTopSalesData
 }

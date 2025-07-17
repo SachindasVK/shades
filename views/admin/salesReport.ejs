@@ -2,62 +2,61 @@
 
 <!-- Sales Report Content -->
 <div class="p-4 sm:p-6 max-w-full overflow-hidden">
-  <!-- Page Header -->
-  <div class="mb-6">
-    <h1 class="text-2xl font-bold text-gray-900">Sales Report</h1>
-    <p class="text-gray-600">Comprehensive sales analytics and reporting</p>
-  </div>
+ 
 
   <!-- Filter Section -->
   <div class="bg-white rounded-lg shadow-sm p-4 sm:p-6 mb-6">
-    <div class="flex flex-col sm:flex-row sm:flex-wrap items-end gap-4">
-      <!-- Report Type Filter -->
-      <div class="w-full sm:flex-1 sm:min-w-[200px]">
-        <label class="block text-sm font-medium text-gray-700 mb-2">Report Type</label>
-        <select id="reportType" name="reportType"
-          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-          <option value="daily" <%= reportType === 'daily' ? 'selected' : '' %>>Daily</option>
-          <option value="weekly" <%= reportType === 'weekly' ? 'selected' : '' %>>Weekly</option>
-          <option value="monthly" <%= reportType === 'monthly' ? 'selected' : '' %>>Monthly</option>
-          <option value="yearly" <%= reportType === 'yearly' ? 'selected' : '' %>>Yearly</option>
-          <option value="custom" <%= reportType === 'custom' ? 'selected' : '' %>>Custom Date Range</option>
-        </select>
-      </div>
+    <form id="filterForm" method="GET" action="/admin/sales-report">
+      <div class="flex flex-col sm:flex-row sm:flex-wrap items-end gap-4">
+        <!-- Report Type Filter -->
+        <div class="w-full sm:flex-1 sm:min-w-[200px]">
+          <label class="block text-sm font-medium text-gray-700 mb-2">Report Type</label>
+          <select id="reportType" name="reportType"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            <option value="" <%= !reportType ? 'selected' : '' %>>All Time</option>
+            <option value="daily" <%= reportType === 'daily' ? 'selected' : '' %>>Daily</option>
+            <option value="weekly" <%= reportType === 'weekly' ? 'selected' : '' %>>Weekly</option>
+            <option value="monthly" <%= reportType === 'monthly' ? 'selected' : '' %>>Monthly</option>
+            <option value="yearly" <%= reportType === 'yearly' ? 'selected' : '' %>>Yearly</option>
+            <option value="custom" <%= reportType === 'custom' ? 'selected' : '' %>>Custom Date Range</option>
+          </select>
+        </div>
 
-      <!-- Date From (Custom) -->
-      <div id="dateFromContainer" class="w-full sm:flex-1 sm:min-w-[150px] <%= reportType !== 'custom' ? 'hidden' : '' %>">
-        <label class="block text-sm font-medium text-gray-700 mb-2">From Date</label>
-        <input type="date" id="dateFrom" name="dateFrom" value="<%= dateFrom || '' %>"
-          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-      </div>
+        <!-- Date From (Custom) -->
+        <div id="dateFromContainer" class="w-full sm:flex-1 sm:min-w-[150px] <%= reportType !== 'custom' ? 'hidden' : '' %>">
+          <label class="block text-sm font-medium text-gray-700 mb-2">From Date</label>
+          <input type="date" id="dateFrom" name="dateFrom" value="<%= dateFrom || '' %>"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+        </div>
 
-      <!-- Date To (Custom) -->
-      <div id="dateToContainer" class="w-full sm:flex-1 sm:min-w-[150px] <%= reportType !== 'custom' ? 'hidden' : '' %>">
-        <label class="block text-sm font-medium text-gray-700 mb-2">To Date</label>
-        <input type="date" id="dateTo" name="dateTo" value="<%= dateTo || '' %>"
-          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-      </div>
+        <!-- Date To (Custom) -->
+        <div id="dateToContainer" class="w-full sm:flex-1 sm:min-w-[150px] <%= reportType !== 'custom' ? 'hidden' : '' %>">
+          <label class="block text-sm font-medium text-gray-700 mb-2">To Date</label>
+          <input type="date" id="dateTo" name="dateTo" value="<%= dateTo || '' %>"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+        </div>
 
-      <!-- Apply Filter Button -->
-      <div class="w-full sm:w-auto">
-        <button id="applyFilter"
-          class="w-full sm:w-auto px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
-          <i class="fas fa-filter mr-2"></i>Apply Filter
-        </button>
-      </div>
+        <!-- Apply Filter Button -->
+        <div class="w-full sm:w-auto">
+          <button type="submit" id="applyFilter"
+            class="w-full sm:w-auto px-6 py-2 bg-white text-black hover:text-gray-700 rounded-md transition-colors">
+            <i class="fas fa-filter mr-2"></i>Apply Filter
+          </button>
+        </div>
 
-      <!-- Download Buttons -->
-      <div class="w-full sm:w-auto flex gap-2">
-        <button id="downloadPDF"
-          class="w-full sm:w-auto px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors">
-          <i class="fas fa-file-pdf mr-2"></i>PDF
-        </button>
-        <button id="downloadExcel"
-          class="w-full sm:w-auto px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors">
-          <i class="fas fa-file-excel mr-2"></i>Excel
-        </button>
+        <!-- Download Buttons -->
+        <div class="w-full sm:w-auto flex gap-2">
+          <button type="button" id="downloadPDF"
+            class="w-full sm:w-auto px-4 py-2 bg-white text-red-600 rounded-md hover:text-red-700 transition-colors">
+            <i class="fas fa-file-pdf mr-2"></i>PDF
+          </button>
+          <button type="button" id="downloadExcel"
+            class="w-full sm:w-auto px-4 py-2 bg-white text-green-600 rounded-md hover:text-green-700 transition-colors">
+            <i class="fas fa-file-excel mr-2"></i>Excel
+          </button>
+        </div>
       </div>
-    </div>
+    </form>
   </div>
 
   <!-- Summary Cards -->
@@ -266,37 +265,70 @@
         <div class="mb-2 sm:mb-0">
           <p class="text-sm text-gray-700">
             Showing
-            <span class="font-medium"><%= (page - 1) * limit + 1 %></span> to
-            <span class="font-medium"><%= Math.min(page * limit, totalSalesCount) %></span> of
+            <span class="font-medium"><%= ((currentPage - 1) * limit) + 1 %></span> to
+            <span class="font-medium"><%= Math.min(currentPage * limit, totalSalesCount) %></span> of
             <span class="font-medium"><%= totalSalesCount %></span> results
           </p>
         </div>
         <div>
           <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
             <!-- Previous Button -->
-            <a href="<%= page > 1 ? `/admin/sales-report?page=${page - 1}&reportType=${reportType}${reportType === 'custom' ? `&dateFrom=${dateFrom}&dateTo=${dateTo}` : ''}` : '#' %>"
-              class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 <%= page === 1 ? 'cursor-not-allowed' : '' %>">
+            <% 
+              let prevUrl = '#';
+              if (currentPage > 1) {
+                const prevParams = new URLSearchParams({
+                  page: (currentPage - 1).toString(),
+                  limit: limit.toString(),
+                  reportType: reportType || '',
+                  ...(reportType === 'custom' && { dateFrom: dateFrom || '', dateTo: dateTo || '' })
+                });
+                prevUrl = `/admin/sales-report?${prevParams.toString()}`;
+              }
+            %>
+            <a href="<%= prevUrl %>"
+              class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 <%= currentPage === 1 ? 'cursor-not-allowed opacity-50' : '' %>">
               <i class="fas fa-chevron-left"></i>
             </a>
+
             <!-- Page Numbers -->
             <% 
-              const totalPages = Math.ceil(totalSalesCount / limit);
               const maxPagesToShow = 5;
-              let startPage = Math.max(1, page - Math.floor(maxPagesToShow / 2));
+              let startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2));
               let endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
               if (endPage - startPage + 1 < maxPagesToShow) {
                 startPage = Math.max(1, endPage - maxPagesToShow + 1);
               }
-              for (let i = startPage; i <= endPage; i++) { 
+              
+              for (let i = startPage; i <= endPage; i++) {
+                const pageParams = new URLSearchParams({
+                  page: i.toString(),
+                  limit: limit.toString(),
+                  reportType: reportType || '',
+                  ...(reportType === 'custom' && { dateFrom: dateFrom || '', dateTo: dateTo || '' })
+                });
+                const pageUrl = `/admin/sales-report?${pageParams.toString()}`;
             %>
-              <a href="/admin/sales-report?page=<%= i %>&reportType=<%= reportType %><%= reportType === 'custom' ? `&dateFrom=${dateFrom}&dateTo=${dateTo}` : '' %>"
-                class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium <%= i === page ? 'bg-blue-50 text-blue-600' : 'text-gray-700 hover:bg-gray-50' %>">
+              <a href="<%= pageUrl %>"
+                class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium <%= i === currentPage ? 'bg-blue-50 text-blue-600 border-blue-500' : 'text-gray-700 hover:bg-gray-50' %>">
                 <%= i %>
               </a>
             <% } %>
+
             <!-- Next Button -->
-            <a href="<%= page < totalPages ? `/admin/sales-report?page=${page + 1}&reportType=${reportType}${reportType === 'custom' ? `&dateFrom=${dateFrom}&dateTo=${dateTo}` : ''}` : '#' %>"
-              class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 <%= page === totalPages ? 'cursor-not-allowed' : '' %>">
+            <% 
+              let nextUrl = '#';
+              if (currentPage < totalPages) {
+                const nextParams = new URLSearchParams({
+                  page: (currentPage + 1).toString(),
+                  limit: limit.toString(),
+                  reportType: reportType || '',
+                  ...(reportType === 'custom' && { dateFrom: dateFrom || '', dateTo: dateTo || '' })
+                });
+                nextUrl = `/admin/sales-report?${nextParams.toString()}`;
+              }
+            %>
+            <a href="<%= nextUrl %>"
+              class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 <%= currentPage === totalPages ? 'cursor-not-allowed opacity-50' : '' %>">
               <i class="fas fa-chevron-right"></i>
             </a>
           </nav>
@@ -306,49 +338,62 @@
   </div>
 </div>
 
-<!-- Loading Overlay -->
-<div id="loadingOverlay" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden z-50">
-  <div class="bg-white rounded-lg p-6 flex items-center space-x-3" role="status" aria-live="polite">
-    <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
-    <span class="text-gray-700">Loading report...</span>
+ <div id="toast" class="fixed bottom-4 right-4 z-50 hidden">
+    <div class="bg-white rounded-lg shadow-lg border-l-4 border-green-500 px-4 py-3 max-w-sm">
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <i class="fas fa-check-circle text-green-500"></i>
+        </div>
+        <div class="ml-3">
+          <p id="toastMessage" class="text-sm font-medium text-gray-900"></p>
+        </div>
+        <div class="ml-auto pl-3">
+          <button id="closeToast" class="text-gray-400 hover:text-gray-500">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
-</div>
-
 <script>
+
   document.addEventListener('DOMContentLoaded', function () {
     const reportTypeSelect = document.getElementById('reportType');
     const dateFromContainer = document.getElementById('dateFromContainer');
     const dateToContainer = document.getElementById('dateToContainer');
     const dateFromInput = document.getElementById('dateFrom');
     const dateToInput = document.getElementById('dateTo');
-    const applyFilterBtn = document.getElementById('applyFilter');
+    const filterForm = document.getElementById('filterForm');
     const downloadPDFBtn = document.getElementById('downloadPDF');
     const downloadExcelBtn = document.getElementById('downloadExcel');
-    const loadingOverlay = document.getElementById('loadingOverlay');
 
     // Toggle date inputs visibility based on report type
     function toggleDateInputs() {
       const isCustom = reportTypeSelect.value === 'custom';
       dateFromContainer.classList.toggle('hidden', !isCustom);
       dateToContainer.classList.toggle('hidden', !isCustom);
-    }
-
-    // Set default dates if not provided
-    if (!dateFromInput.value || !dateToInput.value) {
-      const today = new Date();
-      const lastMonth = new Date(today.getFullYear(), today.getMonth() - 1, today.getDate());
-      dateFromInput.value = lastMonth.toISOString().split('T')[0];
-      dateToInput.value = today.toISOString().split('T')[0];
+      
+      if (isCustom && (!dateFromInput.value || !dateToInput.value)) {
+        const today = new Date();
+        const lastMonth = new Date(today.getFullYear(), today.getMonth() - 1, today.getDate());
+        dateFromInput.value = dateFromInput.value || lastMonth.toISOString().split('T')[0];
+        dateToInput.value = dateToInput.value || today.toISOString().split('T')[0];
+      }
     }
 
     // Initial toggle
     toggleDateInputs();
 
     // Report type change handler
-    reportTypeSelect.addEventListener('change', toggleDateInputs);
+    reportTypeSelect.addEventListener('change', function() {
+      toggleDateInputs();
+      updateReportPeriodText();
+    });
 
-    // Apply filter function
-    applyFilterBtn.addEventListener('click', function () {
+    // Form submission handler
+    filterForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
       const reportType = reportTypeSelect.value;
       const dateFrom = dateFromInput.value;
       const dateTo = dateToInput.value;
@@ -365,26 +410,12 @@
         }
       }
 
-      // Show loading
-      loadingOverlay.classList.remove('hidden');
-
-      // Build filter params
-      const params = new URLSearchParams({
-        reportType: reportType,
-        page: 1 // Reset to first page on filter apply
-      });
-
-      if (reportType === 'custom') {
-        if (dateFrom) params.append('dateFrom', dateFrom);
-        if (dateTo) params.append('dateTo', dateTo);
-      }
-
-      // Redirect to filtered page
-      window.location.href = `/admin/sales-report?${params.toString()}`;
+      // Submit form
+      this.submit();
     });
 
-    // Download PDF
-    downloadPDFBtn.addEventListener('click', function () {
+    // Download functions
+    function downloadReport(format) {
       const reportType = reportTypeSelect.value;
       const dateFrom = dateFromInput.value;
       const dateTo = dateToInput.value;
@@ -401,20 +432,16 @@
       }
 
       const params = new URLSearchParams({
-        reportType: reportType,
-        format: 'pdf'
+        reportType: reportType || '',
+        format: format,
+        ...(reportType === 'custom' && { dateFrom: dateFrom || '', dateTo: dateTo || '' })
       });
 
-      if (reportType === 'custom') {
-        if (dateFrom) params.append('dateFrom', dateFrom);
-        if (dateTo) params.append('dateTo', dateTo);
-      }
-
-      loadingOverlay.classList.remove('hidden');
+   
 
       const link = document.createElement('a');
       link.href = `/admin/sales-report/download?${params.toString()}`;
-      link.download = `sales_report_${reportType}_${new Date().toISOString().split('T')[0]}.pdf`;
+      link.download = `sales_report_${reportType || 'all'}_${new Date().toISOString().split('T')[0]}.${format === 'pdf' ? 'pdf' : 'xlsx'}`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -422,107 +449,268 @@
       setTimeout(() => {
         loadingOverlay.classList.add('hidden');
       }, 2000);
+    }
+
+    // Download PDF
+    downloadPDFBtn.addEventListener('click', function () {
+      downloadReport('pdf');
     });
 
     // Download Excel
     downloadExcelBtn.addEventListener('click', function () {
-      const reportType = reportTypeSelect.value;
-      const dateFrom = dateFromInput.value;
-      const dateTo = dateToInput.value;
-
-      if (reportType === 'custom') {
-        if (!dateFrom || !dateTo) {
-          showToast('Please select both start and end dates for custom range.', 'error');
-          return;
-        }
-        if (new Date(dateTo) < new Date(dateFrom)) {
-          showToast('End date cannot be earlier than start date.', 'error');
-          return;
-        }
-      }
-
-      const params = new URLSearchParams({
-        reportType: reportType,
-        format: 'excel'
-      });
-
-      if (reportType === 'custom') {
-        if (dateFrom) params.append('dateFrom', dateFrom);
-        if (dateTo) params.append('dateTo', dateTo);
-      }
-
-      loadingOverlay.classList.remove('hidden');
-
-      const link = document.createElement('a');
-      link.href = `/admin/sales-report/download?${params.toString()}`;
-      link.download = `sales_report_${reportType}_${new Date().toISOString().split('T')[0]}.xlsx`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-
-      setTimeout(() => {
-        loadingOverlay.classList.add('hidden');
-      }, 2000);
+      downloadReport('excel');
     });
 
     // Update report period text based on filter
-    function updateReportPeriodText() {
-      const reportType = reportTypeSelect.value;
-      const reportPeriodText = document.getElementById('reportPeriodText');
+  // Complete the updateReportPeriodText function
+function updateReportPeriodText() {
+  const reportType = reportTypeSelect.value;
+  const reportPeriodText = document.getElementById('reportPeriodText');
 
-      switch (reportType) {
-        case 'daily':
-          reportPeriodText.textContent = 'Today';
-          break;
-        case 'weekly':
-          reportPeriodText.textContent = 'This Week';
-          break;
-        case 'monthly':
-          reportPeriodText.textContent = 'This Month';
-          break;
-        case 'yearly':
-          reportPeriodText.textContent = 'This Year';
-          break;
-        case 'custom':
-          if (dateFromInput.value && dateToInput.value) {
-            reportPeriodText.textContent = `${new Date(dateFromInput.value).toLocaleDateString('en-GB')} to ${new Date(dateToInput.value).toLocaleDateString('en-GB')}`;
-          } else {
-            reportPeriodText.textContent = 'Custom Range';
-          }
-          break;
-        default:
-          reportPeriodText.textContent = 'All Time';
+  switch (reportType) {
+    case 'daily':
+      reportPeriodText.textContent = 'Today';
+      break;
+    case 'weekly':
+      reportPeriodText.textContent = 'This Week';
+      break;
+    case 'monthly':
+      reportPeriodText.textContent = 'This Month';
+      break;
+    case 'yearly':
+      reportPeriodText.textContent = 'This Year';
+      break;
+    case 'custom':
+      const dateFrom = dateFromInput.value;
+      const dateTo = dateToInput.value;
+      if (dateFrom && dateTo) {
+        const fromDate = new Date(dateFrom).toLocaleDateString('en-GB');
+        const toDate = new Date(dateTo).toLocaleDateString('en-GB');
+        reportPeriodText.textContent = `${fromDate} to ${toDate}`;
+      } else {
+        reportPeriodText.textContent = 'Custom Range';
       }
-    }
+      break;
+    default:
+      reportPeriodText.textContent = 'All Time';
+      break;
+  }
+}
 
-    // Update period text on change
-    reportTypeSelect.addEventListener('change', updateReportPeriodText);
-    dateFromInput.addEventListener('change', updateReportPeriodText);
-    dateToInput.addEventListener('change', updateReportPeriodText);
+// Add event listeners for date inputs to update period text
+dateFromInput.addEventListener('change', updateReportPeriodText);
+dateToInput.addEventListener('change', updateReportPeriodText);
 
-    // Initialize period text
-    updateReportPeriodText();
+// Show toast notification function
+ function showToast(message, type = 'success') {
+      if (!toast) return;
 
-    // Toast notification function
-    function showToast(message, type = 'info') {
-      const toast = document.createElement('div');
-      toast.className = `fixed top-4 right-4 px-6 py-3 rounded-lg shadow-lg z-50 ${
-        type === 'success' ? 'bg-green-500' :
-        type === 'error' ? 'bg-red-500' :
-        type === 'warning' ? 'bg-yellow-500' : 'bg-blue-500'
-      } text-white`;
-      toast.textContent = message;
+      const toastMessage = document.getElementById('toastMessage');
+      const toastIcon = toast.querySelector('i.fas');
+      const toastBorder = toast.querySelector('div.border-l-4');
 
-      document.body.appendChild(toast);
+      // Set message
+      toastMessage.textContent = message;
 
+      // Set toast appearance based on type
+      if (type === 'success') {
+        toastIcon.className = 'fas fa-check-circle text-green-500';
+        toastBorder.className = toastBorder.className.replace(/border-\w+-500/g, 'border-green-500');
+      } else if (type === 'error') {
+        toastIcon.className = 'fas fa-exclamation-circle text-red-500';
+        toastBorder.className = toastBorder.className.replace(/border-\w+-500/g, 'border-red-500');
+      } else if (type === 'warning') {
+        toastIcon.className = 'fas fa-exclamation-triangle text-amber-500';
+        toastBorder.className = toastBorder.className.replace(/border-\w+-500/g, 'border-amber-500');
+      } else if (type === 'info') {
+        toastIcon.className = 'fas fa-info-circle text-blue-500';
+        toastBorder.className = toastBorder.className.replace(/border-\w+-500/g, 'border-blue-500');
+      }
+
+      // Show toast
+      toast.classList.remove('hidden');
+
+      // Auto-hide after 3 seconds
       setTimeout(() => {
-        toast.classList.add('opacity-0');
-        setTimeout(() => toast.remove(), 300);
+        toast.classList.add('hidden');
       }, 3000);
     }
 
-    window.showToast = showToast;
-  });
-</script>
+// Enhanced form validation
+function validateForm() {
+  const reportType = reportTypeSelect.value;
+  const dateFrom = dateFromInput.value;
+  const dateTo = dateToInput.value;
 
-<%- include('../../views/partials/admin/footer') %>
+  if (reportType === 'custom') {
+    if (!dateFrom || !dateTo) {
+      showToast('Please select both start and end dates for custom range.', 'error');
+      return false;
+    }
+    
+    const fromDate = new Date(dateFrom);
+    const toDate = new Date(dateTo);
+    const today = new Date();
+    
+    if (toDate < fromDate) {
+      showToast('End date cannot be earlier than start date.', 'error');
+      return false;
+    }
+    
+    if (fromDate > today) {
+      showToast('Start date cannot be in the future.', 'warning');
+      return false;
+    }
+    
+    // Check if date range is too large (more than 1 year)
+    const oneYearAgo = new Date(today.getFullYear() - 1, today.getMonth(), today.getDate());
+    if (fromDate < oneYearAgo) {
+      showToast('Date range cannot exceed one year for performance reasons.', 'warning');
+      return false;
+    }
+  }
+  
+  return true;
+}
+
+// Enhanced download function with better error handling
+function downloadReport(format) {
+  if (!validateForm()) {
+    return;
+  }
+
+  const reportType = reportTypeSelect.value;
+  const dateFrom = dateFromInput.value;
+  const dateTo = dateToInput.value;
+
+  const params = new URLSearchParams({
+    reportType: reportType || '',
+    format: format,
+    ...(reportType === 'custom' && { dateFrom: dateFrom || '', dateTo: dateTo || '' })
+  });
+
+
+  // Create download link
+  const link = document.createElement('a');
+  link.href = `/admin/sales-report/download?${params.toString()}`;
+  link.download = `sales_report_${reportType || 'all'}_${new Date().toISOString().split('T')[0]}.${format === 'pdf' ? 'pdf' : 'xlsx'}`;
+  
+  // Handle download completion
+  link.addEventListener('click', function() {
+    showToast(`${format.toUpperCase()}  dowloaded`, 'success');
+  });
+
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+
+}
+
+// Add keyboard shortcuts
+document.addEventListener('keydown', function(e) {
+  // Ctrl/Cmd + Enter to apply filter
+  if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+    e.preventDefault();
+    if (validateForm()) {
+      filterForm.submit();
+    }
+  }
+});
+
+
+
+// Initialize auto-refresh for daily reports
+if (reportTypeSelect.value === 'daily') {
+  enableAutoRefresh();
+}
+
+// Add loading states to buttons
+function setButtonLoading(button, isLoading) {
+  if (isLoading) {
+    button.disabled = true;
+    button.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i>${button.textContent}`;
+  } else {
+    button.disabled = false;
+    button.innerHTML = button.getAttribute('data-original-text');
+  }
+}
+
+// Store original button texts
+document.querySelectorAll('button[type="submit"], button[type="button"]').forEach(button => {
+  button.setAttribute('data-original-text', button.innerHTML);
+});
+
+// Add smooth scrolling to top when filter is applied
+function scrollToTop() {
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth'
+  });
+}
+
+// Add this to the form submission handler
+filterForm.addEventListener('submit', function(e) {
+  e.preventDefault();
+  
+  if (!validateForm()) {
+    return;
+  }
+
+ 
+  setButtonLoading(document.getElementById('applyFilter'), true);
+
+  // Submit form
+  this.submit();
+});
+
+// Reset form function
+function resetForm() {
+  reportTypeSelect.value = '';
+  dateFromInput.value = '';
+  dateToInput.value = '';
+  toggleDateInputs();
+  updateReportPeriodText();
+  showToast('Filter reset successfully', 'success');
+}
+
+// Add reset button functionality (if you want to add a reset button)
+const resetButton = document.createElement('button');
+resetButton.type = 'button';
+resetButton.className = 'w-full sm:w-auto px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors';
+resetButton.innerHTML = '<i class="fas fa-undo mr-2"></i>Reset';
+resetButton.addEventListener('click', resetForm);
+
+
+
+// Handle page visibility change (pause auto-refresh when tab is not active)
+document.addEventListener('visibilitychange', function() {
+  if (document.hidden) {
+    console.log('Page hidden - pausing auto-refresh');
+  } else {
+    console.log('Page visible - resuming auto-refresh');
+  }
+});
+
+// Print functionality (bonus feature)
+function printReport() {
+  window.print();
+}
+
+// Add print button functionality if you want to add a print button
+const printButton = document.createElement('button');
+printButton.type = 'button';
+printButton.className = 'w-full sm:w-auto px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition-colors';
+printButton.innerHTML = '<i class="fas fa-print mr-2"></i>Print';
+printButton.addEventListener('click', printReport);
+
+// Initialize everything
+updateReportPeriodText();
+
+// Show success message if page loaded after form submission
+const urlParams = new URLSearchParams(window.location.search);
+if (urlParams.get('filtered') === 'true') {
+  showToast('Report filtered successfully!', 'success');
+  scrollToTop();
+}
+  })
+  </script>

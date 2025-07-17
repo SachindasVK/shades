@@ -228,7 +228,7 @@
     }
 
     .order-content {
-      padding: 20px;
+      padding: 10px;
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
@@ -422,13 +422,6 @@
       font-size: 0.875rem;
       color: #374151;
     }
-
-    .shop-header {
-      background-color: white;
-      border-bottom: 1px solid var(--border-color);
-      padding: 1.5rem 0;
-    }
-
     .no-orders {
       text-align: center;
       padding: 3rem 1rem;
@@ -460,20 +453,8 @@
 <body class="page-body">
   <!-- Header Partial -->
   <%- include("../../views/partials/user/header") %>
-  <div class="shop-header">
-    <div class="max-w-7xl mx-auto px-4">
-      <nav aria-label="breadcrumb">
-        <ol class="flex space-x-2 text-sm">
-          <li><a href="/" class="text-blue-600 hover:underline">Home</a></li>
-          <li>
-            <a href="/shop" class="text-blue-600 hover:underline"><span class="mx-2 text-black">></span>Shop</a>
-          </li>
-          <li class="flex items-center">
-            <span class="mx-2">></span><span class="text-gray-500">Orders</span>
-          </li>
-        </ol>
-      </div>
-    </div>
+ 
+    
     <div class="container">
       <div class="sidebar">
         <div class="profile-header">
@@ -781,7 +762,7 @@
           params.append("page", page);
           params.append("limit", ordersPerPage);
 
-          const response = await fetch(`/orders?${params.toString()}`, {
+          const response = await fetch(`/orders?${params}`, {
             method: "GET",
             headers: {
               Accept: "application/json",

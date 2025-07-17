@@ -20,6 +20,7 @@ const getCart = async (req, res) => {
         username: "",
         cartItems: [],
         grandTotal: 0,
+        recommendations:[]
       });
     }
 
@@ -54,7 +55,7 @@ const getCart = async (req, res) => {
         isDeleted: false,
         category: categoryId,
         _id: { $ne: productId },
-      })
+      }).populate('category').populate('brand')
     }
 
     res.render("cart", {
@@ -233,7 +234,7 @@ const updateQuantity = async (req, res) => {
 const getCartStatus = async (req, res) => {
   try {
     const userId = req.session.user;
-    const { productIds } = req.body; // <-- important to get from body
+    const { productIds } = req.body; 
 
     if (!userId) {
       return res.status(200).json({ success: true, cartStatus: {} });

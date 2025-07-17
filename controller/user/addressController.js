@@ -21,7 +21,7 @@ const getAddress = async (req, res) => {
                 _id: addr._id,
                 fullName: addr.name,
                 phone: addr.phone,
-                flat: addr.streetAddress,
+                flat: addr.flat,
                 area: addr.area || '', 
                 city: addr.city,
                 state: addr.state,
@@ -55,7 +55,7 @@ const addAddress = async (req, res) => {
         if (!userId) {
             return res.status(401).json({ success: false, message: 'User not authenticated' });
         }
-
+console.log(req.body)
         const {
             fullName,
             phone,
@@ -102,7 +102,7 @@ const addAddress = async (req, res) => {
         const newAddress = {
             name: fullName.trim(),
             phone: phone.trim(),
-            streetAddress: flat.trim(),
+            flat: flat.trim(),
             area: area.trim(),
             pincode: parseInt(pincode),
             landMark: landmark ? landmark.trim() : '',
@@ -110,7 +110,7 @@ const addAddress = async (req, res) => {
             state: state,
             addressType: addressType,
             isDefault: isDefault || false,
-            country: 'India', // Default to India
+            country: 'India', 
             email: user.email
         };
 
@@ -176,7 +176,7 @@ const updateAddress = async (req, res) => {
             addressType,
             isDefault
         } = req.body;
-
+console.log(flat)
         // Validation
         if (!fullName || !phone || !flat || !area || !pincode || !city || !state || !addressType) {
             return res.status(400).json({
@@ -241,7 +241,7 @@ const updateAddress = async (req, res) => {
 
         addrToUpdate.name = fullName.trim();
         addrToUpdate.phone = phone.trim();
-        addrToUpdate.streetAddress = flat.trim();
+        addrToUpdate.flat = flat.trim();
         addrToUpdate.area = area.trim(); 
         addrToUpdate.pincode = parseInt(pincode);
         addrToUpdate.city = city.trim();

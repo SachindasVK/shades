@@ -255,20 +255,20 @@ const postNewPassword = async (req, res) => {
                 // Format the address for display
                 defaultAddress = {
                     fullName: defaultAddr.name,
-                    addressLine: `${defaultAddr.streetAddress}, ${defaultAddr.landMark ? defaultAddr.landMark + ', ' : ''}${defaultAddr.city}, ${defaultAddr.state} - ${defaultAddr.pincode}`,
+                    addressLine: `${defaultAddr.flat}, ${defaultAddr.landMark ? defaultAddr.landMark + ', ' : ''}${defaultAddr.city}, ${defaultAddr.state} - ${defaultAddr.pincode}`,
                     phone: defaultAddr.phone,
                     addressType: defaultAddr.addressType,
-                    complete: `${defaultAddr.name}, ${defaultAddr.streetAddress}, ${defaultAddr.landMark ? defaultAddr.landMark + ', ' : ''}${defaultAddr.city}, ${defaultAddr.state} - ${defaultAddr.pincode}, Phone: ${defaultAddr.phone}`
+                    complete: `${defaultAddr.name}, ${defaultAddr.flat}, ${defaultAddr.landMark ? defaultAddr.landMark + ', ' : ''}${defaultAddr.city}, ${defaultAddr.state} - ${defaultAddr.pincode}, Phone: ${defaultAddr.phone}`
                 };
             } else if (addressDoc.address.length > 0) {
                 // If no default is set, use the first address
                 const firstAddr = addressDoc.address[0];
                 defaultAddress = {
                     fullName: firstAddr.name,
-                    addressLine: `${firstAddr.streetAddress}, ${firstAddr.landMark ? firstAddr.landMark + ', ' : ''}${firstAddr.city}, ${firstAddr.state} - ${firstAddr.pincode}`,
+                    addressLine: `${firstAddr.flat}, ${firstAddr.landMark ? firstAddr.landMark + ', ' : ''}${firstAddr.city}, ${firstAddr.state} - ${firstAddr.pincode}`,
                     phone: firstAddr.phone,
                     addressType: firstAddr.addressType,
-                    complete: `${firstAddr.name}, ${firstAddr.streetAddress}, ${firstAddr.landMark ? firstAddr.landMark + ', ' : ''}${firstAddr.city}, ${firstAddr.state} - ${firstAddr.pincode}, Phone: ${firstAddr.phone}`
+                    complete: `${firstAddr.name}, ${firstAddr.flat}, ${firstAddr.landMark ? firstAddr.landMark + ', ' : ''}${firstAddr.city}, ${firstAddr.state} - ${firstAddr.pincode}, Phone: ${firstAddr.phone}`
                 };
             }
         }
@@ -545,10 +545,6 @@ const changePassword = async (req, res) => {
         });
     }
 };
-
-
-
-
 
 
 module.exports = {

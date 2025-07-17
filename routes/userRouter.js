@@ -87,6 +87,7 @@ router.post('/orders/filter', userAuth, orderController.filterOrders);
 router.get('/order/details/:id', userAuth, orderController.getOrderDetails)
 router.get('/order/invoice/:id', userAuth, orderController.downloadInvoice)
 router.put('/order/cancel/:orderId', userAuth, orderController.cancelOrder)
+router.put('/order/cancel-item/:itemId',userAuth, orderController.cancelSingleItem)
 router.post('/order/:orderId/return', userAuth, orderController.requestReturn)
 
 //wallet management
@@ -129,4 +130,5 @@ router.post('/verify-payment', userAuth, checkoutController.verifyRazorpayPaymen
 router.post('/payment-failed',userAuth,checkoutController.paymentFailed)
 router.post('/retry-payment/:orderId',userAuth,checkoutController.loadRazorpayPayment)
 router.get('/create-razorpay-order/:orderId',userAuth,orderController.getRazorpayOrder)
+
 module.exports = router

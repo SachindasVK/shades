@@ -50,21 +50,21 @@
         }
 
         .thumbnail-img {
-            width: 80px;
+            width: 147px;
             height: 80px;
             object-fit: contain;
-            border: 2px solid transparent;
-            border-radius: 5px;
+            border: 1px solid transparent;
+          
             cursor: pointer;
             transition: border-color 0.3s ease;
         }
 
         .thumbnail-img.active {
-            border-color: var(--primary-color);
+            border-color: rgb(88, 88, 88);
         }
 
         .thumbnail-img:hover {
-            border-color: #ccc;
+            border-color: #7c7c7c;
         }
 
         .btn-add-cart {
@@ -100,6 +100,7 @@
             animation: spin 0.8s linear infinite;
             margin-left: 8px;
         }
+        
 
         .wishlist-btn {
             background-color: white;
@@ -159,44 +160,9 @@
             background-color: #f5f5f5;
         }
 
-        .scroll-btn {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background-color: rgba(0, 0, 0, 0.5);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            z-index: 10;
-        }
-
-        .scroll-btn:hover {
-            background-color: rgba(0, 0, 0, 0.7);
-        }
-
-        .scroll-btn.left {
-            left: 10px;
-        }
-
-        .scroll-btn.right {
-            right: 10px;
-        }
-
+       
         .recommendations-section:hover .scroll-btn {
             opacity: 2;
-        }
-
-        .scroll-btn:disabled {
-            background-color: rgba(0, 0, 0, 0.3);
-            cursor: not-allowed;
         }
 
         @media (max-width: 767.98px) {
@@ -208,11 +174,6 @@
                 height: 160px;
             }
 
-            .scroll-btn {
-                width: 32px;
-                height: 32px;
-                font-size: 0.9rem;
-            }
         }
     </style>
 </head>
@@ -224,9 +185,23 @@
         <div class="container mx-auto px-4">
             <nav aria-label="breadcrumb">
                 <ol class="flex space-x-2 text-sm">
-                    <li><a href="/" class="text-blue-600 hover:underline">Home</a></li>
-                    <li class="flex items-center"><span class="mx-2">></span><a href="/shop" class="text-blue-600 hover:underline">Shop</a></li>
-                    <li class="flex items-center"><span class="mx-2">></span><span class="text-gray-500"><%= product.name || product.productName %></span></li>
+            
+                    <li><a href="/" class="text-black hover:underline text-xs"><i class="fas fa-home"></i> Home</a></li>
+                   <li class="flex items-center"><span class="mx-2"><svg
+                                    class="h-5 w-5 text-gray-500 rtl:rotate-180" aria-hidden="true"
+                                    xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
+                                    viewBox="0 0 24 24">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                        stroke-width="2" d="m9 5 7 7-7 7"></path>
+                                </svg></i></span><span class="text-gray-500 text-xs"><%=product.category.name%></span></li>
+                
+                    <li class="flex items-center"><span class="mx-2"><svg
+                                    class="h-5 w-5 text-gray-500 rtl:rotate-180" aria-hidden="true"
+                                    xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
+                                    viewBox="0 0 24 24">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                        stroke-width="2" d="m9 5 7 7-7 7"></path>
+                                </svg></i></span><span class="text-gray-500 text-xs"><%= product.name || product.productName %></span></li>
                 </ol>
             </nav>
         </div>
@@ -262,27 +237,6 @@
                 <!-- Product Details -->
                 <div>
                     <h1 class="text-2xl lg:text-3xl font-semibold mb-2"><%= product.name || product.productName %></h1>
-                    
-                    <!-- Rating -->
-                    <% if (product.averageRating) { %>
-                        <div class="flex items-center mb-4">
-                            <span class="rating-stars text-yellow-400 text-sm" aria-label="Rating: <%= product.averageRating %> out of 5 stars">
-                                <% for(let i = 1; i <= 5; i++) { %>
-                                    <% if (i <= Math.floor(product.averageRating)) { %>
-                                        <i class="fas fa-star"></i>
-                                    <% } else if (i <= Math.floor(product.averageRating) + 0.5) { %>
-                                        <i class="fas fa-star-half-alt"></i>
-                                    <% } else { %>
-                                        <i class="far fa-star"></i>
-                                    <% } %>
-                                <% } %>
-                            </span>
-                            <% if (product.ratingCount) { %>
-                                <span class="text-gray-500 text-sm ml-2">(<%= product.ratingCount %> reviews)</span>
-                            <% } %>
-                        </div>
-                    <% } %>
-
                     <!-- Price and Discount -->
                     <div class="flex items-baseline mb-4">
                         <span class="text-2xl lg:text-3xl font-bold text-black">₹<%= (product.price || product.salePrice).toLocaleString('en-IN') %></span>
@@ -292,6 +246,16 @@
                             <span class="text-sm bg-green-100 text-black px-2 rounded-full ml-2 font-semibold"><%= discount %>% off</span>
                         <% } %>
                     </div>
+<div class="product-category text-sm text-gray-500 mb-3 flex justify-between items-center">
+  
+  <div class="text-yellow-500 text-[1rem] flex">
+    <i class="fas fa-star mr-[1px]"></i>
+    <i class="fas fa-star mr-[1px]"></i>
+    <i class="fas fa-star mr-[1px]"></i>
+    <i class="fas fa-star mr-[1px]"></i>
+    <i class="fas fa-star-half-alt"></i>
+  </div>
+</div>
 
                     <!-- Stock Status -->
                     <div class="mb-4 text-sm <%= product.quantity > 10 ? 'text-green-600' : product.quantity > 0 ? 'text-orange-600' : 'text-red-600' %>">
@@ -370,73 +334,151 @@
                 </div>
 
                 <!-- Reviews -->
-                <div class="col-span-1 lg:col-span-2 bg-white p-6 rounded-lg shadow-sm mb-8">
-                    <h4 class="text-xl font-semibold mb-4 text-gray-900">Customer Reviews</h4>
-                    <% if (product.reviews && product.reviews.length > 0) { %>
-                        <% product.reviews.forEach(review => { %>
-                            <div class="border-b border-gray-200 pb-4 mb-4 last:border-b-0 last:pb-0 last:mb-0">
-                                <div class="flex justify-between">
-                                    <div>
-                                        <strong><%= review.userName || 'Anonymous' %></strong>
-                                        <div class="rating-stars text-yellow-400 text-sm" aria-label="Review rating: <%= review.rating %> out of 5 stars">
-                                            <% for(let i = 1; i <= 5; i++) { %>
-                                                <% if (i <= review.rating) { %>
-                                                    <i class="fas fa-star"></i>
-                                                <% } else { %>
-                                                    <i class="far fa-star"></i>
-                                                <% } %>
-                                            <% } %>
-                                        </div>
-                                    </div>
-                                    <small class="text-gray-500"><%= new Date(review.date).toLocaleDateString() %></small>
-                                </div>
-                                <p><%= review.comment %></p>
-                            </div>
-                        <% }); %>
-                    <% } else { %>
-                        <p class="text-gray-600">No reviews yet. Be the first to review this product!</p>
-                    <% } %>
-                </div>
+                <div class="col-span-1 lg:col-span-2 bg-white p-6 rounded-lg shadow shadow-md mb-8">
+  <h4 class="text-xl font-semibold mb-6 text-gray-800 border-b pb-2">Customer Reviews</h4>
+
+  
+  <div class="flex items-start gap-4 mb-6">
+    <div class="bg-gray-100 w-10 h-10 rounded-full flex items-center justify-center font-semibold text-gray-700">A</div>
+    <div class="flex-1">
+      <div class="flex justify-between items-center mb-1">
+        <span class="font-semibold text-gray-800">Arunima M</span>
+        <span class="text-sm text-gray-400">Jul 2, 2025</span>
+      </div>
+       <div class="flex text-yellow-500 text-[0.7rem]  mb-2">
+                <i class="fas fa-star mr-[1px]"></i>
+                <i class="fas fa-star mr-[1px]"></i>
+                <i class="fas fa-star mr-[1px]"></i>
+                <i class="fas fa-star mr-[1px]"></i>
+                <i class="fas fa-star-half-alt"></i>
+              </div>
+      <p class="text-gray-600 text-sm">Great quality sunglasses, fits perfectly and looks premium. Worth the price!</p>
+    </div>
+  </div>
+
+  
+  <div class="flex items-start gap-4 mb-6">
+    <div class="bg-gray-100 w-10 h-10 rounded-full flex items-center justify-center font-semibold text-gray-700">S</div>
+    <div class="flex-1">
+      <div class="flex justify-between items-center mb-1">
+        <span class="font-semibold text-gray-800">Sachin VK</span>
+        <span class="text-sm text-gray-400">Jun 25, 2025</span>
+      </div>
+     <div class="flex text-yellow-500 text-[0.7rem]  mb-2">
+                <i class="fas fa-star mr-[1px]"></i>
+                <i class="fas fa-star mr-[1px]"></i>
+                <i class="fas fa-star mr-[1px]"></i>
+                <i class="fas fa-star mr-[1px]"></i>
+                <i class="fas fa-star-half-alt"></i>
+              </div>
+      <p class="text-gray-600 text-sm">Absolutely loved it! The lens is crystal clear and super comfortable.</p>
+    </div>
+  </div>
+
+  
+  <div class="flex items-start gap-4">
+    <div class="bg-gray-100 w-10 h-10 rounded-full flex items-center justify-center font-semibold text-gray-700">U</div>
+    <div class="flex-1">
+      <div class="flex justify-between items-center mb-1">
+        <span class="font-semibold text-gray-800">Unknown</span>
+        <span class="text-sm text-gray-400">Jun 10, 2025</span>
+      </div>
+       <div class="flex text-yellow-500 text-[0.7rem]  mb-2">
+                <i class="fas fa-star mr-[1px]"></i>
+                <i class="fas fa-star mr-[1px]"></i>
+                <i class="fas fa-star mr-[1px]"></i>
+                <i class="fas fa-star mr-[1px]"></i>
+                <i class="fas fa-star-half-alt"></i>
+              </div>
+      <p class="text-gray-600 text-sm">The style is nice, but expected better packaging. Overall decent.</p>
+    </div>
+  </div>
+</div>
+
             </div>
 
-            <!-- Recommendations -->
-            <% if (recommendations && recommendations.length > 0) { %>
-                <div class="relative mt-8">
-                    <h4 class="text-xl font-semibold mb-4">YOU MAY ALSO LIKE</h4>
-                    <button class="scroll-btn left" id="scrollLeft" aria-label="Scroll left">
-                        <i class="fas fa-chevron-left"></i>
-                    </button>
-                    <button class="scroll-btn right" id="scrollRight" aria-label="Scroll right">
-                        <i class="fas fa-chevron-right"></i>
-                    </button>
-                    <div class="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory" id="recommendationsContainer" style="scrollbar-width: none; -ms-overflow-style: none;">
-                        <% recommendations.slice(0, 6).forEach(rec => { %>
-                            <div class="flex-none w-80 lg:w-96 bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all snap-start h-80">
-                                <a href="/productDetails?id=<%= rec._id%>" aria-label="View <%= rec.name || rec.productName %>">
-                                    <img src="<%= rec.productImage?.[0] || rec.images?.[0] || '/images/default-product.jpg' %>" class="recommendation-img" alt="<%= rec.name || rec.productName %>">
-                                </a>
-                                <div class="p-3">
-                                    <a href="/productDetails?id=<%= rec._id%>" aria-label="View <%= rec.name || rec.productName %>">
-                                        <h6 class="text-lg font-semibold mb-1 truncate"><%= rec.name || rec.productName %></h6>
-                                        <div class="flex items-baseline">
-                                            <span class="text-lg font-bold">₹<%= (rec.price || rec.salePrice).toLocaleString('en-IN') %></span>
-                                            <% if (rec.regularPrice && rec.regularPrice > (rec.price || rec.salePrice)) { %>
-                                                <span class="text-sm text-gray-500 line-through ml-2">₹<%= rec.regularPrice.toLocaleString('en-IN') %></span>
-                                                <% const discount = Math.round((rec.regularPrice - (rec.price || rec.salePrice)) / rec.regularPrice * 100); %>
-                                                <span class="text-sm bg-green-100 text-black px-2 rounded-full ml-2 font-semibold"><%= discount %>% off</span>
-                                            <% } %>
-                                        </div>
-                                    </a>
-                                </div>
-                            </div>
-                        <% }); %>
-                    </div>
-                </div>
+           <% if (recommendations && recommendations.length > 0) { %>
+  <div class="relative mt-8">
+    <h4 class="text-xl font-semibold mb-4">YOU MAY ALSO LIKE</h4>
+
+    <!-- Scroll Buttons -->
+   
+
+    <!-- Recommendations Container -->
+    <div class="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory" id="recommendationsContainer" style="scrollbar-width: none; -ms-overflow-style: none;">
+      <% recommendations.forEach(rec => { %>
+        <div class="flex-none w-80 lg:w-96 bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all snap-start relative">
+
+          <!-- Wishlist Button (fixed position & working) -->
+          <button 
+            class="absolute top-2 right-2 z-10 text-gray-600 hover:text-red-500 wishlist-btn add-to-wishlist" 
+            data-product-id="<%= rec._id %>" 
+            aria-label="Add to Wishlist">
+            <i class="far fa-heart text-xl"></i>
+          </button>
+
+          <!-- Product Image -->
+          <a href="/productDetails?id=<%= rec._id %>" aria-label="View <%= rec.name || rec.productName %>">
+            <img src="<%= rec.productImage?.[0] || rec.images?.[0] || '/images/default-product.jpg' %>" 
+              class="w-full h-48 object-cover" 
+              alt="<%= rec.name || rec.productName %>">
+          </a>
+
+          <!-- Product Info -->
+          <div class="p-3">
+            <div class="text-sm text-gray-500 mb-1 flex justify-between items-center">
+              <span class="uppercase"><%= product.brand ? product.brand.name : 'Eyewear' %></span>
+              <div class="text-yellow-500 text-[10px] flex">
+                <i class="fas fa-star mr-[1px]"></i>
+                <i class="fas fa-star mr-[1px]"></i>
+                <i class="fas fa-star mr-[1px]"></i>
+                <i class="fas fa-star mr-[1px]"></i>
+                <i class="fas fa-star-half-alt"></i>
+              </div>
+            </div>
+
+            <a href="/productDetails?id=<%= rec._id%>">
+              <h6 class="text-lg font-semibold mb-1 truncate"><%= rec.name || rec.productName %></h6>
+              <div class="flex items-baseline">
+                <span class="text-lg font-bold">₹<%= (rec.price || rec.salePrice).toLocaleString('en-IN') %></span>
+                <% if (rec.regularPrice && rec.regularPrice > (rec.price || rec.salePrice)) { %>
+                  <span class="text-sm text-gray-500 line-through ml-2">₹<%= rec.regularPrice.toLocaleString('en-IN') %></span>
+                  <% const discount = Math.round((rec.regularPrice - (rec.price || rec.salePrice)) / rec.regularPrice * 100); %>
+                  <span class="text-sm bg-green-100 text-black px-2 rounded-full ml-2 font-semibold"><%= discount %>% off</span>
+                <% } %>
+              </div>
+            </a>
+          </div>
+
+          <!-- Add to Cart Button Full Width -->
+          <div class="px-3 pb-3">
+            <% if (rec.quantity === 0) { %>
+              <button 
+                class="w-full bg-gray-700 text-white cursor-not-allowed py-2 rounded flex justify-center items-center gap-2 hover:bg-gray-800 transition-all add-to-cart btn btn-add-cart" 
+                disabled>
+                <i class="fas fa-times-circle"></i> Out of stock
+              </button>
+            <% } else { %>
+              <button 
+                class="w-full bg-black text-white py-2 rounded flex justify-center items-center gap-2 hover:bg-gray-800 transition-all add-to-cart btn btn-add-cart" 
+                data-product-id="<%= rec._id %>">
+                <i class="fas fa-shopping-cart"></i> Add to Cart
+              </button>
             <% } %>
+          </div>
+
+        </div>
+      <% }); %>
+    </div>
+  </div>
+<% } %>
+
         <% } %>
     </div>
 
     <script>
+
+
         document.addEventListener('DOMContentLoaded', function() {
             initializeWishlistButtons()
           initializeCartButtons()
@@ -508,60 +550,8 @@
             });
         });
 
-            // Recommendations scroll buttons
-            const scrollLeftBtn = document.getElementById('scrollLeft');
-            const scrollRightBtn = document.getElementById('scrollRight');
-            const recommendationsContainer = document.getElementById('recommendationsContainer');
-
-            if (scrollLeftBtn && scrollRightBtn && recommendationsContainer) {
-                // Function to update button states
-                function updateScrollButtons() {
-                    const scrollLeft = recommendationsContainer.scrollLeft;
-                    const maxScroll = recommendationsContainer.scrollWidth - recommendationsContainer.clientWidth;
-
-                    scrollLeftBtn.disabled = scrollLeft <= 0;
-                    scrollRightBtn.disabled = scrollLeft >= maxScroll - 1;
-                }
-
-                // Initial button state
-                updateScrollButtons();
-
-                // Update button states on scroll
-                recommendationsContainer.addEventListener('scroll', updateScrollButtons);
-
-                // Scroll left
-                scrollLeftBtn.addEventListener('click', function() {
-                    recommendationsContainer.scrollBy({
-                        left: -360,
-                        behavior: 'smooth'
-                    });
-                });
-
-                // Scroll right
-                scrollRightBtn.addEventListener('click', function() {
-                    recommendationsContainer.scrollBy({
-                        left: 360,
-                        behavior: 'smooth'
-                    });
-                });
-
-                // Adjust scroll amount for mobile
-                if (window.innerWidth <= 767.98) {
-                    scrollLeftBtn.addEventListener('click', function() {
-                        recommendationsContainer.scrollBy({
-                            left: -240,
-                            behavior: 'smooth'
-                        });
-                    });
-                    scrollRightBtn.addEventListener('click', function() {
-                        recommendationsContainer.scrollBy({
-                            left: 240,
-                            behavior: 'smooth'
-                        });
-                    });
-                }
-            }
-
+           
+           
             // Image Zoom Functionality
             function initImageZoom() {
                 const imageContainer = document.getElementById('imageContainer');
@@ -625,7 +615,7 @@
                                 const productId = button.getAttribute('data-product-id');
                                 if (data.cartStatus[productId]) {
                                     // Product already in cart
-                                    button.innerHTML = '<i class="fas fa-shopping-cart"></i> Go to Cart';
+                                    button.innerHTML = '<i class="fas fa-shopping-cart mr-3"></i> Go to Cart';
                                     button.classList.add('bg-black');
 
                                     const newButton = button.cloneNode(true);
@@ -710,7 +700,7 @@
 
                             // Change button to "Go to Cart"
                             if (button) {
-                                button.innerHTML = '<i class="fas fa-shopping-cart"></i> Go to Cart';
+                                button.innerHTML = '<i class="fas fa-shopping-cart mr-3"></i> Go to Cart';
                                 button.classList.add('bg-black');
 
                                 // Remove old listener

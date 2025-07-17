@@ -165,30 +165,32 @@ const loadHomepage = async (req, res) => {
     const userId = req.session.user || (req.user && req.user._id);
      
     const categories = await Category.find({ isActive: true });
-
-    // New arrivals 
-    let productData = await Product.find({
+ const brands = await Brand.find({});
+    // New arrivals
+    let newArrivals = await Product.find({
       isDeleted: false,
       category: { $in: categories.map(category => category._id) }
-    }).populate('category'); // populate to load category data
-    productData.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-    productData = productData.slice(0, 12);
+    }).populate('category').populate('brand');
+    newArrivals.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    newArrivals = newArrivals.slice(0, 12);
 
-    // Best sellers - products with highest sales count
+    // Best sellers
     let bestSellerProducts = await Product.find({
       isDeleted: false,
       category: { $in: categories.map(category => category._id) }
-    }).populate('category').sort({ salesCount: -1 });
+    }).populate('category').sort({ salesCount: -1 }).populate('brand');
 
     if (!bestSellerProducts[0]?.salesCount) {
+      // No best sellers, fallback
       bestSellerProducts = await Product.find({
         isDeleted: false,
         category: { $in: categories.map(category => category._id) }
-      }).populate('category').skip(4).limit(4);
+      }).populate('category')
     } else {
-      bestSellerProducts = bestSellerProducts.slice(0, 4);
+      bestSellerProducts = bestSellerProducts.slice(0, 4)
     }
 
+    // User logic
     if (userId) {
       const userData = await User.findOne({ _id: userId });
 
@@ -199,24 +201,26 @@ const loadHomepage = async (req, res) => {
         });
         return;
       }
-      if (userData) {
-        return res.render('home', {
-          products: productData,
-          bestSellerProducts: bestSellerProducts,
-          isLoggedIn: true,
-          username: userData.name,
-          user: userData,
-          categories: categories
-        });
-      }
+
+      return res.render('home', {
+        newArrivals,
+        bestSellerProducts,
+        isLoggedIn: true,
+        username: userData.name,
+        user: userData,
+        categories,
+        brands
+      });
     }
 
+    // Guest rendering
     res.render('home', {
-      products: productData,
-      bestSellerProducts: bestSellerProducts,
+      newArrivals,
+      bestSellerProducts,
       isLoggedIn: false,
       username: '',
-      categories: categories
+      categories,
+      brands
     });
 
   } catch (error) {
@@ -227,7 +231,8 @@ const loadHomepage = async (req, res) => {
       message: 'Server error'
     });
   }
-}
+};
+
 
 
 
@@ -516,9 +521,13 @@ const login = async (req, res) => {
     const trimmedPassword = password.trim();
 
     const findUser = await User.findOne({
-      isAdmin: 0,
+      // isAdmin: 0,
       email: trimmedEmail
     });
+
+    if (findUser && findUser.isAdmin) {
+  return res.redirect('admin/login');
+}
 
     if (!findUser) {
       console.log('User not found for email:', trimmedEmail)
@@ -562,7 +571,7 @@ const login = async (req, res) => {
       console.log('Session regenerated, redirecting to shop');
       res.redirect('/shop');
     });
-
+    
   } catch (error) {
     console.error('Login error:', error);
     req.session.errorMessage = 'Login failed. Please try again later.';
@@ -807,6 +816,23 @@ const loadShoppingPage = async (req, res) => {
         'category.isDeleted': false,
       },
     });
+    
+// Add brand lookup
+aggregatePipeline.push(
+  {
+    $lookup: {
+      from: 'brands',
+      localField: 'brand',
+      foreignField: '_id',
+      as: 'brand',
+    },
+  },
+  {
+    $addFields: {
+      brand: { $arrayElemAt: ['$brand', 0] },
+    },
+  }
+);
 
 
     // Add pagination

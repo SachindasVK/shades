@@ -373,36 +373,6 @@
       font-weight: 600;
       color: #1f2937;
     }
-
-    .toast {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      min-width: 250px;
-      background-color: #1f2937;
-      color: white;
-      padding: 1rem;
-      border-radius: 4px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      z-index: 2000;
-      opacity: 0;
-      transform: translateY(20px);
-      transition: opacity 0.3s ease, transform 0.3s ease;
-    }
-
-    .toast.show {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    .toast.success {
-      background-color: #22c55e;
-    }
-
-    .toast.error {
-      background-color: #ef4444;
-    }
-
     .error-message {
       color: #ef4444;
       font-size: 0.875rem;
@@ -456,11 +426,7 @@
       }
     }
 
-    .shop-header {
-      background-color: white;
-      border-bottom: 1px solid var(--border-color);
-      padding: 1.5rem 0;
-    }
+   
 
     .breadcrumb-item+.breadcrumb-item::before {
       content: ">";
@@ -471,22 +437,8 @@
 <body class="page-body">
   <!-- Header Partial -->
   <%- include("../../views/partials/user/header") %>
-    <div class="shop-header">
-      <div class="max-w-7xl mx-auto px-4">
-        <nav aria-label="breadcrumb">
-          <ol class="flex space-x-2 text-sm">
-            <li><a href="/" class="text-blue-600 hover:underline">Home</a></li>
-            <li>
-              <a href="/shop" class="text-blue-600 hover:underline"><span class="mx-2 text-black">></span>Shop</a>
-            </li>
-            <li class="flex items-center">
-              <span class="mx-2">></span><span class="text-gray-500">Address</span>
-            </li>
-          </ol>
-        </nav>
-      </div>
-    </div>
-    <div class="containeer">
+    
+    <div class="containeer ">
       <div class="sidebar">
         <div class="profile-header">
           <div class="profile-icon">
@@ -714,12 +666,12 @@
         </div>
 
         <form id="addressForm" class="space-y-4">
-          <input type="hidden" id="addressId" />
+          <input type="hidden" id="addressId"/>
 
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1" for="fullName">Full Name <span
                 class="text-red-500">*</span></label>
-            <input type="text" id="fullName"
+            <input type="text" id="fullName" name="name"
               class="w-full p-2 border rounded-md focus:ring-blue-500 focus:border-blue-500"
               placeholder="Enter your full name" required />
             <span class="text-sm text-red-500" id="error-fullName"></span>
@@ -728,7 +680,7 @@
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1" for="phone">Phone Number <span
                 class="text-red-500">*</span></label>
-            <input type="tel" id="phone" class="w-full p-2 border rounded-md focus:ring-blue-500 focus:border-blue-500"
+            <input type="tel" id="phone" name="phone" class="w-full p-2 border rounded-md focus:ring-blue-500 focus:border-blue-500"
               placeholder="10 digit mobile number" title="Please enter a 10-digit mobile number" />
             <span class="text-sm text-red-500" id="error-phone"></span>
           </div>
@@ -736,7 +688,7 @@
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1" for="flat">Flat, House no., Building, Company
               <span class="text-red-500">*</span></label>
-            <input type="text" id="flat" class="w-full p-2 border rounded-md focus:ring-blue-500 focus:border-blue-500"
+            <input type="text" id="flat" name="flat" class="w-full p-2 border rounded-md focus:ring-blue-500 focus:border-blue-500"
               placeholder="Enter house details" required />
             <span class="text-sm text-red-500" id="error-flat"></span>
           </div>
@@ -744,7 +696,7 @@
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1" for="area">Area, Street, Sector, Village
               <span class="text-red-500">*</span></label>
-            <input type="text" id="area" class="w-full p-2 border rounded-md focus:ring-blue-500 focus:border-blue-500"
+            <input type="text" id="area" name="area" class="w-full p-2 border rounded-md focus:ring-blue-500 focus:border-blue-500"
               placeholder="Enter area details" required />
             <span class="text-sm text-red-500" id="error-area"></span>
           </div>
@@ -753,7 +705,7 @@
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-1" for="pincode">Pincode <span
                   class="text-red-500">*</span></label>
-              <input type="text" id="pincode"
+              <input type="text" id="pincode" name="pincode"
                 class="w-full p-2 border rounded-md focus:ring-blue-500 focus:border-blue-500"
                 placeholder="6 digits [0-9] PIN code" required pattern="\d{6}"
                 title="Please enter a 6-digit PIN code" />
@@ -761,7 +713,7 @@
             </div>
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-1" for="landmark">Landmark (optional)</label>
-              <input type="text" id="landmark"
+              <input type="text" id="landmark" name="landmark"
                 class="w-full p-2 border rounded-md focus:ring-blue-500 focus:border-blue-500"
                 placeholder="e.g., near Apollo Hospital" />
               <span class="text-sm text-red-500" id="error-landmark"></span>
@@ -772,7 +724,7 @@
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-1" for="city">City/Town <span
                   class="text-red-500">*</span></label>
-              <input type="text" id="city"
+              <input type="text" id="city" name="city"
                 class="w-full p-2 border rounded-md focus:ring-blue-500 focus:border-blue-500"
                 placeholder="Enter city/town" required />
               <span class="text-sm text-red-500" id="error-city"></span>
@@ -780,7 +732,7 @@
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-1" for="state">State <span
                   class="text-red-500">*</span></label>
-              <select id="state" class="w-full p-2 border rounded-md focus:ring-blue-500 focus:border-blue-500"
+              <select id="state" name="state" class="w-full p-2 border rounded-md focus:ring-blue-500 focus:border-blue-500"
                 required>
                 <option value="">Select your state</option>
                 <option value="Andhra Pradesh">Andhra Pradesh</option>
@@ -891,7 +843,7 @@
       class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden z-50">
       <div class="bg-white rounded-lg p-6 w-full max-w-md mx-4 shadow-xl">
         <div class="flex items-center mb-4">
-          <i class="fas fa-map-marker-alt text-blue-600 mr-3"></i>
+          <i class="fas fa-map-marker-alt text-red-600 mr-3"></i>
           <h2 class="text-lg font-semibold">Confirm Deletion</h2>
         </div>
         <p class="text-sm text-gray-700 mb-4">
@@ -902,7 +854,7 @@
             onclick="closeDeleteAddressModal()">
             Cancel
           </button>
-          <button type="button" class="px-4 py-2 bg-black text-white rounded hover:bg-gray-700 transition-colors"
+          <button type="button" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
             onclick="confirmDeleteAddress()">
             <i class="fas fa-trash-alt mr-2"></i>Confirm
           </button>

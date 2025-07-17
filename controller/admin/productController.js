@@ -1,30 +1,31 @@
-  const Product = require('../../models/productSchema')
-  const Category = require('../../models/categorySchema')
-  const mongoose = require('mongoose');
-  const Brand = require('../../models/brandSchema')
-  const fs = require('fs')
-  const path = require('path')
-  const sharp = require('sharp')
+const Product = require('../../models/productSchema')
+const Category = require('../../models/categorySchema')
+const mongoose = require('mongoose');
+const Brand = require('../../models/brandSchema')
+const fs = require('fs')
+const path = require('path')
+const sharp = require('sharp')
 
-  const getProductsAddPage = async(req,res)=>{
-      try {
-        
-        const shapes = await Category.distinct("shape", {
-          shape: { $ne: null },
-          isDeleted: false
-        });
-        const categoryList = await Category.find({isActive:true})
-        const brandList = await Brand.find({isActive:true})
-        res.render('addProducts',{
-            pageTitle: 'Add Products',
-            category:categoryList,
-            brand:brandList,
-            shape:shapes
-        })
-      } catch (error) {
-          res.redirect('/admin/error')
-      }
+const getProductsAddPage = async (req, res) => {
+  try {
+
+    const shapes = await Category.distinct("shape", {
+      shape: { $ne: null },
+      isDeleted: false
+    });
+    const categoryList = await Category.find({ isActive: true })
+    const brandList = await Brand.find({ isActive: true })
+    res.render('addProducts', {
+      pageTitle: 'Add Products',
+      category: categoryList,
+      brand: brandList,
+      shape: shapes
+    })
+  } catch (error) {
+    res.redirect('/admin/error')
   }
+}
+
 const addProducts = async (req, res) => {
   try {
     const { productName, description, shape, brand, category, regularPrice, salePrice, quantity, color } = req.body;
@@ -167,110 +168,105 @@ const addProducts = async (req, res) => {
 };
 
 
-  // Keeping this function for backward compatibility with other parts of the app
-  const saveImage = async (req, res) => {
-    try {
-      const file = req.file;
-      if (!file) {
-        return res.status(400).json({ success: false, message: "No image file provided" });
-      }
-
-      // Generate unique filename
-      const filename = Date.now() + '-' + file.originalname.replace(/\s/g, "");
-      const filepath = path.join(__dirname, "../../public/uploads/product-images", filename);
-
-      // Resize & convert to WebP
-      await sharp(file.buffer)
-        .resize(1200, 600, { fit: "inside", withoutEnlargement: true })
-        .webp({ quality: 80 })
-        .toFile(filepath);
-
-      return res.status(200).json({ 
-        success: true, 
-        message: "Image saved successfully", 
-        filename: `uploads/product-images/${filename}`
-      });
-    } catch (error) {
-      console.error("Error saving image:", error);
-      return res.status(500).json({ success: false, message: "Error saving image" });
+// Keeping this function for backward compatibility with other parts of the app
+const saveImage = async (req, res) => {
+  try {
+    const file = req.file;
+    if (!file) {
+      return res.status(400).json({ success: false, message: "No image file provided" });
     }
-  };
-    
+
+    // Generate unique filename
+    const filename = Date.now() + '-' + file.originalname.replace(/\s/g, "");
+    const filepath = path.join(__dirname, "../../public/uploads/product-images", filename);
+
+    // Resize & convert to WebP
+    await sharp(file.buffer)
+      .resize(1200, 600, { fit: "inside", withoutEnlargement: true })
+      .webp({ quality: 80 })
+      .toFile(filepath);
+
+    return res.status(200).json({
+      success: true,
+      message: "Image saved successfully",
+      filename: `uploads/product-images/${filename}`
+    });
+  } catch (error) {
+    console.error("Error saving image:", error);
+    return res.status(500).json({ success: false, message: "Error saving image" });
+  }
+};
 
 
-  // get All products
-  const getAllProducts = async (req, res) => {
-    try {
-      console.log("Getting all products...");
-      const search = req.query.search || "";
-      const page = parseInt(req.query.page) || 1;
-      const limit = 10;
-      
-      // Create search query - adjust for your schema
-      const searchQuery = {};
-      
-      // Add search criteria if provided
-      if (search) {
-        searchQuery.$or = [
-          { productName: { $regex: new RegExp(".*" + search + ".*", "i") } },
-          { name: { $regex: new RegExp(".*" + search + ".*", "i") } }
-        ];
-      }
 
-      // By default, only show active products (if your schema uses this)
-      // Comment out this section if you don't use an isActive field
-      if (req.query.showAll !== 'true') {
-        // Uncomment the appropriate filter based on your schema:
-        // searchQuery.isActive = true;
-        // OR 
-        searchQuery.status = { $ne: "deleted" }; // Assuming "deleted" is a status value
-      }
+// get All products
+const getAllProducts = async (req, res) => {
+  try {
+    console.log("Getting all products...");
+    const search = req.query.search || "";
+    const page = parseInt(req.query.page) || 1;
+    const limit = 10;
 
-      console.log("Search query:", searchQuery);
+    // Create search query - adjust for your schema
+    const searchQuery = {};
 
-      // Fetch products with pagination
-      const products = await Product.find(searchQuery)
-        .sort({ createdAt: -1 })
-        .limit(limit)
-        .skip((page - 1) * limit)
-        .populate("category")
-        .populate("brand") 
-        .exec();
-
-      console.log(`Found ${products.length} products`);
-      
-      // Count total matching products
-      const totalItems = await Product.countDocuments(searchQuery);
-      
-      // Fetch categories and brands for dropdowns
-      const categories = await Category.find({ isActive: true });
-      const brands = await Brand.find({ isActive: true });
-
-      // Render the products page with data
-      res.render("products", {
-        products: products,
-        totalItems: totalItems,
-        currentPage: page,
-        totalPages: Math.ceil(totalItems / limit),
-        limit: limit,
-        searchTerm: search,
-        categories: categories,
-        brands: brands,
-        pageTitle: 'Product Management'
-      });
-    } catch (error) {
-      console.error("Error fetching products:", error);
-      res.status(500).render("admin/error", { 
-        message: "Failed to fetch products", 
-        error: error.message 
-      });
+    // Add search criteria if provided
+    if (search) {
+      searchQuery.$or = [
+        { productName: { $regex: new RegExp(".*" + search + ".*", "i") } },
+        { name: { $regex: new RegExp(".*" + search + ".*", "i") } }
+      ];
     }
-  };
+
+    if (req.query.showAll !== 'true') {
+      searchQuery.status = { $ne: "deleted" }; // Assuming "deleted" is a status value
+    }
+
+    console.log("Search query:", searchQuery);
+
+    // Fetch products with pagination
+    const products = await Product.find(searchQuery)
+      .sort({ createdAt: -1 })
+      .limit(limit)
+      .skip((page - 1) * limit)
+      .populate("category")
+      .populate("brand")
+      .exec();
+
+    console.log(`Found ${products.length} products`);
+
+    // Count total matching products
+    const totalItems = await Product.countDocuments(searchQuery);
+
+    // Fetch categories and brands for dropdowns
+    const categories = await Category.find({ isActive: true });
+    const brands = await Brand.find({ isActive: true });
+
+    // Render the products page with data
+    res.render("products", {
+      products: products,
+      totalItems: totalItems,
+      currentPage: page,
+      totalPages: Math.ceil(totalItems / limit),
+      limit: limit,
+      searchTerm: search,
+      categories: categories,
+      brands: brands,
+      pageTitle: 'Product Management'
+    });
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    res.status(500).render("error", {
+      message: "Failed to fetch products",
+      error: error.message
+    });
+  }
+};
 
 
 
-  // Add Category Offer
-  const addProductOffer = async (req, res) => {
+// Add Category Offer
+const addProductOffer = async (req, res) => {
   try {
     const productId = req.params.id;
     const { offerPercentage } = req.body;
@@ -293,12 +289,12 @@ const addProducts = async (req, res) => {
       return res.status(404).json({ success: false, message: "Product not found" });
     }
 
-    // Set product offer
+    // Set product offer flags
     product.productOffer = percentage;
     product.offerPercentage = percentage;
     product.hasOffer = true;
 
-    // Check if category has active offer
+    // Check category offer
     const category = product.category;
     const now = new Date();
     let categoryOffer = 0;
@@ -312,7 +308,7 @@ const addProducts = async (req, res) => {
     }
 
     const maxOffer = Math.max(percentage, categoryOffer);
-    const discountAmount = (product.regularPrice * maxOffer) / 100;
+    const discountAmount = Math.floor((product.regularPrice * maxOffer) / 100);
     product.salePrice = product.regularPrice - discountAmount;
 
     await product.save();
@@ -320,7 +316,7 @@ const addProducts = async (req, res) => {
     return res.json({ success: true, message: "Product offer added successfully" });
   } catch (error) {
     console.error("Error in addProductOffer:", error);
-    return res.status(500).render('admin/error', {
+    return res.status(500).render('error', {
       pageTitle: 'Error',
       message: 'Something went wrong while adding product offer'
     });
@@ -328,105 +324,85 @@ const addProducts = async (req, res) => {
 };
 
 
-  // Remove Product Offer
-  const removeProductOffer = async (req, res) => {
-    try {
-      const productId = req.params.id;
-      
-      // Validate input
-      if (!productId) {
-        return res.status(400).json({ success: false, message: "Product ID is required" });
-      }
-      
-      // Find product
-      const product = await Product.findById(productId);
-      if (!product) {
-        return res.status(404).json({ success: false, message: "Product not found" });
-      }
-      
-      // Update product to remove offer
-      await Product.updateOne(
-        { _id: productId },
-        { 
-          $set: { 
-            hasOffer: false, 
-            offerPercentage: 0,
-            salePrice: product.regularPrice, // Reset sale price to regular price
-            productOffer: 0
-          } 
+// Remove Product Offer
+const removeProductOffer = async (req, res) => {
+  try {
+    const productId = req.params.id;
+
+    // Validate input
+    if (!productId) {
+      return res.status(400).json({ success: false, message: "Product ID is required" });
+    }
+
+    // Find product
+    const product = await Product.findById(productId);
+    if (!product) {
+      return res.status(404).json({ success: false, message: "Product not found" });
+    }
+
+    // Update product to remove offer
+    await Product.updateOne(
+      { _id: productId },
+      {
+        $set: {
+          hasOffer: false,
+          offerPercentage: 0,
+          salePrice: product.regularPrice, // Reset sale price to regular price
+          productOffer: 0
         }
-      );
-      
-      return res.status(200).json({ success: true, message: "Offer removed successfully" });
-    } catch (error) {
-      console.error("Error in removeProductOffer:", error);
-      return res.status(500).json({ success: false, message: "Internal Server Error" });
-    }
-  };
+      }
+    );
 
-
-  //editProduct
-
-  // //edit Category
-  // const editProduct = async (req, res) => {
-  //   try {
-  //     const productId = req.params.id
-  //     const { productName, brand, category, regularPrice, salePrice, quantity } = req.body
-  //     const updatedProduct = await Category.findByIdAndUpdate(productId, { productName,brand, category, regularPrice, salePrice, quantity }, { new: true })
-  //     if (!updatedProduct) {
-  //       return res.status(404).json({ success: false, message: "Product not found" })
-  //     }
-  //     res.json({ success: true, message: "Product updated successfully" })
-  //   } catch (error) {
-  //     console.error(error)
-  //     res.status(500).json({ success: false, message: "Failed to update category" })
-  //   }
-  // }
+    return res.status(200).json({ success: true, message: "Offer removed successfully" });
+  } catch (error) {
+    console.error("Error in removeProductOffer:", error);
+    return res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+};
 
 
 
+// DELETE AND RECOVER 
+const updateProductStatus = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const { action } = req.body;
 
-  // DELETE AND RECOVER 
-  const updateProductStatus = async (req, res) => {
-    try {
-      const id = req.params.id;
-      const { action } = req.body;
-
-      let updateData = {};
-      const product = await Product.findById(id);
-      if (!product) {
+    let updateData = {};
+    const product = await Product.findById(id);
+    if (!product) {
       return res.status(404).json({ success: false, message: 'Product not found' });
-      }
-      if (action === 'delete') {
-          updateData = {
-          isDeleted: true,
-          deletedAt: new Date(),
-          isActive: false,
-          status: 'Unavailable'
-        };
-      } else if (action === 'recover') {
-          updateData = {
-          isDeleted: false,
-          deletedAt: null,
-          isActive: true,
-          status: 'Available'
-        };
-      } else {
-        return res.status(400).json({ success: false, message: 'Invalid action' });
-      }
-      const result = await Product.updateOne({ _id: id }, { $set: updateData });
-      console.log('Update Result:', result);
-
-      if (result.modifiedCount === 0) {
-        return res.status(404).json({ success: false, message: 'Product not found or already in desired state' });
-      }
-
-      res.json({ success: true, message: `Product ${action}d successfully!` });
-    } catch (error) {
-      console.error('Update Status Error:', error);
-      res.status(500).json({ success: false, message: 'Internal server error' });
     }
-  };
+    if (action === 'delete') {
+      updateData = {
+        isDeleted: true,
+        deletedAt: new Date(),
+        isActive: false,
+        status: 'Unavailable'
+      };
+    } else if (action === 'recover') {
+      updateData = {
+        isDeleted: false,
+        deletedAt: null,
+        isActive: true,
+        status: 'available'
+      };
+    } else {
+      return res.status(400).json({ success: false, message: 'Invalid action' });
+    }
+    const result = await Product.updateOne({ _id: id }, { $set: updateData });
+    console.log('Update Result:', result);
+
+    if (result.modifiedCount === 0) {
+      return res.status(404).json({ success: false, message: 'Product not found or already in desired state' });
+    }
+
+    res.json({ success: true, message: `Product ${action}d successfully!` });
+  } catch (error) {
+    console.error('Update Status Error:', error);
+    res.status(500).json({ success: false, message: 'Internal server error' });
+  }
+};
 
 const getEditProduct = async (req, res) => {
   try {
@@ -436,14 +412,14 @@ const getEditProduct = async (req, res) => {
     });
     const id = req.params.id;
     const product = await Product.findOne({ _id: id });
-    
+
     if (!product) {
       return res.redirect('/admin/products');
     }
-    
+
     const categoryList = await Category.find({ isActive: true });
     const brandList = await Brand.find({ isActive: true });
-    
+
     // Changed from 'admin/productEdit' to 'productEdit' to match your file structure
     res.render('productEdit', {
       pageTitle: 'Edit Products',
@@ -462,11 +438,11 @@ const editProduct = async (req, res) => {
   try {
     const id = req.params.id;
     const product = await Product.findOne({ _id: id });
-    
+
     if (!product) {
       return res.status(404).json({ success: false, message: "Product not found" });
     }
-    
+
     const data = req.body;
     console.log("Updating product:", id);
     console.log("New product data:", data);
@@ -477,11 +453,11 @@ const editProduct = async (req, res) => {
       productName: data.productName,
       _id: { $ne: id }
     });
-    
+
     if (existingProduct) {
-      return res.status(400).json({ 
-        success: false, 
-        message: "Product with this name already exists. Please try another name" 
+      return res.status(400).json({
+        success: false,
+        message: "Product with this name already exists. Please try another name"
       });
     }
 
@@ -505,9 +481,9 @@ const editProduct = async (req, res) => {
         if (category) {
           updateFields.category = category._id;
         } else {
-          return res.status(400).json({ 
-            success: false, 
-            message: "Category not found. Please select a valid category." 
+          return res.status(400).json({
+            success: false,
+            message: "Category not found. Please select a valid category."
           });
         }
       }
@@ -533,7 +509,7 @@ const editProduct = async (req, res) => {
     // Handle image updates - Fixed Logic
     const existingImages = product.productImage || [];
     const newProductImages = [];
-    
+
     // Process each image slot (1-4)
     for (let i = 1; i <= 4; i++) {
       // Check if there's a new file uploaded for this slot
@@ -543,12 +519,12 @@ const editProduct = async (req, res) => {
         const filename = `${Date.now()}-image${i}.webp`;
         const uploadDir = path.join(__dirname, "../../public/uploads/product-images");
         const filePath = path.join(uploadDir, filename);
-        
+
         // Ensure directory exists
         if (!fs.existsSync(uploadDir)) {
           fs.mkdirSync(uploadDir, { recursive: true });
         }
-        
+
         // Process image with sharp
         await sharp(file.buffer)
           .resize({
@@ -559,23 +535,23 @@ const editProduct = async (req, res) => {
           })
           .webp({ quality: 80 })
           .toFile(filePath);
-        
+
         newProductImages.push(`uploads/product-images/${filename}`);
-        
+
         // Delete old image if it exists
-        if (existingImages[i-1]) {
-          const oldImagePath = path.join(__dirname, "../../public", existingImages[i-1]);
+        if (existingImages[i - 1]) {
+          const oldImagePath = path.join(__dirname, "../../public", existingImages[i - 1]);
           if (fs.existsSync(oldImagePath)) {
             fs.unlinkSync(oldImagePath);
           }
         }
-      } else if (existingImages[i-1]) {
+      } else if (existingImages[i - 1]) {
         // No new image uploaded, keep existing image
-        newProductImages.push(existingImages[i-1]);
+        newProductImages.push(existingImages[i - 1]);
       }
       // If no new image and no existing image, skip (empty slot)
     }
-    
+
     // Ensure at least one image exists
     if (newProductImages.length === 0) {
       return res.status(400).json({
@@ -583,70 +559,70 @@ const editProduct = async (req, res) => {
         message: "Product must have at least one image"
       });
     }
-    
+
     // Update the product images array
     updateFields.productImage = newProductImages;
-    
+
     console.log("Update fields:", updateFields);
-    
+
     // Update the product
     const updatedProduct = await Product.findByIdAndUpdate(
-      id, 
-      updateFields, 
-      { 
+      id,
+      updateFields,
+      {
         new: true,
         runValidators: true // This ensures schema validation runs
       }
     );
-    
+
     if (!updatedProduct) {
       return res.status(404).json({
         success: false,
         message: "Product not found during update"
       });
     }
-    
+
     console.log("Product updated successfully:", updatedProduct._id);
-    res.status(200).json({ 
-      success: true, 
+    res.status(200).json({
+      success: true,
       message: "Product updated successfully",
       product: updatedProduct
     });
-    
+
   } catch (error) {
     console.error('Error updating product:', error);
-    
+
     // More specific error handling
     if (error.name === 'ValidationError') {
       const errorMessages = Object.values(error.errors).map(err => err.message);
-      return res.status(400).json({ 
-        success: false, 
-        message: `Validation error: ${errorMessages.join(', ')}` 
+      return res.status(400).json({
+        success: false,
+        message: `Validation error: ${errorMessages.join(', ')}`
       });
     }
-    
+
     if (error.name === 'CastError') {
-      return res.status(400).json({ 
-        success: false, 
-        message: "Invalid data format provided" 
+      return res.status(400).json({
+        success: false,
+        message: "Invalid data format provided"
       });
     }
-    
-    res.status(500).json({ 
-      success: false, 
+
+    res.status(500).json({
+      success: false,
       message: "An error occurred while updating the product",
       error: process.env.NODE_ENV === 'development' ? error.message : undefined
     });
   }
 };
-  module.exports = {
-      getProductsAddPage,
-      addProducts,
-      saveImage,
-      getAllProducts,
-      addProductOffer,
-      removeProductOffer,
-      updateProductStatus,
-      getEditProduct,
-      editProduct
-  }
+module.exports = {
+  getProductsAddPage,
+  addProducts,
+  saveImage,
+  getAllProducts,
+  addProductOffer,
+  removeProductOffer,
+  updateProductStatus,
+  getEditProduct,
+  editProduct
+}

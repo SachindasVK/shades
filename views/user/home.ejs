@@ -156,22 +156,22 @@
 
         /* Brand container hover effects */
         .brand-container {
-            transition: background-color 0.3s ease, transform 0.5s ease;
+            transition: background-color 0.8s ease, transform 0.5s ease;
             border-radius: 10px;
             padding: 10px;
         }
 
         .brand-container:hover {
-            background-color: #FFEB3B;
-            transform: translateY(-8px);
+            background-color: #eeff00;
+            transform: translateY(-2px);
         }
 
         .brand-container img {
-            transition: transform 0.5s ease;
+            transition: transform 0.4s ease;
         }
 
         .brand-container:hover img {
-            transform: scale(1.3);
+            transform: scale(1.1);
         }
 
         /* Featured models section */
@@ -293,55 +293,48 @@
         <div class="container mx-auto px-4">
             <h2 class="text-2xl font-medium mb-8 section-heading">New arrivals for you</h2>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <% for(let i=0; i < products.length; i++) { %>
+                <% for (let i = 0; i < newArrivals.length; i++) { %>
+
                     <div class="product-card">
                         <div class="product-img-container">
-                            <button class="wishlist-btn add-to-wishlist" data-product-id="<%= products[i]._id %>">
+                            <button class="wishlist-btn add-to-wishlist" data-product-id="<%= newArrivals[i]._id %>">
                                 <i class="far fa-heart"></i>
                             </button>
-                            <a href="/productDetails?id=<%= products[i]._id %>">
-                                <img src="<%= products[i].productImage[0] %>" alt="<%= products[i].productName %>"
+                            <a href="/productDetails?id=<%= newArrivals[i]._id %>">
+                                <img src="<%= newArrivals[i].productImage[0] %>" alt="<%= newArrivals[i].productName %>"
                                     class="product-img">
                             </a>
                             
                         </div>
                      <div class="card-body">
-  <a href="/productDetails?id=<%= products[i]._id %>">
+  <a href="/productDetails?id=<%= newArrivals[i]._id %>">
     
     <!-- Category -->
-    <div class="product-category text-sm text-gray-500 mb-1">
-      <%= products[i].category ? products[i].category.name : 'Eyewear' %>                
-    </div>
+   <div class="product-category text-sm text-gray-500 mb-1 flex justify-between items-center">
+   <span><%= newArrivals[i].brand ? newArrivals[i].brand.name : '' %></span>
+  <div class="text-yellow-500 text-[10px] flex ml-2">
+    <i class="fas fa-star mr-[1px]"></i>
+    <i class="fas fa-star mr-[1px]"></i>
+    <i class="fas fa-star mr-[1px]"></i>
+    <i class="fas fa-star mr-[1px]"></i>
+    <i class="fas fa-star-half-alt"></i>
+  </div>
+</div>
+
     
   
     <!-- Product Name -->
     <h3 class="product-title text-lg font-semibold text-gray-800 mb-2">
-      <%= products[i].name || products[i].productName %>
-    </h3>
+      <%= newArrivals[i].name || newArrivals[i].productName %>
+    
 
-    <!-- Rating Section -->
-    <% if (products[i].averageRating) { %>
-      <div class="product-rating text-yellow-500 mb-1">
-        <% for (let star = 1; star <= 5; star++) { %>
-          <% if (star <= Math.floor(products[i].averageRating)) { %>
-            <i class="fas fa-star"></i>
-          <% } else if (star - 0.5 <= products[i].averageRating) { %>
-            <i class="fas fa-star-half-alt"></i>
-          <% } else { %>
-            <i class="far fa-star"></i>
-          <% } %>
-        <% } %>
-        <% if (products[i].ratingCount) { %>
-          <span class="text-sm text-gray-600 ml-1">(<%= products[i].ratingCount %>)</span>
-        <% } %>
-      </div>
-    <% } %>
+    </h3>
 
     <!-- Price Section -->
     <div class="product-price text-base">
       <% 
-        const regular = products[i].regularPrice;
-        const sale = products[i].price || products[i].salePrice || regular;
+        const regular = newArrivals[i].regularPrice;
+        const sale = newArrivals[i].price || newArrivals[i].salePrice || regular;
       %>
 
       <span class="current-price text-green-600 font-bold">
@@ -355,7 +348,7 @@
           ₹<%= regular.toLocaleString('en-IN') %>
         </span>
         <span class="discount-percentage text-red-500 font-semibold ml-2">
-          <%= discount %>% OFF
+          <%= discount %>% off
         </span>
       <% } %>
     </div>
@@ -363,12 +356,12 @@
   </a>
 </div>
                         <div class="card-footer">
-                            <%if(products[i].quantity===0){%>
-                            <button class="btn btn-add-cart add-to-cart" data-product-id="<%= products[i]._id %>" <%= products[i].quantity === 0 ? 'disabled' : '' %> >
+                            <%if(newArrivals[i].quantity===0){%>
+                            <button class="btn btn-add-cart add-to-cart" data-product-id="<%= newArrivals[i]._id %>" <%= newArrivals[i].quantity === 0 ? 'disabled' : '' %> >
                                <i class="fas fa-times-circle mr-2"></i>Out of stock
                             </button>
                         <%}else{%>
-                            <button class="btn btn-add-cart add-to-cart" data-product-id="<%= products[i]._id %>">
+                            <button class="btn btn-add-cart add-to-cart" data-product-id="<%= newArrivals[i]._id %>">
                                 <i class="fas fa-shopping-cart"></i>Add to Cart
                             </button>
                             <%}%>
@@ -400,79 +393,84 @@
   <div class="container mx-auto px-4">
     <h2 class="text-2xl font-medium mb-8 section-heading">Best-sellers for every occasion</h2>
 
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-      <% for(let i=0; i < products.length && i < 4; i++) { %>
-        <div class="product-card">
+   <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+  <% for (let i = 0; i < bestSellerProducts.length; i++) { %>
+    <div class="product-card">
+      
+      <!-- Image & Wishlist -->
+      <div class="product-img-container">
+        <button class="wishlist-btn add-to-wishlist" data-product-id="<%= bestSellerProducts[i]._id %>">
+          <i class="far fa-heart"></i>
+        </button>
+        <a href="/productDetails?id=<%= bestSellerProducts[i]._id %>">
+          <img src="<%= bestSellerProducts[i].productImage[0] %>" alt="<%= bestSellerProducts[i].productName %>" class="product-img">
+        </a>
+      </div>
 
-          <!-- 🖼️ IMAGE & WISHLIST -->
-          <div class="product-img-container">
-            <button class="wishlist-btn add-to-wishlist" data-product-id="<%= products[i]._id %>">
-              <i class="far fa-heart"></i>
-            </button>
-            <a href="/productDetails?id=<%= products[i]._id %>">
-              <img src="<%= products[i].productImage[0] %>" alt="<%= products[i].productName %>" class="product-img">
-            </a>
+      <!-- Card Body -->
+      <div class="card-body">
+        <!-- Category Static Rating Row -->
+        <div class="product-category text-sm text-gray-500 mb-1 flex justify-between items-center">
+          <span><%= bestSellerProducts[i].brand ? bestSellerProducts[i].brand.name : '' %></span>
+
+          <div class="text-yellow-400 text-[10px] flex ml-2">
+            <i class="fas fa-star mr-[1px]"></i>
+            <i class="fas fa-star mr-[1px]"></i>
+            <i class="fas fa-star mr-[1px]"></i>
+            <i class="fas fa-star mr-[1px]"></i>
+            <i class="fas fa-star-half-alt"></i>
           </div>
-          <div class="card-body">
-
-            <div class="product-category">
-              <%= products[i].category ? products[i].category.name : 'Eyewear' %>
-            </div>
-
-            <h3 class="product-title">
-              <%= products[i].productName %>
-            </h3>
-
-            <!-- PRICE + DISCOUNT LOGIC -->
-            <div class="product-price">
-              <%
-                const regularPrice = products[i].regularPrice;
-                const now = new Date();
-
-                // Product-level offer
-                const productOffer = (products[i].hasOffer && products[i].productOffer > 0)
-                  ? products[i].productOffer
-                  : 0;
-
-                // Category-level offer
-                let categoryOffer = 0;
-                if (
-                  products[i].category &&
-                  products[i].category.hasOffer &&
-                  products[i].category.offerPercentage > 0
-                ) {
-                  const start = new Date(products[i].category.offerStartDate);
-                  const end = new Date(products[i].category.offerEndDate);
-                  if (!isNaN(start) && !isNaN(end) && now >= start && now <= end) {
-                    categoryOffer = products[i].category.offerPercentage;
-                  }
-                }
-
-                // Final discount
-                const discount = Math.max(productOffer, categoryOffer);
-                const finalPrice = Math.round(regularPrice * (1 - discount / 100));
-              %>
-
-              <% if (discount > 0) { %>
-                <span class="current-price">₹<%= finalPrice.toLocaleString('en-IN') %></span>
-                <span class="original-price">₹<%= regularPrice.toLocaleString('en-IN') %></span>
-                <span class="discount-percentage"><%= discount %>% off</span>
-              <% } else { %>
-                <span class="current-price">₹<%= regularPrice.toLocaleString('en-IN') %></span>
-              <% } %>
-            </div>
-          </div>
-
-
-          <div class="card-footer">
-            <button class="btn btn-add-cart add-to-cart" data-product-id="<%= products[i]._id %>">
-              <i class="fas fa-shopping-cart"></i> Add to Cart
-            </button>
-          </div>
-
         </div>
-      <% } %>
+
+        <!-- Product Title -->
+        <h3 class="product-title text-base font-semibold text-gray-800 mb-2">
+          <%= bestSellerProducts[i].productName %>
+        </h3>
+
+        <div class="product-price">
+          <%
+            const regularPrice = bestSellerProducts[i].regularPrice;
+            const now = new Date();
+
+            const productOffer = (bestSellerProducts[i].hasOffer && bestSellerProducts[i].productOffer > 0)
+              ? bestSellerProducts[i].productOffer : 0;
+
+            let categoryOffer = 0;
+            if (
+              bestSellerProducts[i].category &&
+              bestSellerProducts[i].category.hasOffer &&
+              bestSellerProducts[i].category.offerPercentage > 0
+            ) {
+              const start = new Date(bestSellerProducts[i].category.offerStartDate);
+              const end = new Date(bestSellerProducts[i].category.offerEndDate);
+              if (!isNaN(start) && !isNaN(end) && now >= start && now <= end) {
+                categoryOffer = bestSellerProducts[i].category.offerPercentage;
+              }
+            }
+
+            const discount = Math.max(productOffer, categoryOffer);
+            const finalPrice = Math.round(regularPrice * (1 - discount / 100));
+          %>
+
+          <% if (discount > 0) { %>
+            <span class="current-price text-green-600 font-bold">₹<%= finalPrice.toLocaleString('en-IN') %></span>
+            <span class="original-price text-gray-500 line-through ml-2">₹<%= regularPrice.toLocaleString('en-IN') %></span>
+            <span class="discount-percentage text-red-500 font-semibold ml-2"><%= discount %>% off</span>
+          <% } else { %>
+            <span class="current-price text-green-600 font-bold">₹<%= regularPrice.toLocaleString('en-IN') %></span>
+          <% } %>
+        </div>
+      </div>
+
+      <div class="card-footer">
+        <button class="btn btn-add-cart add-to-cart" data-product-id="<%= bestSellerProducts[i]._id %>">
+          <i class="fas fa-shopping-cart"></i> Add to Cart
+        </button>
+      </div>
     </div>
+  <% } %>
+</div>
+
   </div>
 </section>
 
@@ -481,30 +479,27 @@
     <section class="py-12 bg-white border-t border-gray-200">
         <div class="container mx-auto px-4">
             <h2 class="text-2xl font-medium mb-8 section-heading">Shop with brands</h2>
-            <div class="grid grid-cols-3 md:grid-cols-6 gap-4">
-                <div class="brand-container flex items-center justify-center py-4">
-                    <img src="/css/image/shop_with_Brands/Oakley_bl_18.webp" alt="Oakley logo"
-                        class="h-12 transition-transform duration-300">
-                </div>
+            <div class="grid grid-cols-3 md:grid-cols-5 gap-2">
+                
                 <div class="brand-container flex items-center justify-center py-4">
                     <img src="/css/image/shop_with_Brands/Ray-Ban_bl_18.webp" alt="Ray-Ban logo"
-                        class="h-12 transition-transform duration-300">
+                        class="h-20 transition-transform duration-300">
                 </div>
                 <div class="brand-container flex items-center justify-center py-4">
                     <img src="/css/image/shop_with_Brands/Gucci_bl_18.webp" alt="Gucci logo"
-                        class="h-12 transition-transform duration-300">
+                        class="h-20 transition-transform duration-300">
                 </div>
                 <div class="brand-container flex items-center justify-center py-4">
                     <img src="/css/image/shop_with_Brands/costa_bl_18.avif" alt="Costa logo"
-                        class="h-12 transition-transform duration-300">
+                        class="h-20 transition-transform duration-300">
                 </div>
                 <div class="brand-container flex items-center justify-center py-4">
                     <img src="/css/image/shop_with_Brands/Dolce&Gabbana_bl_18.webp" alt="Dolce & Gabbana logo"
-                        class="h-12 transition-transform duration-300">
+                        class="h-20 transition-transform duration-300">
                 </div>
                 <div class="brand-container flex items-center justify-center py-4">
                     <img src="/css/image/shop_with_Brands/Versace_bl_18.avif" alt="Versace logo"
-                        class="h-12 transition-transform duration-300">
+                        class="h-20 transition-transform duration-300">
                 </div>
             </div>
         </div>

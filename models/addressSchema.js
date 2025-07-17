@@ -32,9 +32,9 @@ const addressSchema = new Schema({
             type: String,
             required: true
         },
-        streetAddress: {
-            type: String,
-            required: true
+        flat:{
+            type:String,
+            required:true
         },
         landMark: {
             type: String,
