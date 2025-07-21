@@ -506,11 +506,11 @@ const editProduct = async (req, res) => {
       }
     }
 
-    // Handle image updates - Fixed Logic
+    // Handle image updates
     const existingImages = product.productImage || [];
     const newProductImages = [];
 
-    // Process each image slot (1-4)
+    // Process each image slot 
     for (let i = 1; i <= 4; i++) {
       // Check if there's a new file uploaded for this slot
       if (req.files && req.files[`image${i}`] && req.files[`image${i}`][0]) {
@@ -571,7 +571,7 @@ const editProduct = async (req, res) => {
       updateFields,
       {
         new: true,
-        runValidators: true // This ensures schema validation runs
+        runValidators: true 
       }
     );
 
@@ -615,6 +615,23 @@ const editProduct = async (req, res) => {
     });
   }
 };
+
+
+const updateProductQuantity = async (req, res) => {
+  try {
+    const productId = req.params.id;
+    const { quantity } = req.body;
+
+    await Product.findByIdAndUpdate(productId, { quantity: parseInt(quantity) });
+
+    res.json({ success: true });
+  } catch (error) {
+    console.error("Error updating quantity:", error);
+    res.status(500).json({ success: false });
+  }
+};
+
+
 module.exports = {
   getProductsAddPage,
   addProducts,
@@ -624,5 +641,6 @@ module.exports = {
   removeProductOffer,
   updateProductStatus,
   getEditProduct,
-  editProduct
+  editProduct,
+  updateProductQuantity
 }

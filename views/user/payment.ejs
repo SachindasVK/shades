@@ -923,7 +923,7 @@ async function handleRazorpayPayment(orderDbId) {
     })
   }).then(() => {
     setTimeout(()=>{
-window.location.href = '/orders?payment=failed';
+window.location.href = '/order-failure';
     },2000)
     
   });

@@ -40,7 +40,7 @@ const orderSchema = new Schema({
         },
         status: {
             type: String,
-            enum: ['pending', 'confirmed', 'shipped', 'delivered', 'cancelled', 'return_requested', 'returning', 'returned', 'failed'],
+            enum: ['pending', 'confirmed', 'shipped', 'delivered', 'cancelled', 'return_requested', 'returned', 'failed', 'return_rejected'],
             default: 'pending'
         },
         cancelReason: {
@@ -48,7 +48,27 @@ const orderSchema = new Schema({
         },
         cancelledAt: {
             type: Date
-        }
+        },
+        returnReason: {
+            type: String
+        },
+        requestStatus: {
+            type: String,
+            enum: ['pending', 'approved', 'rejected'],
+            default: 'pending'
+        },
+        returnProcessedAt: {
+            type: Date
+        },
+        updatedOn: {
+            type: Date,
+        },
+        rejectionCategory: {
+            type: String
+        },
+        rejectionReason: {
+            type: String
+        },
     }],
     totalPrice: {
         type: Number,
@@ -105,7 +125,7 @@ const orderSchema = new Schema({
     status: {
         type: String,
         required: true,
-        enum: ['pending', 'confirmed', 'shipped', 'delivered', 'cancelled', 'return_requested', 'returning', 'returned', 'failed','return_rejected'],
+        enum: ['pending', 'confirmed', 'shipped', 'delivered', 'cancelled', 'return_requested', 'returned', 'failed', 'return_rejected'],
         default: 'pending'
     },
     cancelReason: {
@@ -117,12 +137,6 @@ const orderSchema = new Schema({
     returnReason: {
         type: String
     },
-    returnDescription: {
-        type: String
-    },
-    returnImages: [{
-        type: String
-    }],
     requestStatus: {
         type: String,
         enum: ['pending', 'approved', 'rejected'],

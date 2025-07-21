@@ -1,0 +1,527 @@
+<%- include('../../views/partials/admin/header') %>
+<!-- Returns Management Page Content -->
+<div class="p-6">
+    <!-- Search and Filter Controls -->
+    <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+        <div class="flex flex-col md:flex-row justify-between items-center mb-4">
+            <h3 class="text-lg font-semibold">Returns Management</h3>
+            <form method="GET" action="/admin/returns" class="flex space-x-4 mt-4 md:mt-0">
+                <!-- Search -->
+                <div class="relative">
+                    <input type="text" name="search" value="<%= search %>" placeholder="Search by Order ID or Customer"
+                        class="pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                </div>
+                <!-- Filter -->
+                <select name="status"
+                    class="px-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    onchange="this.form.submit()">
+                    <option value="return_requested" <%= status === 'return_requested' ? 'selected' : '' %>>All Return Statuses</option>
+                    <option value="pending" <%= status === 'pending' ? 'selected' : '' %>>Pending</option>
+                    <option value="approved" <%= status === 'approved' ? 'selected' : '' %>>Approved</option>
+                    <option value="rejected" <%= status === 'rejected' ? 'selected' : '' %>>Rejected</option>
+                </select>
+                <!-- Search Button -->
+                <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">Search</button>
+                <!-- Clear Search -->
+                <a href="/admin/returns" class="px-3 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 text-decoration-none">Clear</a>
+            </form>
+        </div>
+    </div>
+
+    <!-- Returns Table -->
+    <div class="bg-white rounded-lg shadow-sm overflow-hidden mb-6">
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200" id="returnsTable">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th scope="col"
+                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Order ID</th>
+                        <th scope="col"
+                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Customer</th>
+                        <th scope="col"
+                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Date</th>
+                        <th scope="col"
+                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Total</th>
+                        <th scope="col"
+                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Status</th>
+                        <th scope="col"
+                            class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200" id="returnsBody">
+                    <% returns.forEach(returnItem => { %>
+                        <tr data-order-id="<%= returnItem.orderId %>">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm font-medium text-gray-900">#<%= returnItem.orderId %></div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex items-center">
+                                    <div class="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center">
+                                        <span class="text-xs font-medium">
+                                            <%= returnItem.userId?.name?.split(' ').map(n => n[0]).join('').toUpperCase() %>
+                                        </span>
+                                    </div>
+                                    <div class="ml-3">
+                                        <div class="text-sm font-medium text-gray-900"><%= returnItem.userId?.name || 'Unknown' %></div>
+                                        <div class="text-xs text-gray-500"><%= returnItem.userId?.email || 'N/A' %></div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-900">
+                                    <%= new Date(returnItem.createdAt).toLocaleDateString('en-GB') %>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm font-medium text-gray-900">₹<%= returnItem.finalAmount %></div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="px-2 py-1 text-xs font-semibold rounded-full
+                                    <%= returnItem.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                                        returnItem.status === 'approved' ? 'bg-green-100 text-green-800' :
+                                        'bg-red-100 text-red-800' %>">
+                                    <%= returnItem.status.charAt(0).toUpperCase() + returnItem.status.slice(1) %>
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                <button class="view-return text-blue-500 hover:underline mr-2"
+                                    data-order-id="<%= returnItem.orderId %>">View</button>
+                                <% if (returnItem.status === 'pending') { %>
+                                    <button class="accept-return text-green-500 hover:underline mr-2"
+                                        data-order-id="<%= returnItem.orderId %>">Accept</button>
+                                    <button class="reject-return text-red-500 hover:underline"
+                                        data-order-id="<%= returnItem.orderId %>">Reject</button>
+                                <% } else { %>
+                                    <span class="text-gray-400">No Action</span>
+                                <% } %>
+                            </td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Pagination -->
+    <% if (totalPages > 1) { %>
+        <div class="px-6 py-4 border-t border-gray-200">
+            <div class="flex justify-between items-center">
+                <div class="text-sm text-gray-500">
+                    Showing
+                    <span class="font-medium"><%= ((currentPage - 1) * limit) + 1 %></span>
+                    to
+                    <span class="font-medium"><%= Math.min(currentPage * limit, totalReturns) %></span>
+                    of
+                    <span class="font-medium"><%= totalReturns %></span> returns
+                </div>
+                <nav class="flex space-x-1">
+                    <!-- Previous -->
+                    <% if (currentPage > 1) { 
+                        const prevParams = new URLSearchParams({
+                            page: (currentPage - 1).toString(),
+                            limit: limit.toString(),
+                            search: search || '',
+                            status: status || ''
+                        });
+                    %>
+                        <a href="?<%= prevParams.toString() %>"
+                            class="px-3 py-1 rounded-md text-sm font-medium bg-gray-200 text-gray-700 hover:bg-gray-300">
+                            Previous
+                        </a>
+                    <% } else { %>
+                        <span
+                            class="px-3 py-1 rounded-md text-sm font-medium bg-gray-100 text-gray-400 cursor-not-allowed">
+                            Previous
+                        </span>
+                    <% } %>
+
+                    <!-- Dynamic Page Numbers: Max 3 -->
+                    <% 
+                        let start = Math.max(1, currentPage - 1);
+                        let end = Math.min(totalPages, start + 2);
+                        if (end - start < 2) {
+                            start = Math.max(1, end - 2);
+                        }
+                        for (let i = start; i <= end; i++) {
+                            const pageParams = new URLSearchParams({
+                                page: i.toString(),
+                                limit: limit.toString(),
+                                search: search || '',
+                                status: status || ''
+                            });
+                    %>
+                        <% if (i === currentPage) { %>
+                            <span
+                                class="px-3 py-1 rounded-md text-sm font-medium bg-blue-600 text-white"><%= i %></span>
+                        <% } else { %>
+                            <a href="?<%= pageParams.toString() %>"
+                                class="px-3 py-1 rounded-md text-sm font-medium bg-gray-200 text-gray-700 hover:bg-gray-300">
+                                <%= i %>
+                            </a>
+                        <% } %>
+                    <% } %>
+
+                    <!-- Next -->
+                    <% if (currentPage < totalPages) { 
+                        const nextParams = new URLSearchParams({
+                            page: (currentPage + 1).toString(),
+                            limit: limit.toString(),
+                            search: search || '',
+                            status: status || ''
+                        });
+                    %>
+                        <a href="?<%= nextParams.toString() %>"
+                            class="px-3 py-1 rounded-md text-sm font-medium bg-gray-200 text-gray-700 hover:bg-gray-300">
+                            Next
+                        </a>
+                    <% } else { %>
+                        <span
+                            class="px-3 py-1 rounded-md text-sm font-medium bg-gray-100 text-gray-400 cursor-not-allowed">
+                            Next
+                        </span>
+                    <% } %>
+                </nav>
+            </div>
+        </div>
+    <% } %>
+
+    <!-- Reject Reason Modal -->
+    <div id="rejectModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="bg-white rounded-lg p-6 w-full max-w-md">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-semibold">Reject Return Request</h3>
+                <button id="closeRejectModal" class="text-gray-500 hover:text-black"><i class="fas fa-times"></i></button>
+            </div>
+            <div id="rejectModalContent">
+                <p class="text-sm text-gray-700 mb-4">Order #<span id="rejectOrderId"></span></p>
+                <div class="mb-4">
+                    <label for="rejectReason" class="block text-sm font-medium text-gray-700 mb-2">Reason for Rejection:</label>
+                    <textarea id="rejectReason" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" rows="4" placeholder="Enter reason for rejection"></textarea>
+                </div>
+                <div class="flex justify-end">
+                    <button id="submitRejectReason" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600">Submit Rejection</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-4 right-4 z-50 hidden">
+        <div class="bg-white rounded-lg shadow-lg border-l-4 border-green-500 px-4 py-3 max-w-sm">
+            <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    <i class="fas fa-check-circle text-green-500"></i>
+                </div>
+                <div class="ml-3">
+                    <p id="toastMessage" class="text-sm font-medium text-gray-900"></p>
+                </div>
+                <div class="ml-auto pl-3">
+                    <button id="closeToast" class="text-gray-400 hover:text-gray-500">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript for Functionality -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Helper function to show toast notifications
+            function showToast(message, type = 'success') {
+                const toastMessage = document.getElementById('toastMessage');
+                const toastElement = document.getElementById('toast');
+                if (!toastMessage || !toastElement) return;
+
+                toastMessage.textContent = message;
+                const toastDiv = toastElement.querySelector('div');
+                const toastIcon = toastDiv.querySelector('i');
+
+                if (type === 'error') {
+                    toastDiv.classList.remove('border-green-500');
+                    toastDiv.classList.add('border-red-500');
+                    toastIcon.classList.remove('text-green-500', 'fa-check-circle');
+                    toastIcon.classList.add('text-red-500', 'fa-exclamation-circle');
+                } else {
+                    toastDiv.classList.remove('border-red-500');
+                    toastDiv.classList.add('border-green-500');
+                    toastIcon.classList.remove('text-red-500', 'fa-exclamation-circle');
+                    toastIcon.classList.add('text-green-500', 'fa-check-circle');
+                }
+
+                toastElement.classList.remove('hidden');
+                setTimeout(() => toastElement.classList.add('hidden'), 5000);
+            }
+
+            // Close toast
+            const closeToast = document.getElementById('closeToast');
+            if (closeToast) {
+                closeToast.addEventListener('click', () => {
+                    document.getElementById('toast').classList.add('hidden');
+                });
+            }
+
+            // View order modal functionality
+            document.querySelectorAll('.view-return').forEach(button => {
+                button.addEventListener('click', async (e) => {
+                    const orderId = e.target.dataset.orderId;
+                    try {
+                        const response = await fetch(`/admin/orders/${orderId}`);
+                        const data = await response.json();
+
+                        if (response.ok && data.success) {
+                            const order = data.order;
+                            const modal = document.getElementById('orderModal');
+                            const content = document.getElementById('orderDetailsContent');
+
+                            // Helper function to get status badge
+                            function getStatusBadge(status) {
+                                const statusStyles = {
+                                    'pending': 'bg-yellow-100 text-yellow-800',
+                                    'approved': 'bg-green-100 text-green-800',
+                                    'rejected': 'bg-red-100 text-red-800'
+                                };
+                                const style = statusStyles[status] || 'bg-gray-100 text-gray-800';
+                                return `<span class="px-2 py-1 text-xs font-semibold rounded-full ${style}">${status.charAt(0).toUpperCase() + status.slice(1)}</span>`;
+                            }
+
+                            content.innerHTML = `
+                                <div class="max-h-96 overflow-y-auto">
+                                    <h4 class="text-md font-medium mb-4">Order #${order.orderId}</h4>
+                                    <div class="grid grid-cols-2 gap-4 mb-4">
+                                        <div>
+                                            <p><strong>Customer:</strong> ${order.userId?.name || 'Unknown'}</p>
+                                            <p><strong>Email:</strong> ${order.userId?.email || 'N/A'}</p>
+                                        </div>
+                                        <div>
+                                            <p><strong>Date:</strong> ${new Date(order.createdAt).toLocaleDateString('en-GB')}</p>
+                                            <p><strong>Return Status:</strong> ${getStatusBadge(order.status)}</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-4 p-3 bg-gray-50 rounded">
+                                        <div class="flex justify-between items-center">
+                                            <span><strong>Total Amount:</strong> ₹${order.finalAmount}</span>
+                                            <span><strong>Payment Method:</strong> ${order.paymentMethod?.toUpperCase()}</span>
+                                        </div>
+                                    </div>
+
+                                    ${order.returnReason ? `
+                                        <div class="mb-4 p-3 bg-orange-50 border border-orange-200 rounded">
+                                            <p class="text-sm"><strong>Return Reason:</strong> ${order.returnReason}</p>
+                                        </div>
+                                    ` : ''}
+
+                                    <h5 class="text-sm font-semibold mb-3">Order Items:</h5>
+                                    <div class="space-y-3">
+                                        ${order.orderedItems?.map(item => {
+                                            const itemStatus = item.status || order.status;
+                                            return `
+                                                <div class="border rounded-lg p-3 bg-white border-gray-200">
+                                                    <div class="flex items-center mb-2">
+                                                        
+                                                        <div class="flex-1">
+                                                            <h6 class="font-medium text-sm">${item.productName || 'Unknown Product'}</h6>
+                                                            <div class="mt-1 text-xs text-gray-600">
+                                                                <span>Qty: ${item.quantity}</span> • 
+                                                                <span>Price: ₹${item.price}</span> • 
+                                                                <span>Total: ₹${item.price * item.quantity}</span>
+                                                            </div>
+                                                            <div class="mt-1 text-xs">
+                                                                <strong>Status:</strong> ${getStatusBadge(itemStatus)}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    ${item.returnReason ? `
+                                                        <div class="mt-2 p-2 bg-orange-100 rounded text-xs">
+                                                            <strong>Return Reason:</strong> ${item.returnReason}
+                                                        </div>
+                                                    ` : ''}
+                                                </div>
+                                            `;
+                                        }).join('') || '<p class="text-gray-500 text-sm">No items found</p>'}
+                                    </div>
+
+                                    <!-- Order Summary -->
+                                    <div class="mt-4 pt-4 border-t border-gray-200">
+                                        <div class="space-y-1 text-sm">
+                                            <div class="flex justify-between">
+                                                <span>Subtotal:</span>
+                                                <span>₹${order.totalPrice}</span>
+                                            </div>
+                                            ${order.discount > 0 ? `
+                                                <div class="flex justify-between text-green-600">
+                                                    <span>Discount:</span>
+                                                    <span>-₹${order.discount}</span>
+                                                </div>
+                                            ` : ''}
+                                            <div class="flex justify-between">
+                                                <span>GST:</span>
+                                                <span>₹${order.gstAmount || 0}</span>
+                                            </div>
+                                            <div class="flex justify-between">
+                                                <span>Delivery Charge:</span>
+                                                <span>₹${order.deliveryCharge}</span>
+                                            </div>
+                                            <div class="flex justify-between font-semibold text-base pt-2 border-t">
+                                                <span>Final Amount:</span>
+                                                <span>₹${order.finalAmount}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Delivery Address -->
+                                    ${order.address ? `
+                                        <div class="mt-4 pt-4 border-t border-gray-200">
+                                            <h6 class="font-semibold text-sm mb-2">Delivery Address:</h6>
+                                            <div class="text-sm text-gray-700 bg-gray-50 p-3 rounded">
+                                                <p>${order.address.name || ''}</p>
+                                                <p>${order.address.area || ''},</p>
+                                                <p>House/flat: ${order.address.flat || ''}, ${order.address.landMark || ''},</p>
+                                                <p>${order.address.city || ''}, ${order.address.state || ''} - ${order.address.pincode || ''}</p>
+                                                ${order.address.phone ? `<p>Phone: ${order.address.phone}</p>` : ''}
+                                            </div>
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            `;
+                            modal.classList.remove('hidden');
+                        } else {
+                            showToast('Failed to load order details', 'error');
+                        }
+                    } catch (error) {
+                        console.error('Error fetching order details:', error);
+                        showToast('An error occurred while loading order details', 'error');
+                    }
+                });
+            });
+
+            // Close order modal
+            const closeModal = document.getElementById('closeModal');
+            if (closeModal) {
+                closeModal.addEventListener('click', () => {
+                    document.getElementById('orderModal').classList.add('hidden');
+                });
+            }
+
+            // Close order modal when clicking outside
+            const orderModal = document.getElementById('orderModal');
+            if (orderModal) {
+                orderModal.addEventListener('click', (e) => {
+                    if (e.target.id === 'orderModal') {
+                        orderModal.classList.add('hidden');
+                    }
+                });
+            }
+
+            // Accept return functionality
+            document.querySelectorAll('.accept-return').forEach(button => {
+                button.addEventListener('click', async (e) => {
+                    const orderId = e.target.dataset.orderId;
+                    try {
+                        const response = await fetch(`/admin/returns/${orderId}/verify`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ action: 'approve' })
+                        });
+                        const data = await response.json();
+
+                        if (response.ok && data.success) {
+                            showToast('Return approved successfully');
+                            setTimeout(() => window.location.reload(), 1500);
+                        } else {
+                            showToast(data.message || 'Failed to approve return', 'error');
+                        }
+                    } catch (error) {
+                        console.error('Error approving return:', error);
+                        showToast('An error occurred while approving return', 'error');
+                    }
+                });
+            });
+
+            // Reject return functionality
+            document.querySelectorAll('.reject-return').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const orderId = e.target.dataset.orderId;
+                    const modal = document.getElementById('rejectModal');
+                    const rejectOrderId = document.getElementById('rejectOrderId');
+                    const rejectReasonInput = document.getElementById('rejectReason');
+                    const submitRejectButton = document.getElementById('submitRejectReason');
+
+                    if (!modal || !rejectOrderId || !rejectReasonInput || !submitRejectButton) {
+                        showToast('Modal elements not found', 'error');
+                        return;
+                    }
+
+                    // Set order ID and show modal
+                    rejectOrderId.textContent = orderId;
+                    modal.classList.remove('hidden');
+                    rejectReasonInput.value = '';
+
+                    // Submit reject reason
+                    const newSubmitRejectButton = submitRejectButton.cloneNode(true);
+                    submitRejectButton.parentNode.replaceChild(newSubmitRejectButton, submitRejectButton);
+                    newSubmitRejectButton.addEventListener('click', async () => {
+                        const reason = rejectReasonInput.value.trim();
+                        if (!reason) {
+                            showToast('Please provide a reason for rejection', 'error');
+                            return;
+                        }
+
+                        try {
+                            const response = await fetch(`/admin/returns/${orderId}/verify`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ action: 'reject', reason })
+                            });
+                            const data = await response.json();
+
+                            if (response.ok && data.success) {
+                                showToast('Return rejected successfully');
+                                modal.classList.add('hidden');
+                                rejectReasonInput.value = '';
+                                setTimeout(() => window.location.reload(), 1500);
+                            } else {
+                                showToast(data.message || 'Failed to reject return', 'error');
+                            }
+                        } catch (error) {
+                            console.error('Error rejecting return:', error);
+                            showToast('An error occurred while rejecting return', 'error');
+                        }
+                    });
+                });
+            });
+
+            // Close reject modal
+            const closeRejectModal = document.getElementById('closeRejectModal');
+            if (closeRejectModal) {
+                closeRejectModal.addEventListener('click', () => {
+                    const modal = document.getElementById('rejectModal');
+                    const rejectReasonInput = document.getElementById('rejectReason');
+                    modal.classList.add('hidden');
+                    rejectReasonInput.value = '';
+                });
+            }
+
+            // Close reject modal when clicking outside
+            const rejectModal = document.getElementById('rejectModal');
+            if (rejectModal) {
+                rejectModal.addEventListener('click', (e) => {
+                    if (e.target.id === 'rejectModal') {
+                        const rejectReasonInput = document.getElementById('rejectReason');
+                        rejectModal.classList.add('hidden');
+                        rejectReasonInput.value = '';
+                    }
+                });
+            }
+        });
+    </script>
+</div>
+<%- include('../../views/partials/admin/footer') %>

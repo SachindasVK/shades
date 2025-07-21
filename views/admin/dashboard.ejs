@@ -72,39 +72,34 @@
       </div>
     </div>
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-  <!-- Sales Overview -->
-  <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
-    <div class="flex justify-between items-center mb-4">
-      <h3 class="text-lg font-semibold">Sales Overview</h3>
-      <select
-        id="chartFilter"
-        class="text-sm border border-gray-300 rounded px-2 py-1 focus:outline-none"
-      >
-        <option value="daily">Daily</option>
-        <option value="weekly">Weekly</option>
-        <option value="monthly" selected>Monthly</option>
-        <option value="yearly">Yearly</option>
-      </select>
-    </div>
-    <canvas id="salesChart" height="200"></canvas>
-  </div>
+      <!-- Sales Overview -->
+      <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-lg font-semibold">Sales Overview</h3>
+          <select id="chartFilter" class="text-sm border border-gray-300 rounded px-2 py-1 focus:outline-none">
+            <option value="daily">Daily</option>
+            <option value="weekly">Weekly</option>
+            <option value="monthly">Monthly</option>
+            <option value="yearly">Yearly</option>
+          </select>
+        </div>
+        <canvas id="salesChart" height="200"></canvas>
+      </div>
 
-  <!-- Top Selling Pie Chart -->
-  <div class="bg-white rounded-lg shadow-sm p-6 mb-6 min-h-[400px]">
-    <div class="flex justify-between items-center mb-4">
-      <h3 class="text-lg font-semibold">Top Selling Overview</h3>
-      <select
-        id="topFilter"
-        class="text-sm border border-gray-300 rounded px-2 py-1 focus:outline-none"
-      >
-        <option value="product">Products</option>
-        <option value="category">Categories</option>
-        <option value="brand">Brands</option>
-      </select>
+      <!-- Top Selling Pie Chart -->
+      <div class="bg-white rounded-lg shadow-sm p-6 mb-6 min-h-[400px]">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-lg font-semibold">Top Selling Overview</h3>
+          <select id="topFilter" class="text-sm border border-gray-300 rounded px-2 py-1 focus:outline-none">
+            <option value="product">Products</option>
+            <option value="category">Categories</option>
+            <option value="brand">Brands</option>
+          </select>
+        </div>
+        <canvas id="topSalesChart" class="w-full h-[300px]" style="max-height: 300px;"></canvas>
+
+      </div>
     </div>
-    <canvas id="topSalesChart" height="200"></canvas>
-  </div>
-</div>
 
 
 
@@ -215,7 +210,7 @@
                 Status
               </th>
               <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Actions
+                Details
               </th>
             </tr>
           </thead>
@@ -270,12 +265,12 @@
               </span>
               <%}else if(order.status==='return_request' ){%>
                 <span
-                  class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-orange-100 text-orange-800">
+                  class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
                   <%=order.status%>
                 </span>
                 <%}else if(order.status==='returned' ){%>
                   <span
-                    class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-orange-200 text-orange-800">
+                    class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-200 text-gray-800">
                     <%=order.status%>
                   </span>
                   <%}else if(order.status==='confirmed' ){%>
@@ -283,11 +278,6 @@
                       class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
                       <%=order.status%>
                     </span>
-                    <%}else if(order.status==='returning' ){%>
-                      <span
-                        class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                        <%=order.status%>
-                      </span>
                       <%}else{%>
                         <span
                           class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
@@ -480,73 +470,80 @@
 
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-
   <script>
 
+
     const topCtx = document.getElementById("topSalesChart").getContext("2d");
-  let topChart;
+    let topChart = null;
 
-  async function fetchTopSalesData(filter = "product") {
-    try {
-      const res = await fetch(`/admin/top-sales-chart?filter=${filter}`);
-      const result = await res.json();
-      if (!result.success) return;
+    async function fetchTopSalesData(filter = "product") {
+      try {
+        const res = await fetch(`/admin/top-sales-chart?filter=${filter}`);
+        const result = await res.json();
+        if (!result.success) return;
 
-      const labels = result.data.map(item => item.name);
-      const values = result.data.map(item => item.totalSold);
+        const labels = result.data.map(item => item.name);
+        const values = result.data.map(item => item.totalSold);
 
-      if (topChart) topChart.destroy();
+        if (topChart) topChart.destroy();
 
-      topChart = new Chart(topCtx, {
-        type: "pie",
-        data: {
-          labels: labels,
-          datasets: [
-            {
-              data: values,
-              backgroundColor: [
-                "#3b82f6", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6",
-                "#ec4899", "#14b8a6", "#f43f5e", "#22c55e", "#6366f1"
-              ],
-            },
-          ],
-        },
-        options: {
-          responsive: true,
-          plugins: {
-            legend: {
-              position: "right",
-            },
-            tooltip: {
-              callbacks: {
-                label: function (ctx) {
-                  const label = ctx.label || "";
-                  const value = ctx.formattedValue || 0;
-                  return `${label}: ${value} sold`;
+        topChart = new Chart(topCtx, {
+          type: "pie",
+          data: {
+            labels: labels,
+            datasets: [
+              {
+                data: values,
+                backgroundColor: [
+                  "#EF4444",
+                  "#F97316",
+                  "#FACC15",
+                  "#22C55E",
+                  "#3B82F6",
+                  "#6366F1",
+                  "#8B5CF6",
+                  "#EC4899",
+                  "#14B8A6",
+                  "#EAB308"
+                ],
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: {
+                position: "right",
+              },
+              tooltip: {
+                callbacks: {
+                  label: function (ctx) {
+                    const label = ctx.label || "";
+                    const value = ctx.formattedValue || 0;
+                    return `${label}: ${value} sold`;
+                  },
                 },
               },
             },
           },
-        },
-      });
-    } catch (error) {
-      console.error("Failed to load top sales chart:", error);
+        });
+      } catch (error) {
+        console.error("Failed to load top sales chart:", error);
+      }
     }
-  }
 
-  document.getElementById("topFilter").addEventListener("change", function () {
-    fetchTopSalesData(this.value);
-  });
+    document.getElementById("topFilter").addEventListener("change", function () {
+      fetchTopSalesData(this.value);
+    });
 
-  // Initial load
-  fetchTopSalesData("product");
+    // Initial load
+    fetchTopSalesData("product");
 
-  
+
     const ctx = document.getElementById('salesChart').getContext('2d');
     let salesChart;
 
-    async function fetchAndRenderChart(filter = 'monthly') {
+    async function fetchAndRenderChart(filter = 'daily') {
       const response = await fetch(`/admin/sales-chart?filter=${filter}`);
       const result = await response.json();
 
@@ -591,7 +588,7 @@
     });
 
     // Initial load
-    fetchAndRenderChart('monthly');
+    fetchAndRenderChart('daily');
     document.querySelectorAll(".view-order").forEach((button) => {
       button.addEventListener("click", async (e) => {
         const orderId = e.target.dataset.orderId;
@@ -613,7 +610,7 @@
                 delivered: "bg-green-100 text-green-800",
                 cancelled: "bg-red-100 text-red-800",
                 return_requested: "bg-orange-100 text-orange-800",
-                returning: "bg-orange-100 text-orange-800",
+  
                 returned: "bg-gray-100 text-gray-800",
               };
 

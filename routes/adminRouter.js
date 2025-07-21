@@ -59,6 +59,7 @@ router.post("/addProducts", adminAuth, upload.fields([
 // product managenmt
 router.get('/products',adminAuth,productController.getAllProducts)
 router.post('/products/:id/offer',adminAuth,productController.addProductOffer)
+router.put('/update-quantity/:id',adminAuth,productController.updateProductQuantity)
 router.delete('/products/:id/offer',adminAuth,productController.removeProductOffer)
 router.patch('/products/:id/status',adminAuth,productController.updateProductStatus)
 router.get('/productEdit/:id', adminAuth, productController.getEditProduct);
@@ -81,8 +82,9 @@ router.get('/coupons/:id', adminAuth, couponController.getCouponById)
 //order management
 router.get('/orders',adminAuth,orderController.viewAllOrders)
 router.patch('/orders/:orderId/status', adminAuth,orderController.updateOrderStatus);
-router.post('/orders/:orderId/verify-return',adminAuth,orderController.verifyReturn);
-router.get('/orders/:orderId', adminAuth, orderController.getOrderDetails);
+router.post('/return/accept/:orderId',adminAuth,orderController.acceptReturnRequest);
+router.post('/return/accept-item/:orderId/:itemId',adminAuth,orderController.acceptReturnItemRequest)
+router.get('/order/:orderId', adminAuth, orderController.getOrderDetails);
 
 //Sales Report
 router.get('/sales-report', adminAuth, salesReportController.getSalesReport);

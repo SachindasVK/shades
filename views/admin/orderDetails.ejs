@@ -1,0 +1,530 @@
+<%- include('../../views/partials/admin/header') %>
+<div class="p-6">
+    <!-- Order Details Header -->
+    <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-semibold">#<%= order.orderId %></h3>
+            <a href="/admin/orders" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 text-sm">Back to Orders</a>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+        <h4 class="text-md font-semibold mb-4">Order Information</h4>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <!-- Order ID -->
+            <div>
+                <p class="text-sm font-medium text-gray-600">Order ID</p>
+                <p class="text-sm text-gray-900">#<%= order.orderId %></p>
+            </div>
+            <!-- Payment Status -->
+            <div>
+                <p class="text-sm font-medium text-gray-600">Payment Status</p>
+                <p class="text-sm text-gray-900"><%= order.paymentStatus || 'Pending' %></p>
+            </div>
+            <!-- Order Status -->
+            <div>
+                <p class="text-sm font-medium text-gray-600">Order Status</p>
+                <span class="px-2 text-xs font-semibold rounded-full 
+                <%= order.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                    order.status === 'confirmed' ? 'bg-blue-100 text-blue-800' :
+                    order.status === 'shipped' ? 'bg-purple-100 text-purple-800' :
+                    order.status === 'delivered' ? 'bg-green-100 text-green-800' :
+                    order.status === 'cancelled' ? 'bg-red-100 text-red-800' :
+                    order.status === 'return_requested' ? 'bg-orange-100 text-orange-800' :
+                    'bg-gray-100 text-gray-800' %>">
+                    <%= order.status.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase()) %>
+                </span>
+            </div>
+            <!-- Return Summary -->
+            <div>
+                <p class="text-sm font-medium text-gray-600">Return Summary</p>
+                <% const returnedItemCount = order.orderedItems.filter(items => items.status === 'return_requested').length;
+                   const isFullOrderReturned = order.status === 'returned';
+                   const isFullOrderReturnRequested = order.status === 'return_requested'; %>
+                <p class="text-sm text-gray-900">
+                    <% if (isFullOrderReturned) { %>
+                        <span class="bg-green-100 text-green-600 font-semibold">Entire order returned</span>
+                    <% } else if (isFullOrderReturnRequested) { %>
+                        <span class="bg-orange-100 text-orange-600 font-semibold">Entire order return requested</span>
+                    <% } else if (returnedItemCount > 0) { %>
+                        <span class="bg-orange-100 text-orange-600 font-semibold">
+                            <%= returnedItemCount %> item(s) return in process
+                        </span>
+                    <% } else if (order.requestStatus && order.status === 'return_requested') { %>
+                        <p class="text-sm text-gray-500 font-bold">Return Status:
+                            <span class="px-2 text-xs font-semibold rounded-full 
+                            <%= order.requestStatus === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                                order.requestStatus === 'approved' ? 'bg-green-100 text-green-800' :
+                                order.requestStatus === 'rejected' ? 'bg-red-100 text-red-800' :
+                                'bg-gray-100 text-gray-800' %>">
+                                <%= order.requestStatus.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase()) %>
+                            </span>
+                        </p>
+                    <% } else { %>
+                        <span class="bg-green-100 text-green-600 font-semibold">No returns</span>
+                    <% } %>
+                </p>
+            </div>
+            <!-- Order Date -->
+            <div>
+                <p class="text-sm font-medium text-gray-600">Order Date</p>
+                <p class="text-sm text-gray-900"><%= new Date(order.createdAt).toLocaleDateString('en-GB') %></p>
+            </div>
+            <!-- Payment Method -->
+            <div>
+                <p class="text-sm font-medium text-gray-600">Payment Method</p>
+                <p class="text-sm text-gray-900"><%= order.paymentMethod || 'Not Specified' %></p>
+            </div>
+            <!-- Expected Delivery -->
+            <div>
+                <p class="text-sm font-medium text-gray-600">Expected Delivery Date</p>
+                <p class="text-sm text-gray-900">
+                    <%= order.expectedDelivery ? new Date(order.expectedDelivery).toLocaleDateString('en-GB') : 'Not Set' %>
+                </p>
+            </div>
+            <% if (isFullOrderReturnRequested) { %>
+                <div class="space-y-2">
+                    <p><i class="text-gray-500">Reason: <%= order.returnReason || 'Not Specified' %></i></p>
+                    <div class="space-x-2">
+                        <button
+                            class="accept-return px-1 py-1 text-blue-800 text-sm font-semibold rounded-md hover:underline transition"
+                            data-order-id="<%= order.orderId %>"
+                            data-return-reason="<%= order.returnReason || 'Not Specified' %>">
+                            Accept
+                        </button>
+                        <button
+                            class="reject-return px-1 py-1 text-red-800 text-sm font-semibold rounded-md hover:underline transition"
+                            data-order-id="<%= order.orderId %>"
+                            data-return-reason="<%= order.returnReason || 'Not Specified' %>">
+                            Reject
+                        </button>
+                    </div>
+                </div>
+            <% } %>
+        </div>
+    </div>
+
+    <!-- Order Items -->
+    <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+        <h4 class="text-md font-semibold mb-4">Order Items</h4>
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">product Image</th>
+                        <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product Name</th>
+                        <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
+                        <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
+                        <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Total</th>
+                        <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Item Status</th>
+                        <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">return Status</th>
+                        <th scope="col" class="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Return item</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    <% order.orderedItems.forEach(item => { %>
+                        <tr>
+                            <td class="px-3 py-4 whitespace-nowrap">
+                                <img src="/<%= item.productImages[0] %>" alt="<%= item.productName %>" class="w-28 h-16 object-contain">
+                            </td>
+                            <td class="px-4 py-4 whitespace-nowrap text-left">
+                                <div class="text-sm font-medium text-gray-900"><%= item.product.productName %></div>
+                            </td>
+                            <td class="px-6 py-4 justify-center whitespace-nowrap text-center">
+                                <div class="text-sm text-gray-900"><%= item.quantity %></div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-center">
+                                <div class="text-sm text-gray-900">₹<%= item.price %></div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-center">
+                                <div class="text-sm text-gray-900">₹<%= item.price * item.quantity %></div>
+                            </td>
+                            <td class="px-3 py-4 whitespace-nowrap text-center">
+                               
+
+                                    <%if(item.status){%>
+                                    <% if (item.status === 'pending') { %>
+                                    <div class="inline-block px-3 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                                        <%= item.status.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase()) %>
+                                    </div> 
+                                    <%}else if(item.status==='return_requested'){%>
+                                        <div class="inline-block px-3 text-xs font-semibold rounded-full bg-orange-100 text-orange-800">
+                                        <%= item.status.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase()) %>
+                                    </div> 
+                                    <%}else if(item.status==='shipped'){%>
+                                        <div class="inline-block px-3 text-xs font-semibold rounded-full bg-purple-100 text-purple-800">
+                                        <%= item.status.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase()) %>
+                                    </div> 
+                                     <%}else if(item.status==='confirmed'){%>
+                                        <div class="inline-block px-3 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
+                                        <%= item.status.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase()) %>
+                                    </div> 
+                                    <%}else if(item.status==='delivered'){%>
+                                        <div class="inline-block px-3 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+                                        <%= item.status.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase()) %>
+                                    </div> 
+                                    <%}else if(item.status==='cancelled'){%>
+                                        <div class="inline-block px-3 text-xs font-semibold rounded-full bg-red-100 text-red-800">
+                                        <%= item.status.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase()) %>
+                                    </div> 
+                                    <%}else if(item.status==='returned'){%>
+                                        <div class="inline-block px-3 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">
+                                        <%= item.status.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase()) %>
+                                    </div> 
+                                    <%}else{%>
+                                        <div class="inline-block px-3 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">
+                                        N/A
+                                    </div> 
+                                        <%}%>
+                                    <%}%>
+
+
+
+                              
+                            </td>
+                            <td class="px-6 py-4 justify-center whitespace-nowrap text-center">
+                               <%if(item.requestStatus){%>
+                                    <% if (item.requestStatus=== 'pending') { %>
+                                    <div class="inline-block px-3 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                                        <%= item.requestStatus.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase()) %>
+                                    </div> 
+                                    <%}else if(item.requestStatus==='approved'){%>
+                                        <div class="inline-block px-3 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+                                        <%= item.requestStatus.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase()) %>
+                                    </div> 
+                                     <%}else if(item.requestStatus==='rejected'){%>
+                                        <div class="inline-block px-3 text-xs font-semibold rounded-full bg-red-100 text-red-800">
+                                        <%= item.requestStatus.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase()) %>
+                                    </div> 
+                                    <%}else{%>
+                                        <div class="inline-block px-3 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">
+                                        N/A
+                                    </div> 
+                                        <%}%>
+                                    <%}%>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-center">
+                                <div class="text-sm text-gray-900 flex gap-1">
+                                    <% if (order.status !== 'returned' && item.status === 'return_requested') { %>
+                                        <button
+                                            class="accept-return-item px-1 py-1 text-blue-800 text-sm font-semibold rounded-md hover:underline transition"
+                                            data-order-id="<%= order.orderId %>"
+                                            data-item-id="<%= item._id %>"
+                                            data-return-reason="<%= item.returnReason || 'Not Specified' %>">
+                                            Accept
+                                        </button>
+                                        <button
+                                            class="reject-return-item px-1 py-1 text-red-800 text-sm font-semibold rounded-md hover:underline transition"
+                                            data-order-id="<%= order.orderId %>"
+                                            data-item-id="<%= item._id %>"
+                                            data-return-reason="<%= item.returnReason || 'Not Specified' %>">
+                                            Reject
+                                        </button>
+                                    <% } else { %>
+                                        <p class="text-gray-500 italic">No Actions</p>
+                                    <% } %>
+                                </div>
+                            </td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        </div>
+        <!-- Order Total -->
+        <div class="mt-4 mr-8 text-right">
+            <p class="text-sm font-medium text-gray-600">Order Total</p>
+            <p class="text-lg font-semibold text-gray-900">₹<%= order.finalAmount %></p>
+        </div>
+    </div>
+
+    <!-- Customer Details -->
+    <div class="bg-white rounded-lg shadow-sm p-4 mb-4">
+        <h4 class="text-md font-semibold mb-3">Customer Details</h4>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+            <div>
+                <p class="text-sm font-medium text-gray-600">Customer Name</p>
+                <p class="text-sm text-gray-900"><%= order.userId?.name || 'Unknown' %></p>
+            </div>
+            <div>
+                <p class="text-sm font-medium text-gray-600">Email</p>
+                <p class="text-sm text-gray-900"><%= order.userId?.email || 'N/A' %></p>
+            </div>
+            <div>
+                <p class="text-sm font-medium text-gray-600">Phone Number</p>
+                <p class="text-sm text-gray-900"><%= order.address?.phone || 'N/A' %></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Shipping Address -->
+    <div class="bg-white rounded-lg shadow-sm p-4 mb-4">
+        <h4 class="text-md font-semibold mb-3">Shipping Address</h4>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+            <div>
+                <p class="text-sm font-medium text-gray-600">Address Line</p>
+                <p class="text-sm text-gray-900">
+                    <%= [order.address?.flat, order.address?.area, order.address?.landMark].filter(Boolean).join(', ') || ' N/A' %>
+                </p>
+            </div>
+            <div>
+                <p class="text-sm font-medium text-gray-600">City, State, pincode</p>
+                <p class="text-sm text-gray-900">
+                    <%= [order.address?.city, order.address?.state, order.address?.pincode].filter(Boolean).join(', ') || ' N/A' %>
+                </p>
+            </div>
+            <div>
+                <p class="text-sm font-medium text-gray-600">Country</p>
+                <p class="text-sm text-gray-900"><%= order.address?.country || 'N/A' %></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-4 right-4 z-50 hidden">
+        <div class="bg-white rounded-lg shadow-lg border-l-4 border-green-500 px-4 py-3 max-w-sm">
+            <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    <i class="fas fa-check-circle text-green-500"></i>
+                </div>
+                <div class="ml-3">
+                    <p id="toastMessage" class="text-sm font-medium text-gray-900"></p>
+                </div>
+                <div class="ml-auto pl-3">
+                    <button id="closeToast" class="text-gray-400 hover:text-gray-500">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirm Modal -->
+    <div id="confirmModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
+        <div class="flex items-center justify-center h-full w-full">
+            <div class="bg-white rounded-lg shadow-xl p-6 max-w-md w-full mx-auto">
+                <h3 class="text-lg font-bold mb-4 text-center" id="modalTitle">Confirm Action</h3>
+                <p id="modalReturnReason" class="text-center bg-red-100 text-red-600 font-semibold rounded-full mb-4 hidden">
+                    Reason: <span id="modalReturnReasonText"></span>
+                </p>
+                <p class="text-gray-700 mb-6 text-center" id="modalMessage">Are you sure you want to accept this return?</p>
+                <div class="flex justify-center space-x-4">
+                    <button id="cancelBtn" class="px-5 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors">
+                        Cancel
+                    </button>
+                    <button class="px-5 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors" id="confirmBtn">
+                        Confirm
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reject Modal -->
+    <div id="rejectModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="bg-white rounded-lg p-6 w-full max-w-md">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-semibold">Reject Return Request</h3>
+                <button id="closeRejectModal" class="text-gray-500 hover:text-black">×</button>
+            </div>
+            <p class="text-sm text-gray-700 mb-4">Order #<span id="rejectOrderId"></span></p>
+            <div class="mb-4">
+                <label for="rejectReason" class="block text-sm font-medium text-gray-700 mb-2">Reason for Rejection:</label>
+                <textarea id="rejectReason" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" rows="4" placeholder="Enter reason for rejection"></textarea>
+            </div>
+            <div class="flex justify-end">
+                <button id="submitRejectReason" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600">Submit Rejection</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const toastElement = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+            const confirmModal = document.getElementById('confirmModal');
+            const confirmBtn = document.getElementById('confirmBtn');
+            const cancelBtn = document.getElementById('cancelBtn');
+            const modalReturnReason = document.getElementById('modalReturnReason');
+            const modalReturnReasonText = document.getElementById('modalReturnReasonText');
+            const rejectModal = document.getElementById('rejectModal');
+            const closeRejectModal = document.getElementById('closeRejectModal');
+            const submitRejectReason = document.getElementById('submitRejectReason');
+            const rejectReason = document.getElementById('rejectReason');
+            const rejectOrderIdElement = document.getElementById('rejectOrderId');
+
+            // Toast notification function
+            function showToast(message, type = 'success') {
+                toastMessage.textContent = message;
+                const toastDiv = toastElement.querySelector('div');
+                const toastIcon = toastDiv.querySelector('i');
+
+                if (type === 'error') {
+                    toastDiv.classList.remove('border-green-500');
+                    toastDiv.classList.add('border-red-500');
+                    toastIcon.classList.remove('text-green-500', 'fa-check-circle');
+                    toastIcon.classList.add('text-red-500', 'fa-exclamation-circle');
+                } else {
+                    toastDiv.classList.remove('border-red-500');
+                    toastDiv.classList.add('border-green-500');
+                    toastIcon.classList.remove('text-red-500', 'fa-exclamation-circle');
+                    toastIcon.classList.add('text-green-500', 'fa-check-circle');
+                }
+
+                toastElement.classList.remove('hidden');
+                setTimeout(() => toastElement.classList.add('hidden'), 5000);
+            }
+
+            // Close toast manually
+            document.getElementById('closeToast').addEventListener('click', () => {
+                toastElement.classList.add('hidden');
+            });
+
+            // Handle Accept Order Return
+            document.querySelectorAll('.accept-return').forEach(button => {
+                button.addEventListener('click', function () {
+                    const orderId = this.dataset.orderId;
+                    const returnReason = this.dataset.returnReason || 'Not Specified';
+                    confirmModal.classList.remove('hidden');
+                    confirmBtn.dataset.orderId = orderId;
+                    delete confirmBtn.dataset.itemId; // Clear itemId for order-level action
+                    document.getElementById('modalMessage').textContent = 'Are you sure you want to accept this order return?';
+                    modalReturnReasonText.textContent = returnReason;
+                    modalReturnReason.classList.toggle('hidden', returnReason === 'Not Specified');
+                });
+            });
+
+            // Handle Accept Item Return
+            document.querySelectorAll('.accept-return-item').forEach(button => {
+                button.addEventListener('click', function () {
+                    const orderId = this.dataset.orderId;
+                    const itemId = this.dataset.itemId;
+                    const returnReason = this.dataset.returnReason || 'Not Specified';
+                    confirmModal.classList.remove('hidden');
+                    confirmBtn.dataset.orderId = orderId;
+                    confirmBtn.dataset.itemId = itemId;
+                    document.getElementById('modalMessage').textContent = 'Are you sure you want to accept this item return?';
+                    modalReturnReasonText.textContent = returnReason;
+                    modalReturnReason.classList.toggle('hidden', returnReason === 'Not Specified');
+                });
+            });
+
+            // Handle Reject Order Return
+            document.querySelectorAll('.reject-return').forEach(button => {
+                button.addEventListener('click', function () {
+                    const orderId = this.dataset.orderId;
+                    rejectModal.classList.remove('hidden');
+                    rejectOrderIdElement.textContent = orderId;
+                    submitRejectReason.dataset.orderId = orderId;
+                    delete submitRejectReason.dataset.itemId; // Clear itemId for order-level action
+                });
+            });
+
+            // Handle Reject Item Return
+            document.querySelectorAll('.reject-return-item').forEach(button => {
+                button.addEventListener('click', function () {
+                    const orderId = this.dataset.orderId;
+                    const itemId = this.dataset.itemId;
+                    rejectModal.classList.remove('hidden');
+                    rejectOrderIdElement.textContent = orderId;
+                    submitRejectReason.dataset.orderId = orderId;
+                    submitRejectReason.dataset.itemId = itemId;
+                });
+            });
+
+            // Cancel button for confirm modal
+            cancelBtn.addEventListener('click', () => {
+                confirmModal.classList.add('hidden');
+                delete confirmBtn.dataset.orderId;
+                delete confirmBtn.dataset.itemId;
+                modalReturnReason.classList.add('hidden');
+            });
+
+            // Close reject modal
+            closeRejectModal.addEventListener('click', () => {
+                rejectModal.classList.add('hidden');
+                rejectReason.value = '';
+                delete submitRejectReason.dataset.orderId;
+                delete submitRejectReason.dataset.itemId;
+            });
+
+            // Confirm button for accept actions
+            confirmBtn.addEventListener('click', () => {
+                const orderId = confirmBtn.dataset.orderId;
+                const itemId = confirmBtn.dataset.itemId;
+
+                async function acceptReturn(orderId, itemId = null) {
+                    try {
+                        const url = itemId
+                            ? `/admin/return/accept-item/${orderId}/${itemId}`
+                            : `/admin/return/accept/${orderId}`;
+                        const response = await fetch(url, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            }
+                        });
+
+                        const result = await response.json();
+
+                        if (result.success) {
+                            showToast(`Return ${itemId ? 'for item' : 'for order'} #${orderId} accepted successfully`);
+                            setTimeout(() => location.reload(), 1500);
+                        } else {
+                            showToast(result.message || 'Server error', 'error');
+                        }
+                    } catch (error) {
+                        console.error('Fetch error:', error);
+                        showToast('Something went wrong', 'error');
+                    }
+                }
+
+                confirmModal.classList.add('hidden');
+                modalReturnReason.classList.add('hidden');
+                acceptReturn(orderId, itemId);
+            });
+
+            // Submit reject reason
+            submitRejectReason.addEventListener('click', () => {
+                const orderId = submitRejectReason.dataset.orderId;
+                const itemId = submitRejectReason.dataset.itemId;
+                const reason = rejectReason.value.trim();
+
+                if (!reason) {
+                    showToast('Please provide a reason for rejection', 'error');
+                    return;
+                }
+
+                async function rejectReturn(orderId, itemId = null) {
+                    try {
+                        const url = itemId
+                            ? `/admin/return/reject-item/${orderId}/${itemId}`
+                            : `/admin/return/reject/${orderId}`;
+                        const response = await fetch(url, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ reason })
+                        });
+
+                        const result = await response.json();
+
+                        if (result.success) {
+                            showToast(`Return ${itemId ? 'for item' : 'for order'} #${orderId} rejected successfully`);
+                            setTimeout(() => location.reload(), 1500);
+                        } else {
+                            showToast(result.message || 'Server error', 'error');
+                        }
+                    } catch (error) {
+                        console.error('Fetch error:', error);
+                        showToast('Something went wrong', 'error');
+                    }
+                }
+
+                rejectModal.classList.add('hidden');
+                rejectReason.value = '';
+                rejectReturn(orderId, itemId);
+            });
+        });
+    </script>
+    <%- include('../../views/partials/admin/footer') %>

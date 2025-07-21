@@ -7,8 +7,10 @@
   <title>My Orders - SHADES</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet" />
-  
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@700&display=swap"
+    rel="stylesheet" />
+
   <style>
     body {
       font-family: "Inter", sans-serif;
@@ -362,11 +364,7 @@
       background-color: rgba(255, 201, 181, 0.137);
     }
 
-    .order-status.returning {
-      color: orange;
-      background-color: rgba(255, 224, 168, 0.178);
-    }
-
+  
     .order-status.cancelled {
       color: red;
       background-color: rgba(255, 170, 170, 0.171);
@@ -422,6 +420,7 @@
       font-size: 0.875rem;
       color: #374151;
     }
+
     .no-orders {
       text-align: center;
       padding: 3rem 1rem;
@@ -438,9 +437,11 @@
       .order-content {
         flex-direction: column;
       }
+
       .product-item {
         width: 100%;
       }
+
       .order-summary {
         align-items: flex-start;
         padding-left: 0;
@@ -453,8 +454,8 @@
 <body class="page-body">
   <!-- Header Partial -->
   <%- include("../../views/partials/user/header") %>
- 
-    
+
+
     <div class="container">
       <div class="sidebar">
         <div class="profile-header">
@@ -529,7 +530,7 @@
       <!-- Main Content -->
       <div class="main-content">
         <h2 class="section-title">
-          <i class="fas fa-box-open mr-2 text-orange-600"></i>My Orders
+          <i class="fas fa-box-open mr-2 text-black"></i>My Orders
         </h2>
 
         <div class="filter-group">
@@ -541,8 +542,7 @@
               <option value="confirmed">Confirmed</option>
               <option value="shipped">Shipped</option>
               <option value="delivered">Delivered</option>
-              <option value="return_requested">Return requested</option>
-              <option value="returning">Returning</option>
+                <option value="return_requested">Return requested</option>
               <option value="returned">Returned</option>
               <option value="cancelled">Cancelled</option>
               <option value="failed">Failed</option>
@@ -559,41 +559,35 @@
           </div>
         </div>
         <div id="orderList">
-          <% if (orders && orders.length > 0) { %>
-            <% orders.forEach((order) => { %>
-              <div class="order-item" data-id="<%= order._id %>" data-status="<%= order.status %>" data-date="<%= order.createdOn %>">
+          <% if (orders && orders.length> 0) { %>
+            <% orders.forEach((order)=> { %>
+              <div class="order-item" data-id="<%= order._id %>" data-status="<%= order.status %>"
+                data-date="<%= order.createdOn %>">
                 <div class="order-header">
                   <div class="order-date">
-                    Order-Date: <%= new Date(order.createdOn).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) %>
+                    Order-Date: <%= new Date(order.createdOn).toLocaleDateString('en-GB', { day: 'numeric' ,
+                      month: 'short' , year: 'numeric' }) %>
                   </div>
                   <div class="order-id">Order Id- #<%= order.orderId %>
                   </div>
-                 <%
-  const retryTimeLimit = 1 * 60 * 1000; // 15 minutes
-  const orderCreatedTime = new Date(order.createdOn).getTime();
-  const currentTime = Date.now();
-  const isRetryAllowed = currentTime - orderCreatedTime <= retryTimeLimit;
-%>
 
-<% if (order.paymentMethod === 'online' && order.status === 'failed') { %>
-  <% if (isRetryAllowed) { %>
-    <button type="button" class="retry-payment-btn" data-id="<%= order._id %>" data-amount="<%= order.finalAmount * 100 %>">
-      <i class="fas fa-redo-alt" style="font-size: 0.875rem;"></i> Retry Payment
-    </button>
-  <% } %>
-  <span class="payment-failed-tag">Payment Failed</span>
-<% } else { %>
-  <a href="/order/details/<%= order._id %>" class="view-link">View Order Details</a>
-<% } %>
+
+
+
+                  <a href="/order/details/<%= order._id %>" class="view-link">View Order Details</a>
+
 
                 </div>
 
                 <div class="order-content">
                   <div class="product-items">
-                    <% if (order.orderedItems && order.orderedItems.length > 0) { %>
-                      <% order.orderedItems.forEach((item) => { %>
+                    
+                    <% if (order.orderedItems && order.orderedItems.length> 0) { %>
+                      <% order.orderedItems.forEach((item)=> { %>
                         <div class="product-item <%= item.status === 'cancelled' ? 'cancelled-item' : '' %>">
-                          <img src="/<%= item.productImages && item.productImages[0] ? item.productImages[0] : 'default-image.jpg' %>" alt="Product Image" class="order-image" onerror="this.src='/default-image.jpg';" />
+                          <img
+                            src="/<%= item.productImages && item.productImages[0] ? item.productImages[0] : 'default-image.jpg' %>"
+                            alt="Product Image" class="order-image" onerror="this.src='/default-image.jpg';" />
                           <div class="product-info">
                             <div class="product-name">
                               <%= item.productName || 'Product Name' %>
@@ -605,22 +599,26 @@
                               <div class="product-detail">
                                 Payment Method: <%= order.paymentMethod || 'N/A' %>
                               </div>
-                              <% if (item.status !== 'cancelled') { %>
+                              <% if (item.status !=='cancelled' ) { %>
                                 <div class="product-detail">
-                                  Expected Delivery by: <%= order.expectedDelivery ? new Date(order.expectedDelivery).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : 'TBD' %>
+                                  Expected Delivery by: <%= order.expectedDelivery ? new
+                                    Date(order.expectedDelivery).toLocaleDateString('en-GB', { day: 'numeric' ,
+                                    month: 'short' , year: 'numeric' }) : 'TBD' %>
                                 </div>
                                 <% } %>
                             </div>
-                            <% if (order.status === 'cancelled' && order.cancelReason) { %>
+                            
+                            <% if (order.status==='cancelled' && order.cancelReason) { %>
                               <div class="cancel-reason">
                                 Cancelled: <%= order.cancelReason %>
                               </div>
-                              <% } else if (item.status === 'cancelled' && item.cancelReason) { %>
+                              <% } else if (item.status==='cancelled' && item.cancelReason) { %>
                                 <div class="cancel-reason">
                                   Cancelled: <%= item.cancelReason %>
                                 </div>
                                 <% } %>
                           </div>
+                          
                         </div>
                         <% }) %>
                           <% } %>
@@ -642,12 +640,12 @@
                 </div>
               </div>
               <% }) %>
-            <% } else { %>
-              <div class="no-orders">
-                <i class="fas fa-box-open" style="font-size: 3rem; margin-bottom: 1rem; color: #d1d5db"></i>
-                <p>No orders found.</p>
-              </div>
-            <% } %>
+                <% } else { %>
+                  <div class="no-orders">
+                    <i class="fas fa-box-open" style="font-size: 3rem; margin-bottom: 1rem; color: #d1d5db"></i>
+                    <p>No orders found.</p>
+                  </div>
+                  <% } %>
         </div>
         <div id="pagination" class="pagination"></div>
       </div>
@@ -658,48 +656,50 @@
 
     <!-- Footer Partial -->
     <%- include("../../views/partials/user/footer") %>
-    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+      <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <script>
-      let currentPage = 1;
-      const ordersPerPage = 5;
+      <script>
+        let currentPage = 1;
+        const ordersPerPage = 5;
+        document.addEventListener("DOMContentLoaded", () => {
+          applyFilters(1);
+        });
+        function showToast(message, type = 'info') {
+          let toastContainer = document.querySelector('.toast-container') || document.getElementById('toastContainer');
+          if (!toastContainer) {
+            toastContainer = document.createElement('div');
+            toastContainer.className = 'toast-container';
+            toastContainer.style.position = 'fixed';
+            toastContainer.style.top = '20px';
+            toastContainer.style.right = '20px';
+            toastContainer.style.zIndex = '9999';
+            toastContainer.style.display = 'flex';
+            toastContainer.style.flexDirection = 'column';
+            toastContainer.style.gap = '10px';
+            document.body.appendChild(toastContainer);
+          }
 
-      function showToast(message, type = 'info') {
-        let toastContainer = document.querySelector('.toast-container') || document.getElementById('toastContainer');
-        if (!toastContainer) {
-          toastContainer = document.createElement('div');
-          toastContainer.className = 'toast-container';
-          toastContainer.style.position = 'fixed';
-          toastContainer.style.top = '20px';
-          toastContainer.style.right = '20px';
-          toastContainer.style.zIndex = '9999';
-          toastContainer.style.display = 'flex';
-          toastContainer.style.flexDirection = 'column';
-          toastContainer.style.gap = '10px';
-          document.body.appendChild(toastContainer);
-        }
+          const toastId = 'toast-' + Date.now();
+          const toast = document.createElement('div');
 
-        const toastId = 'toast-' + Date.now();
-        const toast = document.createElement('div');
+          let bgColor, borderColor;
+          switch (type) {
+            case 'success':
+              bgColor = '#15803d';
+              borderColor = '#15803d';
+              break;
+            case 'error':
+              bgColor = '#dc2626';
+              borderColor = '#dc2626';
+              break;
+            case 'info':
+            default:
+              bgColor = '#2563eb';
+              borderColor = '#2563eb';
+          }
 
-        let bgColor, borderColor;
-        switch (type) {
-          case 'success':
-            bgColor = '#15803d';
-            borderColor = '#15803d';
-            break;
-          case 'error':
-            bgColor = '#dc2626';
-            borderColor = '#dc2626';
-            break;
-          case 'info':
-          default:
-            bgColor = '#2563eb';
-            borderColor = '#2563eb';
-        }
-
-        toast.style.cssText = `
+          toast.style.cssText = `
           display: flex;
           align-items: center;
           justify-content: space-between;
@@ -716,121 +716,115 @@
           transition: opacity 0.3s ease, transform 0.3s ease;
         `;
 
-        toast.id = toastId;
-        toast.setAttribute('role', 'alert');
-        toast.setAttribute('aria-live', 'assertive');
-        toast.setAttribute('aria-atomic', 'true');
+          toast.id = toastId;
+          toast.setAttribute('role', 'alert');
+          toast.setAttribute('aria-live', 'assertive');
+          toast.setAttribute('aria-atomic', 'true');
 
-        toast.innerHTML = `
+          toast.innerHTML = `
           <div style="flex: 1; font-size: 14px;">${message}</div>
           <button type="button" style="margin-left: 12px; background: none; border: none; color: white; font-size: 16px; cursor: pointer;" data-toast-id="${toastId}">
             ×
           </button>
         `;
 
-        toastContainer.appendChild(toast);
+          toastContainer.appendChild(toast);
 
-        setTimeout(() => {
-          toast.style.opacity = '1';
-          toast.style.transform = 'translateY(0)';
-        }, 100);
+          setTimeout(() => {
+            toast.style.opacity = '1';
+            toast.style.transform = 'translateY(0)';
+          }, 100);
 
-        const closeButton = toast.querySelector(`[data-toast-id="${toastId}"]`);
-        closeButton.addEventListener('click', () => {
-          toast.style.opacity = '0';
-          toast.style.transform = 'translateY(20px)';
-          setTimeout(() => toast.remove(), 300);
-        });
-
-        setTimeout(() => {
-          toast.style.opacity = '0';
-          toast.style.transform = 'translateY(20px)';
-          setTimeout(() => toast.remove(), 300);
-        }, 1500);
-      }
-
-     
-
-      async function applyFilters(page = 1) {
-        const statusFilter = document.getElementById("statusFilter").value;
-        const timeFilter = document.getElementById("timeFilter").value;
-
-        try {
-          const params = new URLSearchParams();
-          if (statusFilter !== "All") params.append("status", statusFilter);
-          if (timeFilter !== "All") params.append("timeFilter", timeFilter);
-          params.append("page", page);
-          params.append("limit", ordersPerPage);
-
-          const response = await fetch(`/orders?${params}`, {
-            method: "GET",
-            headers: {
-              Accept: "application/json",
-              "X-Requested-With": "XMLHttpRequest",
-            },
+          const closeButton = toast.querySelector(`[data-toast-id="${toastId}"]`);
+          closeButton.addEventListener('click', () => {
+            toast.style.opacity = '0';
+            toast.style.transform = 'translateY(20px)';
+            setTimeout(() => toast.remove(), 300);
           });
 
-          if (!response.ok) {
-            throw new Error("Failed to fetch orders");
-          }
+          setTimeout(() => {
+            toast.style.opacity = '0';
+            toast.style.transform = 'translateY(20px)';
+            setTimeout(() => toast.remove(), 300);
+          }, 1500);
+        }
 
-          const data = await response.json();
 
-          if (data.success) {
-            currentPage = page;
-            renderOrders(data.orders);
-            updatePaginationControls(data.pagination);
-            // Scroll to top of the page
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-          } else {
+
+        async function applyFilters(page = 1) {
+          const statusFilter = document.getElementById("statusFilter").value;
+          const timeFilter = document.getElementById("timeFilter").value;
+
+          try {
+            const params = new URLSearchParams();
+            if (statusFilter !== "All") params.append("status", statusFilter);
+            if (timeFilter !== "All") params.append("timeFilter", timeFilter);
+            params.append("page", page);
+            params.append("limit", ordersPerPage);
+
+            const response = await fetch(`/orders?${params}`, {
+              method: "GET",
+              headers: {
+                Accept: "application/json",
+                "X-Requested-With": "XMLHttpRequest",
+              },
+            });
+
+            if (!response.ok) {
+              throw new Error("Failed to fetch orders");
+            }
+
+            const data = await response.json();
+
+            if (data.success) {
+              currentPage = page;
+              renderOrders(data.orders);
+              updatePaginationControls(data.pagination);
+              // Scroll to top of the page
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            } else {
+              showToast("Error loading orders", "error");
+              renderNoOrders();
+            }
+          } catch (error) {
+            console.error("Filter error:", error);
             showToast("Error loading orders", "error");
             renderNoOrders();
           }
-        } catch (error) {
-          console.error("Filter error:", error);
-          showToast("Error loading orders", "error");
-          renderNoOrders();
-        }
-      }
-
-      function renderOrders(orders) {
-        const orderList = document.getElementById("orderList");
-        orderList.innerHTML = "";
-
-        if (!orders || orders.length === 0) {
-          renderNoOrders();
-          return;
         }
 
-        orders.forEach((order) => {
-          const orderElement = document.createElement("div");
-          orderElement.className = "order-item";
-          orderElement.setAttribute("data-id", order._id);
-          orderElement.setAttribute("data-status", order.status);
-          orderElement.setAttribute("data-date", order.createdOn);
+        function renderOrders(orders) {
+          const orderList = document.getElementById("orderList");
+          orderList.innerHTML = "";
 
-          const formattedDate = new Date(order.createdOn).toLocaleDateString('en-GB', {
-            day: 'numeric',
-            month: 'short',
-            year: 'numeric'
-          });
-
-          const expectedDelivery = order.expectedDelivery
-            ? new Date(order.expectedDelivery).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
-            : 'TBD';
-
-          let actionButton = '';
-          if (order.paymentMethod === 'online' && order.status === 'failed') {
-            actionButton = `
-              <button type="button" class="retry-payment-btn" data-id="${order._id}" data-amount="${order.finalAmount * 100}">
-                <i class="fas fa-redo-alt" style="font-size: 0.875rem;"></i> Retry Payment
-              </button>
-            `;
-          } else {
-            actionButton = `<a href="/order/details/${order._id}" class="view-link">View Order Details</a>`;
+          if (!orders || orders.length === 0) {
+            renderNoOrders();
+            return;
           }
 
-          orderElement.innerHTML = `
+          orders.forEach((order) => {
+            const orderElement = document.createElement("div");
+            orderElement.className = "order-item";
+            orderElement.setAttribute("data-id", order._id);
+            orderElement.setAttribute("data-status", order.status);
+            orderElement.setAttribute("data-date", order.createdOn);
+
+            const formattedDate = new Date(order.createdOn).toLocaleDateString('en-GB', {
+              day: 'numeric',
+              month: 'short',
+              year: 'numeric'
+            });
+
+            const expectedDelivery = order.expectedDelivery
+              ? new Date(order.expectedDelivery).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
+              : 'TBD';
+
+            let actionButton = '';
+
+            actionButton = `<a href="/order/details/${order._id}" class="view-link">View Order Details</a>`;
+
+
+            orderElement.innerHTML = `
             <div class="order-header">
               <div class="order-date">Order-Date: ${formattedDate}</div>
               <div class="order-id">Order Id- #${order.orderId}</div>
@@ -848,8 +842,8 @@
                         <div class="product-detail">Payment Method: ${order.paymentMethod || 'N/A'}</div>
                         ${item.status !== 'cancelled' ? `<div class="product-detail">Expected Delivery by: ${expectedDelivery}</div>` : ''}
                       </div>
-                      ${order.status === 'cancelled' && order.cancelReason ? `<div class="cancel-reason">Cancelled: ${order.cancelReason}</div>` : 
-                        item.status === 'cancelled' && item.cancelReason ? `<div class="cancel-reason">Cancelled: ${item.cancelReason}</div>` : ''}
+                      ${order.status === 'cancelled' && order.cancelReason ? `<div class="cancel-reason">Cancelled: ${order.cancelReason}</div>` :
+                item.status === 'cancelled' && item.cancelReason ? `<div class="cancel-reason">Cancelled: ${item.cancelReason}</div>` : ''}
                     </div>
                   </div>
                 `).join('')}
@@ -867,152 +861,66 @@
             </div>
           `;
 
-          orderList.appendChild(orderElement);
-        });
+            orderList.appendChild(orderElement);
+          });
+        }
 
-        // Re-attach event listeners for retry payment buttons
-        attachRetryPaymentListeners();
-      }
-
-      function renderNoOrders() {
-        const orderList = document.getElementById("orderList");
-        orderList.innerHTML = `
+        function renderNoOrders() {
+          const orderList = document.getElementById("orderList");
+          orderList.innerHTML = `
           <div class="no-orders">
             <i class="fas fa-box-open" style="font-size: 3rem; margin-bottom: 1rem; color: #d1d5db"></i>
             <p>No orders found.</p>
           </div>
         `;
-        document.getElementById("pagination").innerHTML = "";
-      }
-
-      function updatePaginationControls(pagination) {
-        const paginationDiv = document.getElementById("pagination");
-        paginationDiv.innerHTML = "";
-
-        if (!pagination || !pagination.totalOrders) {
-          return;
+          document.getElementById("pagination").innerHTML = "";
         }
 
-        const totalPages = pagination.totalPages || 1;
-        const totalOrders = pagination.totalOrders || 0;
-        const startIndex = (currentPage - 1) * ordersPerPage + 1;
-        const endIndex = Math.min(currentPage * ordersPerPage, totalOrders);
+        function updatePaginationControls(pagination) {
+          const paginationDiv = document.getElementById("pagination");
+          paginationDiv.innerHTML = "";
 
-        // Previous Button
-        const prevBtn = document.createElement("button");
-        prevBtn.className = `pagination-btn ${currentPage === 1 ? "disabled" : ""}`;
-        prevBtn.textContent = "Previous";
-        prevBtn.onclick = () => {
-          if (currentPage > 1) {
-            applyFilters(currentPage - 1);
+          if (!pagination || !pagination.totalOrders) {
+            return;
           }
-        };
-        paginationDiv.appendChild(prevBtn);
 
-        // Next Button
-        const nextBtn = document.createElement("button");
-        nextBtn.className = `pagination-btn ${currentPage >= totalPages ? "disabled" : ""}`;
-        nextBtn.textContent = "Next";
-        nextBtn.onclick = () => {
-          if (currentPage < totalPages) {
-            applyFilters(currentPage + 1);
-          }
-        };
-        paginationDiv.appendChild(nextBtn);
+          const totalPages = pagination.totalPages || 1;
+          const totalOrders = pagination.totalOrders || 0;
+          const startIndex = (currentPage - 1) * ordersPerPage + 1;
+          const endIndex = Math.min(currentPage * ordersPerPage, totalOrders);
 
-        // Page Info
-        const pageInfo = document.createElement("span");
-        pageInfo.className = "pagination-info";
-        pageInfo.textContent = `Showing ${startIndex}-${endIndex} of ${totalOrders} orders`;
-        paginationDiv.appendChild(pageInfo);
-      }
-
-      function attachRetryPaymentListeners() {
-        document.querySelectorAll('.retry-payment-btn').forEach(button => {
-          button.addEventListener('click', async function () {
-            const orderDbId = this.getAttribute('data-id');
-
-            try {
-              const res = await fetch(`/create-razorpay-order/${orderDbId}`);
-              const data = await res.json();
-
-              if (!data.success) {
-                return showToast('Could not initiate payment.', 'error');
-              }
-
-              const options = {
-                key: data.razorpayKey,
-                amount: data.amount,
-                currency: "INR",
-                name: "SHADES",
-                description: "Retry Payment",
-                order_id: data.orderId,
-                handler: function (response) {
-                  fetch("/verify-payment", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                      ...response,
-                      orderDbId
-                    })
-                  }).then(res => res.json())
-                    .then(result => {
-                      if (result.success) {
-                        window.location.href = `/order-confirmation/${orderDbId}`;
-                      } else {
-                        showToast('Could not verify payment.', 'error');
-                      }
-                    });
-                },
-                modal: {
-                  ondismiss: function () {
-                    fetch('/payment-failed', {
-                      method: 'POST',
-                      headers: { 'Content-Type': 'application/json' },
-                      body: JSON.stringify({
-                        orderDbId,
-                        reason: 'User cancelled the payment.'
-                      })
-                    });
-                    showToast('Payment process was cancelled.', 'info');
-                  }
-                },
-                theme: { color: "#000000" }
-              };
-
-              const rzp = new Razorpay(options);
-
-              rzp.on('payment.failed', function (response) {
-                fetch('/payment-failed', {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({
-                    orderDbId,
-                    reason: response.error.description,
-                    error: response.error
-                  })
-                }).then(() => {
-                  showToast('Payment failed. Please try again.', 'error');
-                  setTimeout(() => {
-                    window.location.href = '/orders?payment=failed';
-                  }, 2000);
-                });
-              });
-
-              rzp.open();
-            } catch (err) {
-              console.error(err);
-              showToast('Something went wrong.', 'error');
+          // Previous Button
+          const prevBtn = document.createElement("button");
+          prevBtn.className = `pagination-btn ${currentPage === 1 ? "disabled" : ""}`;
+          prevBtn.textContent = "Previous";
+          prevBtn.onclick = () => {
+            if (currentPage > 1) {
+              applyFilters(currentPage - 1);
             }
-          });
-        });
-      }
+          };
+          paginationDiv.appendChild(prevBtn);
 
-      document.addEventListener("DOMContentLoaded", () => {
-        applyFilters(1); 
-        attachRetryPaymentListeners(); 
-      });
-    </script>
+          // Next Button
+          const nextBtn = document.createElement("button");
+          nextBtn.className = `pagination-btn ${currentPage >= totalPages ? "disabled" : ""}`;
+          nextBtn.textContent = "Next";
+          nextBtn.onclick = () => {
+            if (currentPage < totalPages) {
+              applyFilters(currentPage + 1);
+            }
+          };
+          paginationDiv.appendChild(nextBtn);
+
+          // Page Info
+          const pageInfo = document.createElement("span");
+          pageInfo.className = "pagination-info";
+          pageInfo.textContent = `Showing ${startIndex}-${endIndex} of ${totalOrders} orders`;
+          paginationDiv.appendChild(pageInfo);
+        }
+
+
+
+      </script>
 </body>
 
 </html>

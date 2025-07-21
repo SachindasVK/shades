@@ -124,7 +124,7 @@ const loadShipping = async (req, res) => {
       pincode: selectedAddress.pincode,
       phone: selectedAddress.phone,
       addressType: selectedAddress.addressType,
-      flat:selectedAddress.flat
+      flat: selectedAddress.flat
     };
 
     // Save session
@@ -232,19 +232,19 @@ const loadPayment = async (req, res) => {
     const wallet = await Wallet.findOne({ userId });
 
     const rawCoupons = await Coupon.find({
-  isDeleted: false,
-  expireOn: { $gte: new Date() },
-  minimumPrice: { $lte: subtotal }
-});
+      isDeleted: false,
+      expireOn: { $gte: new Date() },
+      minimumPrice: { $lte: subtotal }
+    });
 
-const coupons = rawCoupons.map(coupon => {
-  const discountAmount = (coupon.discountPercentage / 100) * subtotal;
-  const offerPrice = Math.min(discountAmount, coupon.maxDiscount); // Cap it to max
-  return {
-    ...coupon._doc, // Spread original data
-    offerPrice: Math.floor(offerPrice) // Round down to integer ₹
-  };
-});
+    const coupons = rawCoupons.map(coupon => {
+      const discountAmount = (coupon.discountPercentage / 100) * subtotal;
+      const offerPrice = Math.min(discountAmount, coupon.maxDiscount); // Cap it to max
+      return {
+        ...coupon._doc, // Spread original data
+        offerPrice: Math.floor(offerPrice) // Round down to integer ₹
+      };
+    });
 
 
     const shippingDetails = req.session.shippingDetails || {};
@@ -345,7 +345,7 @@ const placeOrder = async (req, res) => {
         quantity: item.quantity,
         price: itemPrice,
         regularPrice: product.regularPrice || itemPrice,
-        status: 'pending'
+        status: 'confirmed'
       });
     }
 
@@ -540,12 +540,19 @@ const confirmOrder = async (req, res) => {
     //     await product.save();
     //   }
     // }
+    for (const item of order.orderedItems) {
+      if (item.status === 'pending') {
+        item.status = 'confirmed';
+        item.updatedOn = new Date();
+      }
+    }
 
     if (order.status === 'pending') {
       order.status = 'confirmed';
       order.updatedOn = new Date();
       await order.save();
     }
+
 
     const shippingDetails = req.session.shippingDetails || {};
     const deliveryDate = shippingDetails.date
@@ -730,6 +737,34 @@ const paymentFailed = async (req, res) => {
     return res.status(500).json({ success: false, message: "Server error" });
   }
 };
+const orderFailure = async (req, res) => {
+  try {
+    const userId = req.session.user;
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.redirect('/login');
+    }
+
+    const order = await Order.findOne({ userId }).sort({ createdAt: -1 }); // Fix here
+
+    if (!order) {
+      return res.render('order-failure', {
+        order: null,
+        username: user.name
+      });
+    }
+
+    res.render('order-failure', {
+      order,
+      username: user.name
+    });
+  } catch (error) {
+    console.error("Error in orderFailure controller:", error);
+    res.redirect('/shop');
+  }
+};
+
 
 module.exports = {
   getSelectAddress,
@@ -742,5 +777,6 @@ module.exports = {
   confirmOrder,
   loadRazorpayPayment,
   verifyRazorpayPayment,
-  paymentFailed
+  paymentFailed,
+  orderFailure
 }

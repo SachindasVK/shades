@@ -278,7 +278,7 @@ const getSalesChart = async (req, res) => {
     const filter = req.query.filter || 'monthly';
     const now = new Date();
     const match = {
-      status: { $in: ['delivered', 'confirmed'] },
+      status: 'delivered',
     };
 
     let groupStage = {};
@@ -329,14 +329,13 @@ const getSalesChart = async (req, res) => {
 const getTopSalesData = async (req, res) => {
   try {
     const filter = req.query.filter || 'product';
-    console.log('Filter received:', filter); // Debug log
 
     let pipeline = [];
 
     // Base match stage - only count from confirmed/delivered orders
     const matchStage = {
       $match: {
-        status: { $in: ['delivered', 'confirmed'] }
+        status: 'delivered'
       }
     };
 
@@ -346,7 +345,7 @@ const getTopSalesData = async (req, res) => {
         { $unwind: '$orderedItems' },
         {
           $group: {
-            _id: '$orderedItems.productId',
+            _id: '$orderedItems.product',
             totalSold: { $sum: '$orderedItems.quantity' }
           }
         },
@@ -387,7 +386,7 @@ const getTopSalesData = async (req, res) => {
         {
           $lookup: {
             from: 'products',
-            localField: 'orderedItems.productId',
+            localField: 'orderedItems.product',
             foreignField: '_id',
             as: 'product'
           }
@@ -442,7 +441,7 @@ const getTopSalesData = async (req, res) => {
         {
           $lookup: {
             from: 'products',
-            localField: 'orderedItems.productId',
+            localField: 'orderedItems.product',
             foreignField: '_id',
             as: 'product'
           }
@@ -492,12 +491,7 @@ const getTopSalesData = async (req, res) => {
       ];
     }
 
-    console.log('Pipeline:', JSON.stringify(pipeline, null, 2)); // Debug log
-
     const result = await Order.aggregate(pipeline);
-    console.log("Top Sales Chart Result:", result); // Debug log
-
-    // If no results, return empty array with success
     if (!result || result.length === 0) {
       console.log('No data found for filter:', filter);
       return res.json({ 

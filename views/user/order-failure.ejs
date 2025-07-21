@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Order Failed</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script> <!-- Razorpay script is required -->
+    <style>
+        :root {
+            --primary-color: #1f2937;
+            --error-color: #ef4444;
+            --text-color: #374151;
+            --light-bg: #f9fafb;
+            --border-color: #e5e7eb;
+            --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        body {
+            background-color: var(--light-bg);
+            color: var(--text-color);
+            font-family: 'Inter', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 1.5rem;
+        }
+
+        .main-section {
+            background-color: white;
+            border-radius: 8px;
+            padding: 5rem;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .loading-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 3rem;
+            text-align: center;
+            margin-bottom: 6.7rem;
+        }
+
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid #e5e7eb;
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 1.5rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .loading-subtext {
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+
+        .failure-container {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .failure-icon {
+            width: 64px;
+            height: 64px;
+            background-color: var(--error-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+        }
+
+        .crossmark {
+            font-size: 1.75rem;
+            color: white;
+            animation: checkmarkAnimation 0.5s ease-in-out;
+        }
+
+        @keyframes checkmarkAnimation {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        .failure-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .failure-subtitle {
+            font-size: 1rem;
+            color: #6b7280;
+            margin-bottom: 1.5rem;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        .action-buttons button {
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background-color: #111827;
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: #f3f4f6;
+        }
+
+        @media (max-width: 767.98px) {
+            .main-section {
+                padding: 1.5rem;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+
+            .action-buttons a button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <%- include("../../views/partials/user/header") %>
+
+    <div class="container">
+        <div class="main-section">
+            <!-- Loading State -->
+            <div id="loadingState" class="loading-container">
+                <div class="loading-spinner"></div>
+                <h2 class="loading-text">Processing Your Order</h2>
+                <p class="loading-subtext">Please wait while we confirm your order...</p>
+            </div>
+
+            <!-- Failure State -->
+            <div id="failureState" class="failure-container">
+                <div class="failure-icon">
+                    <i class="fas fa-times crossmark"></i>
+                </div>
+                <h2 class="failure-title">Order Failed</h2>
+                <p class="failure-subtitle">Unfortunately, something went wrong and we couldn’t complete your order.</p>
+                <p>Please try again or contact support if the issue persists.</p>
+                <div class="action-buttons">
+                    <button class="btn-primary" id="retryBtn"
+                        data-id="<%= order._id %>"
+                        data-amount="<%= order.finalAmount * 100 %>">
+                        Try Again
+                    </button>
+
+                    <a href="/order/details/<%= order._id %>">
+                        <button class="btn-secondary">
+                            View Order Details
+                        </button>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            attachRetryPaymentListener();
+
+            const loadingState = document.getElementById('loadingState');
+            const failureState = document.getElementById('failureState');
+
+            setTimeout(() => {
+                loadingState.style.display = 'none';
+                failureState.style.display = 'block';
+            }, 1000);
+        });
+
+        function attachRetryPaymentListener() {
+            const button = document.querySelector('#retryBtn');
+            if (!button) return;
+
+            button.addEventListener('click', async function () {
+                const orderDbId = this.getAttribute('data-id');
+
+                try {
+                    const res = await fetch(`/create-razorpay-order/${orderDbId}`);
+                    const data = await res.json();
+
+                    console.log('Razorpay order data:', data); 
+
+                    if (!data.success) {
+                        showToast('Could not initiate payment.','error');
+                        return;
+                    }
+
+                    const options = {
+                        key: data.razorpayKey,
+                        amount: data.amount,
+                        currency: "INR",
+                        name: "SHADES",
+                        description: "Retry Payment",
+                        order_id: data.orderId,
+                        handler: function (response) {
+                            fetch("/verify-payment", {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({
+                                    ...response,
+                                    orderDbId
+                                })
+                            }).then(res => res.json())
+                            .then(result => {
+                                if (result.success) {
+                                    window.location.href = `/order-confirmation/${orderDbId}`;
+                                } else {
+                                    showToast('Payment verification failed.','error');
+                                }
+                            });
+                        },
+                        modal: {
+                            ondismiss: function () {
+                                fetch('/payment-failed', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({
+                                        orderDbId,
+                                        reason: 'User cancelled the payment.'
+                                    })
+                                });
+                                showToast('Payment is cancelled.','info');
+                            }
+                        },
+                        theme: { color: "#000000" }
+                    };
+
+                    const rzp = new Razorpay(options);
+
+                    rzp.on('payment.failed', function (response) {
+                        fetch('/payment-failed', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                orderDbId,
+                                reason: response.error.description,
+                                error: response.error
+                            })
+                        }).then(() => {
+                            showToast('Payment failed.','error');
+                            setTimeout(() => {
+                                window.location.href = '/order-failure';
+                            }, 2000);
+                        });
+                    });
+
+                    rzp.open();
+                } catch (err) {
+                    console.error(err);
+                    showToast('Something went wrong. Please try again.','error');
+                }
+            });
+        }
+        function showToast(message, type = 'info') {
+        let toastContainer = document.querySelector('.toast-container') || document.getElementById('toastContainer');
+        if (!toastContainer) {
+          toastContainer = document.createElement('div');
+          toastContainer.className = 'toast-container';
+          toastContainer.style.position = 'fixed';
+          toastContainer.style.top = '20px';
+          toastContainer.style.right = '20px';
+          toastContainer.style.zIndex = '9999';
+          toastContainer.style.display = 'flex';
+          toastContainer.style.flexDirection = 'column';
+          toastContainer.style.gap = '10px';
+          document.body.appendChild(toastContainer);
+        }
+
+        const toastId = 'toast-' + Date.now();
+        const toast = document.createElement('div');
+
+        let bgColor, borderColor;
+        switch (type) {
+          case 'success':
+            bgColor = '#15803d';
+            borderColor = '#15803d';
+            break;
+          case 'error':
+            bgColor = '#dc2626';
+            borderColor = '#dc2626';
+            break;
+          case 'info':
+          default:
+            bgColor = '#2563eb';
+            borderColor = '#2563eb';
+        }
+
+        toast.style.cssText = `
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          background-color: ${bgColor};
+          border-left: 4px solid ${borderColor};
+          color: white;
+          padding: 8px 16px;
+          border-radius: 5px;
+          box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+          max-width: 400px;
+          width: 100%;
+          opacity: 0;
+          transform: translateY(20px);
+          transition: opacity 0.3s ease, transform 0.3s ease;
+        `;
+
+        toast.id = toastId;
+        toast.setAttribute('role', 'alert');
+        toast.setAttribute('aria-live', 'assertive');
+        toast.setAttribute('aria-atomic', 'true');
+
+        toast.innerHTML = `
+          <div style="flex: 1; font-size: 14px;">${message}</div>
+          <button type="button" style="margin-left: 12px; background: none; border: none; color: white; font-size: 16px; cursor: pointer;" data-toast-id="${toastId}">
+            ×
+          </button>
+        `;
+
+        toastContainer.appendChild(toast);
+
+        setTimeout(() => {
+          toast.style.opacity = '1';
+          toast.style.transform = 'translateY(0)';
+        }, 100);
+
+        const closeButton = toast.querySelector(`[data-toast-id="${toastId}"]`);
+        closeButton.addEventListener('click', () => {
+          toast.style.opacity = '0';
+          toast.style.transform = 'translateY(20px)';
+          setTimeout(() => toast.remove(), 300);
+        });
+
+        setTimeout(() => {
+          toast.style.opacity = '0';
+          toast.style.transform = 'translateY(20px)';
+          setTimeout(() => toast.remove(), 300);
+        }, 1500);
+      }
+    </script>
+
+    <%- include("../../views/partials/user/footer") %>
+</body>
+</html>

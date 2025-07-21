@@ -75,21 +75,13 @@ const getCart = async (req, res) => {
 const cartCount = async (req, res) => {
   try {
     const userId = req.session.user;
-    console.log('User in session:', userId);
-
     if (!userId) {
       return res.json({ count: 0 });
     }
-
     const cart = await Cart.findOne({ userId });
-    console.log('Cart:', cart);
-
     const count = cart
       ? cart.items.filter(item => item.status === 'Placed').length
       : 0;
-
-    console.log('Cart Count:', count);
-
     res.json({ count });
   } catch (error) {
     console.error('Error fetching cart count:', error);
