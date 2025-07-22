@@ -66,21 +66,19 @@
                                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 Status</th>
                                  <th scope="col"
-                                class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Details</th>
-                            <th scope="col"
-                                class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Return</th>
+                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                               order Details</th>
+                            
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200" id="ordersBody">
                         <% orders.forEach(order=> { %>
                             <tr data-order-id="<%= order.orderId %>">
-                                <td class="px-6 py-4 whitespace-nowrap">
+                                <td class="px-6 py-4 whitespace-nowrap text-left">
                                     <div class="text-sm font-medium text-gray-900">#<%= order.orderId %>
                                     </div>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
+                                <td class="px-6 py-4 whitespace-nowrap text-left">
                                     <div class="flex items-center">
                                         <div class="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center">
                                             <span class="text-xs font-medium">
@@ -96,12 +94,12 @@
                                         </div>
                                     </div>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
+                                <td class="px-6 py-4 whitespace-nowrap text-left">
                                     <div class="text-sm text-gray-900">
                                         <%= new Date(order.createdAt).toLocaleDateString('en-GB') %>
                                     </div>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
+                                <td class="px-6 py-4 whitespace-nowrap text-left">
                                     <div class="text-sm font-medium text-gray-900">₹<%= order.finalAmount %>
                                     </div>
                                 </td>
@@ -118,7 +116,7 @@
   const currentStatusIndex = statusOrder.indexOf(order.status);
 %>
 
-<td class="px-6 py-4 whitespace-nowrap">
+<td class="px-6 py-4 whitespace-nowrap text-left">
   <select class="status-select px-2 py-1 text-xs font-semibold rounded-full"
       data-order-id="<%= order.orderId %>">
     <% statusOrder.forEach((status, index) => { %>
@@ -134,36 +132,20 @@
 </td>
 
                                 
-                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                            <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
                             <a href="/admin/order/<%= order.orderId %>">
 <button class="view-order text-black hover:underline mr-2"
                                        >View</button>
                             </a>
                                 
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                    
-                                        <% if (order.status === 'return_requested') { %>
-  <button 
-    class="verify-return text-blue-500 hover:underline" 
-    data-order-id="<%= order.orderId %>">
-    View Return
-  </button>
-<% } else { %>
-  <button 
-    class="verify-return text-gray-400 cursor-not-allowed" 
-    disabled>
-    No Return
-  </button>
-<% } %>
-
-                                </td>
-                            </tr>
-                            <% }) %>
-                    </tbody>
-                </table>
-            </div>
-        </div>
+                                
+                                             </tr>
+                                         <% }) %>
+                                     </tbody>
+                                    </table>
+                                  </div>
+                                </div>
 
         <!-- Pagination -->
         <% if (totalPages > 1) { %>

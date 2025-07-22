@@ -85,6 +85,8 @@ router.patch('/orders/:orderId/status', adminAuth,orderController.updateOrderSta
 router.post('/return/accept/:orderId',adminAuth,orderController.acceptReturnRequest);
 router.post('/return/accept-item/:orderId/:itemId',adminAuth,orderController.acceptReturnItemRequest)
 router.get('/order/:orderId', adminAuth, orderController.getOrderDetails);
+router.post('/return/reject-item/:orderId/:itemId',adminAuth, orderController.rejectItemReturnRequest)
+router.post('/return/reject/:orderId',adminAuth, orderController.rejectOrderReturn)
 
 //Sales Report
 router.get('/sales-report', adminAuth, salesReportController.getSalesReport);

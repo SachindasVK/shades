@@ -84,7 +84,7 @@
 
               const orderItemCount = order.orderedItems
             .every(item => item.status !== 'returned')
-
+ const allItemsRejected = order.orderedItems.every(item=>item.status==='return_rejected');
         %>
 
         <div class="flex justify-between items-center border-b pb-4">
@@ -166,9 +166,6 @@
                          <div class="flex items-center space-x-2 text-yellow-600">
                         <div class="w-8 h-8 bg-yellow-600 rounded-full flex items-center justify-center">
                            <i class="fas fa-undo-alt text-white"></i>
-
-
-
                         </div>
                         <p class="text-sm font-medium">Return requested</p>
                     </div>
@@ -183,7 +180,7 @@
                         <p class="text-sm font-medium">Returned</p>
                     </div>
                         <%}%>
-                        <%if(order.status==='return_rejected'){%>
+                        <%if(order.status==='return_rejected'||allItemsRejected){%>
                          <div class="flex items-center space-x-2 text-red-600">
                         <div class="w-8 h-8 bg-red-600 rounded-full flex items-center justify-center">
                             <i class="fas fa-times text-white"></i>
@@ -302,9 +299,9 @@
                     </div>
                     
                     <div class="text-right">
-                        <%if(order.status==='return_rejected'){%>
+                        <%if(order.status==='return_rejected' || allItemsRejected||item.status==='return_rejected'){%>
                             <p class="text-xs text-red-600 font-medium">Rejected</p>
-                            <p class="text-xs text-gray-400 mt-1">Reason: <%=order.rejectionReason%></p>
+                            <p class="text-xs text-gray-400 mt-1">Reason: <%=item.rejectionReason || order.rejectionReason%></p>
                             <%}%>
                             
                         <% if (item.status === 'cancelled') { %>
@@ -339,6 +336,11 @@
                             <% if (item.returnReason) { %>
                                 <p class="text-xs text-gray-400 mt-1">Reason: <%= item.returnReason %></p>
                             <% } %>
+                            <%} else if(item.status==='return_rejected'||allItemsRejected){%>
+                                <p class="text-xs text-red-600 font-medium">Return rejected</p>
+                                <% if (item.returnReason) { %>
+                                <p class="text-xs text-gray-400 mt-1">Reason: <%= item.rejectionReason %></p>
+                            <% } %>
                             <%}else{%>
                             <button class="return-item-btn text-yellow-600 text-xs hover:underline font-medium px-2 py-1 rounded hover:bg-yellow-50 transition-colors"
                                 data-item-id="<%= item._id %>"
@@ -366,6 +368,7 @@
             const originalSubtotal = order.orderedItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
             const activeSubtotal = activeItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
             const cancelledSubtotal = cancelledItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+           
             %>
             
             <div class="flex justify-between">

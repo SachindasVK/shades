@@ -415,10 +415,124 @@ const acceptReturnItemRequest = async (req, res) => {
 };
 
 
+const rejectItemReturnRequest = async (req, res) => {
+  try {
+    const { orderId, itemId } = req.params;
+    const { reason } = req.body;
+
+    if (!reason || reason.trim() === '') {
+      return res.status(400).json({ success: false, message: 'Rejection reason is required' });
+    }
+
+    const order = await Order.findOne({ orderId });
+    if (!order) {
+      return res.status(404).json({ success: false, message: 'Order not found' });
+    }
+
+    // Find the specific item in the order
+    const item = order.orderedItems.find(item => item._id.toString() === itemId);
+    if (!item) {
+      return res.status(404).json({ success: false, message: 'Item not found in order' });
+    }
+
+    if (item.status !== 'return_requested') {
+      return res.status(400).json({ success: false, message: 'Item return request is not pending' });
+    }
+
+    // Update the specific item status  
+    item.status = 'return_rejected';
+    item.requestStatus = 'rejected';
+    item.rejectionReason = reason;
+    item.returnProcessedAt = new Date();
+
+    // Check if order status needs to be updated
+    const hasAnyPendingReturns = order.orderedItems.some(orderItem =>
+      orderItem.status === 'return_requested'
+    );
+
+    // If no more pending returns and order was in return_requested state
+    if (!hasAnyPendingReturns && order.status === 'return_requested') {
+     
+      const allItemsDelivered = order.orderedItems.every(orderItem =>
+        orderItem.status === 'return_rejected'
+      );
+
+      if (allItemsDelivered) {
+        order.status = 'return_rejected';
+      }
+    }
+
+    order.updatedOn = new Date();
+    await order.save();
+
+    return res.status(200).json({
+      success: true,
+      message: 'Item return request rejected successfully',
+      item: item
+    });
+
+  } catch (error) {
+    console.error('Reject item return error:', error);
+    return res.status(500).json({ success: false, message: 'Server error' });
+  }
+};
+
+
+const rejectOrderReturn = async (req, res) => {
+  try {
+    const { orderId } = req.params;
+    const { reason } = req.body;
+
+    if (!reason || reason.trim() === '') {
+      return res.status(400).json({ success: false, message: 'Rejection reason is required' });
+    }
+
+    const order = await Order.findOne({ orderId });
+    if (!order) {
+      return res.status(404).json({ success: false, message: 'Order not found' });
+    }
+
+    // Ensure the order is in a return-requested state
+    if (order.status !== 'return_requested') {
+      return res.status(400).json({ success: false, message: 'Order is not in return requested state' });
+    }
+
+
+    for (const item of order.orderedItems) {
+        item.status = 'return_rejected';
+        item.requestStatus = 'rejected';
+        item.rejectionReason = reason;
+        item.returnProcessedAt = new Date();
+        item.updatedOn= new Date();
+    }
+
+
+    order.status = 'return_rejected';
+    order.requestStatus = 'rejected'
+    order.rejectionReason = reason;
+    order.updatedOn = new Date();
+
+    await order.save();
+
+    return res.status(200).json({
+      success: true,
+      message: 'Order return request rejected successfully',
+      order: order
+    });
+
+  } catch (error) {
+    console.error('Reject order return error:', error);
+    return res.status(500).json({ success: false, message: 'Server error' });
+  }
+};
+
+
 module.exports = {
   viewAllOrders,
   updateOrderStatus,
   getOrderDetails,
   acceptReturnRequest,
-  acceptReturnItemRequest
+  acceptReturnItemRequest,
+  rejectItemReturnRequest,
+  rejectOrderReturn
 };
