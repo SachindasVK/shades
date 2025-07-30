@@ -366,7 +366,7 @@
     const downloadPDFBtn = document.getElementById('downloadPDF');
     const downloadExcelBtn = document.getElementById('downloadExcel');
 
-    // Toggle date inputs visibility based on report type
+   
     function toggleDateInputs() {
       const isCustom = reportTypeSelect.value === 'custom';
       dateFromContainer.classList.toggle('hidden', !isCustom);
@@ -380,16 +380,16 @@
       }
     }
 
-    // Initial toggle
+   
     toggleDateInputs();
 
-    // Report type change handler
+    
     reportTypeSelect.addEventListener('change', function() {
       toggleDateInputs();
       updateReportPeriodText();
     });
 
-    // Form submission handler
+   
     filterForm.addEventListener('submit', function(e) {
       e.preventDefault();
       
@@ -397,7 +397,7 @@
       const dateFrom = dateFromInput.value;
       const dateTo = dateToInput.value;
 
-      // Validate dates for custom range
+     
       if (reportType === 'custom') {
         if (!dateFrom || !dateTo) {
           showToast('Please select both start and end dates for custom range.', 'error');
@@ -409,11 +409,11 @@
         }
       }
 
-      // Submit form
+     
       this.submit();
     });
 
-    // Download functions
+  
     function downloadReport(format) {
       const reportType = reportTypeSelect.value;
       const dateFrom = dateFromInput.value;
@@ -450,18 +450,18 @@
       }, 2000);
     }
 
-    // Download PDF
+    
     downloadPDFBtn.addEventListener('click', function () {
       downloadReport('pdf');
     });
 
-    // Download Excel
+    
     downloadExcelBtn.addEventListener('click', function () {
       downloadReport('excel');
     });
 
-    // Update report period text based on filter
-  // Complete the updateReportPeriodText function
+ 
+ 
 function updateReportPeriodText() {
   const reportType = reportTypeSelect.value;
   const reportPeriodText = document.getElementById('reportPeriodText');
@@ -496,7 +496,7 @@ function updateReportPeriodText() {
   }
 }
 
-// Add event listeners for date inputs to update period text
+//  event listeners for date inputs to update period text
 dateFromInput.addEventListener('change', updateReportPeriodText);
 dateToInput.addEventListener('change', updateReportPeriodText);
 
@@ -511,7 +511,7 @@ dateToInput.addEventListener('change', updateReportPeriodText);
       // Set message
       toastMessage.textContent = message;
 
-      // Set toast appearance based on type
+    
       if (type === 'success') {
         toastIcon.className = 'fas fa-check-circle text-green-500';
         toastBorder.className = toastBorder.className.replace(/border-\w+-500/g, 'border-green-500');
@@ -572,7 +572,7 @@ function validateForm() {
   return true;
 }
 
-// Enhanced download function with better error handling
+// download function 
 function downloadReport(format) {
   if (!validateForm()) {
     return;
@@ -605,7 +605,7 @@ function downloadReport(format) {
 
 }
 
-// Add keyboard shortcuts
+//  keyboard shortcuts
 document.addEventListener('keydown', function(e) {
   // Ctrl/Cmd + Enter to apply filter
   if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
@@ -634,7 +634,7 @@ function setButtonLoading(button, isLoading) {
   }
 }
 
-// Store original button texts
+
 document.querySelectorAll('button[type="submit"], button[type="button"]').forEach(button => {
   button.setAttribute('data-original-text', button.innerHTML);
 });
@@ -695,7 +695,7 @@ function printReport() {
   window.print();
 }
 
-// Add print button functionality if you want to add a print button
+// print button functionality if you want to add a print button
 const printButton = document.createElement('button');
 printButton.type = 'button';
 printButton.className = 'w-full sm:w-auto px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition-colors';

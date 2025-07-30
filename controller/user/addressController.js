@@ -85,6 +85,13 @@ console.log(req.body)
             });
         }
 
+         if  (!/^[6-9]\d{9}$/.test(phone)) {
+            return res.status(400).json({
+                success: false,
+                message: 'please enter a valid phone number'
+            });
+        }
+
         // Validate pincode (6 digits)
         if (!/^\d{6}$/.test(pincode)) {
             return res.status(400).json({
@@ -93,12 +100,16 @@ console.log(req.body)
             });
         }
 
+        
+
+
         // Get user email for the address
         const user = await User.findById(userId);
         if (!user) {
             return res.status(404).json({ success: false, message: 'User not found' });
         }
 
+      
         const newAddress = {
             name: fullName.trim(),
             phone: phone.trim(),
@@ -114,26 +125,51 @@ console.log(req.body)
             email: user.email
         };
 
-        let addressDoc = await Address.findOne({ userId });
+     
+     let addressDoc = await Address.findOne({ userId });
+
+if (addressDoc && Array.isArray(addressDoc.address)) {
+  const isDuplicate = addressDoc.address.some(addr => {
+    return (
+      addr.name === newAddress.name &&
+      addr.phone === newAddress.phone &&
+      addr.area === newAddress.area &&
+      addr.flat === newAddress.flat &&
+      addr.pincode === newAddress.pincode &&
+      addr.landMark === newAddress.landMark &&
+      addr.city === newAddress.city &&
+      addr.state === newAddress.state &&
+      addr.country === newAddress.country &&
+      addr.email === newAddress.email
+    );
+  });
+
+  if (isDuplicate) {
+    return res.status(400).json({
+      success: false,
+      message: 'This address already exists, please choose another address'
+    });
+  }
+}
+
+
 
         if (!addressDoc) {
-            // Create new address document if none exists
             addressDoc = new Address({
                 userId,
                 address: [newAddress]
             });
 
-            // If this is the first address, make it default
             addressDoc.address[0].isDefault = true;
         } else {
-            // If setting as default, remove default from other addresses
+    
             if (isDefault) {
                 addressDoc.address.forEach(addr => {
                     addr.isDefault = false;
                 });
             }
 
-            // If no default exists and this is being added, make it default
+            
             const hasDefault = addressDoc.address.some(addr => addr.isDefault);
             if (!hasDefault) {
                 newAddress.isDefault = true;

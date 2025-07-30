@@ -46,15 +46,15 @@ const sendVerificationEmail = async (email, otp) => {
 };
 
 const securePassword = async (password) => {
-   try {
-    console.log("Password received for hashing:", password); 
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-    return hashedPassword;
-  } catch (error) {
-    console.log("Error hashing password:", error); 
-    throw new Error("Password hashing failed");
-  }
+    try {
+        console.log("Password received for hashing:", password);
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
+        return hashedPassword;
+    } catch (error) {
+        console.log("Error hashing password:", error);
+        throw new Error("Password hashing failed");
+    }
 };
 
 const getForgotPassPage = async (req, res) => {
@@ -70,22 +70,22 @@ const forgotEmailValid = async (req, res) => {
     try {
         const { email } = req.body;
         const findUser = await User.findOne({ email: email });
-        
+
         if (findUser) {
             const otp = generateOtp();
             const emailSent = await sendVerificationEmail(email, otp);
-            if(!emailSent){
-                return res.render('forgot-password',{
-                    message:"Failed to send OTP"
+            if (!emailSent) {
+                return res.render('forgot-password', {
+                    message: "Failed to send OTP"
                 })
             }
             if (emailSent) {
                 req.session.userOtp = otp;
                 req.session.email = email;
-                res.render("forgototp",{
-                    email:email
+                res.render("forgototp", {
+                    email: email
                 });
-                console.log('Email:',email)
+                console.log('Email:', email)
                 console.log("OTP: ", otp);
             } else {
                 return res.render("forgot-password", {
@@ -108,24 +108,24 @@ const forgotEmailValid = async (req, res) => {
 const verifyForgotPassOtp = async (req, res) => {
     try {
         const enteredOtp = req.body.otp;
-        
+
         if (enteredOtp === req.session.userOtp) {
             req.session.resetAllowed = true;
-            
-            // For AJAX requests
+
+           
             if (req.xhr) {
                 return res.json({ success: true, redirectUrl: "/reset-password" });
             }
-            
-            // For form submissions
+
+           
             return res.redirect("/reset-password");
         } else {
-            // For AJAX requests
+           
             if (req.xhr) {
                 return res.json({ success: false, message: "OTP not matching" });
             }
+
             
-            // For form submissions
             return res.render("forgotPass-otp", {
                 message: "OTP not matching",
                 email: req.session.email
@@ -133,13 +133,13 @@ const verifyForgotPassOtp = async (req, res) => {
         }
     } catch (error) {
         console.error("Error in verifyForgotPassOtp:", error);
-        
-        // For AJAX requests
+
+     
         if (req.xhr) {
             return res.status(500).json({ success: false, message: "An error occurred. Please try again." });
         }
-        
-        // For form submissions
+
+       
         res.render("forgototp", {
             message: "An error occurred. Please try again.",
             email: req.session.email
@@ -160,82 +160,82 @@ const getResetPassPage = async (req, res) => {
     }
 };
 const resendOtp = async (req, res) => {
-  try {
-    // Update session email only if email is provided in request
-    if (req.body.email) {
-      req.session.email = req.body.email;
+    try {
+     
+        if (req.body.email) {
+            req.session.email = req.body.email;
+        }
+
+        const email = req.session.email;
+        if (!email) {
+            return res.status(400).json({ success: false, message: "Email not found in session" });
+        }
+
+        const otp = generateOtp();
+        req.session.userOtp = otp;
+
+        console.log("Resending otp to email", email);
+
+        const emailSent = await sendVerificationEmail(email, otp);
+
+        if (emailSent) {
+            console.log("Resend Otp: ", otp);
+            return res.status(200).json({ success: true, message: "Resend OTP Successful" });
+        } else {
+            return res.status(500).json({ success: false, message: "Failed to send OTP email" });
+        }
+    } catch (error) {
+        console.error("Error in resend otp", error);
+        return res.status(500).json({ success: false, message: "Internal server error" });
     }
-
-    const email = req.session.email;
-    if (!email) {
-      return res.status(400).json({ success: false, message: "Email not found in session" });
-    }
-
-    const otp = generateOtp();
-    req.session.userOtp = otp;
-
-    console.log("Resending otp to email", email);
-
-    const emailSent = await sendVerificationEmail(email, otp);
-
-    if (emailSent) {
-      console.log("Resend Otp: ", otp);
-      return res.status(200).json({ success: true, message: "Resend OTP Successful" });
-    } else {
-      return res.status(500).json({ success: false, message: "Failed to send OTP email" });
-    }
-  } catch (error) {
-    console.error("Error in resend otp", error);
-    return res.status(500).json({ success: false, message: "Internal server error" });
-  }
 };
 const postNewPassword = async (req, res) => {
-  try {
-    const { newPassword, confirmPassword } = req.body;
-    console.log("new password", newPassword, "confirm:", confirmPassword);
+    try {
+        const { newPassword, confirmPassword } = req.body;
+        console.log("new password", newPassword, "confirm:", confirmPassword);
 
-    const email = req.session.email;
-    console.log(email);
+        const email = req.session.email;
+        console.log(email);
 
-    if (!req.session.resetAllowed) {
-      return res.status(403).json({ success: false, message: "Unauthorized access. Please request password reset again." });
+        if (!req.session.resetAllowed) {
+            return res.status(403).json({ success: false, message: "Unauthorized access. Please request password reset again." });
+        }
+
+        if (!email) {
+            return res.status(440).json({ success: false, message: "Session expired. Please try again." });
+        }
+
+        if (newPassword !== confirmPassword) {
+            return res.status(400).json({ success: false, message: "Passwords do not match." });
+        }
+
+
+        if (newPassword.length < 8) {
+            return res.status(400).json({ success: false, message: "Password must be at least 8 characters long." });
+        }
+
+        const passwordHash = await securePassword(newPassword);
+
+        const updateResult = await User.updateOne({ email }, { $set: { password: passwordHash } });
+        if (updateResult.modifiedCount === 0) {
+            return res.status(404).json({ success: false, message: "User not found or password not updated." });
+        }
+
+      
+        req.session.userOtp = null;
+        req.session.email = null;
+        req.session.resetAllowed = null;
+
+        return res.json({ success: true, message: "Password updated successfully." });
+
+    } catch (error) {
+        console.error("Error in postNewPassword:", error);
+        return res.status(500).json({ success: false, message: "An error occurred. Please try again." });
     }
-
-    if (!email) {
-      return res.status(440).json({ success: false, message: "Session expired. Please try again." });
-    }
-
-    if (newPassword !== confirmPassword) {
-      return res.status(400).json({ success: false, message: "Passwords do not match." });
-    }
-
-   
-    if (newPassword.length < 8) {
-      return res.status(400).json({ success: false, message: "Password must be at least 8 characters long." });
-    }
-
-    const passwordHash = await securePassword(newPassword);
-
-    const updateResult = await User.updateOne({ email }, { $set: { password: passwordHash } });
-    if (updateResult.modifiedCount === 0) {
-      return res.status(404).json({ success: false, message: "User not found or password not updated." });
-    }
-
-    // Clear session data
-    req.session.userOtp = null;
-    req.session.email = null;
-    req.session.resetAllowed = null;
-
-    return res.json({ success: true, message: "Password updated successfully." });
-
-  } catch (error) {
-    console.error("Error in postNewPassword:", error);
-    return res.status(500).json({ success: false, message: "An error occurred. Please try again." });
-  }
 };
 
 //user profile page
-  const userProfile = async (req, res) => {
+const userProfile = async (req, res) => {
     try {
         const userId = req.session.user;
         const userData = await User.findById(userId);
@@ -243,16 +243,16 @@ const postNewPassword = async (req, res) => {
             return res.redirect('/login');
         }
 
-        // Fetch the default address
+      
         let defaultAddress = null;
         const addressDoc = await Address.findOne({ userId: userId });
-        
+
         if (addressDoc && addressDoc.address && addressDoc.address.length > 0) {
-            // Find the default address
+          
             const defaultAddr = addressDoc.address.find(addr => addr.isDefault === true);
-            
+
             if (defaultAddr) {
-                // Format the address for display
+              
                 defaultAddress = {
                     fullName: defaultAddr.name,
                     addressLine: `${defaultAddr.flat}, ${defaultAddr.landMark ? defaultAddr.landMark + ', ' : ''}${defaultAddr.city}, ${defaultAddr.state} - ${defaultAddr.pincode}`,
@@ -261,7 +261,7 @@ const postNewPassword = async (req, res) => {
                     complete: `${defaultAddr.name}, ${defaultAddr.flat}, ${defaultAddr.landMark ? defaultAddr.landMark + ', ' : ''}${defaultAddr.city}, ${defaultAddr.state} - ${defaultAddr.pincode}, Phone: ${defaultAddr.phone}`
                 };
             } else if (addressDoc.address.length > 0) {
-                // If no default is set, use the first address
+               
                 const firstAddr = addressDoc.address[0];
                 defaultAddress = {
                     fullName: firstAddr.name,
@@ -273,7 +273,7 @@ const postNewPassword = async (req, res) => {
             }
         }
 
-        // Add default address to userData
+      
         userData.defaultAddress = defaultAddress;
 
         res.render("profile", {
@@ -287,69 +287,67 @@ const postNewPassword = async (req, res) => {
 };
 
 
-    //edit user profile 
-   const editUserProfile = async (req, res) => {
+
+const editUserProfile = async (req, res) => {
     try {
         const { id } = req.params;
-        const { name, phone, email } = req.body;
+        const updates = req.body;
 
         const user = await User.findById(id);
         if (!user) {
             return res.status(404).json({ success: false, message: 'User not found' });
         }
 
-      
-        // Update fields
-        if (name) user.name = name;
-        if (email) user.email = email;
-        if (phone) user.phone = phone;
+
+        for (let key in updates) {
+            if (updates[key]) {
+                user[key] = updates[key];
+            }
+        }
 
         await user.save();
-        
-        // Update session if needed
-        if (req.session.user === id) {
+
+
+        if (req.session.user === id && updates.name) {
             req.session.userName = user.name;
         }
 
-        res.json({ 
-            success: true, 
+        res.json({
+            success: true,
             message: 'Profile updated successfully',
             user: {
                 name: user.name,
-                email: user.email,
-                phone: user.phone,
-                image: user.image
-            }
+            },
         });
-        
+
     } catch (error) {
         console.error('Error editing profile:', error);
-        res.status(500).json({ 
-            success: false, 
-            message: 'Server error occurred'
+        res.status(500).json({
+            success: false,
+            message: 'Server error occurred',
         });
     }
 };
 
 
-const removeProfile = async(req,res)=>{
+const removeProfile = async (req, res) => {
     try {
-        const {id} = req.params
+        const { id } = req.params
         const user = await User.findById(id)
 
-        if(!user){
-            return res.status(400).json({success:false,message:'User not found!'})
+        if (!user) {
+            return res.status(400).json({ success: false, message: 'User not found!' })
         }
 
-        if(user.image&&user.image !=='default.png'){
-            const imagePath = path.join(__dirname,'../../public/uploads/userProfileimages',user.image)
-            if(fs.existsSync(imagePath)){
+        if (user.image && user.image !== 'default.png') {
+            const imagePath = path.join(__dirname, '../../public/uploads/userProfileimages', user.image)
+            if (fs.existsSync(imagePath)) {
                 fs.unlinkSync(imagePath)
             }
             user.image = null
             await user.save()
 
-                return res.json({ success: true, message: 'Image removed successfully' });
+            return res.json({ success: true, message: 'Image removed successfully' });
         }
         return res.status(400).json({ success: false, message: 'No image to remove' });
     } catch (error) {
@@ -373,7 +371,7 @@ const uploadProfileImage = async (req, res) => {
             return res.status(404).json({ success: false, message: 'User not found' });
         }
 
-        // Remove old image if exists
+
         if (user.image && user.image !== 'default.png') {
             const oldImagePath = path.join(__dirname, '../../public/uploads/userProfileimages', user.image);
             if (fs.existsSync(oldImagePath)) {
@@ -384,44 +382,37 @@ const uploadProfileImage = async (req, res) => {
         user.image = image;
         await user.save();
 
-        res.json({ 
-            success: true, 
+        res.json({
+            success: true,
             message: 'Profile image uploaded successfully'
         });
-        
+
     } catch (error) {
         console.error('Error uploading profile image:', error);
-        res.status(500).json({ 
-            success: false, 
+        res.status(500).json({
+            success: false,
             message: 'Server error occurred'
         });
     }
 };
+
+
 const getchangePassword = async (req, res) => {
     try {
-        // Debug: Log session structure
-        console.log('Session user:', req.session.user);
-        
-        // Handle different session structures
-        let userId;
-        if (typeof req.session.user === 'string') {
-            userId = req.session.user; // If user ID is stored directly as string
-        } else if (req.session.user && req.session.user._id) {
-            userId = req.session.user._id; // If user object with _id
-        } else if (req.session.user && req.session.user.id) {
-            userId = req.session.user.id; // If user object with id
-        } else {
+
+        const userId = req.session.user
+        if (!userId) {
             return res.redirect('/login');
         }
 
         const userData = await User.findById(userId);
-        
+
         if (!userData) {
             return res.redirect('/login');
         }
-        
+
         res.render("changepassword", {
-            user: userData, // Pass full user object to match your EJS template
+            user: userData,
             username: userData.name
         });
     } catch (error) {
@@ -433,115 +424,96 @@ const getchangePassword = async (req, res) => {
 const changePassword = async (req, res) => {
     try {
         const { currentPassword, newPassword } = req.body;
-        
-        // Debug: Log session structure
-        console.log('Session user:', req.session.user);
-        console.log('Session keys:', Object.keys(req.session || {}));
-        
-        // Get user from session
+
         if (!req.session || !req.session.user) {
-            return res.status(401).json({ 
-                success: false, 
-                message: 'Please log in to change your password.' 
+            return res.status(401).json({
+                success: false,
+                message: 'Please log in to change your password.'
             });
         }
 
-        // Handle different session structures consistently
-        let userId;
-        if (typeof req.session.user === 'string') {
-            userId = req.session.user; // If user ID is stored directly as string
-        } else if (req.session.user && req.session.user._id) {
-            userId = req.session.user._id; // If user object with _id
-        } else if (req.session.user && req.session.user.id) {
-            userId = req.session.user.id; // If user object with id
-        } else {
-            console.error('Invalid session structure:', req.session.user);
-            return res.status(401).json({ 
-                success: false, 
-                message: 'Invalid session. Please log in again.' 
-            });
+        const userId = req.session.user
+        if (!userId) {
+            return res.redirect('/login');
         }
 
         console.log('Extracted userId:', userId);
 
-        // Validate input
         if (!currentPassword || !newPassword) {
-            return res.status(400).json({ 
-                success: false, 
-                message: 'Current password and new password are required.' 
+            return res.status(400).json({
+                success: false,
+                message: 'Current password and new password are required.'
             });
         }
 
-        // Basic password length validation
         if (newPassword.length < 6) {
-            return res.status(400).json({ 
-                success: false, 
-                message: 'New password must be at least 6 characters long.' 
+            return res.status(400).json({
+                success: false,
+                message: 'New password must be at least 6 characters long.'
             });
         }
 
-        // Find user in database by ID
         const dbUser = await User.findById(userId);
         console.log('Database user found:', !!dbUser);
-        
+
         if (!dbUser) {
             console.error('User not found in database with ID:', userId);
-            return res.status(404).json({ 
-                success: false, 
-                message: 'User account not found. Please log in again.' 
+            return res.status(404).json({
+                success: false,
+                message: 'User account not found. Please log in again.'
             });
         }
 
-        // Check if user has a password (in case of social login users)
+
         if (!dbUser.password) {
-            return res.status(400).json({ 
-                success: false, 
-                message: 'Cannot change password for this account type.' 
+            return res.status(400).json({
+                success: false,
+                message: 'Cannot change password for this account type.'
             });
         }
 
-        // Verify current password
+
         const isCurrentPasswordValid = await bcrypt.compare(currentPassword, dbUser.password);
         if (!isCurrentPasswordValid) {
-            return res.status(400).json({ 
-                success: false, 
-                message: 'Current password is incorrect.' 
+            return res.status(400).json({
+                success: false,
+                message: 'Current password is incorrect.'
             });
         }
 
-        // Check if new password is same as current password
+
         const isNewPasswordSameAsCurrent = await bcrypt.compare(newPassword, dbUser.password);
         if (isNewPasswordSameAsCurrent) {
-            return res.status(400).json({ 
-                success: false, 
-                message: 'New password must be different from current password.' 
+            return res.status(400).json({
+                success: false,
+                message: 'New password must be different from current password.'
             });
         }
 
-        // Hash new password
+
         const saltRounds = 10;
         const hashedNewPassword = await bcrypt.hash(newPassword, saltRounds);
 
-        // Update password in database
-        await User.findByIdAndUpdate(userId, { 
+
+        await User.findByIdAndUpdate(userId, {
             password: hashedNewPassword,
             updatedAt: new Date()
         });
 
         console.log('Password updated successfully for user:', userId);
 
-        // Success response
-        return res.json({ 
-            success: true, 
-            message: 'Password changed successfully.' 
+
+        return res.json({
+            success: true,
+            message: 'Password changed successfully.'
         });
 
     } catch (error) {
         console.error("Change password error:", error);
-        
-        return res.status(500).json({ 
-            success: false, 
-            message: 'An error occurred while changing your password. Please try again.' 
+
+        return res.status(500).json({
+            success: false,
+            message: 'An error occurred while changing your password. Please try again.'
         });
     }
 };

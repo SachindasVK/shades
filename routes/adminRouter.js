@@ -1,95 +1,23 @@
 const express = require('express');
+const authRoutes = require('./admin/authRoutes')
+const brandRoutes = require('./admin/brandRoutes')
+const categoryRoutes = require('./admin/categoryRoutes')
+const couponRoutes = require('./admin/couponRoutes')
+const customerRoutes = require('./admin/customerRoutes')
+const dashboardRoutes = require('./admin/dashboardRoutes')
+const orderRoutes = require('./admin/orderRoutes')
+const productRoutes = require('./admin/productRoutes')
+const salesReportRoutes = require('./admin/salesReportRoutes')
 const router = express.Router();
-const adminController = require('../controller/admin/adminController');
-const customerController = require('../controller/admin/customerController');
-const categoryController = require('../controller/admin/categoryController');
-const productController = require('../controller/admin/productController');
-const brandController = require('../controller/admin/brandController')
-const couponController = require('../controller/admin/couponController')
-const orderController = require('../controller/admin/orderController')
-const salesReportController = require('../controller/admin/salesReportController')
-const { adminAuth } = require('../middlewares/auth');
-const multer = require("multer");
-const { brandUpload } = require('../helpers/multer');
-const upload = multer();
 
-// Error management
-router.get('/error', adminController.error);
-
-// General admin
-router.get('/login', adminController.loadLogin);
-router.post('/login', adminController.login);
-router.get('/dashboard',adminAuth,adminController.loadDashboard);
-router.get('/sales-chart',adminAuth,adminController.getSalesChart)
-router.get('/top-sales-chart',adminAuth,adminController.getTopSalesData)
-router.get('/logout', adminAuth,adminController.logout);
-// view all recent Activities
-router.get('/all-recent-activities',adminAuth,adminController.viewAllRecentActivities)
-// Customer management
-router.get('/customers', adminAuth, customerController.customerInfo);
-router.get('/customers/view/:id', adminAuth, customerController.viewCustomer);
-router.get('/customers/block/:id', adminAuth, customerController.blockUser);
-router.get('/customers/unblock/:id', adminAuth, customerController.unblockUser);
-
-// Category management
-router.get('/categories', adminAuth, categoryController.categoryInfo);
-router.post('/categories', adminAuth, categoryController.addCategory);
-router.post('/categories/:id/offer',adminAuth,categoryController.addCategoryOffer)
-router.delete('/categories/:id/offer',adminAuth,categoryController.removeCategoryOffer)
-router.patch('/categories/:id/status', adminAuth, categoryController.updateCategoryStatus)
-router.put('/categories/:id',adminAuth,categoryController.editCategory)
-
-// brand management
-router.get('/brands',adminAuth,brandController.getBrand)
-router.post('/brands', adminAuth, brandUpload.single('logo'), brandController.addBrand);
-router.put('/brands/:id', adminAuth, brandUpload.single('logo'), brandController.editBrand);
-router.patch('/brands/:id/status',adminAuth,brandController.updateBrandStatus)
-
-
-// add product management
-router.get("/addProducts", adminAuth, productController.getProductsAddPage);
-router.post("/saveImage", adminAuth, upload.single('image'), productController.saveImage);
-router.post("/addProducts", adminAuth, upload.fields([
-    { name: 'image1', maxCount: 1 },
-    { name: 'image2', maxCount: 1 },
-    { name: 'image3', maxCount: 1 },
-    { name: 'image4', maxCount: 1 }
-]), productController.addProducts);
-
-// product managenmt
-router.get('/products',adminAuth,productController.getAllProducts)
-router.post('/products/:id/offer',adminAuth,productController.addProductOffer)
-router.put('/update-quantity/:id',adminAuth,productController.updateProductQuantity)
-router.delete('/products/:id/offer',adminAuth,productController.removeProductOffer)
-router.patch('/products/:id/status',adminAuth,productController.updateProductStatus)
-router.get('/productEdit/:id', adminAuth, productController.getEditProduct);
-router.post('/editProduct/:id', adminAuth, upload.fields([
-    { name: 'image1', maxCount: 1 },
-    { name: 'image2', maxCount: 1 },
-    { name: 'image3', maxCount: 1 },
-    { name: 'image4', maxCount: 1 }
-]), productController.editProduct);
-
-
-//coupen management
-router.get('/coupons',adminAuth,couponController.getCoupon)
-router.post('/coupons',adminAuth,couponController.createCoupon)
-router.put('/coupons/:id', adminAuth, couponController.updateCoupon)
-router.patch('/coupons/:id/status', adminAuth, couponController.toggleCouponStatus)
-router.delete('/coupons/:id', adminAuth, couponController.deleteCoupon)
-router.get('/coupons/:id', adminAuth, couponController.getCouponById)
-
-//order management
-router.get('/orders',adminAuth,orderController.viewAllOrders)
-router.patch('/orders/:orderId/status', adminAuth,orderController.updateOrderStatus);
-router.post('/return/accept/:orderId',adminAuth,orderController.acceptReturnRequest);
-router.post('/return/accept-item/:orderId/:itemId',adminAuth,orderController.acceptReturnItemRequest)
-router.get('/order/:orderId', adminAuth, orderController.getOrderDetails);
-router.post('/return/reject-item/:orderId/:itemId',adminAuth, orderController.rejectItemReturnRequest)
-router.post('/return/reject/:orderId',adminAuth, orderController.rejectOrderReturn)
-
-//Sales Report
-router.get('/sales-report', adminAuth, salesReportController.getSalesReport);
-router.get('/sales-report/download', adminAuth, salesReportController.downloadSalesReport);
+router.use('/', authRoutes)
+router.use('/', brandRoutes)
+router.use('/', categoryRoutes)
+router.use('/', couponRoutes)
+router.use('/', customerRoutes)
+router.use('/', dashboardRoutes)
+router.use('/', orderRoutes)
+router.use('/', productRoutes)
+router.use('/', salesReportRoutes)
 
 module.exports = router;

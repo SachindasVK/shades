@@ -498,7 +498,8 @@
             <div class="max-w-7xl mx-auto px-4">
                 <nav aria-label="breadcrumb">
                     <ol class="flex space-x-2 text-sm">
-                        <li><a href="/" class="text-black hover:underline text-xs"><i class="fas fa-home"></i> Home</a></li>
+                        <li><a href="/" class="text-black hover:underline text-xs"><i class="fas fa-home"></i> Home</a>
+                        </li>
                         <li class="flex items-center"><span class="mx-2"><svg
                                     class="h-5 w-5 text-gray-500 rtl:rotate-180" aria-hidden="true"
                                     xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
@@ -676,58 +677,71 @@
                                             <a href="/productDetails?id=<%= product._id %>">
                                                 <div class="product-category">
                                                 </div>
-                                                <div
-                                                    class="product-category text-xs text-gray-500 mb-1 flex justify-between items-center">
-                                                    <span>
-                                                        <%=product.brand?product.brand.name : 'Eyewear' %>
-                                                    </span>
-                                                    <div class="text-yellow-500 text-[10px] flex ml-2">
-                                                        <i class="fas fa-star mr-[1px]"></i>
-                                                        <i class="fas fa-star mr-[1px]"></i>
-                                                        <i class="fas fa-star mr-[1px]"></i>
-                                                        <i class="fas fa-star mr-[1px]"></i>
-                                                        <i class="fas fa-star-half-alt"></i>
-                                                    </div>
-                                                </div>
-                                                <h3 class="product-title">
-                                                    <%= product.name || product.productName %>
-                                                </h3>
-                                                <% if (product.averageRating) { %>
-                                                    <div class="product-rating">
-                                                        <span class="rating-stars">
-                                                            <% for(let i=1; i <=5; i++) { %>
-                                                                <% if (i <=Math.floor(product.averageRating)) { %>
-                                                                    <i class="fas fa-star"></i>
-                                                                    <% } else if (i <=Math.floor(product.averageRating)
-                                                                        + 0.5) { %>
-                                                                        <i class="fas fa-star-half-alt"></i>
-                                                                        <% } else { %>
-                                                                            <i class="far fa-star"></i>
-                                                                            <% } %>
-                                                                                <% } %>
-                                                        </span>
-                                                        <% if (product.ratingCount) { %>
-                                                            <span class="rating-count">(<%= product.ratingCount %>
-                                                                    )</span>
-                                                            <% } %>
+                                                <% if (product.quantity < 10 && product.quantity> 0) { %>
+                                                    <div
+                                                        class="absolute top-2 left-2 bg-white/30 backdrop-blur-lg text-black text-xs px-2 py-1 rounded-md shadow-md border border-white/60 z-10">
+                                                        Only <%= product.quantity %> left!
                                                     </div>
                                                     <% } %>
-                                                        <div class="product-price">
-                                                            <span class="current-price">₹<%= (product.price ||
-                                                                    product.salePrice).toLocaleString('en-IN') %></span>
-                                                            <% if (product.regularPrice && product.regularPrice>
-                                                                (product.price || product.salePrice)) { %>
-                                                                <span class="original-price">₹<%=
-                                                                        product.regularPrice.toLocaleString('en-IN') %>
-                                                                </span>
-                                                                <% const discount=Math.round((product.regularPrice -
-                                                                    (product.price || product.salePrice)) /
-                                                                    product.regularPrice * 100); %>
-                                                                    <span class="discount-percentage">
-                                                                        <%= discount %>% off
-                                                                    </span>
-                                                                    <% } %>
+
+                                                        <div
+                                                            class="product-category text-xs text-gray-500 mb-1 flex justify-between items-center">
+                                                            <span>
+                                                                <%=product.brand?product.brand.name : 'Eyewear' %>
+                                                            </span>
+                                                            <div class="text-yellow-500 text-[10px] flex ml-2">
+                                                                <i class="fas fa-star mr-[1px]"></i>
+                                                                <i class="fas fa-star mr-[1px]"></i>
+                                                                <i class="fas fa-star mr-[1px]"></i>
+                                                                <i class="fas fa-star mr-[1px]"></i>
+                                                                <i class="fas fa-star-half-alt"></i>
+                                                            </div>
                                                         </div>
+                                                        <h3 class="product-title">
+                                                            <%= product.name || product.productName %>
+                                                        </h3>
+                                                        <% if (product.averageRating) { %>
+                                                            <div class="product-rating">
+                                                                <span class="rating-stars">
+                                                                    <% for(let i=1; i <=5; i++) { %>
+                                                                        <% if (i <=Math.floor(product.averageRating)) {
+                                                                            %>
+                                                                            <i class="fas fa-star"></i>
+                                                                            <% } else if (i
+                                                                                <=Math.floor(product.averageRating) +
+                                                                                0.5) { %>
+                                                                                <i class="fas fa-star-half-alt"></i>
+                                                                                <% } else { %>
+                                                                                    <i class="far fa-star"></i>
+                                                                                    <% } %>
+                                                                                        <% } %>
+                                                                </span>
+                                                                <% if (product.ratingCount) { %>
+                                                                    <span class="rating-count">(<%= product.ratingCount
+                                                                            %>
+                                                                            )</span>
+                                                                    <% } %>
+                                                            </div>
+                                                            <% } %>
+                                                                <div class="product-price">
+                                                                    <span class="current-price">₹<%= (product.price ||
+                                                                            product.salePrice).toLocaleString('en-IN')
+                                                                            %></span>
+                                                                    <% if (product.regularPrice && product.regularPrice>
+                                                                        (product.price || product.salePrice)) { %>
+                                                                        <span class="original-price">₹<%=
+                                                                                product.regularPrice.toLocaleString('en-IN')
+                                                                                %>
+                                                                        </span>
+                                                                        <% const
+                                                                            discount=Math.round((product.regularPrice -
+                                                                            (product.price || product.salePrice)) /
+                                                                            product.regularPrice * 100); %>
+                                                                            <span class="discount-percentage">
+                                                                                <%= discount %>% off
+                                                                            </span>
+                                                                            <% } %>
+                                                                </div>
                                             </a>
                                         </div>
                                         <div class="card-footer">
@@ -1047,8 +1061,8 @@
                             if (data.success) {
                                 showToast('Product added to cart!', 'success');
                                 updateCartCounter(data.cartCount);
-                                 // Update header cart badge without reload
-    window.updateCartBadge();
+                                // Update header cart badge without reload
+                                window.updateCartBadge();
 
                                 if (button) {
                                     button.innerHTML = '<i class="fas fa-shopping-cart"></i> Go to Cart';
@@ -1110,8 +1124,8 @@
                         .then(data => {
                             if (data.success) {
                                 updateWishlistCounter(data.wishlistCount);
- window.updateWishlistBadge(); 
-                                
+                                window.updateWishlistBadge();
+
                             } else {
                                 button.innerHTML = originalHTML;
                                 if (wasActive) button.classList.add('active');

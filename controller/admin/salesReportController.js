@@ -6,13 +6,13 @@ const getSalesReport = async (req, res) => {
   try {
     const { reportType, dateFrom, dateTo, page, limit, format } = req.query;
 
-    let dateFilter = { status:{$in:["delivered",'confirmed']}};
+    let dateFilter = { status: { $in: ["delivered", 'confirmed'] } };
 
     const now = new Date();
     const istOffset = 5.5 * 60 * 60 * 1000;
     const nowIST = new Date(now.getTime() + istOffset);
 
-    // Date Filtering by Report Type
+
     if (reportType) {
       switch (reportType) {
         case "daily":
@@ -22,43 +22,43 @@ const getSalesReport = async (req, res) => {
           break;
 
 
-       case "weekly":
-  const dayOfWeek = now.getDay();
-  const startOfWeek = new Date(now);
-  startOfWeek.setDate(now.getDate() - dayOfWeek);
-  startOfWeek.setHours(0, 0, 0, 0);
-  const endOfWeek = new Date(startOfWeek);
-  endOfWeek.setDate(startOfWeek.getDate() + 6);
-  endOfWeek.setHours(23, 59, 59, 999);
-  dateFilter.createdAt = { $gte: startOfWeek, $lte: endOfWeek };
-  break;
+        case "weekly":
+          const dayOfWeek = now.getDay();
+          const startOfWeek = new Date(now);
+          startOfWeek.setDate(now.getDate() - dayOfWeek);
+          startOfWeek.setHours(0, 0, 0, 0);
+          const endOfWeek = new Date(startOfWeek);
+          endOfWeek.setDate(startOfWeek.getDate() + 6);
+          endOfWeek.setHours(23, 59, 59, 999);
+          dateFilter.createdAt = { $gte: startOfWeek, $lte: endOfWeek };
+          break;
 
-       case "monthly":
-  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-  const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
-  dateFilter.createdAt = { $gte: startOfMonth, $lte: endOfMonth };
-  break;
+        case "monthly":
+          const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+          const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
+          dateFilter.createdAt = { $gte: startOfMonth, $lte: endOfMonth };
+          break;
 
 
         case "yearly":
-  const startOfYear = new Date(now.getFullYear(), 0, 1);
-  const endOfYear = new Date(now.getFullYear(), 11, 31, 23, 59, 59, 999);
-  dateFilter.createdAt = { $gte: startOfYear, $lte: endOfYear };
-  break;
+          const startOfYear = new Date(now.getFullYear(), 0, 1);
+          const endOfYear = new Date(now.getFullYear(), 11, 31, 23, 59, 59, 999);
+          dateFilter.createdAt = { $gte: startOfYear, $lte: endOfYear };
+          break;
 
-case "custom":
-  if (dateFrom && dateTo) {
-    const startDateObj = new Date(dateFrom);
-    const endDateObj = new Date(dateTo);
-    endDateObj.setHours(23, 59, 59, 999); // Full end day
-    dateFilter.createdAt = {
-      $gte: startDateObj,
-      $lte: endDateObj
-    };
-  } else {
-    console.warn("❗ Custom report selected without valid dates:", dateFrom, dateTo);
-  }
-  break;
+        case "custom":
+          if (dateFrom && dateTo) {
+            const startDateObj = new Date(dateFrom);
+            const endDateObj = new Date(dateTo);
+            endDateObj.setHours(23, 59, 59, 999);
+            dateFilter.createdAt = {
+              $gte: startDateObj,
+              $lte: endDateObj
+            };
+          } else {
+            console.warn("Custom report selected without valid dates:", dateFrom, dateTo);
+          }
+          break;
 
 
       }
@@ -81,7 +81,7 @@ case "custom":
     ]);
     const totalDiscount = totalDiscountResult[0]?.total || 0;
 
-    // Excel / PDF Download
+
     if (format === "pdf" || format === "excel") {
       const allSalesData = await Order.find(dateFilter)
         .populate("userId", "name email")
@@ -113,7 +113,7 @@ case "custom":
       }
     }
 
-    // Normal Page View - Fix pagination variables
+
     const currentPage = parseInt(page) || 1;
     const pageLimit = parseInt(limit) || 10;
     const skip = (currentPage - 1) * pageLimit;
@@ -121,26 +121,25 @@ case "custom":
     const salesData = await Order.find(dateFilter)
       .populate("userId", "name email")
       .sort({ createdAt: -1 })
-      .skip(skip)  // Use the correct skip variable
-      .limit(pageLimit)  // Use the correct limit variable
+      .skip(skip)
+      .limit(pageLimit)
       .lean();
 
     const totalPages = Math.ceil(totalSalesCount / pageLimit);
 
-    // Render Report Page
     res.render("salesReport", {
       pageTitle: "Sales Report",
       totalSalesCount,
       totalOrderAmount,
       totalDiscount,
       salesData,
-      currentPage,  // Use currentPage instead of page
+      currentPage,
       totalPages,
       limit: pageLimit,
       reportType,
       dateFrom,
       dateTo,
-      page: currentPage,  // Pass currentPage as page for compatibility
+      page: currentPage,
     });
 
   } catch (error) {
@@ -153,7 +152,8 @@ case "custom":
 };
 
 
-// PDF Generation Function
+
+
 const generatePDFReport = async (res, salesData, options) => {
   try {
     const { fileName, reportType, dateFrom, dateTo, totalSalesCount, totalOrderAmount, totalDiscount } = options;
@@ -190,69 +190,88 @@ const generatePDFReport = async (res, salesData, options) => {
     doc.moveDown();
 
     // Table header
-    // Table header
-doc.fontSize(14).text('Detailed Report:', { underline: true });
-doc.moveDown();
+    doc.fontSize(14).text('Detailed Report:', { underline: true });
+    doc.moveDown();
 
-// Column headers
-const tableTop = doc.y;
-const rowHeight = 20;
-
-const columns = [
-  { label: 'Order ID', width: 90 },
-  { label: 'Date', width: 60 },
-  { label: 'Customer', width: 90 },
-  { label: 'Amount', width: 60 },
-  { label: 'Discount', width: 60 },
-  { label: 'Payment', width: 60 },
-  { label: 'Products', width: 150 }
-];
-
-let x = 50;
-
-doc.fontSize(10).fillColor('black').font('Helvetica-Bold');
-columns.forEach(col => {
-  doc.text(col.label, x, tableTop, { width: col.width, align: 'left' });
-  x += col.width;
-});
-
-doc.moveDown();
-
-// Table rows
-if (salesData.length > 0) {
-  doc.font('Helvetica');
-  salesData.forEach((sale, index) => {
-    if (doc.y > 700) doc.addPage();
-
-    let rowY = doc.y;
-    x = 50;
-
-    const productNames = sale.orderedItems?.map(item => item.productName).join(', ') || '';
-
-    const rowData = [
-      sale.orderId,
-      new Date(sale.createdOn).toLocaleDateString('en-GB'),
-      sale.userId?.name || 'Guest',
-      `₹${sale.finalAmount.toFixed(2)}`,
-      `₹${sale.discount.toFixed(2)}`,
-      sale.paymentMethod,
-      productNames.length > 50 ? productNames.substring(0, 50) + '...' : productNames
+    const columns = [
+      { label: 'Order ID', width: 90 },
+      { label: 'Date', width: 60 },
+      { label: 'Customer', width: 90 },
+      { label: 'Amount', width: 60 },
+      { label: 'Discount', width: 60 },
+      { label: 'Payment', width: 60 },
+      { label: 'Products', width: 120 }
     ];
 
-    rowData.forEach((text, i) => {
-      doc.text(text, x, rowY, {
-        width: columns[i].width,
-        align: 'left'
+    const drawTableHeader = (doc, y) => {
+      let x = 50;
+      doc.font('Helvetica-Bold').fontSize(10);
+      columns.forEach(col => {
+        doc.rect(x, y, col.width, 20).stroke();
+        doc.text(col.label, x + 2, y + 5, {
+          width: col.width - 4,
+          align: 'left'
+        });
+        x += col.width;
       });
-      x += columns[i].width;
-    });
+    };
 
-    doc.moveDown();
-  });
-} else {
-  doc.moveDown().text('No sales data found for the selected period.');
-}
+    let y = doc.y;
+    drawTableHeader(doc, y);
+    y += 20;
 
+    if (salesData.length > 0) {
+      doc.font('Helvetica').fontSize(9);
+
+      salesData.forEach((sale, index) => {
+        const productNames = sale.orderedItems?.map(item => item.productName).join(', ') || '';
+
+        const rowData = [
+          sale.orderId,
+          new Date(sale.createdOn).toLocaleDateString('en-GB'),
+          sale.userId?.name || 'Guest',
+          `₹${sale.finalAmount.toFixed(2)}`,
+          `₹${sale.discount.toFixed(2)}`,
+          sale.paymentMethod,
+          productNames
+        ];
+
+      
+        const cellHeights = rowData.map((text, i) => {
+          return doc.heightOfString(text, {
+            width: columns[i].width - 4,
+            align: 'left'
+          });
+        });
+
+        const rowHeight = Math.max(...cellHeights) + 10;
+
+        if (y + rowHeight > 750) {
+          doc.addPage();
+          y = 50;
+          drawTableHeader(doc, y);
+          y += 20;
+          doc.font('Helvetica').fontSize(9); // <- reset font for row data
+        }
+
+
+        // Draw the row
+        let x = 50;
+        rowData.forEach((text, i) => {
+          const col = columns[i];
+          doc.rect(x, y, col.width, rowHeight).stroke();
+          doc.text(text, x + 2, y + 5, {
+            width: col.width - 4,
+            align: 'left'
+          });
+          x += col.width;
+        });
+
+        y += rowHeight;
+      });
+    } else {
+      doc.moveDown().text('No sales data found for the selected period.');
+    }
 
     doc.end();
 
@@ -342,9 +361,7 @@ const generateExcelReport = async (res, salesData, options) => {
 
 // Download route handler
 const downloadSalesReport = async (req, res) => {
-  // This function handles the download route
-  // It's essentially the same logic as getSalesReport but focused on downloads
-  req.query.format = req.query.format || 'pdf'; // Default to PDF if no format specified
+  req.query.format = req.query.format || 'pdf';
   return getSalesReport(req, res);
 };
 

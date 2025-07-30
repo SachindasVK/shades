@@ -118,7 +118,6 @@
                         <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
                         <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
                         <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Total</th>
-                        <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Item Status</th>
                         <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">return Status</th>
                         <th scope="col" class="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Return item</th>
                     </tr>
@@ -141,53 +140,7 @@
                             <td class="px-6 py-4 whitespace-nowrap text-center">
                                 <div class="text-sm text-gray-900">₹<%= item.price * item.quantity %></div>
                             </td>
-                            <td class="px-3 py-4 whitespace-nowrap text-center">
-                               
-
-                                    <%if(item.status){%>
-                                    <% if (item.status === 'pending') { %>
-                                    <div class="inline-block px-3 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">
-                                        <%= item.status.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase()) %>
-                                    </div> 
-                                    <%}else if(item.status==='return_requested'){%>
-                                        <div class="inline-block px-3 text-xs font-semibold rounded-full bg-orange-100 text-orange-800">
-                                        <%= item.status.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase()) %>
-                                    </div> 
-                                    <%}else if(item.status==='return_rejected'){%>
-                                        <div class="inline-block px-3 text-xs font-semibold rounded-full bg-red-200 text-red-800">
-                                        <%= item.status.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase()) %>
-                                    </div> 
-                                    <%}else if(item.status==='shipped'){%>
-                                        <div class="inline-block px-3 text-xs font-semibold rounded-full bg-purple-100 text-purple-800">
-                                        <%= item.status.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase()) %>
-                                    </div> 
-                                     <%}else if(item.status==='confirmed'){%>
-                                        <div class="inline-block px-3 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
-                                        <%= item.status.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase()) %>
-                                    </div> 
-                                    <%}else if(item.status==='delivered'){%>
-                                        <div class="inline-block px-3 text-xs font-semibold rounded-full bg-green-100 text-green-800">
-                                        <%= item.status.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase()) %>
-                                    </div> 
-                                    <%}else if(item.status==='cancelled'){%>
-                                        <div class="inline-block px-3 text-xs font-semibold rounded-full bg-red-100 text-red-800">
-                                        <%= item.status.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase()) %>
-                                    </div> 
-                                    <%}else if(item.status==='returned'){%>
-                                        <div class="inline-block px-3 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">
-                                        <%= item.status.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase()) %>
-                                    </div> 
-                                    <%}else{%>
-                                        <div class="inline-block px-3 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">
-                                        N/A
-                                    </div> 
-                                        <%}%>
-                                    <%}%>
-
-
-
-                              
-                            </td>
+                           
                             <td class="px-6 py-4 justify-center whitespace-nowrap text-center">
                                <%if(item.requestStatus){%>
                                     <% if (item.requestStatus=== 'pending') { %>

@@ -120,7 +120,9 @@
                     </div>
                   </td>
                   <td class="px-3 py-3 whitespace-nowrap text-sm font-medium">
-                    <button class="view-order text-black hover:underline ml-3" data-order-id="ORDERC4D836FC">View</button>
+                    <a href="/admin/product-details/<%= product._id %>">
+                       <button class="text-black hover:underline">View</button>
+                    </a>
                   </td>
                   <td class="px-3 py-3 whitespace-nowrap text-right text-sm font-medium">
                     <% if(!product.hasOffer) { %>

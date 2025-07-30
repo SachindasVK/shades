@@ -25,7 +25,6 @@ const getOrders = async (req, res) => {
 
         // status filter
         if (status && status !== 'All') {
-            // Handle different status formats "Return_Requested" vs "Return Requested
             const statusValue = status.replace(/[_\s]/g, ' ').trim();
             query.status = new RegExp(`^${statusValue}$`, 'i')
         }
@@ -98,7 +97,7 @@ const getOrders = async (req, res) => {
     } catch (error) {
         console.error('Get Orders Error:', error);
 
-        // AJAX errors
+       
         if (req.xhr || req.headers.accept.indexOf('json') > -1) {
             return res.status(500).json({
                 success: false,
@@ -109,6 +108,7 @@ const getOrders = async (req, res) => {
         res.redirect('/pageNotFound');
     }
 };
+
 const filterOrders = async (req, res) => {
     try {
         const userId = req.session.user;
@@ -190,7 +190,6 @@ const getOrderDetails = async (req, res) => {
 
         const orderId = req.params.id;
 
-        // Validate ObjectId format
         if (!orderId.match(/^[0-9a-fA-F]{24}$/)) {
             return res.redirect('/orders');
         }
@@ -360,12 +359,11 @@ const cancelOrder = async (req, res) => {
             return res.status(401).json({ success: false, message: 'Unauthorized' });
         }
 
-        // Validate inputs
+       
         if (!cancelReason || cancelReason.trim() === '') {
             return res.status(400).json({ success: false, message: 'Cancel reason is required' });
         }
 
-        // Validate ObjectId format
         if (!orderId.match(/^[0-9a-fA-F]{24}$/)) {
             return res.status(400).json({ success: false, message: 'Invalid order ID' });
         }
@@ -406,8 +404,8 @@ const cancelOrder = async (req, res) => {
         }
 
         await order.save();
-
-        if (order.paymentMethod === 'wallet' || order.paymentMethod === 'online') {
+        const paymentMethods = ['wallet', 'online']
+        if (paymentMethods.includes(order.paymentMethod)) {
             const refundAmount = order.finalAmount || 0;
 
             let wallet = await Wallet.findOne({ userId });
@@ -469,7 +467,7 @@ const cancelSingleItem = async (req, res) => {
         if (!order) {
             return res.status(404).json({ success: false, message: 'order or item not found' })
         }
-        
+
         const item = order.orderedItems.id(itemId)
         if (!item || item.status === 'cancelled') {
             return res.status(400).json({ success: false, message: 'item already cancelled or not found' })

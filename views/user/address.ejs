@@ -1176,6 +1176,8 @@
             setError("phone", "Phone number is required");
           } else if (!/^\d{10}$/.test(phone)) {
             setError("phone", "Enter a valid 10-digit mobile number");
+          }else if(!/^[6-9]\d{9}$/.test(phone)){
+            setError("phone", "Enter a valid number");
           }
 
           if (!flat) {

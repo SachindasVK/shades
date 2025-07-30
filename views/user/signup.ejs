@@ -14,15 +14,23 @@
         rel="stylesheet">
 
     <style>
-        /* Header styles */
-        body {
-            font-family: 'Inter', sans-serif;
+        .small-swal {
+            width: 600px !important;
+            font-size: 14px;
+            padding: 1rem;
         }
 
-        html,
+        .small-title {
+            font-size: 18px !important;
+        }
+
+        .small-btn {
+            font-size: 14px !important;
+            padding: 4px 20px;
+        }
+
         body {
-            width: 100%;
-            overflow-x: hidden;
+            font-family: 'Inter', sans-serif;
         }
 
         .font-playfair {
@@ -85,7 +93,7 @@
 
         .background-text {
             position: absolute;
-            font-size: 25vw;
+            font-size: 24vw;
             font-weight: 700;
             opacity: 0.05;
             letter-spacing: -0.05em;
@@ -143,77 +151,6 @@
         /* Footer styles */
         .bg-black-logo {
             background-color: #000000;
-        }
-
-        .gucci-style-large {
-            display: flex;
-            justify-content: center;
-            margin: 0 auto;
-            max-width: 1400px;
-        }
-
-        .gucci-style-large .letter {
-            font-family: 'Times New Roman', serif;
-            font-weight: 100;
-            color: #ffffff;
-            font-size: 15rem;
-            line-height: 1;
-            letter-spacing: 0.10em;
-            text-transform: uppercase;
-            padding: 0 0.08em;
-        }
-
-        .footer-heading {
-            color: #8C8C8C;
-            font-size: 0.875rem;
-            font-weight: 500;
-            letter-spacing: 0.05em;
-            margin-bottom: 1.5rem;
-            text-transform: uppercase;
-        }
-
-        .footer-link {
-            color: white;
-            display: block;
-            font-size: 0.875rem;
-            margin-bottom: 1rem;
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-
-        .footer-link:hover {
-            color: #8C8C8C;
-            text-decoration: underline;
-        }
-
-        .input-field {
-            background-color: transparent;
-            border: none;
-            border-bottom: 1px solid #555;
-            color: white;
-            padding: 0.5rem 0;
-            width: 100%;
-        }
-
-        .input-field:focus {
-            border-bottom: 1px solid white;
-            outline: none;
-        }
-
-        .input-button {
-            background-color: transparent;
-            border: none;
-            color: white;
-            cursor: pointer;
-            position: absolute;
-            right: 0;
-            top: 0.5rem;
-        }
-
-        @media (max-width: 768px) {
-            .gucci-style-large .letter {
-                font-size: 8rem;
-            }
         }
     </style>
 </head>
@@ -319,23 +256,16 @@
     <main class="main-content text-white">
         <div class="background-text text-white">SHADES</div>
 
-        <div class="glass-effect w-full max-w-xl p-8 rounded-lg shadow-xl z-10 relative">
+        <div class="glass-effect w-full max-w-xl p-8 md:p-10 lg:p-12 rounded-lg shadow-xl z-10 relative">
+
             <div class="text-center mb-8">
                 <h2 class="text-3xl font-semibold text-white">SHADES</h2>
                 <div class="gradient-line my-2 mx-auto w-16"></div>
                 <p class="text-sm text-white mt-2">Create an account to discover premium eyewear</p>
             </div>
 
-            <!-- Server-side message display -->
-            <!-- Note: This would be dynamically populated by your server -->
-            <!-- 
-            <div class="server-alert error">
-                User with this email already exists
-                <a href="/login" class="text-blue-500 hover:underline ml-1">Log in instead</a>
-            </div>
-            -->
 
-            <form class="space-y-4" method="post" action="/signup" id="signform">
+            <form class="space-y-4 text-sm sm:text-base" method="post" action="/signup" id="signform">
                 <div>
                     <input type="text" placeholder="Full Name" name="name" id="name"
                         class="form-input w-full px-4 py-3 bg-black border border-gray-700 rounded-md focus:outline-none text-sm text-white"
@@ -409,136 +339,161 @@
             </p>
         </div>
     </main>
-     <%- include("../../views/partials/user/footer") %>
-    <script>
-        // Header dropdown functionality
-        window.addEventListener('click', function (event) {
-            const dropdowns = document.querySelectorAll('.dropdown-content');
-            dropdowns.forEach(dropdown => {
-                if (dropdown.classList.contains('show') && !event.target.closest('.dropdown')) {
-                    dropdown.classList.remove('show');
-                }
-            });
-        });
-
-        function toggleDropdown(dropdownId) {
-            event.stopPropagation();
-
-            const dropdowns = document.querySelectorAll('.dropdown-content');
-            dropdowns.forEach(dropdown => {
-                if (dropdown.id !== dropdownId && dropdown.classList.contains('show')) {
-                    dropdown.classList.remove('show');
-                }
+    <%- include("../../views/partials/user/footer") %>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script>
+            window.addEventListener('click', function (event) {
+                const dropdowns = document.querySelectorAll('.dropdown-content');
+                dropdowns.forEach(dropdown => {
+                    if (dropdown.classList.contains('show') && !event.target.closest('.dropdown')) {
+                        dropdown.classList.remove('show');
+                    }
+                });
             });
 
-            document.getElementById(dropdownId).classList.toggle('show');
-        }
+            function toggleDropdown(dropdownId) {
+                event.stopPropagation();
 
-        function toggleMobileMenu() {
-            console.log('Mobile menu toggled');
-        }
+                const dropdowns = document.querySelectorAll('.dropdown-content');
+                dropdowns.forEach(dropdown => {
+                    if (dropdown.id !== dropdownId && dropdown.classList.contains('show')) {
+                        dropdown.classList.remove('show');
+                    }
+                });
 
-        // Form validation functionality
-        const nameid = document.getElementById('name')
-        const emailid = document.getElementById('email')
-        const passwordid = document.getElementById('password')
-        const cPassword = document.getElementById('confirm-Password')
-        const error1 = document.getElementById('error1')
-        const error2 = document.getElementById('error2')
-        const error3 = document.getElementById('error3')
-        const error4 = document.getElementById('error4')
-        const signform = document.getElementById('signform')
-        const termsCheckbox = document.getElementById('terms')
-
-        const referralCodeInput = document.getElementById('referralCode');
-        referralCodeInput.addEventListener('blur', () => {
-            const val = referralCodeInput.value.trim();
-            if (val && !/^[A-Z0-9]{6,10}$/i.test(val)) {
-                alert('Referral code must be 6–10 characters, letters or numbers.');
-            }
-        });
-
-        function nameValidateChecking() {
-            const namevalue = nameid.value.trim()
-            const namePattern = /^[A-Za-z\s]+$/
-            if (namevalue === '') {
-                error1.style.display = 'block'
-                error1.innerHTML = 'Please enter a valid name'
-                return false
-            } else if (!namePattern.test(namevalue)) {
-                error1.style.display = 'block'
-                error1.innerHTML = 'Name can only contain alphabets and spaces'
-                return false
-            } else {
-                error1.style.display = 'none'
-                return true
-            }
-        }
-
-        function emailValidateChecking() {
-            const emailvalue = emailid.value.trim()
-            const emailPattern = /^[a-zA-Z0-9._%+-]+@gmail\.com$/
-            if (!emailPattern.test(emailvalue)) {
-                error2.style.display = 'block'
-                error2.innerHTML = 'Invalid email format'
-                return false
-            } else {
-                error2.style.display = 'none'
-                return true
-            }
-        }
-
-        function passwordValidateChecking() {
-            const passwordValue = passwordid.value
-            const cPassValue = cPassword.value
-            const alpha = /[A-Za-z]/
-            const digit = /\d/
-            let isValid = true
-
-            if (passwordValue.length < 8) {
-                error3.style.display = 'block'
-                error3.innerHTML = 'Should contain at least 8 characters'
-                isValid = false
-            } else if (!alpha.test(passwordValue) || !digit.test(passwordValue)) {
-                error3.style.display = 'block'
-                error3.innerHTML = 'Should contain both letters and numbers'
-                isValid = false
-            } else {
-                error3.style.display = 'none'
+                document.getElementById(dropdownId).classList.toggle('show');
             }
 
-            if (passwordValue !== cPassValue) {
-                error4.style.display = 'block'
-                error4.innerHTML = 'Passwords do not match'
-                isValid = false
-            } else {
-                error4.style.display = 'none'
+            function toggleMobileMenu() {
+                console.log('Mobile menu toggled');
             }
 
-            return isValid
-        }
+            // Form validation functionality
+            const nameid = document.getElementById('name')
+            const emailid = document.getElementById('email')
+            const passwordid = document.getElementById('password')
+            const cPassword = document.getElementById('confirm-Password')
+            const error1 = document.getElementById('error1')
+            const error2 = document.getElementById('error2')
+            const error3 = document.getElementById('error3')
+            const error4 = document.getElementById('error4')
+            const signform = document.getElementById('signform')
+            const termsCheckbox = document.getElementById('terms')
 
-        signform.addEventListener('submit', (e) => {
-            const isNameValid = nameValidateChecking()
-            const isEmailValid = emailValidateChecking()
-            const isPasswordValid = passwordValidateChecking()
+            const referralCodeInput = document.getElementById('referralCode');
+            referralCodeInput.addEventListener('blur', () => {
+                const val = referralCodeInput.value.trim();
+                if (val && !/^[A-Z0-9]{6,10}$/i.test(val)) {
+                     Swal.fire({
+                        icon: 'warning',
+                        title: 'Hold on!',
+                        text: 'Referral code must be 6–10 characters, letters or numbers.',
+                        confirmButtonText: 'OK',
+                        background: '#374151',
+                        color: '#fff',
+                        customClass: {
+                            popup: 'small-swal',
+                            title: 'small-title',
+                            confirmButton: 'small-btn'
+                        }
+                    });
+                }
+            });
 
-            if (!termsCheckbox.checked) {
-                alert('You must agree to the Terms of Service and Privacy Policy.')
-                e.preventDefault()
-                return
+            function nameValidateChecking() {
+                const namevalue = nameid.value.trim()
+                const namePattern = /^[A-Za-z\s]+$/
+                if (namevalue === '') {
+                    error1.style.display = 'block'
+                    error1.innerHTML = 'Please enter a valid name'
+                    return false
+                } else if (!namePattern.test(namevalue)) {
+                    error1.style.display = 'block'
+                    error1.innerHTML = 'Name can only contain alphabets and spaces'
+                    return false
+                } else {
+                    error1.style.display = 'none'
+                    return true
+                }
             }
 
-            if (!isNameValid || !isEmailValid || !isPasswordValid) {
-                e.preventDefault()
+            function emailValidateChecking() {
+                const emailvalue = emailid.value.trim()
+                const emailPattern = /^[a-zA-Z0-9._%+-]+@gmail\.com$/
+                if (!emailPattern.test(emailvalue)) {
+                    error2.style.display = 'block'
+                    error2.innerHTML = 'Invalid email format'
+                    return false
+                } else {
+                    error2.style.display = 'none'
+                    return true
+                }
             }
-        })
 
-        nameid.addEventListener('blur', nameValidateChecking)
-        emailid.addEventListener('blur', emailValidateChecking)
-        passwordid.addEventListener('blur', passwordValidateChecking)
-        cPassword.addEventListener('blur', passwordValidateChecking)
-    </script>
+            function passwordValidateChecking() {
+                const passwordValue = passwordid.value
+                const cPassValue = cPassword.value
+                const alpha = /[A-Za-z]/
+                const digit = /\d/
+                let isValid = true
+
+                if (passwordValue.length < 8) {
+                    error3.style.display = 'block'
+                    error3.innerHTML = 'Should contain at least 8 characters'
+                    isValid = false
+                } else if (!alpha.test(passwordValue) || !digit.test(passwordValue)) {
+                    error3.style.display = 'block'
+                    error3.innerHTML = 'Should contain both letters and numbers'
+                    isValid = false
+                } else {
+                    error3.style.display = 'none'
+                }
+
+                if (passwordValue !== cPassValue) {
+                    error4.style.display = 'block'
+                    error4.innerHTML = 'Passwords do not match'
+                    isValid = false
+                } else {
+                    error4.style.display = 'none'
+                }
+
+                return isValid
+            }
+
+            signform.addEventListener('submit', (e) => {
+                const isNameValid = nameValidateChecking()
+                const isEmailValid = emailValidateChecking()
+                const isPasswordValid = passwordValidateChecking()
+
+                if (!termsCheckbox.checked) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Hold on!',
+                        text: 'You must agree to the Terms of Service and Privacy Policy.',
+                        confirmButtonText: 'OK',
+                        background: '#374151',
+                        color: '#fff',
+                        customClass: {
+                            popup: 'small-swal',
+                            title: 'small-title',
+                            confirmButton: 'small-btn'
+                        }
+                    });
+
+                    e.preventDefault(); // block form submission
+                    return;
+                }
+
+                if (!isNameValid || !isEmailValid || !isPasswordValid) {
+                    e.preventDefault()
+                }
+            })
+
+            nameid.addEventListener('blur', nameValidateChecking)
+            emailid.addEventListener('blur', emailValidateChecking)
+            passwordid.addEventListener('blur', passwordValidateChecking)
+            cPassword.addEventListener('blur', passwordValidateChecking)
+        </script>
 </body>
 
 </html>

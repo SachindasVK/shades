@@ -91,7 +91,11 @@
             <div>
                 <h1 class="text-lg font-semibold">Order #<%= order.orderId %></h1>
                 <p class="text-sm text-gray-500">
+                    <%if(order.paymentStatus==='Failed'){%>
+                        Failed on
+                        <%}else{%>
                     Placed on 
+                    <%}%>
                     <%= new Date(order.createdOn).toLocaleString('en-GB', { 
                         day: '2-digit', 
                         month: 'short', 
@@ -115,6 +119,15 @@
                         order.status === 'return_requested' || allItemsReturn ? 'Return requested' :
                         order.status.charAt(0).toUpperCase() + order.status.slice(1) %>
                 </span>
+                <%if(order.paymentStatus==='Failed'){%>
+                <span class="ml-3 inline-block  px-3 py-1 text-sm font-semibold rounded-full bg-green-200 text-green-800 hover:bg-green-300">
+                 <button class="btn-primary" id="retryBtn"
+                        data-id="<%= order._id %>"
+                        data-amount="<%= order.finalAmount * 100 %>">
+                       Retry Payment
+                    </button>
+                </span>
+                <%}%>
             </div>
             
             <div class="flex space-x-3">
@@ -133,7 +146,7 @@
 
                 <% if (order.status === 'cancelled' || allItemsCancelled) { %>
                     <span class="text-red-600 text-sm">Order Cancelled</span>
-                <% } else if (order.status === 'pending' || order.status === 'confirmed') { %>
+                <% } else if ( order.status === 'confirmed') { %>
                     <button id="cancelOrderBtn" class="text-red-600 text-sm hover:underline font-medium"
                         data-order-id="<%= order._id %>">
                         <i class="fas fa-times mr-1"></i> Cancel Order
@@ -311,7 +324,7 @@
                             <% } %>
 
                             <!-- cancel item -->
-                        <% } else if ((order.status === 'pending' || order.status === 'confirmed') && item.status !== 'cancelled') { %>
+                        <% } else if ((order.status === 'confirmed') && item.status !== 'cancelled') { %>
                             <%if(order.orderedItems.length>1){%>
                             <button class="cancel-item-btn text-red-600 text-xs hover:underline font-medium px-2 py-1 rounded hover:bg-red-50 transition-colors"
                                 data-item-id="<%= item._id %>"
@@ -655,8 +668,105 @@
     </div>
 
     <!-- return item modal -->
-     
+     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script>
+
+        document.addEventListener('DOMContentLoaded', () => {
+            attachRetryPaymentListener();
+
+            const loadingState = document.getElementById('loadingState');
+            const failureState = document.getElementById('failureState');
+
+            setTimeout(() => {
+                loadingState.style.display = 'none';
+                failureState.style.display = 'block';
+            }, 1000);
+        });
+
+        function attachRetryPaymentListener() {
+            const button = document.querySelector('#retryBtn');
+            if (!button) return;
+
+            button.addEventListener('click', async function () {
+                const orderDbId = this.getAttribute('data-id');
+
+                try {
+                    const res = await fetch(`/create-razorpay-order/${orderDbId}`);
+                    const data = await res.json();
+
+                    console.log('Razorpay order data:', data); 
+
+                    if (!data.success) {
+                        showToast('Could not initiate payment.','error');
+                        return;
+                    }
+
+                    const options = {
+                        key: data.razorpayKey,
+                        amount: data.amount,
+                        currency: "INR",
+                        name: "SHADES",
+                        description: "Retry Payment",
+                        order_id: data.orderId,
+                        handler: function (response) {
+                            fetch("/verify-payment", {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({
+                                    ...response,
+                                    orderDbId
+                                })
+                            }).then(res => res.json())
+                            .then(result => {
+                                if (result.success) {
+                                    window.location.href = `/order-confirmation/${orderDbId}`;
+                                } else {
+                                    showToast('Payment verification failed.','error');
+                                }
+                            });
+                        },
+                        modal: {
+                            ondismiss: function () {
+                                fetch('/payment-failed', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({
+                                        orderDbId,
+                                        reason: 'User cancelled the payment.'
+                                    })
+                                });
+                                showToast('Payment is cancelled.','info');
+                            }
+                        },
+                        theme: { color: "#000000" }
+                    };
+
+                    const rzp = new Razorpay(options);
+
+                    rzp.on('payment.failed', function (response) {
+                        fetch('/payment-failed', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                orderDbId,
+                                reason: response.error.description,
+                                error: response.error
+                            })
+                        }).then(() => {
+                            showToast('Payment failed.','error');
+                            setTimeout(() => {
+                                window.location.href = '/order-failure';
+                            }, 2000);
+                        });
+                    });
+
+                    rzp.open();
+                } catch (err) {
+                    console.error(err);
+                    showToast('Something went wrong. Please try again.','error');
+                }
+            });
+        }
         // Toast notification function
        function showToast(message, type = 'info') {
     let toastContainer = document.querySelector('.toast-container');

@@ -163,12 +163,13 @@ const signup = async (req, res) => {
 const loadHomepage = async (req, res) => {
   try {
     const userId = req.session.user || (req.user && req.user._id);
-     
+
     const categories = await Category.find({ isActive: true });
- const brands = await Brand.find({});
+    const brands = await Brand.find({ isActive: true, isDeleted: false });
     // New arrivals
     let newArrivals = await Product.find({
       isDeleted: false,
+      isActive:true,
       category: { $in: categories.map(category => category._id) }
     }).populate('category').populate('brand');
     newArrivals.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
@@ -275,48 +276,48 @@ const verifyOtp = async (req, res) => {
 
       const savedUser = await saveUserData.save();
       console.log('User saved successfully:', savedUser.email);
-    if (referredBy) {
-  const referrer = await User.findOne({ referralCode: referredBy });
+      if (referredBy) {
+        const referrer = await User.findOne({ referralCode: referredBy });
 
-  if (referrer) {
-    // Update referrer's wallet
-    let referrerWallet = await Wallet.findOne({ userId: referrer._id });
-    if (!referrerWallet) {
-      referrerWallet = new Wallet({ userId: referrer._id });
-    }
-    referrerWallet.balance += 220;
-    referrerWallet.transactions.push({
-      amount: 220,
-      transactionType: 'credit',
-      transactionPurpose: 'referrals',
-      description: `Referral reward from ${savedUser.email}`
-    });
-    await referrerWallet.save();
+        if (referrer) {
+          // Update referrer's wallet
+          let referrerWallet = await Wallet.findOne({ userId: referrer._id });
+          if (!referrerWallet) {
+            referrerWallet = new Wallet({ userId: referrer._id });
+          }
+          referrerWallet.balance += 220;
+          referrerWallet.transactions.push({
+            amount: 220,
+            transactionType: 'credit',
+            transactionPurpose: 'referrals',
+            description: `Referral reward from ${savedUser.email}`
+          });
+          await referrerWallet.save();
 
-    // Update referred user's wallet
-    let referredWallet = await Wallet.findOne({ userId: savedUser._id });
-    if (!referredWallet) {
-      referredWallet = new Wallet({ userId: savedUser._id });
-    }
-    referredWallet.balance += 100;
-    referredWallet.transactions.push({
-      amount: 100,
-      transactionType: 'credit',
-      transactionPurpose: 'referrals',
-      description: 'Referral bonus for signing up'
-    });
-    await referredWallet.save();
+          // Update referred user's wallet
+          let referredWallet = await Wallet.findOne({ userId: savedUser._id });
+          if (!referredWallet) {
+            referredWallet = new Wallet({ userId: savedUser._id });
+          }
+          referredWallet.balance += 100;
+          referredWallet.transactions.push({
+            amount: 100,
+            transactionType: 'credit',
+            transactionPurpose: 'referrals',
+            description: 'Referral bonus for signing up'
+          });
+          await referredWallet.save();
 
-    // Update user model
-    referrer.redeemedUsers.push(savedUser._id);
-    await referrer.save();
+          // Update user model
+          referrer.redeemedUsers.push(savedUser._id);
+          await referrer.save();
 
-    savedUser.redeemed = true;
-    await savedUser.save();
+          savedUser.redeemed = true;
+          await savedUser.save();
 
-    console.log(`Referral success: ${referrer.email} earned ₹220, ${savedUser.email} earned ₹100`);
-  }
-}
+          console.log(`Referral success: ${referrer.email} earned ₹220, ${savedUser.email} earned ₹100`);
+        }
+      }
       delete req.session.userOtp;
       delete req.session.userData;
       delete req.session.referredBy;
@@ -526,8 +527,8 @@ const login = async (req, res) => {
     });
 
     if (findUser && findUser.isAdmin) {
-  return res.redirect('admin/login');
-}
+      return res.redirect('admin/login');
+    }
 
     if (!findUser) {
       console.log('User not found for email:', trimmedEmail)
@@ -571,7 +572,7 @@ const login = async (req, res) => {
       console.log('Session regenerated, redirecting to shop');
       res.redirect('/shop');
     });
-    
+
   } catch (error) {
     console.error('Login error:', error);
     req.session.errorMessage = 'Login failed. Please try again later.';
@@ -797,7 +798,7 @@ const loadShoppingPage = async (req, res) => {
         aggregatePipeline.push({ $sort: { createdAt: -1, _id: 1 } });
     }
 
-    // Add category lookup
+    // category lookup
     aggregatePipeline.push(
       {
         $lookup: {
@@ -816,32 +817,32 @@ const loadShoppingPage = async (req, res) => {
         'category.isDeleted': false,
       },
     });
-    
-// Add brand lookup
-aggregatePipeline.push(
-  {
-    $lookup: {
-      from: 'brands',
-      localField: 'brand',
-      foreignField: '_id',
-      as: 'brand',
-    },
-  },
-  {
-    $addFields: {
-      brand: { $arrayElemAt: ['$brand', 0] },
-    },
-  }
-);
+
+    // brand lookup
+    aggregatePipeline.push(
+      {
+        $lookup: {
+          from: 'brands',
+          localField: 'brand',
+          foreignField: '_id',
+          as: 'brand',
+        },
+      },
+      {
+        $addFields: {
+          brand: { $arrayElemAt: ['$brand', 0] },
+        },
+      }
+    );
 
 
-    // Add pagination
+    // pagination
     aggregatePipeline.push({ $skip: skip }, { $limit: limit });
 
     // Execute aggregation
     const products = await Product.aggregate(aggregatePipeline);
 
-    // Add wishlist status to products
+    // wishlist status to products
     let productsWithWishlistStatus = products;
     if (userData) {
       const wishlist = userData.wishlist.map(id => id.toString());
@@ -915,7 +916,6 @@ aggregatePipeline.push(
       }
     }
 
-    // Check if user is blocked
     if (userData?.isBlocked) {
       req.session.destroy(err => {
         if (err) console.log('Session destroy error:', err);
@@ -925,7 +925,6 @@ aggregatePipeline.push(
       return;
     }
 
-    // Render the shop page
     res.render('shop', {
       isLoggedIn: !!req.session.user,
       user: userData,
@@ -953,6 +952,45 @@ aggregatePipeline.push(
 };
 
 
+
+const productDetails = async (req, res) => {
+    try {
+        const userId = req.session.user
+        const userData = await User.findById(userId)
+        const productId = req.query.id
+        const product = await Product.findById(productId).populate('category').populate('brand')
+     
+        if (!product||product.isDeleted) {
+            return res.redirect('/shop');
+        }
+        
+        const recommendations = await Product.find({
+            isDeleted: false,
+            category: product.category,
+            _id: { $ne: productId }
+        })
+
+        if (userData?.isBlocked) {
+            req.session.destroy(err => {
+                if (err) console.log('Session destroy error:', err);
+                return res.redirect('/login');
+            });
+            return;
+        }
+        res.render('productDetails', {
+            isLoggedIn: req.session.user,
+            user: userData,
+            username: userData ? userData.name : null,
+            product: product,
+            quantity: product.quantity,
+            recommendations
+        })
+    } catch (error) {
+        console.error('error for fetching product details', error)
+        res.redirect('/pageNotFound')
+    }
+}
+
 module.exports = {
   loadHomepage,
   pageNotFound,
@@ -964,5 +1002,6 @@ module.exports = {
   login,
   logout,
   loadShoppingPage,
-  generateReferralCode
+  generateReferralCode,
+  productDetails
 }

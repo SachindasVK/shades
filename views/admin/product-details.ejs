@@ -1,0 +1,173 @@
+<%- include('../partials/admin/header') %>
+
+<div class="p-6">
+  <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+    <!-- Page Header -->
+<div class="bg-white rounded-lg shadow-sm p-6">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center space-x-4">
+           <a href="/admin/products"
+            class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors">
+            <i class="fas fa-arrow-left mr-2"></i>
+            Back to products
+          </a>
+         <h3 class="text-xl font-semibold"><%=product.productName%></h3>
+        </div>
+        <div class="flex space-x-2">
+          <a href="/admin/productEdit/<%= product._id %>">
+          <button class="px-4 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+            <i class="fas fa-edit mr-2"></i>Edit Product
+          </button>
+        </a>
+        </div>
+      </div>
+    </div>
+
+
+   
+
+    <!-- Product Details Content -->
+    <div class="pr-6 pl-6 pt-3">
+      <% if (product) { %>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Product Images -->
+          <div>
+            <h4 class="text-md font-medium text-gray-700 mb-4">Product Images</h4>
+            <div class="grid grid-cols-2 gap-4">
+              <% for(let i = 0; i < Math.min(product.productImage.length, 4); i++) { %>
+                <img src="/<%= product.productImage[i] %>" alt="<%= product.productName %>" class="w-full h-48 object-contain rounded-lg border border-gray-200">
+              <% } %>
+              <% if (product.productImage.length < 4) { %>
+                <% for(let i = product.productImage.length; i < 4; i++) { %>
+                  <div class="w-full h-48 bg-gray-100 rounded-lg border border-gray-200 flex items-center justify-center">
+                    <span class="text-gray-500 text-sm">No Image</span>
+                  </div>
+                <% } %>
+              <% } %>
+            </div>
+          </div>
+
+          <!-- Product Information -->
+          <div>
+  <h4 class="text-md font-medium text-gray-700 mb-4">Product Information</h4>
+  <div class="overflow-x-auto">
+    <table class="min-w-full divide-y divide-gray-200 border border-gray-300 rounded-lg">
+      <tbody class="divide-y divide-gray-200">
+        <tr>
+          <th class="text-left px-4 py-2 text-sm font-medium text-gray-500 bg-gray-50">Product Name</th>
+          <td class="px-4 py-5 text-gray-900 font-medium"><%= product.productName %></td>
+        </tr>
+        <tr>
+          <th class="text-left px-4 py-5 text-sm font-medium text-gray-500 bg-gray-50">Category</th>
+          <td class="px-4 py-5 text-gray-900 font-medium"><%= product.category.name || 'N/A' %></td>
+        </tr>
+        <tr>
+          <th class="text-left px-4 py-5 text-sm font-medium text-gray-500 bg-gray-50">Brand</th>
+          <td class="px-4 py-5 text-gray-900 font-medium"><%= product.brand.name || 'N/A' %></td>
+        </tr>
+        <tr>
+          <th class="text-left px-4 py-5 text-sm font-medium text-gray-500 bg-gray-50">Regular Price</th>
+          <td class="px-4 py-5 text-gray-900 font-medium">₹<%= product.regularPrice.toFixed(2) %></td>
+        </tr>
+        <tr>
+          <th class="text-left px-4 py-5 text-sm font-medium text-gray-500 bg-gray-50">Discount</th>
+          <td class="px-4 py-5">
+            <% if(product.hasOffer) { %>
+              <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                <%= product.offerPercentage %>% Off
+              </span>
+            <% } else { %>
+              <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+                No Discount
+              </span>
+            <% } %>
+          </td>
+        </tr>
+        <tr>
+          <th class="text-left px-4 py-2 text-sm font-medium text-gray-500 bg-gray-50">Sales Price</th>
+          <td class="px-4 py-2 text-gray-900 font-medium">₹<%= product.salePrice.toFixed(2) %></td>
+        </tr>
+        <tr>
+          <th class="text-left px-4 py-2 text-sm font-medium text-gray-500 bg-gray-50">Quantity</th>
+          <td class="px-4 py-2 text-gray-900 font-medium"><%= product.quantity %></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+        </div>
+      <% } else { %>
+        <div class="text-center py-6">
+          <p class="text-gray-500">Product not found.</p>
+          <a href="/admin/products" class="text-blue-600 hover:text-blue-900">Return to Product List</a>
+        </div>
+      <% } %>
+    </div>
+  </div>
+</div>
+
+
+<!-- Toast Notification -->
+<div id="toast" class="fixed bottom-4 right-4 z-50 hidden">
+  <div class="bg-white rounded-lg shadow-lg border-l-4 border-green-500 px-4 py-3 max-w-sm">
+    <div class="flex items-center">
+      <div class="flex-shrink-0">
+        <i class="fas fa-check-circle text-green-500"></i>
+      </div>
+      <div class="ml-3">
+        <p id="toastMessage" class="text-sm font-medium text-gray-900"></p>
+      </div>
+      <div class="ml-auto pl-3">
+        <button id="closeToast" class="text-gray-400 hover:text-gray-500">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const toast = document.getElementById("toast");
+    const closeToast = document.getElementById("closeToast");
+
+    // Close toast
+    if (closeToast) {
+      closeToast.addEventListener("click", function () {
+        toast.classList.add("hidden");
+      });
+    }
+
+    function showToast(message, type = "success") {
+      const toastMessage = document.getElementById("toastMessage");
+      const toastElement = document.getElementById("toast");
+
+      toastMessage.textContent = message;
+
+      if (type === "error") {
+        toastElement.querySelector("div").classList.remove("border-green-500");
+        toastElement.querySelector("div").classList.add("border-red-500");
+        toastElement.querySelector("i").classList.remove("text-green-500");
+        toastElement.querySelector("i").classList.add("text-red-500");
+        toastElement.querySelector("i").classList.remove("fa-check-circle");
+        toastElement.querySelector("i").classList.add("fa-exclamation-circle");
+      } else {
+        toastElement.querySelector("div").classList.remove("border-red-500");
+        toastElement.querySelector("div").classList.add("border-green-500");
+        toastElement.querySelector("i").classList.remove("text-red-500");
+        toastElement.querySelector("i").classList.add("text-green-500");
+        toastElement.querySelector("i").classList.remove("fa-exclamation-circle");
+        toastElement.querySelector("i").classList.add("fa-check-circle");
+      }
+
+      toastElement.classList.remove("hidden");
+
+      setTimeout(() => {
+        toastElement.classList.add("hidden");
+      }, 5000);
+    }
+  });
+</script>
+
+<%- include('../partials/admin/footer') %>

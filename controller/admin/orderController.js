@@ -193,7 +193,7 @@ async function processRefund(userId, amount, orderId, reason) {
 
     await wallet.save();
 
-    // Also update user's wallet field (if you're using it)
+   
     await User.findByIdAndUpdate(userId, {
       $inc: { wallet: amount }
     });
@@ -235,7 +235,6 @@ const acceptReturnRequest = async (req, res) => {
   try {
     const { orderId } = req.params;
 
-    // Find the order by orderId
     const order = await Order.findOne({ orderId });
     if (!order) {
       return res.status(404).json({ success: false, message: 'Order not found' });
@@ -329,7 +328,7 @@ const acceptReturnItemRequest = async (req, res) => {
     item.returnProcessedAt = new Date();
     item.refundedAt = new Date();
 
-    // Cancel reason 
+  
     if (req.body.cancelReason) {
       item.cancelReason = req.body.cancelReason;
     }
@@ -348,12 +347,12 @@ const acceptReturnItemRequest = async (req, res) => {
       }
     });
 
-    // Final amount recalculation
+    // total amount 
     const activeItems = order.orderedItems.filter(i => i.status !== 'cancelled');
     const activeTotal = activeItems.reduce((sum, i) => sum + i.price * i.quantity, 0);
     order.finalAmount = activeTotal + order.deliveryCharge + order.gstAmount - (order.discount || 0) - (order.couponDiscount || 0);
 
-    // Refund logic
+    // Refund 
     if (['wallet', 'online'].includes(order.paymentMethod)) {
       const refundAmountRaw = item.price * item.quantity;
       const totalBeforeCancellation = order.orderedItems.reduce((sum, i) => sum + i.price * i.quantity, 0);
@@ -503,7 +502,7 @@ const rejectOrderReturn = async (req, res) => {
         item.requestStatus = 'rejected';
         item.rejectionReason = reason;
         item.returnProcessedAt = new Date();
-        item.updatedOn= new Date();
+        item.updatedOn= new Date()
     }
 
 

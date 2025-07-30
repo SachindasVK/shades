@@ -545,30 +545,33 @@
 
     <div style="display: grid; gap: 1.5rem">
       <!-- Full Name with Edit icon beside -->
-      <div>
-        <div style="font-weight: 600; color: #374151; font-size: 0.95rem">Full Name</div>
-        <div style="display: flex; align-items: center; gap: 5.5rem; color: #4b5563; font-size: 0.9rem">
-          <span><%= user.name %></span>
-          <button
-            class="action-button"
-            style="
-              color: #6b7280;
-              font-size: 0.85rem;
-              font-weight: 500;
-              display: flex;
-              align-items: center;
-              gap: 0.25rem;
-              background: none;
-              border: none;
-              cursor: pointer;
-              padding: 0;
-            "
-            onclick="editField('name', '<%= user.name %>')"
-          >
-            <i class="fas fa-edit mr-1"></i> Edit
-          </button>
-        </div>
-      </div>
+      <div data-field="name">
+  <div style="font-weight: 600; color: #374151; font-size: 0.95rem">Full Name</div>
+  <div
+    style="display: flex; align-items: center; gap: 5.5rem; color: #4b5563; font-size: 0.9rem"
+  >
+    <span class="field-value"><%= user.name %></span> 
+    <button
+      class="action-button"
+      style="
+        color: #6b7280;
+        font-size: 0.85rem;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0;
+      "
+      onclick="editField('name', '<%= user.name %>')"
+    >
+      <i class="fas fa-edit mr-1"></i> Edit
+    </button>
+  </div>
+</div>
+
 
       <!-- Email -->
       <div>
@@ -642,7 +645,7 @@
   <div class="bg-white rounded-lg p-6 w-full max-w-md mx-4 shadow-xl">
     <div class="flex items-center mb-4">
       <i class="fas fa-user-edit text-blue-500 mr-3"></i>
-      <h2 class="text-lg font-semibold">Edit Profile</h2>
+      <h2 class="text-lg font-semibold">Edit profile name</h2>
     </div>
     <form id="editForm">
       <div class="mb-4">
@@ -905,51 +908,44 @@
         currentEditField = "";
       }
 
-      document
-        .getElementById("editForm")
-        .addEventListener("submit", function (e) {
-          e.preventDefault();
-          const fieldName = document.getElementById("fieldName").value;
-          const fieldValue = document.getElementById("fieldInput").value.trim();
-          if (!fieldValue) {
-            showToast(`Please enter a valid ${fieldName}`, "error");
-            return;
-          }
-          const formData = new FormData();
-          formData.append(fieldName, fieldValue);
-          fetch(`/edit-profile/<%= user._id %>`, {
-            method: "POST",
-            body: formData,
-          })
-            .then((res) => res.json())
-            .then((data) => {
-              if (data.success) {
-                const fieldElement = document.querySelector(
-                  `[data-field="${fieldName}"] .field-value`,
-                  location.reload()
-                );
-                if (fieldElement) {
-                  fieldElement.textContent = fieldValue;
-                }
-                closeEditModal();
-                const fieldDisplayName =
-                  fieldName.charAt(0).toUpperCase() + fieldName.slice(1);
-                showToast(
-                  `${fieldDisplayName} updated to "${fieldValue}"`,
-                  "success"
-                );
-              } else {
-                showToast(
-                  data.message || `Failed to update ${fieldName}`,
-                  "error"
-                );
-              }
-            })
-            .catch((err) => {
-              console.error("Update error:", err);
-              showToast(`Failed to update ${fieldName}`, "error");
-            });
-        });
+     document.getElementById("editForm").addEventListener("submit", async function (e) {
+  e.preventDefault();
+
+  const fieldName = document.getElementById("fieldName").value;
+  const fieldValue = document.getElementById("fieldInput").value.trim();
+
+  if (!fieldValue) {
+    showToast(`Please enter a valid ${fieldName}`, "error");
+    return;
+  }
+
+  try {
+    const response = await fetch(`/edit-profile/<%= user._id %>`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ [fieldName]: fieldValue }),
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+   
+      const elementToUpdate = document.querySelector(`[data-field="${fieldName}"] .field-value`);
+       const modal = document.getElementById("editModal");
+      if (elementToUpdate) elementToUpdate.textContent = fieldValue;
+          
+      closeEditModal();
+      showToast(`${(fieldName)} updated successfully!`, "success");
+       location.reload(); 
+    } else {
+      showToast(data.message || "Update failed", "error");
+    }
+  } catch (err) {
+    console.error("Update error:", err);
+    showToast("Server error", "error");
+  }
+});
+
 
       document
         .getElementById("editModal")
@@ -996,6 +992,9 @@
       function toggleMobileMenu() {
         console.log("Mobile menu toggled");
       }
+
+
+      
     </script>
   </body>
 </html>
