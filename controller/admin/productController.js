@@ -5,6 +5,7 @@ const Brand = require('../../models/brandSchema')
 const fs = require('fs')
 const path = require('path')
 const sharp = require('sharp')
+const logger = require('../../helpers/logger')
 
 const getProductsAddPage = async (req, res) => {
   try {
@@ -153,13 +154,13 @@ const addProducts = async (req, res) => {
       isActive: true
     });
 
-    console.log("About to save product:", newProduct);
+    logger.info(`About to save product: ${newProduct}`);
     await newProduct.save();
-    console.log("Product saved successfully");
+    logger.info("Product saved successfully");
 
     return res.status(200).json({ success: true, message: "Product added successfully" });
   } catch (error) {
-    console.error("Error saving product:", error);
+    logger.error("Error saving product:", error);
     return res.status(500).json({ success: false, message: "Error saving product: " + error.message });
   }
 };
@@ -189,7 +190,7 @@ const saveImage = async (req, res) => {
       filename: `uploads/product-images/${filename}`
     });
   } catch (error) {
-    console.error("Error saving image:", error);
+    logger.error("Error saving image:", error);
     return res.status(500).json({ success: false, message: "Error saving image" });
   }
 };
@@ -200,7 +201,7 @@ const saveImage = async (req, res) => {
 
 const getAllProducts = async (req, res) => {
   try {
-    console.log("Getting all products...");
+    logger.info("Getting all products...");
     const search = req.query.search || "";
     const page = parseInt(req.query.page) || 1;
     const limit = 10;
@@ -228,7 +229,7 @@ const getAllProducts = async (req, res) => {
       .populate("brand")
       .exec();
 
-    console.log(`Found ${products.length} products`);
+    logger.info(`Found ${products.length} products`);
 
     const totalItems = await Product.countDocuments(searchQuery);
 
@@ -249,7 +250,7 @@ const getAllProducts = async (req, res) => {
       pageTitle: 'Product Management'
     });
   } catch (error) {
-    console.error("Error fetching products:", error);
+    logger.error("Error fetching products:", error);
     res.status(500).render("error", {
       message: "Failed to fetch products",
       error: error.message
@@ -307,7 +308,7 @@ const addProductOffer = async (req, res) => {
 
     return res.json({ success: true, message: "Product offer added successfully" });
   } catch (error) {
-    console.error("Error in addProductOffer:", error);
+    logger.error("Error in addProductOffer:", error);
     return res.status(500).render('error', {
       pageTitle: 'Error',
       message: 'Something went wrong while adding product offer'
@@ -321,19 +322,13 @@ const addProductOffer = async (req, res) => {
 const removeProductOffer = async (req, res) => {
   try {
     const productId = req.params.id;
-
-
     if (!productId) {
       return res.status(400).json({ success: false, message: "Product ID is required" });
     }
-
-
     const product = await Product.findById(productId);
     if (!product) {
       return res.status(404).json({ success: false, message: "Product not found" });
     }
-
-
     await Product.updateOne(
       { _id: productId },
       {
@@ -348,7 +343,7 @@ const removeProductOffer = async (req, res) => {
 
     return res.status(200).json({ success: true, message: "Offer removed successfully" });
   } catch (error) {
-    console.error("Error in removeProductOffer:", error);
+    logger.error("Error in removeProductOffer:", error);
     return res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 };
@@ -384,7 +379,7 @@ const updateProductStatus = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Invalid action' });
     }
     const result = await Product.updateOne({ _id: id }, { $set: updateData });
-    console.log('Update Result:', result);
+    logger.info(`Update Result: ${result}`);
 
     if (result.modifiedCount === 0) {
       return res.status(404).json({ success: false, message: 'Product not found or already in desired state' });
@@ -392,7 +387,7 @@ const updateProductStatus = async (req, res) => {
 
     res.json({ success: true, message: `Product ${action}d successfully!` });
   } catch (error) {
-    console.error('Update Status Error:', error);
+    logger.error('Update Status Error:', error);
     res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
@@ -421,7 +416,7 @@ const getEditProduct = async (req, res) => {
       product: product
     });
   } catch (error) {
-    console.error('Error loading edit product page:', error);
+    logger.error('Error loading edit product page:', error);
     res.redirect('/admin/error');
   }
 };
@@ -439,10 +434,8 @@ const editProduct = async (req, res) => {
     }
 
     const data = req.body;
-    console.log("Updating product:", id);
-    console.log("New product data:", data);
-    console.log("Files received:", req.files ? Object.keys(req.files) : 'No files');
-
+   logger.info(`Updating product: ${id}`);
+   logger.info(`New product data: ${data}`);
 
     const existingProduct = await Product.findOne({
       productName: data.productName,
@@ -558,7 +551,7 @@ const editProduct = async (req, res) => {
 
     updateFields.productImage = newProductImages;
 
-    console.log("Update fields:", updateFields);
+    logger.info(`Update fields: ${updateFields}`);
 
 
     const updatedProduct = await Product.findByIdAndUpdate(
@@ -577,7 +570,7 @@ const editProduct = async (req, res) => {
       });
     }
 
-    console.log("Product updated successfully:", updatedProduct._id);
+    logger.info(`Product updated successfully: ${updatedProduct._id}`);
     res.status(200).json({
       success: true,
       message: "Product updated successfully",
@@ -585,7 +578,7 @@ const editProduct = async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Error updating product:', error);
+    logger.error('Error updating product:', error);
 
 
     if (error.name === 'ValidationError') {
@@ -621,7 +614,7 @@ const updateProductQuantity = async (req, res) => {
 
     res.json({ success: true });
   } catch (error) {
-    console.error("Error updating quantity:", error);
+    logger.error("Error updating quantity:", error);
     res.status(500).json({ success: false });
   }
 };
@@ -635,7 +628,7 @@ const loadProductDetails = async (req, res) => {
     }
     res.render('product-details', { product ,pageTitle:'Product-details'});
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     res.render('admin/productDetails', { product: null });
   }
 }

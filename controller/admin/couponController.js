@@ -32,7 +32,7 @@ const getCoupon = async(req,res)=>{
             limit
         });
     } catch (error) {
-        console.error('Get coupons error:', error);
+        logger.error('Get coupons error:', error);
         return res.redirect('/admin/error');
     }
 };
@@ -40,10 +40,9 @@ const getCoupon = async(req,res)=>{
 
 const createCoupon = async (req, res) => {
     try {
-        console.log('Coupon form submitted:', req.body); 
+        logger.log(`Coupon form submitted: ${req.body}`); 
         const { name, startDate, endDate, discountPercentage, maxDiscount, minimumPrice } = req.body;
 
-        // Input validation
         if (!name || !startDate || !endDate || !discountPercentage || !maxDiscount || !minimumPrice) {
             return res.status(400).json({
                 success: false,
@@ -51,7 +50,6 @@ const createCoupon = async (req, res) => {
             });
         }
 
-        // Validation: Start date should be before end date
         if (new Date(startDate) > new Date(endDate)) {
             return res.status(400).json({
                 success: false,
@@ -59,7 +57,7 @@ const createCoupon = async (req, res) => {
             });
         }
 
-        // Validation: Discount percentage should be positive and <= 100
+       
         if (parseFloat(discountPercentage) <= 0 || parseFloat(discountPercentage) > 100) {
             return res.status(400).json({
                 success: false,
@@ -67,7 +65,6 @@ const createCoupon = async (req, res) => {
             });
         }
 
-        // Validation: Max discount and min price should be positive
         if (parseFloat(maxDiscount) <= 0) {
             return res.status(400).json({
                 success: false,
@@ -82,7 +79,6 @@ const createCoupon = async (req, res) => {
             });
         }
 
-        // Check if coupon name already exists
         const existingCoupon = await Coupon.findOne({ 
             name: { $regex: new RegExp(`^${name}$`, 'i') }
         });
@@ -94,7 +90,6 @@ const createCoupon = async (req, res) => {
             });
         }
 
-        // Create new coupon
         const newCoupon = new Coupon({
             name: name.trim(),
             createdOn: new Date(startDate),
@@ -113,7 +108,7 @@ const createCoupon = async (req, res) => {
             data: newCoupon
         });
     } catch (error) {
-        console.error('Create coupon error:', error);
+        logger.error('Create coupon error:', error);
         return res.status(500).json({
             success: false,
             message: 'Server error while creating coupon'
@@ -127,31 +122,25 @@ const updateCoupon = async (req, res) => {
         const couponId = req.params.id;
         const { name, startDate, endDate, discountPercentage, maxDiscount, minimumPrice } = req.body;
 
-        // Input validation
+
         if (!name || !startDate || !endDate || !discountPercentage || !maxDiscount || !minimumPrice) {
             return res.status(400).json({
                 success: false,
                 message: 'All fields are required'
             });
         }
-
-        // Validation: Start date should be before end date
         if (new Date(startDate) > new Date(endDate)) {
             return res.status(400).json({
                 success: false,
                 message: 'Start date cannot be after end date'
             });
         }
-
-        // Validation: Discount % between 1 and 100
         if (parseFloat(discountPercentage) <= 0 || parseFloat(discountPercentage) > 100) {
             return res.status(400).json({
                 success: false,
                 message: 'Discount percentage must be between 1 and 100'
             });
         }
-
-        // Validation: maxDiscount and minimumPrice should be > 0
         if (parseFloat(maxDiscount) <= 0) {
             return res.status(400).json({
                 success: false,
@@ -165,8 +154,6 @@ const updateCoupon = async (req, res) => {
                 message: 'Minimum price must be greater than 0'
             });
         }
-
-        // Check if coupon exists
         const existingCoupon = await Coupon.findById(couponId);
         if (!existingCoupon) {
             return res.status(404).json({
@@ -174,8 +161,6 @@ const updateCoupon = async (req, res) => {
                 message: 'Coupon not found'
             });
         }
-
-        // Check for duplicate coupon name
         const duplicateCoupon = await Coupon.findOne({
             _id: { $ne: couponId },
             name: { $regex: new RegExp(`^${name}$`, 'i') }
@@ -187,8 +172,6 @@ const updateCoupon = async (req, res) => {
                 message: 'Coupon with this name already exists'
             });
         }
-
-        // Update coupon
         const updatedCoupon = await Coupon.findByIdAndUpdate(
             couponId,
             {
@@ -209,7 +192,7 @@ const updateCoupon = async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Update coupon error:', error);
+        logger.error('Update coupon error:', error);
         return res.status(500).json({
             success: false,
             message: 'Server error while updating coupon'
@@ -224,7 +207,6 @@ const toggleCouponStatus = async (req, res) => {
         const couponId = req.params.id;
         const { action } = req.body;
 
-        // Validate action
         if (!action || !['delete', 'recover'].includes(action)) {
             return res.status(400).json({
                 success: false,
@@ -232,7 +214,6 @@ const toggleCouponStatus = async (req, res) => {
             });
         }
 
-        // Check if coupon exists
         const coupon = await Coupon.findById(couponId);
         if (!coupon) {
             return res.status(404).json({
@@ -241,10 +222,9 @@ const toggleCouponStatus = async (req, res) => {
             });
         }
 
-        // Determine new status
         const newStatus = action === 'delete' ? true : false;
         
-        // Check if status is already what we want to set
+      
         if (coupon.isDeleted === newStatus) {
             const statusText = newStatus ? 'deleted' : 'active';
             return res.status(400).json({
@@ -253,8 +233,7 @@ const toggleCouponStatus = async (req, res) => {
             });
         }
 
-        // Update status
-        const updatedCoupon = await Coupon.findByIdAndUpdate(
+       const updatedCoupon = await Coupon.findByIdAndUpdate(
             couponId,
             { isDeleted: newStatus },
             { new: true }
@@ -269,7 +248,7 @@ const toggleCouponStatus = async (req, res) => {
             data: updatedCoupon
         });
     } catch (error) {
-        console.error('Toggle coupon status error:', error);
+        logger.error('Toggle coupon status error:', error);
         return res.status(500).json({
             success: false,
             message: 'Server error while updating coupon status'
@@ -282,7 +261,6 @@ const deleteCoupon = async (req, res) => {
     try {
         const couponId = req.params.id;
 
-        // Check if coupon exists
         const coupon = await Coupon.findById(couponId);
         if (!coupon) {
             return res.status(404).json({
@@ -291,7 +269,6 @@ const deleteCoupon = async (req, res) => {
             });
         }
 
-        // Permanently delete coupon
         await Coupon.findByIdAndDelete(couponId);
 
         return res.status(200).json({
@@ -299,7 +276,7 @@ const deleteCoupon = async (req, res) => {
             message: `Coupon "${coupon.name}" has been permanently deleted`
         });
     } catch (error) {
-        console.error('Delete coupon error:', error);
+        logger.error('Delete coupon error:', error);
         return res.status(500).json({
             success: false,
             message: 'Server error while deleting coupon'
@@ -325,7 +302,7 @@ const getCouponById = async (req, res) => {
             data: coupon
         });
     } catch (error) {
-        console.error('Get coupon by ID error:', error);
+        logger.error('Get coupon by ID error:', error);
         return res.status(500).json({
             success: false,
             message: 'Server error while fetching coupon'

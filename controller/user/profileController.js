@@ -2,10 +2,9 @@ const User = require("../../models/userSchema");
 const Address = require("../../models/addressSchema")
 const nodemailer = require("nodemailer");
 const bcrypt = require("bcrypt");
-const env = require("dotenv").config();
-const session = require("express-session");
 const path = require('path');
 const fs = require('fs');
+const logger = require('../../helpers/logger')
 
 function generateOtp() {
     const digits = "1234567890";
@@ -40,19 +39,19 @@ const sendVerificationEmail = async (email, otp) => {
         const info = await transporter.sendMail(mailOption);
         return true;
     } catch (error) {
-        console.error("error sending email", error);
+        logger.error("error sending email: ",error.message);
         return false;
     }
 };
 
 const securePassword = async (password) => {
     try {
-        console.log("Password received for hashing:", password);
+        logger.info(`Password received for hashing: ${password}`);
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
         return hashedPassword;
     } catch (error) {
-        console.log("Error hashing password:", error);
+        logger.error("Error hashing password: ",error.message);
         throw new Error("Password hashing failed");
     }
 };
@@ -61,7 +60,7 @@ const getForgotPassPage = async (req, res) => {
     try {
         res.render("forgot-password", { message: "" });
     } catch (error) {
-        console.error("Error in getForgotPassPage:", error);
+        logger.error("Error in to load forgot password page: ",error.message);
         res.redirect("/pageNotFound");
     }
 };
@@ -85,8 +84,8 @@ const forgotEmailValid = async (req, res) => {
                 res.render("forgototp", {
                     email: email
                 });
-                console.log('Email:', email)
-                console.log("OTP: ", otp);
+                logger.info(`Email: ${email}`)
+                logger.info(`OTP: ${otp}`);
             } else {
                 return res.render("forgot-password", {
                     message: "Failed to send OTP. Please try again"
@@ -98,7 +97,7 @@ const forgotEmailValid = async (req, res) => {
             });
         }
     } catch (error) {
-        console.error("Error in forgotEmailValid:", error);
+        logger.error("Error in forgotEmailValid: ",error.message);
         res.render("forgot-password", {
             message: "An error occurred. Please try again."
         });
@@ -112,34 +111,34 @@ const verifyForgotPassOtp = async (req, res) => {
         if (enteredOtp === req.session.userOtp) {
             req.session.resetAllowed = true;
 
-           
+
             if (req.xhr) {
                 return res.json({ success: true, redirectUrl: "/reset-password" });
             }
 
-           
+
             return res.redirect("/reset-password");
         } else {
-           
+
             if (req.xhr) {
                 return res.json({ success: false, message: "OTP not matching" });
             }
 
-            
+
             return res.render("forgotPass-otp", {
                 message: "OTP not matching",
                 email: req.session.email
             });
         }
     } catch (error) {
-        console.error("Error in verifyForgotPassOtp:", error);
+        logger.error("Error in verifyForgotPassOtp: ",error.message);
 
-     
+
         if (req.xhr) {
             return res.status(500).json({ success: false, message: "An error occurred. Please try again." });
         }
 
-       
+
         res.render("forgototp", {
             message: "An error occurred. Please try again.",
             email: req.session.email
@@ -155,13 +154,13 @@ const getResetPassPage = async (req, res) => {
             res.redirect("/forgot-password");
         }
     } catch (error) {
-        console.error("Error in getResetPassPage:", error);
+        logger.error("Error in getResetPassPage: ",error.message);
         res.redirect("/pageNotFound");
     }
 };
 const resendOtp = async (req, res) => {
     try {
-     
+
         if (req.body.email) {
             req.session.email = req.body.email;
         }
@@ -174,28 +173,28 @@ const resendOtp = async (req, res) => {
         const otp = generateOtp();
         req.session.userOtp = otp;
 
-        console.log("Resending otp to email", email);
+        logger.info(`Resending otp to email: ${email}`);
 
         const emailSent = await sendVerificationEmail(email, otp);
 
         if (emailSent) {
-            console.log("Resend Otp: ", otp);
+            logger.info(`Resend Otp: ${otp}`);
             return res.status(200).json({ success: true, message: "Resend OTP Successful" });
         } else {
             return res.status(500).json({ success: false, message: "Failed to send OTP email" });
         }
     } catch (error) {
-        console.error("Error in resend otp", error);
+        logger.error("Error in resend otp", error.message);
         return res.status(500).json({ success: false, message: "Internal server error" });
     }
 };
 const postNewPassword = async (req, res) => {
     try {
         const { newPassword, confirmPassword } = req.body;
-        console.log("new password", newPassword, "confirm:", confirmPassword);
+        logger.info(`new password:  ${newPassword}, confirm: ${confirmPassword}`);
 
         const email = req.session.email;
-        console.log(email);
+        logger.info(email);
 
         if (!req.session.resetAllowed) {
             return res.status(403).json({ success: false, message: "Unauthorized access. Please request password reset again." });
@@ -221,7 +220,7 @@ const postNewPassword = async (req, res) => {
             return res.status(404).json({ success: false, message: "User not found or password not updated." });
         }
 
-      
+
         req.session.userOtp = null;
         req.session.email = null;
         req.session.resetAllowed = null;
@@ -229,7 +228,7 @@ const postNewPassword = async (req, res) => {
         return res.json({ success: true, message: "Password updated successfully." });
 
     } catch (error) {
-        console.error("Error in postNewPassword:", error);
+        logger.error("Error in postNewPassword:",error.message);
         return res.status(500).json({ success: false, message: "An error occurred. Please try again." });
     }
 };
@@ -243,16 +242,16 @@ const userProfile = async (req, res) => {
             return res.redirect('/login');
         }
 
-      
+
         let defaultAddress = null;
         const addressDoc = await Address.findOne({ userId: userId });
 
         if (addressDoc && addressDoc.address && addressDoc.address.length > 0) {
-          
+
             const defaultAddr = addressDoc.address.find(addr => addr.isDefault === true);
 
             if (defaultAddr) {
-              
+
                 defaultAddress = {
                     fullName: defaultAddr.name,
                     addressLine: `${defaultAddr.flat}, ${defaultAddr.landMark ? defaultAddr.landMark + ', ' : ''}${defaultAddr.city}, ${defaultAddr.state} - ${defaultAddr.pincode}`,
@@ -261,7 +260,7 @@ const userProfile = async (req, res) => {
                     complete: `${defaultAddr.name}, ${defaultAddr.flat}, ${defaultAddr.landMark ? defaultAddr.landMark + ', ' : ''}${defaultAddr.city}, ${defaultAddr.state} - ${defaultAddr.pincode}, Phone: ${defaultAddr.phone}`
                 };
             } else if (addressDoc.address.length > 0) {
-               
+
                 const firstAddr = addressDoc.address[0];
                 defaultAddress = {
                     fullName: firstAddr.name,
@@ -273,7 +272,7 @@ const userProfile = async (req, res) => {
             }
         }
 
-      
+
         userData.defaultAddress = defaultAddress;
 
         res.render("profile", {
@@ -281,7 +280,7 @@ const userProfile = async (req, res) => {
             username: userData.name
         });
     } catch (error) {
-        console.error('Error:', error);
+        logger.error('user profile Error:',error.message);
         res.redirect("/pageNotFound");
     }
 };
@@ -321,7 +320,7 @@ const editUserProfile = async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Error editing profile:', error);
+        logger.error('Error editing profile:',error.message);
         res.status(500).json({
             success: false,
             message: 'Server error occurred',
@@ -351,7 +350,7 @@ const removeProfile = async (req, res) => {
         }
         return res.status(400).json({ success: false, message: 'No image to remove' });
     } catch (error) {
-        console.error('Error removing profile image:', error);
+        logger.error('Error removing profile image: ',error.message);
         return res.status(500).json({ success: false, message: 'Server error occurred' });
     }
 }
@@ -388,7 +387,7 @@ const uploadProfileImage = async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Error uploading profile image:', error);
+        logger.error('Error uploading profile image: ',error.message);
         res.status(500).json({
             success: false,
             message: 'Server error occurred'
@@ -416,7 +415,7 @@ const getchangePassword = async (req, res) => {
             username: userData.name
         });
     } catch (error) {
-        console.error('Get change password error:', error);
+        logger.error('Get change password error: ',error.message);
         res.redirect('/pageNotFound');
     }
 };
@@ -437,7 +436,7 @@ const changePassword = async (req, res) => {
             return res.redirect('/login');
         }
 
-        console.log('Extracted userId:', userId);
+        logger.info(`Extracted userId: ${userId}`);
 
         if (!currentPassword || !newPassword) {
             return res.status(400).json({
@@ -454,10 +453,10 @@ const changePassword = async (req, res) => {
         }
 
         const dbUser = await User.findById(userId);
-        console.log('Database user found:', !!dbUser);
+        logger.info(`Database user found: ${dbUser}`);
 
         if (!dbUser) {
-            console.error('User not found in database with ID:', userId);
+            logger.info(`User not found in database with ID: ${userId}`);
             return res.status(404).json({
                 success: false,
                 message: 'User account not found. Please log in again.'
@@ -500,7 +499,7 @@ const changePassword = async (req, res) => {
             updatedAt: new Date()
         });
 
-        console.log('Password updated successfully for user:', userId);
+        logger.info(`Password updated successfully for user: ${userId}`);
 
 
         return res.json({
@@ -509,8 +508,7 @@ const changePassword = async (req, res) => {
         });
 
     } catch (error) {
-        console.error("Change password error:", error);
-
+        logger.error("Change password error: ", error.message);
         return res.status(500).json({
             success: false,
             message: 'An error occurred while changing your password. Please try again.'

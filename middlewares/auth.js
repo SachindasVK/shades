@@ -1,20 +1,22 @@
 const User = require('../models/userSchema')
 const Cart = require('../models/cartSchema')
+const logger = require('../helpers/logger')
+
 const userAuth = async (req, res, next) => {
   try {
     res.locals.isLoggedIn = false;
     res.locals.user = null;
 
     if (!req.session.user) {
-      return res.redirect('/login');
+      return res.redirect('/login')
     }
 
     const userId = req.session.user?._id || req.session.user;
     const user = await User.findById(userId);
 
     if (!user) {
-      req.session.destroy((err) => {
-        if (err) console.log('Error destroying session:', err);
+      req.session.destroy((error) => {
+        if (error) logger.error('Error destroying session:', + error.message)
         res.redirect('/login');
       });
       return;
@@ -22,8 +24,8 @@ const userAuth = async (req, res, next) => {
 
     if (user.isBlocked) {
       req.session.message = 'Access denied. Your account has been blocked.';
-      req.session.destroy((err) => {
-        if (err) console.log('Error destroying session:', err);
+      req.session.destroy((error) => {
+        if (error) logger.error('Error destroying session:', + error.message)
         res.redirect('/login');
       });
       return;
@@ -35,10 +37,10 @@ const userAuth = async (req, res, next) => {
 
     next();
   } catch (error) {
-    console.log('Error in userAuth middleware:', error);
-    req.session.destroy((err) => {
-      if (err) console.log('Error destroying session:', err);
-      res.status(500).send('Internal server error');
+    logger.error('Error in userAuth middleware:', + error.message)
+    req.session.destroy((error) => {
+      if (error) logger.error('Error destroying session:', + error.message)
+      res.status(500).send('Internal server error')
     });
   }
 };
@@ -46,24 +48,24 @@ const userAuth = async (req, res, next) => {
 
 
 const adminAuth = async (req, res, next) => {
-    try {
-        const adminId = req.session.admin;
+  try {
+    const adminId = req.session.admin;
 
-        if (!adminId) {
-            return res.redirect('/admin/login');
-        }
-
-        const adminUser = await User.findById(adminId);
-
-        if (adminUser && adminUser.isAdmin) {
-            next();
-        } else {
-            res.redirect('/admin/login');
-        }
-    } catch (error) {
-        console.error('Error in adminAuth middleware:', error);
-        res.status(500).send('Internal Server Error!');
+    if (!adminId) {
+      return res.redirect('/admin/login')
     }
+
+    const adminUser = await User.findById(adminId)
+
+    if (adminUser && adminUser.isAdmin) {
+      next();
+    } else {
+      res.redirect('/admin/login')
+    }
+  } catch (error) {
+    logger.error('Error in adminAuth middleware:', + error.message)
+    res.status(500).send('Internal Server Error!')
+  }
 };
 
 
@@ -96,7 +98,7 @@ const validateCartStock = async (req, res, next) => {
 };
 
 module.exports = {
-    userAuth,
-    adminAuth,
-    validateCartStock
+  userAuth,
+  adminAuth,
+  validateCartStock
 }

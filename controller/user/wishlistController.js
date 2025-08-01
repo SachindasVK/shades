@@ -1,6 +1,7 @@
 const User = require("../../models/userSchema");
 const Product = require("../../models/productSchema");
 const Wishlist = require("../../models/wishlistSchema");
+const logger = require('../../helpers/logger')
 
 const loadWishlist = async (req, res) => {
   try {
@@ -20,7 +21,7 @@ const loadWishlist = async (req, res) => {
         wishlistCount: 0,
       });
     }
-    // Extract productIds from wishlist.products
+
     const productIds = wishlist.products.map((item) => item.productId);
     const products = await Product.find({
       _id: { $in: productIds },
@@ -30,13 +31,11 @@ const loadWishlist = async (req, res) => {
 
     const validProductIds = products.map((product) => product._id.toString());
 
-    // Find invalid product entries to remove
     const invalidProducts = wishlist.products.filter(
       (item) => !validProductIds.includes(item.productId.toString())
     );
 
     if (invalidProducts.length > 0) {
-      // Remove invalid products from wishlist.
       await Wishlist.updateOne(
         { userId },
         {
@@ -48,7 +47,6 @@ const loadWishlist = async (req, res) => {
         }
       );
 
-      // Update wishlist.products locally as well
       wishlist.products = wishlist.products.filter((item) =>
         validProductIds.includes(item.productId.toString())
       );
@@ -61,7 +59,7 @@ const loadWishlist = async (req, res) => {
       wishlistCount: products.length,
     });
   } catch (error) {
-    console.error("Error in loadWishlist:", error);
+    logger.error("Error in loadWishlist:", error);
     res.redirect("/pageNotFound");
   }
 };
@@ -71,7 +69,6 @@ const addToWishlist = async (req, res) => {
     const userId = req.session.user;
     const { productId } = req.body;
 
-    // Check if user is logged in
     if (!userId) {
       return res.status(401).json({
         success: false,
@@ -79,7 +76,6 @@ const addToWishlist = async (req, res) => {
       });
     }
 
-    // Validate productId
     if (!productId) {
       return res.status(400).json({
         success: false,
@@ -87,7 +83,6 @@ const addToWishlist = async (req, res) => {
       });
     }
 
-    // Check if product exists
     const product = await Product.findById(productId);
     if (!product) {
       return res.status(404).json({
@@ -96,7 +91,6 @@ const addToWishlist = async (req, res) => {
       });
     }
 
-    // Find the user
     const user = await User.findById(userId);
     if (!user || user.isBlocked) {
       return res.status(404).json({
@@ -110,26 +104,21 @@ const addToWishlist = async (req, res) => {
       wishlist = new Wishlist({ userId, products: [] });
     }
 
-    // Check if product is already in wishlist
     const productIndex = wishlist.products.findIndex(
       (item) => item.productId.toString() === productId
     );
     let added = false;
 
     if (productIndex > -1) {
-      // Remove from wishlist if already exists
       wishlist.products.splice(productIndex, 1);
       added = false;
     } else {
-      // Add to wishlist if not exists
       wishlist.products.push({ productId, addedOn: new Date() });
       added = true;
     }
 
-    // Save the updated user
     await wishlist.save();
 
-    // Return success response
     res.status(200).json({
       success: true,
       added: added,
@@ -139,7 +128,7 @@ const addToWishlist = async (req, res) => {
       wishlistCount: wishlist.products.length,
     });
   } catch (error) {
-    console.error("Error in addToWishlist:", error);
+    logger.error("Error in addToWishlist:", error);
     res.status(500).json({
       success: false,
       message: "Internal server error",
@@ -147,7 +136,6 @@ const addToWishlist = async (req, res) => {
   }
 };
 
-// Fixed removeFromWishlist to handle both URL params and request body
 const removeFromWishlist = async (req, res) => {
   try {
     const userId = req.session.user;
@@ -175,7 +163,6 @@ const removeFromWishlist = async (req, res) => {
       });
     }
 
-    // Find user's wishlist document
     const wishlist = await Wishlist.findOne({ userId });
     if (!wishlist) {
       return res.status(404).json({
@@ -184,13 +171,11 @@ const removeFromWishlist = async (req, res) => {
       });
     }
 
-    // Remove product from wishlist
     const initialLength = wishlist.products.length;
     wishlist.products = wishlist.products.filter(
       (item) => item.productId.toString() !== productId
     );
 
-    // Check if item was actually removed
     if (wishlist.products.length === initialLength) {
       return res.status(404).json({
         success: false,
@@ -206,7 +191,7 @@ const removeFromWishlist = async (req, res) => {
       wishlistCount: wishlist.products.length,
     });
   } catch (error) {
-    console.error("Error in removeFromWishlist:", error);
+    logger.error("Error in removeFromWishlist:", error);
     res.status(500).json({
       success: false,
       message: "Internal server error",
@@ -219,7 +204,6 @@ const getWishlistStatus = async (req, res) => {
     const userId = req.session.user;
     const { productIds } = req.body;
 
-    // Check if user is logged in
     if (!userId) {
       return res.status(200).json({
         success: true,
@@ -227,7 +211,6 @@ const getWishlistStatus = async (req, res) => {
       });
     }
 
-    // Validate productIds
     if (!productIds || !Array.isArray(productIds)) {
       return res.status(400).json({
         success: false,
@@ -235,7 +218,6 @@ const getWishlistStatus = async (req, res) => {
       });
     }
 
-    // Find the user
     const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({
@@ -244,9 +226,7 @@ const getWishlistStatus = async (req, res) => {
       });
     }
 
-    // Find user's wishlist
     const wishlist = await Wishlist.findOne({ userId });
-    // Create status object for each product
     const wishlistStatus = {};
 
     if (wishlist && wishlist.products.length > 0) {
@@ -258,19 +238,16 @@ const getWishlistStatus = async (req, res) => {
         wishlistStatus[id] = productIdSet.has(id);
       });
     } else {
-      // If no wishlist, all are false
       productIds.forEach((id) => {
         wishlistStatus[id] = false;
       });
     }
-
-    // Return status for all products
     res.status(200).json({
       success: true,
       wishlistStatus,
     });
   } catch (error) {
-    console.error("Error in getWishlistStatus:", error);
+    logger.error("Error in getWishlistStatus:", error);
     res.status(500).json({
       success: false,
       message: "Internal server error",
@@ -291,7 +268,7 @@ const wishlistCount = async (req, res) => {
 
     res.json({ count });
   } catch (error) {
-    console.error('Error fetching wishlist count:', error);
+    logger.error('Error fetching wishlist count:', error);
     res.status(500).json({ count: 0 });
   }
 };

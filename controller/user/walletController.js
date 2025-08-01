@@ -23,10 +23,8 @@ const getWallet = async (req, res) => {
       });
     }
 
-    // Total referrals
     const totalReferrals = userDoc.redeemedUsers.length;
 
-    // Cashback earned (sum of all credit transactions)
     const totalEarned = wallet?.transactions
   .filter(txn =>
     txn.transactionType === 'credit' &&
@@ -35,8 +33,6 @@ const getWallet = async (req, res) => {
   )
   .reduce((sum, txn) => sum + txn.amount, 0);
 
-
-    // User info
     const user = {
       name: userDoc.name,
       image: userDoc.image || '',
@@ -46,7 +42,6 @@ const getWallet = async (req, res) => {
       referrals: userDoc.redeemedUsers
     };
 
-    // Sorted transactions
     const transactions = (wallet?.transactions || []).sort(
       (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
     );
@@ -61,7 +56,7 @@ const getWallet = async (req, res) => {
     });
 
   } catch (err) {
-    console.error(err);
+    logger.error(err);
     res.status(500).send('Error loading wallet');
   }
 };
@@ -91,7 +86,7 @@ const createWalletRazorpayOrder = async (req, res) => {
       }
     });
   } catch (err) {
-    console.error("Create Razorpay order error:", err);
+    logger.error("Create Razorpay order error:", err);
     res.json({ success: false });
   }
 }
@@ -108,7 +103,7 @@ const verifyWalletPayment = async (req, res) => {
     if (expectedSignature !== razorpay_signature) {
       return res.json({ success: false, message: "Signature mismatch" });
     }
-    // Add amount to wallet
+
     let wallet = await Wallet.findOne({ userId: req.user._id });
 
     if (!wallet) {
@@ -135,7 +130,7 @@ const verifyWalletPayment = async (req, res) => {
     res.json({ success: true });
 
   } catch (err) {
-    console.error("Verify payment error:", err);
+    logger.error("Verify payment error:", err);
     res.json({ success: false });
   }
 }
@@ -167,7 +162,7 @@ const getReferrals = async (req, res) => {
     });
 
   } catch (error) {
-    console.error("Error in getReferrals:", error);
+    logger.error("Error in getReferrals:", error);
     res.status(500).render('page-500', {
       isLoggedIn: true,
       username: '',

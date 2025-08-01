@@ -2,14 +2,13 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 
-// Ensure the upload directory exists
 const ensureDirectoryExists = (dir) => {
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir, { recursive: true });
   }
 };
 
-// Storage for product images
+// Storage product images
 const productStorage = multer.diskStorage({
   destination: (req, file, cb) => {
     const uploadPath = path.join(__dirname, '../public/uploads/product-images');
@@ -22,7 +21,7 @@ const productStorage = multer.diskStorage({
   }
 });
 
-// Storage for brand logos
+// Storage brand logos
 const brandStorage = multer.diskStorage({
   destination: (req, file, cb) => {
     const uploadPath = path.join(__dirname, '../public/uploads/brands');
@@ -35,7 +34,7 @@ const brandStorage = multer.diskStorage({
   }
 });
 
-//storage for user images
+//storage user images
 const userStorage = multer.diskStorage({
   destination: (req, file, cb) => {
     const uploadPath = path.join(__dirname, '../public/uploads/userProfileimages');
@@ -61,7 +60,7 @@ const fileFilter = (req, file, cb) => {
 const productUpload = multer({
   storage: productStorage,
   limits: {
-    fileSize: 5 * 1024 * 1024 // 5MB max file size
+    fileSize: 5 * 1024 * 1024
   },
   fileFilter: fileFilter
 });
@@ -69,7 +68,7 @@ const productUpload = multer({
 const brandUpload = multer({
   storage: brandStorage,
   limits: {
-    fileSize: 2 * 1024 * 1024 // 2MB max file size
+    fileSize: 5 * 1024 * 1024
   },
   fileFilter: fileFilter
 });
@@ -80,7 +79,7 @@ const brandUpload = multer({
 const userUpload = multer({
   storage: userStorage,
   limits: {
-    fileSize: 2 * 1024 * 1024 // 2MB max file size
+    fileSize: 5 * 1024 * 1024
   },
   fileFilter: fileFilter
 });
@@ -89,4 +88,4 @@ module.exports = {
   productUpload,
   brandUpload,
   userUpload,
-};
+}

@@ -1,0 +1,83 @@
+[01-08-2025 08:12:25] INFO: Server Running http://localhost:3000
+[01-08-2025 08:12:25] INFO: DB Connected!
+[01-08-2025 08:12:52] INFO: Server Running http://localhost:3000
+[01-08-2025 08:12:52] INFO: DB Connected!
+[01-08-2025 08:13:04] INFO: Server Running http://localhost:3000
+[01-08-2025 08:13:04] INFO: DB Connected!
+[01-08-2025 08:13:11] INFO: Server Running http://localhost:3000
+[01-08-2025 08:13:11] INFO: DB Connected!
+[01-08-2025 08:13:25] INFO: Server Running http://localhost:3000
+[01-08-2025 08:13:25] INFO: DB Connected!
+[01-08-2025 08:13:31] INFO: Server Running http://localhost:3000
+[01-08-2025 08:13:33] INFO: Server Running http://localhost:3000
+[01-08-2025 08:13:33] INFO: DB Connected!
+[01-08-2025 08:13:53] INFO: Server Running http://localhost:3000
+[01-08-2025 08:13:53] INFO: DB Connected!
+[01-08-2025 08:14:01] INFO: Server Running http://localhost:3000
+[01-08-2025 08:14:01] INFO: DB Connected!
+[01-08-2025 08:14:04] INFO: Server Running http://localhost:3000
+[01-08-2025 08:14:04] INFO: DB Connected!
+[01-08-2025 08:14:07] INFO: Server Running http://localhost:3000
+[01-08-2025 08:14:08] INFO: DB Connected!
+[01-08-2025 08:14:27] INFO: Server Running http://localhost:3000
+[01-08-2025 08:14:27] INFO: DB Connected!
+[01-08-2025 08:14:36] INFO: Server Running http://localhost:3000
+[01-08-2025 08:14:37] INFO: DB Connected!
+[01-08-2025 08:15:10] INFO: Server Running http://localhost:3000
+[01-08-2025 08:15:10] INFO: DB Connected!
+[01-08-2025 08:18:13] INFO: Server Running http://localhost:3000
+[01-08-2025 08:18:13] INFO: DB Connected!
+[01-08-2025 08:28:50] INFO: Password match result: false
+[01-08-2025 08:28:50] INFO: Password mismatch for user: sachin@gmail.com
+[01-08-2025 08:29:18] INFO: Password match result: true
+[01-08-2025 08:29:18] INFO: Login successful for user: sachin@gmail.com
+[01-08-2025 08:29:18] INFO: Session regenerated, redirecting to shop
+[01-08-2025 08:29:35] INFO: Selected address saved in session:  undefined
+[01-08-2025 08:29:36] INFO: {
+  isDefault: true,
+  addressType: 'Home',
+  name: 'sachin vk',
+  country: 'India',
+  city: 'manjeri',
+  area: 'kuthiradath H thrikkalangode po manjeri.',
+  flat: '78',
+  landMark: 'near Store',
+  state: 'Kerala',
+  pincode: 676123,
+  phone: '9995971320',
+  email: 'sachin@gmail.com',
+  _id: new ObjectId('688a2f6982a569775e485699')
+}
+[01-08-2025 09:02:41] INFO: Selected address saved in session:  [object Object]
+[01-08-2025 09:02:42] INFO: {
+  isDefault: true,
+  addressType: 'Home',
+  name: 'sachin vk',
+  country: 'India',
+  city: 'manjeri',
+  area: 'kuthiradath H thrikkalangode po manjeri.',
+  flat: '78',
+  landMark: 'near Store',
+  state: 'Kerala',
+  pincode: 676123,
+  phone: '9995971320',
+  email: 'sachin@gmail.com',
+  _id: new ObjectId('688a2f6982a569775e485699')
+}
+[01-08-2025 09:04:09] INFO: Selected address saved in session:  [object Object]
+[01-08-2025 09:04:25] INFO: Selected address saved in session:  [object Object]
+[01-08-2025 09:04:27] INFO: {
+  isDefault: true,
+  addressType: 'Home',
+  name: 'sachin vk',
+  country: 'India',
+  city: 'manjeri',
+  area: 'kuthiradath H thrikkalangode po manjeri.',
+  flat: '78',
+  landMark: 'near Store',
+  state: 'Kerala',
+  pincode: 676123,
+  phone: '9995971320',
+  email: 'sachin@gmail.com',
+  _id: new ObjectId('688a2f6982a569775e485699')
+}

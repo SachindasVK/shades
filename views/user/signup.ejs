@@ -8,18 +8,23 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@700&display=swap"
-        rel="stylesheet">
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@700&display=swap"
+    rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet">
-
+    rel="stylesheet">
+    
     <style>
         .small-swal {
-            width: 600px !important;
+            width: 500px !important;
             font-size: 14px;
             padding: 1rem;
         }
-
+        
+        body.swal2-shown {
+            padding-right: 0 !important;
+            overflow-x: hidden !important;
+            overflow-y: auto !important;
+        }
         .small-title {
             font-size: 18px !important;
         }
@@ -32,6 +37,8 @@
         body {
             font-family: 'Inter', sans-serif;
         }
+
+
 
         .font-playfair {
             font-family: 'Playfair Display', serif;
@@ -262,8 +269,11 @@
                 <h2 class="text-3xl font-semibold text-white">SHADES</h2>
                 <div class="gradient-line my-2 mx-auto w-16"></div>
                 <p class="text-sm text-white mt-2">Create an account to discover premium eyewear</p>
+                <p class="text-sm text-white bg-red-600"><%=message%></p>
             </div>
-
+            <div>
+                
+            </div>
 
             <form class="space-y-4 text-sm sm:text-base" method="post" action="/signup" id="signform">
                 <div>
@@ -384,7 +394,7 @@
             referralCodeInput.addEventListener('blur', () => {
                 const val = referralCodeInput.value.trim();
                 if (val && !/^[A-Z0-9]{6,10}$/i.test(val)) {
-                     Swal.fire({
+                    Swal.fire({
                         icon: 'warning',
                         title: 'Hold on!',
                         text: 'Referral code must be 6–10 characters, letters or numbers.',

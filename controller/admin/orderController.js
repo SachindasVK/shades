@@ -3,6 +3,7 @@ const User = require('../../models/userSchema');
 const Product = require('../../models/productSchema')
 const Wallet = require('../../models/walletSchema')
 const Coupon = require('../../models/couponSchema')
+const logger = require('../../helpers/logger')
 
 const viewAllOrders = async (req, res) => {
   try {
@@ -25,14 +26,12 @@ const viewAllOrders = async (req, res) => {
       query.status = status.toLowerCase();
     }
 
-    // Build sort object
     let sortOption = {};
     if (sort === 'date-desc') sortOption.createdAt = -1;
     else if (sort === 'date-asc') sortOption.createdAt = 1;
     else if (sort === 'total-desc') sortOption.finalAmount = -1;
     else if (sort === 'total-asc') sortOption.finalAmount = 1;
 
-    // Fetch paginated orders
     const orders = await Order.find(query)
       .populate('userId', 'name email')
       .sort(sortOption)
@@ -53,7 +52,7 @@ const viewAllOrders = async (req, res) => {
       status,
     });
   } catch (error) {
-    console.error('Error fetching orders:', error);
+    logger.error('Error fetching orders:', error);
     res.status(500).render('error', {
       message: 'Failed to load order management page',
     });
@@ -65,7 +64,6 @@ const updateOrderStatus = async (req, res) => {
   const { status } = req.body;
 
   try {
-    // Validate status
     const validStatuses = [
       'pending',
       'confirmed',
@@ -83,7 +81,6 @@ const updateOrderStatus = async (req, res) => {
       });
     }
 
-    // Find and update the order
     const order = await Order.findOne({ orderId }).populate('userId');
     if (!order) {
       return res.status(404).json({
@@ -94,12 +91,9 @@ const updateOrderStatus = async (req, res) => {
 
     const previousStatus = order.status;
 
-    // Update the status and relevant fields
     order.status = status;
     order.updatedOn = Date.now();
 
-
-    // Handle specific status updates
     if (status === 'cancelled') {
       order.cancelledAt = Date.now();
 
@@ -116,7 +110,8 @@ const updateOrderStatus = async (req, res) => {
       }
 
       // Process refund if payment was made online or via wallet
-      if (order.paymentMethod === 'online' || order.paymentMethod === 'wallet') {
+      const payment = ['online', 'wallet']
+      if (payment.includes(order.paymentMethod)) {
         await processRefund(order.userId._id, order.finalAmount, orderId, 'Order cancellation');
       }
 
@@ -154,7 +149,7 @@ const updateOrderStatus = async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Error updating order status:', error);
+    logger.error('Error updating order status:', error);
     return res.status(500).json({
       success: false,
       message: 'Server error while updating status',
@@ -168,7 +163,6 @@ async function processRefund(userId, amount, orderId, reason) {
     let wallet = await Wallet.findOne({ userId });
 
     if (!wallet) {
-      // Create new wallet if doesn't exist
       wallet = new Wallet({
         userId,
         balance: 0,
@@ -193,15 +187,15 @@ async function processRefund(userId, amount, orderId, reason) {
 
     await wallet.save();
 
-   
+
     await User.findByIdAndUpdate(userId, {
       $inc: { wallet: amount }
     });
 
-    console.log(`Refunded ₹${amount} to user ${userId} for order ${orderId}`);
+    logger.info(`Refunded ₹${amount} to user ${userId} for order ${orderId}`);
 
   } catch (error) {
-    console.error('Error processing refund:', error);
+    logger.error('Error processing refund:', error);
     throw error;
   }
 }
@@ -211,7 +205,7 @@ const getOrderDetails = async (req, res) => {
   try {
     const { orderId } = req.params
 
-    console.log('Requested Order ID:', orderId);
+    logger.info(`Requested Order ID: ${orderId}`);
 
     const order = await Order.findOne({ orderId })
       .populate('userId', 'name email')
@@ -226,7 +220,7 @@ const getOrderDetails = async (req, res) => {
       order
     })
   } catch (error) {
-    console.error('Error fetching order details:', error);
+    logger.error('Error fetching order details:', error);
     res.status(500).json({ success: false, message: 'Server error' });
   }
 }
@@ -277,7 +271,7 @@ const acceptReturnRequest = async (req, res) => {
         }
       }
 
-      // Process refund for returned items
+      // refund for returned items
       await processRefund(order.userId._id, order.finalAmount, orderId, 'Order return');
       order.requestStatus = 'approved';
     }
@@ -328,7 +322,7 @@ const acceptReturnItemRequest = async (req, res) => {
     item.returnProcessedAt = new Date();
     item.refundedAt = new Date();
 
-  
+
     if (req.body.cancelReason) {
       item.cancelReason = req.body.cancelReason;
     }
@@ -408,7 +402,7 @@ const acceptReturnItemRequest = async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Accept item return error:', error);
+    logger.error('Accept item return error:', error);
     return res.status(500).json({ success: false, message: 'Server error' });
   }
 };
@@ -451,7 +445,7 @@ const rejectItemReturnRequest = async (req, res) => {
 
     // If no more pending returns and order was in return_requested state
     if (!hasAnyPendingReturns && order.status === 'return_requested') {
-     
+
       const allItemsDelivered = order.orderedItems.every(orderItem =>
         orderItem.status === 'return_rejected'
       );
@@ -471,7 +465,7 @@ const rejectItemReturnRequest = async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Reject item return error:', error);
+    logger.error('Reject item return error:', error);
     return res.status(500).json({ success: false, message: 'Server error' });
   }
 };
@@ -498,11 +492,11 @@ const rejectOrderReturn = async (req, res) => {
 
 
     for (const item of order.orderedItems) {
-        item.status = 'return_rejected';
-        item.requestStatus = 'rejected';
-        item.rejectionReason = reason;
-        item.returnProcessedAt = new Date();
-        item.updatedOn= new Date()
+      item.status = 'return_rejected';
+      item.requestStatus = 'rejected';
+      item.rejectionReason = reason;
+      item.returnProcessedAt = new Date();
+      item.updatedOn = new Date()
     }
 
 
@@ -520,7 +514,7 @@ const rejectOrderReturn = async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Reject order return error:', error);
+    logger.error('Reject order return error:', error);
     return res.status(500).json({ success: false, message: 'Server error' });
   }
 };

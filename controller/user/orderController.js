@@ -10,28 +10,26 @@ const getOrders = async (req, res) => {
     try {
         const userId = req.session.user;
 
-        if (!userId) {
-            return res.redirect('/login');
-        }
+        if (!userId) return res.redirect('/login');
 
         const userData = await User.findById(userId);
-        if (!userData) {
-            return res.redirect('/pageNotFound');
-        }
+        if (!userData) return res.redirect('/pageNotFound');
 
-        const { status, timeFilter, page = 1, limit = 5 } = req.query;
+        const { status, page = 1, limit = 5, timeFilter } = req.query;
 
         let query = { userId };
 
-        // status filter
+        // Filter by status
         if (status && status !== 'All') {
             const statusValue = status.replace(/[_\s]/g, ' ').trim();
-            query.status = new RegExp(`^${statusValue}$`, 'i')
+            query.status = new RegExp(`^${statusValue}$`, 'i');
         }
 
+        // Filter by time
+        let cutoffDate = null;
         if (timeFilter && timeFilter !== 'All') {
             const currentDate = new Date();
-            let cutoffDate = new Date();
+            cutoffDate = new Date();
 
             switch (timeFilter) {
                 case 'Last30Days':
@@ -51,6 +49,7 @@ const getOrders = async (req, res) => {
                 query.createdOn = { $gte: cutoffDate };
             }
         }
+
         const pageNum = parseInt(page);
         const limitNum = parseInt(limit);
         const skip = (pageNum - 1) * limitNum;
@@ -58,7 +57,6 @@ const getOrders = async (req, res) => {
         const totalOrders = await Order.countDocuments(query);
         const totalPages = Math.ceil(totalOrders / limitNum);
 
-        // Fetch filtered and paginated orders
         const orders = await Order.find(query)
             .populate('orderedItems.product')
             .sort({ createdOn: -1 })
@@ -78,6 +76,7 @@ const getOrders = async (req, res) => {
                 }
             });
         }
+
         res.render('order', {
             orders,
             username: userData.name,
@@ -95,9 +94,8 @@ const getOrders = async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Get Orders Error:', error);
+        logger.error('Get Orders Error:', error);
 
-       
         if (req.xhr || req.headers.accept.indexOf('json') > -1) {
             return res.status(500).json({
                 success: false,
@@ -106,72 +104,6 @@ const getOrders = async (req, res) => {
         }
 
         res.redirect('/pageNotFound');
-    }
-};
-
-const filterOrders = async (req, res) => {
-    try {
-        const userId = req.session.user;
-
-        if (!userId) {
-            return res.status(401).json({ success: false, message: 'Unauthorized' });
-        }
-
-        const { status, timeFilter, page = 1, limit = 5 } = req.body;
-
-        let query = { userId };
-        if (status && status !== 'All') {
-            const statusValue = status.replace(/[_\s]/g, ' ').trim();
-            query.status = new RegExp(`^${statusValue}$`, 'i');
-        }
-
-        if (timeFilter && timeFilter !== 'All') {
-            const currentDate = new Date();
-            let cutoffDate = new Date();
-
-            switch (timeFilter) {
-                case 'Last30Days':
-                    cutoffDate.setDate(currentDate.getDate() - 30);
-                    break;
-                case 'Last3Months':
-                    cutoffDate.setMonth(currentDate.getMonth() - 3);
-                    break;
-                case 'Last6Months':
-                    cutoffDate.setMonth(currentDate.getMonth() - 6);
-                    break;
-            }
-
-            if (cutoffDate) {
-                query.createdOn = { $gte: cutoffDate };
-            }
-        }
-
-        const pageNum = parseInt(page);
-        const limitNum = parseInt(limit);
-        const skip = (pageNum - 1) * limitNum;
-
-        const totalOrders = await Order.countDocuments(query);
-        const orders = await Order.find(query)
-            .populate('orderedItems.product')
-            .sort({ createdOn: -1 })
-            .skip(skip)
-            .limit(limitNum);
-
-        res.json({
-            success: true,
-            orders,
-            pagination: {
-                currentPage: pageNum,
-                totalPages: Math.ceil(totalOrders / limitNum),
-                totalOrders,
-                hasNext: pageNum < Math.ceil(totalOrders / limitNum),
-                hasPrev: pageNum > 1
-            }
-        });
-
-    } catch (error) {
-        console.error('Filter Orders Error:', error);
-        res.status(500).json({ success: false, message: 'Error filtering orders' });
     }
 };
 
@@ -207,7 +139,7 @@ const getOrderDetails = async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Get Order Details Error:', error);
+        logger.error('Get Order Details Error:', error);
         res.redirect('/pageNotFound');
     }
 };
@@ -344,7 +276,7 @@ const downloadInvoice = async (req, res) => {
         doc.end();
 
     } catch (err) {
-        console.error("Invoice error:", err);
+        logger.error("Invoice error:", err);
         res.status(500).send("Internal Server Error");
     }
 };
@@ -443,7 +375,7 @@ const cancelOrder = async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Cancel Order Error:', error);
+        logger.error('Cancel Order Error:', error);
         res.status(500).json({
             success: false,
             message: 'An error occurred while cancelling the order'
@@ -474,7 +406,6 @@ const cancelSingleItem = async (req, res) => {
         }
 
 
-        // Update the item status
         item.status = 'cancelled';
         item.cancelReason = cancelReason;
         item.cancelledAt = new Date();
@@ -494,8 +425,6 @@ const cancelSingleItem = async (req, res) => {
             }
         );
 
-
-        // recalculate finalAmount, coupon logic etc if needed
         const activeItems = order.orderedItems.filter(item => item.status !== 'cancelled');
         const activeTotal = activeItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
@@ -505,17 +434,14 @@ const cancelSingleItem = async (req, res) => {
         if (order.paymentMethod === 'wallet' || order.paymentMethod === 'online') {
             const refundAmountRaw = item.price * item.quantity;
 
-            // Total price of all items before cancellation
             const totalBeforeCancellation = order.orderedItems.reduce((sum, i) => sum + i.price * i.quantity, 0);
 
-            // Get coupon details 
             const coupon = order.couponCode
                 ? await Coupon.findOne({ name: order.couponCode, isDeleted: false })
                 : null;
 
             let refundAmount = refundAmountRaw;
 
-            // base discount
             if (order.discount && totalBeforeCancellation > 0) {
                 const discountShare = (refundAmount / totalBeforeCancellation) * order.discount;
                 refundAmount = refundAmount - discountShare;
@@ -524,16 +450,13 @@ const cancelSingleItem = async (req, res) => {
 
 
             if (coupon && totalBeforeCancellation >= coupon.minimumPrice) {
-                // Calculate actual discount used
                 const totalCouponDiscount = Math.min(
                     (totalBeforeCancellation * coupon.discountPercentage) / 100,
                     coupon.maxDiscount
                 );
 
-                // Calculate this item's share of discount
                 const itemDiscountShare = (refundAmountRaw / totalBeforeCancellation) * totalCouponDiscount;
-
-                // Reduce refund by item's share
+            
                 refundAmount = refundAmountRaw - itemDiscountShare;
                 refundAmount = Math.floor(refundAmount);
 
@@ -544,7 +467,6 @@ const cancelSingleItem = async (req, res) => {
                 }
             }
 
-            // Refund to wallet
             let wallet = await Wallet.findOne({ userId });
             if (!wallet) {
                 wallet = new Wallet({
@@ -574,14 +496,12 @@ const cancelSingleItem = async (req, res) => {
         }
         res.status(200).json({ success: true, message: "Item cancelled successfully" });
     } catch (error) {
-        console.error("Cancel item error:", error);
+        logger.error("Cancel item error:", error);
         res.status(500).json({ success: false, message: "Server error" });
     }
 }
 
 
-
-// Return request handler 
 const requestReturn = async (req, res) => {
     try {
         const { orderId } = req.params;
@@ -634,7 +554,7 @@ const requestReturn = async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Return Request Error:', error);
+        logger.error('Return Request Error:', error);
         res.status(500).json({ success: false, message: 'Server error' });
     }
 };
@@ -657,7 +577,7 @@ const getRazorpayOrder = async (req, res) => {
             amount: newOrder.amount,
         });
     } catch (error) {
-        console.error(error);
+        logger.error(error);
         res.json({ success: false });
     }
 }
@@ -700,7 +620,6 @@ const returnOrderItem = async (req, res) => {
             });
         }
 
-        // Update subdocument
         item.status = 'return_requested';
         item.returnReason = returnItemReason;
         item.requestStatus = 'pending';
@@ -709,7 +628,6 @@ const returnOrderItem = async (req, res) => {
         if (allItemsReturned) {
             order.status = 'return_requested';
         }
-        // Save parent document
         await order.save();
 
         return res.json({
@@ -717,7 +635,7 @@ const returnOrderItem = async (req, res) => {
             message: 'Return request submitted successfully'
         });
     } catch (error) {
-        console.error('Return item error:', error);
+        logger.error('Return item error:', error);
         return res.status(500).json({ success: false, message: 'Internal server error', error });
     }
 };
@@ -727,7 +645,6 @@ module.exports = {
     getOrderDetails,
     downloadInvoice,
     cancelOrder,
-    filterOrders,
     requestReturn,
     getRazorpayOrder,
     cancelSingleItem,

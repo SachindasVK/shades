@@ -3,11 +3,12 @@
  const dotenv = require("dotenv")
  const session = require('express-session') 
  const passport = require('./config/passport')
- dotenv.config()
  const db = require('./config/db')
+ const logger = require('./helpers/logger')
  const userRouter = require('./routes/userRouter')
  const adminRouter = require('./routes/adminRouter')
-
+ 
+ dotenv.config()
  db()
  const app = express()
 
@@ -39,7 +40,7 @@ app.set("views",[path.join(__dirname,"views/user"),path.join(__dirname,"views/ad
 
  const PORT = process.env.PORT || 3000
  app.listen(PORT,()=>{
-    console.log(`Server Running http://localhost:${PORT}`)
+   logger.info(`Server Running http://localhost:${PORT}`)
  })
 
 module.exports = app

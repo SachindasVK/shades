@@ -2,26 +2,24 @@ const User = require('../../models/userSchema')
 const Order = require('../../models/orderSchema')
 const Product = require('../../models/productSchema')
 const Coupon = require('../../models/couponSchema')
-const mongoose = require('mongoose')
 const bcrypt = require('bcrypt')
+const logger = require('../../helpers/logger')
 
 const logout = async (req, res) => {
   try {
-    // Destroy the session to log out the admin
     req.session.destroy(err => {
       if (err) {
-        console.log('Error destroying session:', err);
-        return res.redirect('/pageerror');
+        logger.error('Error destroying session:', err);
+        return res.redirect('/error');
       }
 
-      // Clear the cookie to avoid session traces
-      res.clearCookie('connect.sid'); // depends on your session cookie name
-      console.log('logout success')
+      res.clearCookie('connect.sid'); 
+      logger.info('logout success')
 
       res.redirect('/admin/login');
     });
   } catch (error) {
-    console.log('Unexpected error during logout:', error);
+    logger.error('Unexpected error during logout:', error);
     res.redirect('/admin/error');
   }
 };
@@ -31,7 +29,7 @@ const error = async (req, res) => {
   try {
     res.render('error', { message: 'An error occurred while processing your request.' });
   } catch (error) {
-    console.error('Error rendering the error page:', error);
+    logger.error('Error rendering the error page:', error);
     res.status(500).send('An error occurred while rendering the error page');
   }
 }
@@ -62,7 +60,7 @@ const login = async (req, res) => {
       return res.render('adminLogin', { message: 'No admin account found' });
     }
   } catch (error) {
-    console.log('login error!', error);
+    logger.error('login error!', error);
     return res.redirect('/admin/error');
   }
 };
@@ -187,7 +185,7 @@ const loadDashboard = async (req, res) => {
       topProducts
     })
   } catch (error) {
-    console.log('dashboard error', error)
+    logger.error('dashboard error', error)
     res.redirect('/admin/error')
   }
 }
@@ -264,7 +262,7 @@ const viewAllRecentActivities = async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Error fetching orders:', error);
+    logger.error('Error fetching orders:', error);
     res.status(500).render('error', {
       message: 'Failed to load order management page',
     });
@@ -316,7 +314,7 @@ const getSalesChart = async (req, res) => {
 
     res.json({ success: true, data: sales });
   } catch (err) {
-    console.error(err);
+    logger.error(err);
     res.status(500).json({ success: false, message: 'Failed to load chart' });
   }
 };
@@ -330,7 +328,6 @@ const getTopSalesData = async (req, res) => {
 
     let pipeline = [];
 
-    // Base match stage - only count from confirmed/delivered orders
     const matchStage = {
       $match: {
         status: 'delivered'
@@ -501,7 +498,7 @@ const getTopSalesData = async (req, res) => {
 
     res.json({ success: true, data: result });
   } catch (error) {
-    console.error('Error in getTopSalesData:', error);
+    logger.error('Error in getTopSalesData:', error);
     res.status(500).json({
       success: false,
       message: 'Chart data error',

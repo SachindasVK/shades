@@ -33,7 +33,7 @@ const brandSchema = new Schema({
   }
 }, { timestamps: true });
 
-// Create a case-insensitive unique index on the name field
+
 brandSchema.index({ name: 1 }, { unique: true, collation: { locale: 'en', strength: 2 } });
 
 const Brand = mongoose.model('Brand', brandSchema);

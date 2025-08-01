@@ -5,7 +5,6 @@ const router = express.Router()
 
 //order management
 router.get('/orders', userAuth, orderController.getOrders)
-router.post('/orders/filter', userAuth, orderController.filterOrders)
 //order details
 router.get('/order/details/:id', userAuth, orderController.getOrderDetails)
 router.get('/order/invoice/:id', userAuth, orderController.downloadInvoice)

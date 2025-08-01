@@ -40,7 +40,7 @@ const getAddress = async (req, res) => {
             title: 'Manage Addresses'
         })
     } catch (error) {
-        console.error('Get address error:', error);
+        logger.error('Get address error:', error);
         res.redirect('/pageNotFound')
     }
 }
@@ -55,7 +55,6 @@ const addAddress = async (req, res) => {
         if (!userId) {
             return res.status(401).json({ success: false, message: 'User not authenticated' });
         }
-console.log(req.body)
         const {
             fullName,
             phone,
@@ -69,7 +68,6 @@ console.log(req.body)
             isDefault
         } = req.body;
 
-        // Validate required fields
         if (!fullName || !phone || !flat || !area || !pincode || !city || !state || !addressType) {
             return res.status(400).json({
                 success: false,
@@ -77,7 +75,6 @@ console.log(req.body)
             });
         }
 
-        // Validate phone number (10 digits)
         if (!/^\d{10}$/.test(phone)) {
             return res.status(400).json({
                 success: false,
@@ -92,7 +89,6 @@ console.log(req.body)
             });
         }
 
-        // Validate pincode (6 digits)
         if (!/^\d{6}$/.test(pincode)) {
             return res.status(400).json({
                 success: false,
@@ -100,10 +96,6 @@ console.log(req.body)
             });
         }
 
-        
-
-
-        // Get user email for the address
         const user = await User.findById(userId);
         if (!user) {
             return res.status(404).json({ success: false, message: 'User not found' });
@@ -187,7 +179,7 @@ if (addressDoc && Array.isArray(addressDoc.address)) {
         });
 
     } catch (error) {
-        console.error('Error adding address:', error);
+        logger.error('Error adding address:', error);
         res.status(500).json({
             success: false,
             message: 'Server error occurred while adding address'
@@ -212,8 +204,7 @@ const updateAddress = async (req, res) => {
             addressType,
             isDefault
         } = req.body;
-console.log(flat)
-        // Validation
+
         if (!fullName || !phone || !flat || !area || !pincode || !city || !state || !addressType) {
             return res.status(400).json({
                 success: false,
@@ -221,15 +212,20 @@ console.log(flat)
             });
         }
 
-        // Validate phone number (10 digits)
-        if (!/^\d{10}$/.test(phone)) {
+          if (!/^\d{10}$/.test(phone)) {
             return res.status(400).json({
                 success: false,
-                message: 'Please enter a valid 10-digit mobile number'
+                message: 'Phone number must be 10 digits'
             });
         }
 
-        // Validate pincode (6 digits)
+         if  (!/^[6-9]\d{9}$/.test(phone)) {
+            return res.status(400).json({
+                success: false,
+                message: 'please enter a valid phone number'
+            });
+        }
+
         if (!/^\d{6}$/.test(pincode)) {
             return res.status(400).json({
                 success: false,
@@ -245,7 +241,6 @@ console.log(flat)
             });
         }
 
-        // Find the address document
         const addressDoc = await Address.findOne({ userId: userId });
         if (!addressDoc) {
             return res.status(404).json({
@@ -254,7 +249,6 @@ console.log(flat)
             });
         }
 
-        // Find the specific address to update
         const addressIndex = addressDoc.address.findIndex(addr => addr._id.toString() === addressId);
         if (addressIndex === -1) {
             return res.status(404).json({
@@ -263,7 +257,6 @@ console.log(flat)
             });
         }
 
-        // If this address is being set as default, unset others
         if (isDefault) {
             addressDoc.address.forEach((addr, index) => {
                 if (index !== addressIndex) {
@@ -272,7 +265,6 @@ console.log(flat)
             });
         }
 
-        // Update the address
         const addrToUpdate = addressDoc.address[addressIndex];
 
         addrToUpdate.name = fullName.trim();
@@ -298,7 +290,7 @@ console.log(flat)
         });
 
     } catch (error) {
-        console.error('Update address error:', error);
+        logger.error('Update address error:', error);
         res.status(500).json({
             success: false,
             message: 'Failed to update address. Please try again.'
@@ -327,14 +319,8 @@ const deleteAddress = async (req, res) => {
                 message: 'Address not found'
             });
         }
-
-        // Check if we're deleting the default address
         const isDefaultAddress = addressDoc.address[addressIndex].isDefault;
-
-        // Remove the address
         addressDoc.address.splice(addressIndex, 1);
-
-        // If we deleted the default address and there are other addresses, make the first one default
         if (isDefaultAddress && addressDoc.address.length > 0) {
             addressDoc.address[0].isDefault = true;
         }
@@ -347,7 +333,7 @@ const deleteAddress = async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Delete address error:', error);
+        logger.error('Delete address error:', error);
         res.status(500).json({
             success: false,
             message: 'Failed to delete address. Please try again.'

@@ -8,6 +8,7 @@ const Product = require('../../models/productSchema')
 const razorpay = require('../../config/razorpay')
 const crypto = require('crypto')
 const mongoose = require('mongoose');
+const logger = require('../../helpers/logger')
 
 const getSelectAddress = async (req, res) => {
   try {
@@ -19,7 +20,7 @@ const getSelectAddress = async (req, res) => {
 
     const addressDoc = await Address.findOne({ userId });
     const addresses = addressDoc ? addressDoc.address : [];
-    console.log("Selected address saved in session:", req.session.selectedAddress);
+    logger.info(`Selected address saved in session:  ${req.session.selectedAddress}`);
 
     res.render('selectAddress', {
       user: userData,
@@ -29,7 +30,7 @@ const getSelectAddress = async (req, res) => {
       selectedAddress: req.session.selectedAddress || null
     });
   } catch (error) {
-    console.log('Error loading addresses:', error);
+    logger.error('Error loading addresses:', error);
     res.redirect('/cart');
   }
 }
@@ -70,7 +71,7 @@ const selectAddress = async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Error selecting address:', error);
+    logger.error('Error selecting address:', error);
     res.status(500).json({
       success: false,
       message: 'Server error occurred while selecting address'
@@ -103,7 +104,7 @@ const loadShipping = async (req, res) => {
 
   
     const selectedAddress = userAddresses.address.find(addr => addr._id.toString() === addressId);
-    console.log(selectedAddress)
+    logger.info(selectedAddress)
     if (!selectedAddress) {
       return res.status(404).json({
         success: false,
@@ -129,7 +130,7 @@ const loadShipping = async (req, res) => {
   
     req.session.save((err) => {
       if (err) {
-        console.error('Session save error:', err);
+        logger.error('Session save error:', err);
         return res.status(500).json({
           success: false,
           message: 'Failed to save address selection. Please try again.'
@@ -144,7 +145,7 @@ const loadShipping = async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Error proceeding to shipping:', error);
+    logger.error('Error proceeding to shipping:', error);
     res.status(500).json({
       success: false,
       message: 'Something went wrong. Please try again.'
@@ -170,7 +171,7 @@ const getShipping = async (req, res) => {
       username: user?.name || "User"
     });
   } catch (error) {
-    console.error("Error loading shipping page:", error);
+    logger.error("Error loading shipping page:", error);
     res.status(500).send("Internal Server Error");
   }
 };
@@ -195,7 +196,7 @@ const proceedToPayment = async (req, res) => {
       redirectUrl: "/payment"
     });
   } catch (error) {
-    console.error("Error proceeding to payment:", error);
+    logger.error("Error proceeding to payment:", error);
     return res.status(500).json({
       success: false,
       message: "Something went wrong while proceeding to payment"
@@ -283,7 +284,7 @@ const loadPayment = async (req, res) => {
     });
 
   } catch (error) {
-    console.error("Error rendering payment page:", error.message);
+    logger.error("Error rendering payment page:", error.message);
     res.status(500).send("Error loading payment page");
   }
 };
@@ -427,8 +428,6 @@ const placeOrder = async (req, res) => {
     const savedOrder = await order.save();
 
 
-
-    
     if (paymentMethod === 'online') {
       try {
         const razorpayOrder = await razorpay.orders.create({
@@ -453,7 +452,7 @@ const placeOrder = async (req, res) => {
           paymentRequired: true
         });
       } catch (razorpayError) {
-        console.error('Razorpay error:', JSON.stringify(razorpayError));
+        logger.error('Razorpay error:', JSON.stringify(razorpayError));
 
         
         await Order.findByIdAndDelete(savedOrder._id);
@@ -492,7 +491,7 @@ const placeOrder = async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Error placing order:', error);
+    logger.error('Error placing order:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to place order. Please try again.',
@@ -522,7 +521,7 @@ const confirmOrder = async (req, res) => {
     }
 
     if (!order) {
-      console.log('Order not found', orderId);
+      logger.info(`Order not found ${orderId}`);
       return res.redirect('/pageNotFound');
     }
 
@@ -565,7 +564,7 @@ const confirmOrder = async (req, res) => {
     });
 
   } catch (error) {
-    console.error("Order confirmation error:", error);
+    logger.error("Order confirmation error:", error);
     res.redirect('/pageNotFound');
   }
 };
@@ -604,7 +603,7 @@ const loadRazorpayPayment = async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Error loading Razorpay payment:', error);
+    logger.error('Error loading Razorpay payment:', error);
     res.status(500).json({ success: false, message: "Failed to load payment details" });
   }
 };
@@ -622,7 +621,6 @@ const verifyRazorpayPayment = async (req, res) => {
       });
     }
 
-    // Verify signature
     const generatedSignature = crypto.createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
       .update(razorpay_order_id + "|" + razorpay_payment_id)
       .digest("hex");
@@ -649,14 +647,12 @@ const verifyRazorpayPayment = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Order not found' });
     }
 
-    // Update order status
     order.status = 'confirmed';
     order.paymentStatus = 'Paid';
     order.paymentId = razorpay_payment_id;
     order.updatedOn = new Date();
     await order.save();
 
-    // Update product stock
     for (const item of order.orderedItems) {
       await Product.findByIdAndUpdate(item.product, {
         $inc: {
@@ -683,7 +679,7 @@ const verifyRazorpayPayment = async (req, res) => {
     });
 
   } catch (error) {
-    console.error("Razorpay verification error:", error);
+    logger.error("Razorpay verification error:", error);
 
   
     if (req.body.orderDbId) {
@@ -721,7 +717,7 @@ const paymentFailed = async (req, res) => {
 
     return res.json({ success: true, message: "Payment marked as failed" });
   } catch (error) {
-    console.error("Payment Failed Error:", error);
+    logger.error("Payment Failed Error:", error);
     return res.status(500).json({ success: false, message: "Server error" });
   }
 };
@@ -751,7 +747,7 @@ const orderFailure = async (req, res) => {
       username: user.name
     });
   } catch (error) {
-    console.error("Error in orderFailure controller:", error);
+    logger.error("Error in orderFailure controller:", error);
     res.redirect('/shop');
   }
 };

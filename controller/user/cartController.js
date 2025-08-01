@@ -64,7 +64,7 @@ const getCart = async (req, res) => {
       recommendations
     });
   } catch (error) {
-    console.log("Error in getCart:", error);
+    logger.log("Error in getCart:", error);
     res.status(500).render("error", {
       message: "Something went wrong loading your cart",
       error: process.env.NODE_ENV === "development" ? error : {},
@@ -84,7 +84,7 @@ const cartCount = async (req, res) => {
       : 0;
     res.json({ count });
   } catch (error) {
-    console.error('Error fetching cart count:', error);
+    logger.error('Error fetching cart count:', error);
     res.status(500).json({ count: 0 });
   }
 };
@@ -153,7 +153,7 @@ const addToCart = async (req, res) => {
     );
     res.json({ success: true, cartCount });
   } catch (error) {
-    console.error("Add to Cart Error:", error);
+    logger.error("Add to Cart Error:", error);
     res.status(500).json({ success: false, message: "Something went wrong" });
   }
 };
@@ -179,11 +179,11 @@ const removeCart = async (req, res) => {
     cart.items = cart.items.filter(
       (item) => item.productId.toString() !== productId
     );
-    console.log("Cart after removal:", cart.items);
+    logger.info(`Cart after removal: ${cart.items}`);
     await cart.save();
     res.json({ success: true });
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     res.status(500).json({ success: false, message: "Server error" });
   }
 };
@@ -244,7 +244,7 @@ const updateQuantity = async (req, res) => {
       }
     });
   } catch (error) {
-    console.error("update quantity error", error);
+    logger.error("update quantity error", error);
     return res
       .status(500)
       .json({ success: false, message: "Something went wrong" });
@@ -279,7 +279,7 @@ const getCartStatus = async (req, res) => {
 
     res.status(200).json({ success: true, cartStatus });
   } catch (error) {
-    console.error("Cart status error:", error);
+    logger.error("Cart status error:", error);
     res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 };

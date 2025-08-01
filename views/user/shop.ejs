@@ -55,7 +55,7 @@
         }
 
         .search-input {
-            border-radius: 9999px;
+            border-radius: 5px;
             padding-left: 40px;
             height: 40px;
             border: 1px solid var(--border-color);
@@ -91,7 +91,7 @@
         }
 
         .sort-select {
-            border-radius: 9999px;
+            border-radius: 5px;
             height: 40px;
             padding-left: 40px;
             border: 1px solid var(--border-color);
@@ -530,13 +530,14 @@
                         </div>
                     </form>
                 </div>
-                <div class="w-full md:w-3/12 px-2 ml-auto">
-                    <div class="relative">
-                        <i class="fas fa-sort-amount-down sort-icon"></i>
-                        <select name="sort by" id="sortSelect" class="sort-select w-full">
-                            <option value="" disabled>Sort by</option>
+                <div class="w-full md:w-3/12 px-2 ml-auto flex justify-end">
+                    <div class="relative w-full md:w-48">
+                        <i
+                            class="fas fa-sort-amount-down absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 pointer-events-none"></i>
+                        <select class="sort-select" name="sort" id="sortSelect"
+                            class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm bg-white shadow-sm hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-gray-500 transition">
+                            <option value="" disabled <%=filters.sort==='' ? 'selected' : '' %>>Sort by</option>
                             <option value="new" <%=filters.sort==='new' ? 'selected' : '' %>>New Arrivals</option>
-                            <option value="featured" <%=filters.sort==='featured' ? 'selected' : '' %>>Featured</option>
                             <option value="price-asc" <%=filters.sort==='price-asc' ? 'selected' : '' %>>Price: Low to
                                 High</option>
                             <option value="price-desc" <%=filters.sort==='price-desc' ? 'selected' : '' %>>Price: High
@@ -547,10 +548,11 @@
                             </option>
                             <option value="popularity" <%=filters.sort==='popularity' ? 'selected' : '' %>>Best Selling
                             </option>
-                            <option value="rating" <%=filters.sort==='rating' ? 'selected' : '' %>>Top Rated</option>
                         </select>
                     </div>
                 </div>
+
+
             </div>
 
             <div class="flex flex-wrap -mx-3">
@@ -608,6 +610,8 @@
                                             <small>₹<%= priceRange.max %></small>
                                         </div>
                                     </div>
+
+
                                     <!-- Brand Filter -->
                                     <div class="filter-group">
                                         <h5>Bricks</h5>
@@ -635,6 +639,8 @@
                         </form>
                     </div>
                 </div>
+
+
                 <!-- Products Section -->
                 <div class="w-full lg:w-9/12 px-3">
                     <div class="flex justify-between items-center mb-4">
@@ -846,7 +852,7 @@
                 // Sort handling
                 const sortSelect = document.getElementById('sortSelect');
                 sortSelect.addEventListener('change', function () {
-                    const queryString = buildQueryString(1); // Reset to page 1 when sorting
+                    const queryString = buildQueryString(1); 
                     const params = new URLSearchParams(queryString);
                     params.set('sort', this.value);
                     window.location.href = `/shop?${params.toString()}`;
@@ -1061,7 +1067,7 @@
                             if (data.success) {
                                 showToast('Product added to cart!', 'success');
                                 updateCartCounter(data.cartCount);
-                                // Update header cart badge without reload
+                              
                                 window.updateCartBadge();
 
                                 if (button) {

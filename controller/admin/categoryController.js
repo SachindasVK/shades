@@ -1,5 +1,6 @@
 const Category = require('../../models/categorySchema');
 const Product = require('../../models/productSchema')
+const logger = require('../../helpers/logger')
 
 const categoryInfo = async (req, res) => {
   try {
@@ -32,7 +33,7 @@ const categoryInfo = async (req, res) => {
       searchTerm: searchTerm
     });
   } catch (error) {
-    console.error('Error in Category management:', error);
+    logger.error('Error in Category management:', error);
     res.redirect('/admin/error')
   }
 };
@@ -44,7 +45,7 @@ const addCategory = async (req, res) => {
     const trimmedName = name.trim()
 
     if (!trimmedName || trimmedName.length === 0) {
-      console.log("Invalid input: name is empty or contains only whitespace")
+      logger.info("Invalid input: name is empty or contains only whitespace")
       return res.status(400).json({
         success: false,
         message: "Category name cannot be empty"
@@ -73,7 +74,7 @@ const addCategory = async (req, res) => {
       description
     })
     const savedCategory = await newCategory.save()
-    console.log("New category added:", savedCategory)
+    logger.info("New category added:", savedCategory)
 
     return res.status(201).json({
       success: true,
@@ -81,7 +82,7 @@ const addCategory = async (req, res) => {
       category: savedCategory
     });
   } catch (error) {
-    console.error('Error adding category:', error);
+    logger.error('Error adding category:', error);
     return res.status(500).json({
       success: false,
       message: "Failed to add category", error: error.message
@@ -140,7 +141,7 @@ const addCategoryOffer = async (req, res) => {
 
     return res.json({ success: true, message: "Category offer applied successfully" });
   } catch (error) {
-    console.error("Error in addCategoryOffer:", error);
+    logger.error("Error in addCategoryOffer:", error);
     return res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 };
@@ -186,10 +187,10 @@ const removeCategoryOffer = async (req, res) => {
         }
       }
     );
-    console.log('Offer removed', category)
+    logger.info(`Offer removed ${category}` )
     return res.json({ success: true, message: "Offer removed successfully" });
   } catch (error) {
-    console.error("Error in removeCategoryOffer:", error);
+    logger.error("Error in removeCategoryOffer:", error);
     return res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 };
@@ -223,7 +224,7 @@ const updateCategoryStatus = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Invalid action' });
     }
     const result = await Category.updateOne({ _id: id }, { $set: updateData });
-    console.log('Update Result:', result);
+    logger.info(`Update Result: ${result}` );
 
     if (result.modifiedCount === 0) {
       return res.status(404).json({ success: false, message: 'Category not found or already in desired state' });
@@ -231,7 +232,7 @@ const updateCategoryStatus = async (req, res) => {
 
     res.json({ success: true, message: `Category ${action}d successfully!` });
   } catch (error) {
-    console.error('Update Status Error:', error);
+    logger.error('Update Status Error:', error);
     res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
@@ -248,7 +249,7 @@ const editCategory = async (req, res) => {
     }
     res.json({ success: true, message: "Category updated successfully" })
   } catch (error) {
-    console.error(error)
+    logger.error(error)
     res.status(500).json({ success: false, message: "Failed to update category" })
   }
 }

@@ -1,6 +1,7 @@
 const Order = require('../../models/orderSchema');
 const PDFDocument = require('pdfkit');
 const ExcelJS = require('exceljs');
+const logger = require('../../helpers/logger')
 
 const getSalesReport = async (req, res) => {
   try {
@@ -56,7 +57,7 @@ const getSalesReport = async (req, res) => {
               $lte: endDateObj
             };
           } else {
-            console.warn("Custom report selected without valid dates:", dateFrom, dateTo);
+            logger.info(`Custom report selected without valid dates: ${dateFrom, dateTo}`);
           }
           break;
 
@@ -64,7 +65,7 @@ const getSalesReport = async (req, res) => {
       }
     }
 
-    console.log("Final Date Filter:", dateFilter);
+    logger.info(`Final Date Filter: ${dateFilter}`);
 
     // Totals
     const totalSalesCount = await Order.countDocuments(dateFilter);
@@ -143,7 +144,7 @@ const getSalesReport = async (req, res) => {
     });
 
   } catch (error) {
-    console.error("Sales Report Error:", error.message);
+    logger.error("Sales Report Error:", error.message);
     res.status(500).render("error", {
       pageTitle: "Error",
       message: "An error occurred while generating the sales report. Please try again later.",
@@ -168,7 +169,7 @@ const generatePDFReport = async (res, salesData, options) => {
     doc.fontSize(20).text('Sales Report', { align: 'center' });
     doc.moveDown();
 
-    // Report period
+   
     let periodText = 'All Time';
     if (reportType === 'custom' && dateFrom && dateTo) {
       periodText = `${dateFrom} to ${dateTo}`;

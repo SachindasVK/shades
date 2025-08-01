@@ -1,7 +1,7 @@
 const User = require('../../models/userSchema');
 const Order = require('../../models/orderSchema')
 const Address = require('../../models/addressSchema')
-
+const logger = require('../../helpers/logger')
 
 const customerInfo = async (req, res) => {
     try {
@@ -51,7 +51,7 @@ const customerInfo = async (req, res) => {
             search
         });
     } catch (error) {
-        console.error('Error in customer management:', error);
+        logger.error('Error in customer management:', error);
         res.status(500).render('error', {
             message: 'An error occurred while loading customer data'
         });
@@ -88,7 +88,7 @@ const viewCustomer = async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Error viewing customer:', error);
+        logger.error('Error viewing customer:', error);
         res.status(500).render('error', {
             message: 'An error occurred while retrieving customer details'
         });
@@ -105,7 +105,7 @@ const blockUser = async (req, res) => {
         await User.findByIdAndUpdate(userId, { isBlocked: true })
         res.status(200).json({ success: true, message: 'user blocked successfully' })
     } catch (error) {
-        console.error('block user error', error)
+        logger.error('block user error', error)
         res.status(500).json({ success: false, message: 'block user server error' })
     }
 }
@@ -121,7 +121,7 @@ const unblockUser = async (req, res) => {
         await User.findByIdAndUpdate(userId, { isBlocked: false })
         res.status(200).json({ success: true, message: 'user unblocked successfully' })
     } catch (error) {
-        console.error('unblock user error', error)
+        logger.error('unblock user error', error)
         res.status(500).json({ success: false, message: 'unblock user server error' })
     }
 }

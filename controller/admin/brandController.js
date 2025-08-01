@@ -1,9 +1,8 @@
 const Brand = require('../../models/brandSchema');
-const Product = require('../../models/productSchema');
 const path = require('path');
 const fs = require('fs');
+const logger = require('../../helpers/logger')
 
-// Utility function to escape special characters in regex
 function escapeRegex(text) {
     return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
 }
@@ -19,9 +18,9 @@ const getBrand = async (req, res) => {
             filter.name = { $regex: new RegExp(searchTerm, 'i') };
         }
 
-        // Sort by createdAt in descending order (-1) to get newest brands first
+        
         const brandData = await Brand.find(filter)
-            .sort({ createdAt: -1 })  // newest brands first
+            .sort({ createdAt: -1 })  
             .skip(skip)
             .limit(limit);
         
@@ -29,12 +28,9 @@ const getBrand = async (req, res) => {
         const totalBrands = await Brand.countDocuments(filter);
         const totalPages = Math.ceil(totalBrands / limit);
 
-        // Remove this line - no need to reverse the already sorted data
-        // const reverseBrand = brandData.reverse();
-
         res.render('brand', {
             pageTitle: 'Brand Management',
-            data: brandData,  // Pass the correctly sorted data directly
+            data: brandData,  
             currentPage: page,
             totalPages: totalPages,
             totalItems: totalBrands,
@@ -42,7 +38,7 @@ const getBrand = async (req, res) => {
             limit: limit
         });
     } catch (error) {
-        console.error('Error in Brand management:', error.message, error.stack);
+        logger.error('Error in Brand management:', error.message);
         res.status(500).json({ success: false, message: 'Server error: ' + error.message });
     }
 };
@@ -51,8 +47,7 @@ const addBrand = async (req, res) => {
     try {
         const { name, description } = req.body;
         
-        // Debug log to check if file is attached
-        console.log('Received file:', req.file);
+        logger.info(`Received file: ${req.file}`);
         
         const logo = req.file ? req.file.filename : null;
 
@@ -60,7 +55,6 @@ const addBrand = async (req, res) => {
             return res.status(400).json({ success: false, message: 'Brand name is required' });
         }
 
-        // Escape the brand name to avoid regex issues
         const escapedName = escapeRegex(name);
         const existingBrand = await Brand.findOne({ name: { $regex: new RegExp(`^${escapedName}$`, 'i') } });
         
@@ -77,7 +71,7 @@ const addBrand = async (req, res) => {
         await brand.save();
         res.json({ success: true, message: 'Brand added successfully' });
     } catch (error) {
-        console.error('Error adding brand:', error.message, error.stack);
+        logger.error('Error adding brand:', error.message);
         res.status(500).json({ success: false, message: 'Server error: ' + error.message });
     }
 };
@@ -96,8 +90,6 @@ const editBrand = async (req, res) => {
         if (!brand) {
             return res.status(404).json({ success: false, message: 'Brand not found' });
         }
-
-        // Escape the brand name to avoid regex issues
         const escapedName = escapeRegex(name);
         const existingBrand = await Brand.findOne({ 
             name: { $regex: new RegExp(`^${escapedName}$`, 'i') },
@@ -122,13 +114,13 @@ const editBrand = async (req, res) => {
         await brand.save();
         res.json({ success: true, message: 'Brand updated successfully' });
     } catch (error) {
-        console.error('Error editing brand:', error.message, error.stack);
+        logger.error('Error editing brand:', error.message);
         res.status(500).json({ success: false, message: 'Server error: ' + error.message });
     }
 };
 
 
-// DELETE AND RECOVER 
+
 const updateBrandStatus = async (req, res) => {
   try {
     const id = req.params.id;
@@ -157,7 +149,7 @@ const updateBrandStatus = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Invalid action' });
     }
     const result = await Brand.updateOne({ _id: id }, { $set: updateData });
-    console.log('Update Result:', result);
+    logger.info(`Update Result: ${result}`);
 
     if (result.modifiedCount === 0) {
       return res.status(404).json({ success: false, message: 'Category not found or already in desired state' });
@@ -165,7 +157,7 @@ const updateBrandStatus = async (req, res) => {
 
     res.json({ success: true, message: `Category ${action}d successfully!` });
   } catch (error) {
-    console.error('Update Status Error:', error);
+    logger.error('Update Status Error:', error);
     res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
