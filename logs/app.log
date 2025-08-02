@@ -81,3 +81,238 @@
   email: 'sachin@gmail.com',
   _id: new ObjectId('688a2f6982a569775e485699')
 }
+[02-08-2025 09:35:27] INFO: Server Running http://localhost:3000
+[02-08-2025 09:35:27] INFO: DB Connected!
+[02-08-2025 09:35:29] INFO: Server Running http://localhost:3000
+[02-08-2025 09:35:29] INFO: DB Connected!
+[02-08-2025 09:35:36] INFO: Server Running http://localhost:3000
+[02-08-2025 09:35:36] INFO: DB Connected!
+[02-08-2025 09:35:37] INFO: Server Running http://localhost:3000
+[02-08-2025 09:35:37] INFO: DB Connected!
+[02-08-2025 10:36:40] INFO: Logout initiated for session: 68711a9547789a58f11a432c
+[02-08-2025 10:36:40] INFO: Google user logged out successfully
+[02-08-2025 10:57:43] INFO: Server Running http://localhost:3000
+[02-08-2025 10:57:43] INFO: DB Connected!
+[02-08-2025 10:57:46] INFO: Server Running http://localhost:3000
+[02-08-2025 10:57:46] INFO: DB Connected!
+[02-08-2025 11:00:32] INFO: Server Running http://localhost:3000
+[02-08-2025 11:00:32] INFO: DB Connected!
+[02-08-2025 11:00:41] INFO: Server Running http://localhost:3000
+[02-08-2025 11:00:41] INFO: DB Connected!
+[02-08-2025 11:00:58] INFO: Server Running http://localhost:3000
+[02-08-2025 11:00:58] INFO: DB Connected!
+[02-08-2025 11:01:05] INFO: Server Running http://localhost:3000
+[02-08-2025 11:01:05] INFO: DB Connected!
+[02-08-2025 11:01:09] INFO: Server Running http://localhost:3000
+[02-08-2025 11:01:09] INFO: DB Connected!
+[02-08-2025 11:01:13] INFO: Server Running http://localhost:3000
+[02-08-2025 11:01:13] INFO: DB Connected!
+[02-08-2025 11:01:17] INFO: Server Running http://localhost:3000
+[02-08-2025 11:01:17] INFO: DB Connected!
+[02-08-2025 11:01:30] INFO: Server Running http://localhost:3000
+[02-08-2025 11:01:30] INFO: DB Connected!
+[02-08-2025 11:02:18] INFO: Server Running http://localhost:3000
+[02-08-2025 11:02:18] INFO: DB Connected!
+[02-08-2025 11:02:36] INFO: Server Running http://localhost:3000
+[02-08-2025 11:02:36] INFO: DB Connected!
+[02-08-2025 11:02:43] INFO: Server Running http://localhost:3000
+[02-08-2025 11:02:43] INFO: DB Connected!
+[02-08-2025 11:02:48] INFO: Server Running http://localhost:3000
+[02-08-2025 11:02:48] INFO: DB Connected!
+[02-08-2025 11:03:06] INFO: Server Running http://localhost:3000
+[02-08-2025 11:03:07] INFO: DB Connected!
+[02-08-2025 11:03:19] INFO: Server Running http://localhost:3000
+[02-08-2025 11:03:19] INFO: DB Connected!
+[02-08-2025 11:03:23] INFO: Server Running http://localhost:3000
+[02-08-2025 11:03:23] INFO: DB Connected!
+[02-08-2025 11:03:30] INFO: Server Running http://localhost:3000
+[02-08-2025 11:03:30] INFO: DB Connected!
+[02-08-2025 11:03:33] INFO: Server Running http://localhost:3000
+[02-08-2025 11:03:33] INFO: DB Connected!
+[02-08-2025 11:04:12] INFO: Server Running http://localhost:3000
+[02-08-2025 11:04:12] INFO: DB Connected!
+[02-08-2025 11:05:12] INFO: Server Running http://localhost:3000
+[02-08-2025 11:05:13] INFO: DB Connected!
+[02-08-2025 11:07:23] INFO: Server Running http://localhost:3000
+[02-08-2025 11:07:23] INFO: DB Connected!
+[02-08-2025 11:08:43] INFO: Server Running http://localhost:3000
+[02-08-2025 11:08:43] INFO: DB Connected!
+[02-08-2025 11:10:00] INFO: Server Running http://localhost:3000
+[02-08-2025 11:10:00] INFO: DB Connected!
+[02-08-2025 11:13:55] INFO: Server Running http://localhost:3000
+[02-08-2025 11:13:55] INFO: DB Connected!
+[02-08-2025 11:14:11] INFO: Server Running http://localhost:3000
+[02-08-2025 11:14:11] INFO: DB Connected!
+[02-08-2025 11:14:14] INFO: Server Running http://localhost:3000
+[02-08-2025 11:14:14] INFO: DB Connected!
+[02-08-2025 11:14:17] INFO: Server Running http://localhost:3000
+[02-08-2025 11:14:17] INFO: DB Connected!
+[02-08-2025 11:14:20] INFO: Server Running http://localhost:3000
+[02-08-2025 11:14:20] INFO: DB Connected!
+[02-08-2025 11:17:12] INFO: Server Running http://localhost:3000
+[02-08-2025 11:17:12] INFO: DB Connected!
+[02-08-2025 11:17:53] INFO: Server Running http://localhost:3000
+[02-08-2025 11:17:53] INFO: DB Connected!
+[02-08-2025 11:18:06] INFO: Server Running http://localhost:3000
+[02-08-2025 11:18:06] INFO: DB Connected!
+[02-08-2025 11:54:55] INFO: Server Running http://localhost:3000
+[02-08-2025 11:54:55] INFO: DB Connected!
+[02-08-2025 11:57:44] INFO: Server Running http://localhost:3000
+[02-08-2025 11:57:44] INFO: DB Connected!
+[02-08-2025 11:57:52] INFO: Server Running http://localhost:3000
+[02-08-2025 11:57:52] INFO: DB Connected!
+[02-08-2025 11:58:16] INFO: Server Running http://localhost:3000
+[02-08-2025 11:58:17] INFO: DB Connected!
+[02-08-2025 11:58:50] INFO: Server Running http://localhost:3000
+[02-08-2025 11:58:50] INFO: DB Connected!
+[02-08-2025 12:00:04] INFO: Server Running http://localhost:3000
+[02-08-2025 12:00:05] INFO: DB Connected!
+[02-08-2025 12:00:23] INFO: Server Running http://localhost:3000
+[02-08-2025 12:00:23] INFO: DB Connected!
+[02-08-2025 12:00:27] INFO: Server Running http://localhost:3000
+[02-08-2025 12:00:27] INFO: DB Connected!
+[02-08-2025 12:00:31] INFO: Server Running http://localhost:3000
+[02-08-2025 12:00:31] INFO: DB Connected!
+[02-08-2025 12:00:44] INFO: Server Running http://localhost:3000
+[02-08-2025 12:00:44] INFO: DB Connected!
+[02-08-2025 12:00:47] INFO: Server Running http://localhost:3000
+[02-08-2025 12:00:47] INFO: DB Connected!
+[02-08-2025 12:00:58] INFO: Server Running http://localhost:3000
+[02-08-2025 12:00:58] INFO: DB Connected!
+[02-08-2025 12:03:51] INFO: Server Running http://localhost:3000
+[02-08-2025 12:03:51] INFO: DB Connected!
+[02-08-2025 12:04:01] INFO: Server Running http://localhost:3000
+[02-08-2025 12:04:01] INFO: DB Connected!
+[02-08-2025 12:05:16] INFO: Server Running http://localhost:3000
+[02-08-2025 12:05:16] INFO: DB Connected!
+[02-08-2025 12:08:15] INFO: Server Running http://localhost:3000
+[02-08-2025 12:08:15] INFO: DB Connected!
+[02-08-2025 12:11:23] INFO: Server Running http://localhost:3000
+[02-08-2025 12:11:23] INFO: DB Connected!
+[02-08-2025 12:13:38] INFO: Server Running http://localhost:3000
+[02-08-2025 12:13:38] INFO: DB Connected!
+[02-08-2025 12:14:13] INFO: Server Running http://localhost:3000
+[02-08-2025 12:14:13] INFO: DB Connected!
+[02-08-2025 12:14:19] INFO: Server Running http://localhost:3000
+[02-08-2025 12:14:19] INFO: DB Connected!
+[02-08-2025 12:14:36] INFO: Server Running http://localhost:3000
+[02-08-2025 12:14:36] INFO: DB Connected!
+[02-08-2025 12:15:03] INFO: Server Running http://localhost:3000
+[02-08-2025 12:15:03] INFO: DB Connected!
+[02-08-2025 12:15:09] INFO: Server Running http://localhost:3000
+[02-08-2025 12:15:09] INFO: DB Connected!
+[02-08-2025 12:15:35] INFO: Server Running http://localhost:3000
+[02-08-2025 12:15:35] INFO: DB Connected!
+[02-08-2025 12:15:42] INFO: Server Running http://localhost:3000
+[02-08-2025 12:15:42] INFO: DB Connected!
+[02-08-2025 12:15:49] INFO: Server Running http://localhost:3000
+[02-08-2025 12:15:49] INFO: DB Connected!
+[02-08-2025 12:15:52] INFO: Server Running http://localhost:3000
+[02-08-2025 12:15:53] INFO: DB Connected!
+[02-08-2025 12:16:02] INFO: Server Running http://localhost:3000
+[02-08-2025 12:16:02] INFO: DB Connected!
+[02-08-2025 12:16:05] INFO: Server Running http://localhost:3000
+[02-08-2025 12:16:05] INFO: DB Connected!
+[02-08-2025 12:16:18] INFO: Server Running http://localhost:3000
+[02-08-2025 12:16:18] INFO: DB Connected!
+[02-08-2025 12:16:20] INFO: Server Running http://localhost:3000
+[02-08-2025 12:16:20] INFO: DB Connected!
+[02-08-2025 12:16:51] INFO: Server Running http://localhost:3000
+[02-08-2025 12:16:51] INFO: DB Connected!
+[02-08-2025 12:17:34] INFO: Server Running http://localhost:3000
+[02-08-2025 12:17:34] INFO: DB Connected!
+[02-08-2025 12:17:49] INFO: Server Running http://localhost:3000
+[02-08-2025 12:17:49] INFO: DB Connected!
+[02-08-2025 12:18:20] INFO: Server Running http://localhost:3000
+[02-08-2025 12:18:20] INFO: DB Connected!
+[02-08-2025 12:19:00] INFO: Server Running http://localhost:3000
+[02-08-2025 12:19:00] INFO: DB Connected!
+[02-08-2025 12:19:10] INFO: Server Running http://localhost:3000
+[02-08-2025 12:19:10] INFO: DB Connected!
+[02-08-2025 12:19:38] INFO: Server Running http://localhost:3000
+[02-08-2025 12:19:38] INFO: DB Connected!
+[02-08-2025 12:21:30] INFO: Server Running http://localhost:3000
+[02-08-2025 12:21:30] INFO: DB Connected!
+[02-08-2025 12:22:28] INFO: Server Running http://localhost:3000
+[02-08-2025 12:22:28] INFO: DB Connected!
+[02-08-2025 12:22:45] INFO: Server Running http://localhost:3000
+[02-08-2025 12:22:45] INFO: DB Connected!
+[02-08-2025 12:24:12] INFO: Server Running http://localhost:3000
+[02-08-2025 12:24:13] INFO: DB Connected!
+[02-08-2025 12:24:48] INFO: Server Running http://localhost:3000
+[02-08-2025 12:24:48] INFO: DB Connected!
+[02-08-2025 12:25:40] INFO: Server Running http://localhost:3000
+[02-08-2025 12:25:40] INFO: DB Connected!
+[02-08-2025 12:25:57] INFO: Server Running http://localhost:3000
+[02-08-2025 12:25:57] INFO: DB Connected!
+[02-08-2025 12:26:50] INFO: Server Running http://localhost:3000
+[02-08-2025 12:26:50] INFO: DB Connected!
+[02-08-2025 12:27:47] INFO: Server Running http://localhost:3000
+[02-08-2025 12:27:47] INFO: DB Connected!
+[02-08-2025 12:34:17] INFO: Server Running http://localhost:3000
+[02-08-2025 12:34:17] INFO: DB Connected!
+[02-08-2025 12:34:41] INFO: Server Running http://localhost:3000
+[02-08-2025 12:34:41] INFO: DB Connected!
+[02-08-2025 12:34:56] INFO: Server Running http://localhost:3000
+[02-08-2025 12:34:56] INFO: DB Connected!
+[02-08-2025 12:40:04] INFO: Server Running http://localhost:3000
+[02-08-2025 12:40:04] INFO: DB Connected!
+[02-08-2025 12:43:33] INFO: Server Running http://localhost:3000
+[02-08-2025 12:43:34] INFO: DB Connected!
+[02-08-2025 12:43:40] INFO: Server Running http://localhost:3000
+[02-08-2025 12:43:40] INFO: DB Connected!
+[02-08-2025 12:45:45] INFO: Server Running http://localhost:3000
+[02-08-2025 12:45:47] INFO: Server Running http://localhost:3000
+[02-08-2025 12:45:47] INFO: DB Connected!
+[02-08-2025 12:45:52] INFO: Server Running http://localhost:3000
+[02-08-2025 12:45:52] INFO: DB Connected!
+[02-08-2025 12:46:07] INFO: Server Running http://localhost:3000
+[02-08-2025 12:46:08] INFO: DB Connected!
+[02-08-2025 12:46:20] INFO: Server Running http://localhost:3000
+[02-08-2025 12:46:20] INFO: DB Connected!
+[02-08-2025 12:46:58] INFO: Server Running http://localhost:3000
+[02-08-2025 12:46:59] INFO: DB Connected!
+[02-08-2025 12:52:57] INFO: Server Running http://localhost:3000
+[02-08-2025 12:52:57] INFO: DB Connected!
+[02-08-2025 12:54:25] INFO: Server Running http://localhost:3000
+[02-08-2025 12:54:25] INFO: DB Connected!
+[02-08-2025 12:54:28] INFO: Server Running http://localhost:3000
+[02-08-2025 12:54:28] INFO: DB Connected!
+[02-08-2025 12:54:33] INFO: Server Running http://localhost:3000
+[02-08-2025 12:54:33] INFO: DB Connected!
+[02-08-2025 12:54:43] INFO: Server Running http://localhost:3000
+[02-08-2025 12:54:43] INFO: DB Connected!
+[02-08-2025 12:54:46] INFO: Server Running http://localhost:3000
+[02-08-2025 12:54:46] INFO: DB Connected!
+[02-08-2025 12:55:49] INFO: Server Running http://localhost:3000
+[02-08-2025 12:55:49] INFO: DB Connected!
+[02-08-2025 13:03:24] INFO: Server Running http://localhost:3000
+[02-08-2025 13:03:24] INFO: DB Connected!
+[02-08-2025 13:03:44] INFO: Server Running http://localhost:3000
+[02-08-2025 13:03:44] INFO: DB Connected!
+[02-08-2025 13:04:19] INFO: Server Running http://localhost:3000
+[02-08-2025 13:04:19] INFO: DB Connected!
+[02-08-2025 13:05:55] INFO: Server Running http://localhost:3000
+[02-08-2025 13:05:55] INFO: DB Connected!
+[02-08-2025 13:15:13] INFO: Server Running http://localhost:3000
+[02-08-2025 13:15:13] INFO: DB Connected!
+[02-08-2025 13:17:08] INFO: Server Running http://localhost:3000
+[02-08-2025 13:17:08] INFO: DB Connected!
+[02-08-2025 13:17:42] INFO: Server Running http://localhost:3000
+[02-08-2025 13:17:42] INFO: DB Connected!
+[02-08-2025 13:18:53] INFO: Server Running http://localhost:3000
+[02-08-2025 13:18:53] INFO: DB Connected!
+[02-08-2025 13:19:19] INFO: Server Running http://localhost:3000
+[02-08-2025 13:19:19] INFO: DB Connected!
+[02-08-2025 13:19:43] INFO: Server Running http://localhost:3000
+[02-08-2025 13:19:43] INFO: DB Connected!
+[02-08-2025 13:22:52] INFO: Server Running http://localhost:3000
+[02-08-2025 13:22:52] INFO: DB Connected!
+[02-08-2025 13:28:54] INFO: Server Running http://localhost:3000
+[02-08-2025 13:28:54] INFO: DB Connected!
+[02-08-2025 13:29:55] INFO: Server Running http://localhost:3000
+[02-08-2025 13:29:55] INFO: DB Connected!
+[02-08-2025 13:32:13] INFO: Server Running http://localhost:3000
+[02-08-2025 13:32:13] INFO: DB Connected!
+[02-08-2025 13:32:35] INFO: Server Running http://localhost:3000
+[02-08-2025 13:32:35] INFO: DB Connected!

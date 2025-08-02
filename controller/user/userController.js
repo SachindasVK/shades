@@ -18,10 +18,11 @@ const pageNotFound = async (req, res) => {
       message: 'Page not found'
     });
   } catch (error) {
-    logger.error('404 page error:',error.message);
+    logger.error('404 page error:', error.message);
     res.status(500).send('Server error');
   }
 };
+
 
 
 function generateReferralCode(length = 8) {
@@ -60,7 +61,7 @@ const sendVerificationEmail = async (email, otp) => {
     await transporter.sendMail(mailOptions);
     return true;
   } catch (error) {
-    logger.error('Error sending verification email:',error.message);
+    logger.error('Error sending verification email:', error.message);
     return false;
   }
 };
@@ -71,7 +72,7 @@ const securePassword = async (password) => {
     const passwordHash = await bcrypt.hash(password, 10);
     return passwordHash;
   } catch (error) {
-    logger.error('Error hashing password:',error.message);
+    logger.error('Error hashing password:', error.message);
     throw error;
   }
 };
@@ -90,7 +91,7 @@ const loadSignup = async (req, res) => {
       message: null
     });
   } catch (error) {
-    logger.error('Signup page error:',error.message);
+    logger.error('Signup page error:', error.message);
     res.status(500).render('page-404', {
       isLoggedIn: false,
       username: '',
@@ -110,10 +111,10 @@ const signup = async (req, res) => {
     const trimmedPassword = password.trim();
     const trimmedCPassword = cPassword.trim();
 
-    const existingUser = await User.findOne({email})
-    if(existingUser){
-      return res.render('signup',{
-        message:'Email already exists. Please login instead.' 
+    const existingUser = await User.findOne({ email })
+    if (existingUser) {
+      return res.render('signup', {
+        message: 'Email already exists. Please login instead.'
       })
     }
 
@@ -175,7 +176,7 @@ const signup = async (req, res) => {
     // Force session save before rendering
     req.session.save((error) => {
       if (error) {
-        logger.error('Session save error:',error.message);
+        logger.error('Session save error:', error.message);
         return res.render('signup', {
           isLoggedIn: false,
           username: '',
@@ -298,7 +299,7 @@ const verifyOtp = async (req, res) => {
     }
 
   } catch (error) {
-    logger.error('Verify OTP error:',error.message);
+    logger.error('Verify OTP error:', error.message);
     res.status(500).json({
       success: false,
       message: 'An error occurred!'
@@ -386,7 +387,7 @@ const resendOtp = async (req, res) => {
     // Save session explicity
     req.session.save((error) => {
       if (error) {
-        logger.error('Session save error:',error.message);
+        logger.error('Session save error:', error.message);
       } else {
         logger.info('Session saved successfully');
       }
@@ -411,7 +412,7 @@ const resendOtp = async (req, res) => {
     }
 
   } catch (error) {
-    logger.error('Error in resendOtp:',error.message);
+    logger.error('Error in resendOtp:', error.message);
     res.status(500).json({
       success: false,
       message: 'Internal server error. Please try again.'
@@ -439,7 +440,7 @@ const loadLogin = async (req, res) => {
       message
     });
   } catch (error) {
-    logger.error('Login page error:',error.message);
+    logger.error('Login page error:', error.message);
     res.status(500).render('page-404', {
       isLoggedIn: false,
       username: '',
@@ -500,7 +501,7 @@ const login = async (req, res) => {
 
     req.session.regenerate((error) => {
       if (error) {
-        logger.error('Session regeneration error:',error.message);
+        logger.error('Session regeneration error:', error.message);
         req.session.errorMessage = 'Login failed. Please try again.';
         return res.redirect('/login');
       }
@@ -511,7 +512,7 @@ const login = async (req, res) => {
     });
 
   } catch (error) {
-    logger.error('Login error: ',error.message);
+    logger.error('Login error: ', error.message);
     req.session.errorMessage = 'Login failed. Please try again later.';
     res.redirect('/login');
   }
@@ -529,7 +530,7 @@ const logout = async (req, res) => {
 
       req.logout((error) => {
         if (error) {
-          logger.error('Passport logout error: ',error.message);
+          logger.error('Passport logout error: ', error.message);
           return res.status(500).render('page-404', {
             isLoggedIn: false,
             username: '',
@@ -539,7 +540,7 @@ const logout = async (req, res) => {
 
         req.session.destroy((error) => {
           if (error) {
-            logger.error('Session destroy error: ',error.message);
+            logger.error('Session destroy error: ', error.message);
             return res.status(500).render('page-404', {
               isLoggedIn: false,
               username: '',
@@ -558,7 +559,7 @@ const logout = async (req, res) => {
       const userId = req.session.user;
       req.session.destroy((error) => {
         if (error) {
-          logger.error('Session destroy error: ',error.message);
+          logger.error('Session destroy error: ', error.message);
           return res.status(500).render('page-404', {
             isLoggedIn: false,
             username: '',
@@ -574,7 +575,7 @@ const logout = async (req, res) => {
       res.redirect('/');
     }
   } catch (error) {
-    logger.error('Logout error: ',error.message);
+    logger.error('Logout error: ', error.message);
     res.status(500).render('page-404', {
       isLoggedIn: false,
       username: '',
@@ -620,7 +621,7 @@ const loadHomepage = async (req, res) => {
 
       if (userData?.isBlocked) {
         req.session.destroy(error => {
-          if (error) logger.error('Session destroy error: ',error.message);
+          if (error) logger.error('Session destroy error: ', error.message);
           return res.redirect('/login');
         });
         return;
@@ -648,7 +649,7 @@ const loadHomepage = async (req, res) => {
     });
 
   } catch (error) {
-    logger.error('Home page error: ',error.message);
+    logger.error('Home page error: ', error.message);
     res.status(500).render('page-404', {
       isLoggedIn: false,
       username: '',
@@ -689,7 +690,7 @@ const loadShoppingPage = async (req, res) => {
           query.category = categoryObjectId;
         }
       } catch (error) {
-        logger.error('Error with category filter: ',error.message);
+        logger.error('Error with category filter: ', error.message);
       }
     }
 
@@ -702,7 +703,7 @@ const loadShoppingPage = async (req, res) => {
           query.brand = brandObjectId;
         }
       } catch (error) {
-        logger.error('Error with brand filter: ',error.message);
+        logger.error('Error with brand filter: ', error.message);
       }
     }
 
@@ -930,11 +931,10 @@ const loadShoppingPage = async (req, res) => {
       priceRange: priceRange,
     });
   } catch (error) {
-    logger.error('Error in loadShoppingPage: ',error.message);
+    logger.error('Error in loadShoppingPage: ', error.message);
     res.redirect('/pageNotFound');
   }
 };
-
 
 
 const productDetails = async (req, res) => {
@@ -956,7 +956,7 @@ const productDetails = async (req, res) => {
 
     if (userData?.isBlocked) {
       req.session.destroy(error => {
-        if (error) logger.error('Session destroy error:',error.message);
+        if (error) logger.error('Session destroy error:', error.message);
         return res.redirect('/login');
       });
       return;
@@ -970,10 +970,11 @@ const productDetails = async (req, res) => {
       recommendations
     })
   } catch (error) {
-    logger.error('error for fetching product details ',error.message)
+    logger.error('error for fetching product details ', error.message)
     res.redirect('/pageNotFound')
   }
 }
+
 
 module.exports = {
   pageNotFound,
@@ -987,5 +988,5 @@ module.exports = {
   loadHomepage,
   loadShoppingPage,
   productDetails,
-  generateReferralCode
+  generateReferralCode,
 }

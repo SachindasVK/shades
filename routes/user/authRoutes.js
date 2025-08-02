@@ -55,7 +55,7 @@ router.get('/', userController.loadHomepage)
 router.get('/shop', userController.loadShoppingPage)
 router.get('/productDetails', userController.productDetails)
 
-
 router.get('/pageNotFound', userController.pageNotFound)
+
 
 module.exports = router
