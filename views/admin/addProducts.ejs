@@ -1,8 +1,13 @@
-<%- include('../partials/admin/header') %>
-
+<!DOCTYPE html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SHADES - Admin Produduct mangaement</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cropperjs@1.5.12/dist/cropper.min.css" />
+  <script defer src="/admin.js"></script>
+  <link rel="icon" href="favicon/favicon.ico" type="ico">
   <style>
     .image-upload-container {
       margin-bottom: 30px;
@@ -172,11 +177,10 @@
     }
   </style>
 </head>
-
 <body class="bg-gray-100">
-  <!-- Header/Nav would be here -->
+  <%- include('../partials/admin/header') %>
+  
 
-  <!-- Add Product Content -->
   <div class="p-6">
     <div class="bg-white rounded-lg shadow-sm overflow-hidden mb-6">
       <div class="px-6 py-4 border-b border-gray-200">
@@ -348,6 +352,7 @@
     </div>
   </div>
   
+<%- include('../partials/admin/footer') %>
   <script src="https://cdn.jsdelivr.net/npm/cropperjs@1.5.12/dist/cropper.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script>
@@ -413,33 +418,6 @@
       
       return true;
     }
-
-    // Show toast notification
-    function showToast(message, type) {
-      const toastContainer = document.querySelector('.toast-container') || document.createElement('div');
-      toastContainer.className = 'toast-container';
-      document.body.appendChild(toastContainer);
-
-      const toast = document.createElement('div');
-      toast.className = `toast toast-${type} show`;
-      toast.innerHTML = `
-        <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'} toast-icon"></i>
-        <span class="toast-message">${message}</span>
-        <button class="toast-close">×</button>
-      `;
-      toastContainer.appendChild(toast);
-
-      setTimeout(() => {
-        toast.classList.remove('show');
-        setTimeout(() => toast.remove(), 300);
-      }, 3000);
-
-      toast.querySelector('.toast-close').addEventListener('click', () => {
-        toast.classList.remove('show');
-        setTimeout(() => toast.remove(), 300);
-      });
-    }
-
     // Initialize color picker and real-time price validation
     document.addEventListener("DOMContentLoaded", function () {
       const colorPicker = document.getElementById("colorPicker");
@@ -499,7 +477,7 @@
             return;
           }
           
-          errorElement.textContent = ""; // Clear any previous error
+          errorElement.textContent = ""; 
           
           // Reset previous state
           if (croppers[index]) {
@@ -736,4 +714,6 @@
     });
   </script>
 </body>
-<%- include('../partials/admin/footer') %>
+</html>
+
+

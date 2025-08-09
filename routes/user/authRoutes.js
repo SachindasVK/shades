@@ -53,9 +53,9 @@ router.get('/auth/google/callback', (req, res, next) => {
 //user pages
 router.get('/', userController.loadHomepage)
 router.get('/shop', userController.loadShoppingPage)
-router.get('/productDetails', userController.productDetails)
+router.get('/product/details/:id', userController.productDetails)
 
-router.get('/pageNotFound', userController.pageNotFound)
+router.get('/page-404', userController.pageNotFound)
 
 
 module.exports = router

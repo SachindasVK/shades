@@ -60,7 +60,7 @@ const loadWishlist = async (req, res) => {
     });
   } catch (error) {
     logger.error("Error in loadWishlist:", error);
-    res.redirect("/pageNotFound");
+    return res.status(500).render('page-404')
   }
 };
 
@@ -129,10 +129,7 @@ const addToWishlist = async (req, res) => {
     });
   } catch (error) {
     logger.error("Error in addToWishlist:", error);
-    res.status(500).json({
-      success: false,
-      message: "Internal server error",
-    });
+    return res.status(500).render('page-404')
   }
 };
 
@@ -192,10 +189,7 @@ const removeFromWishlist = async (req, res) => {
     });
   } catch (error) {
     logger.error("Error in removeFromWishlist:", error);
-    res.status(500).json({
-      success: false,
-      message: "Internal server error",
-    });
+    return res.status(500).render('page-404')
   }
 };
 
@@ -248,10 +242,7 @@ const getWishlistStatus = async (req, res) => {
     });
   } catch (error) {
     logger.error("Error in getWishlistStatus:", error);
-    res.status(500).json({
-      success: false,
-      message: "Internal server error",
-    });
+    return res.status(500).render('page-404')
   }
 };
 
@@ -269,7 +260,7 @@ const wishlistCount = async (req, res) => {
     res.json({ count });
   } catch (error) {
     logger.error('Error fetching wishlist count:', error);
-    res.status(500).json({ count: 0 });
+    return res.status(500).render('page-404')
   }
 };
 

@@ -5,8 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Order Failed</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+   <link rel="icon" href="favicon/favicon.ico" type="ico">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script> <!-- Razorpay script is required -->
+    <script defer src="/script/script.js"></script>
     <style>
         :root {
             --primary-color: #1f2937;
@@ -317,89 +319,7 @@
                 }
             });
         }
-        function showToast(message, type = 'info') {
-        let toastContainer = document.querySelector('.toast-container') || document.getElementById('toastContainer');
-        if (!toastContainer) {
-          toastContainer = document.createElement('div');
-          toastContainer.className = 'toast-container';
-          toastContainer.style.position = 'fixed';
-          toastContainer.style.top = '20px';
-          toastContainer.style.right = '20px';
-          toastContainer.style.zIndex = '9999';
-          toastContainer.style.display = 'flex';
-          toastContainer.style.flexDirection = 'column';
-          toastContainer.style.gap = '10px';
-          document.body.appendChild(toastContainer);
-        }
-
-        const toastId = 'toast-' + Date.now();
-        const toast = document.createElement('div');
-
-        let bgColor, borderColor;
-        switch (type) {
-          case 'success':
-            bgColor = '#15803d';
-            borderColor = '#15803d';
-            break;
-          case 'error':
-            bgColor = '#dc2626';
-            borderColor = '#dc2626';
-            break;
-          case 'info':
-          default:
-            bgColor = '#2563eb';
-            borderColor = '#2563eb';
-        }
-
-        toast.style.cssText = `
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          background-color: ${bgColor};
-          border-left: 4px solid ${borderColor};
-          color: white;
-          padding: 8px 16px;
-          border-radius: 5px;
-          box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-          max-width: 400px;
-          width: 100%;
-          opacity: 0;
-          transform: translateY(20px);
-          transition: opacity 0.3s ease, transform 0.3s ease;
-        `;
-
-        toast.id = toastId;
-        toast.setAttribute('role', 'alert');
-        toast.setAttribute('aria-live', 'assertive');
-        toast.setAttribute('aria-atomic', 'true');
-
-        toast.innerHTML = `
-          <div style="flex: 1; font-size: 14px;">${message}</div>
-          <button type="button" style="margin-left: 12px; background: none; border: none; color: white; font-size: 16px; cursor: pointer;" data-toast-id="${toastId}">
-            ×
-          </button>
-        `;
-
-        toastContainer.appendChild(toast);
-
-        setTimeout(() => {
-          toast.style.opacity = '1';
-          toast.style.transform = 'translateY(0)';
-        }, 100);
-
-        const closeButton = toast.querySelector(`[data-toast-id="${toastId}"]`);
-        closeButton.addEventListener('click', () => {
-          toast.style.opacity = '0';
-          toast.style.transform = 'translateY(20px)';
-          setTimeout(() => toast.remove(), 300);
-        });
-
-        setTimeout(() => {
-          toast.style.opacity = '0';
-          toast.style.transform = 'translateY(20px)';
-          setTimeout(() => toast.remove(), 300);
-        }, 1500);
-      }
+        
     </script>
 
     <%- include("../../views/partials/user/footer") %>

@@ -5,7 +5,7 @@ const router = express.Router()
 
 // Customer management
 router.get('/customers', adminAuth, customerController.customerInfo);
-router.get('/customers/view/:id', adminAuth, customerController.viewCustomer);
+router.get('/customer/details/:id', adminAuth, customerController.customerDetails);
 router.patch('/customers/:id/block', adminAuth, customerController.blockUser);
 router.patch('/customers/:id/unblock',adminAuth, customerController.unblockUser);
 

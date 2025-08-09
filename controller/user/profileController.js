@@ -39,7 +39,7 @@ const sendVerificationEmail = async (email, otp) => {
         const info = await transporter.sendMail(mailOption);
         return true;
     } catch (error) {
-        logger.error("error sending email: ",error.message);
+        logger.error("error sending email: ",error);
         return false;
     }
 };
@@ -61,7 +61,7 @@ const getForgotPassPage = async (req, res) => {
         res.render("forgot-password", { message: "" });
     } catch (error) {
         logger.error("Error in to load forgot password page: ",error.message);
-        res.redirect("/pageNotFound");
+        return res.status(500).render('page-404')
     }
 };
 
@@ -97,10 +97,8 @@ const forgotEmailValid = async (req, res) => {
             });
         }
     } catch (error) {
-        logger.error("Error in forgotEmailValid: ",error.message);
-        res.render("forgot-password", {
-            message: "An error occurred. Please try again."
-        });
+        logger.error("Error in forgotEmailValid: ",error);
+        return res.status(500).render('page-404')
     }
 };
 
@@ -131,18 +129,8 @@ const verifyForgotPassOtp = async (req, res) => {
             });
         }
     } catch (error) {
-        logger.error("Error in verifyForgotPassOtp: ",error.message);
-
-
-        if (req.xhr) {
-            return res.status(500).json({ success: false, message: "An error occurred. Please try again." });
-        }
-
-
-        res.render("forgototp", {
-            message: "An error occurred. Please try again.",
-            email: req.session.email
-        });
+        logger.error("Error in verifyForgotPassOtp: ",error);
+        return res.status(500).render('page-404')
     }
 };
 
@@ -154,8 +142,8 @@ const getResetPassPage = async (req, res) => {
             res.redirect("/forgot-password");
         }
     } catch (error) {
-        logger.error("Error in getResetPassPage: ",error.message);
-        res.redirect("/pageNotFound");
+        logger.error("Error in getResetPassPage: ",error);
+        return res.status(500).render('page-404')
     }
 };
 const resendOtp = async (req, res) => {
@@ -185,7 +173,7 @@ const resendOtp = async (req, res) => {
         }
     } catch (error) {
         logger.error("Error in resend otp", error.message);
-        return res.status(500).json({ success: false, message: "Internal server error" });
+        return res.status(500).render('page-404')
     }
 };
 const postNewPassword = async (req, res) => {
@@ -229,7 +217,7 @@ const postNewPassword = async (req, res) => {
 
     } catch (error) {
         logger.error("Error in postNewPassword:",error.message);
-        return res.status(500).json({ success: false, message: "An error occurred. Please try again." });
+        return res.status(500).render('page-404')
     }
 };
 
@@ -280,8 +268,8 @@ const userProfile = async (req, res) => {
             username: userData.name
         });
     } catch (error) {
-        logger.error('user profile Error:',error.message);
-        res.redirect("/pageNotFound");
+        logger.error('user profile Error:',error);
+        return res.status(500).render('page-404')
     }
 };
 
@@ -321,10 +309,7 @@ const editUserProfile = async (req, res) => {
 
     } catch (error) {
         logger.error('Error editing profile:',error.message);
-        res.status(500).json({
-            success: false,
-            message: 'Server error occurred',
-        });
+        return res.status(500).render('page-404')
     }
 };
 
@@ -350,8 +335,8 @@ const removeProfile = async (req, res) => {
         }
         return res.status(400).json({ success: false, message: 'No image to remove' });
     } catch (error) {
-        logger.error('Error removing profile image: ',error.message);
-        return res.status(500).json({ success: false, message: 'Server error occurred' });
+        logger.error('Error removing profile image: ',error);
+        return res.status(500).render('page-404')
     }
 }
 
@@ -359,7 +344,7 @@ const removeProfile = async (req, res) => {
 const uploadProfileImage = async (req, res) => {
     try {
         const userId = req.session.user;
-        const image = req.file ? req.file.filename : null;
+        const image = req.file ? req.file.path : null;
 
         if (!image) {
             return res.status(400).json({ success: false, message: 'No image provided' });
@@ -388,10 +373,7 @@ const uploadProfileImage = async (req, res) => {
 
     } catch (error) {
         logger.error('Error uploading profile image: ',error.message);
-        res.status(500).json({
-            success: false,
-            message: 'Server error occurred'
-        });
+        return res.status(500).render('page-404')
     }
 };
 
@@ -415,8 +397,8 @@ const getchangePassword = async (req, res) => {
             username: userData.name
         });
     } catch (error) {
-        logger.error('Get change password error: ',error.message);
-        res.redirect('/pageNotFound');
+        logger.error('Get change password error: ',error);
+        return res.status(500).render('page-404')
     }
 };
 
@@ -508,11 +490,8 @@ const changePassword = async (req, res) => {
         });
 
     } catch (error) {
-        logger.error("Change password error: ", error.message);
-        return res.status(500).json({
-            success: false,
-            message: 'An error occurred while changing your password. Please try again.'
-        });
+        logger.error("Change password error: ", error);
+        return res.status(500).render('page-404')
     }
 };
 

@@ -1,20 +1,34 @@
-</main>
-<script>
+</div>
+  </main>
+
+  <script>
     document.addEventListener('DOMContentLoaded', function() {
       const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+      const closeMenuToggle = document.getElementById('close-menu-toggle');
       const sidebarMenu = document.querySelector('aside');
       
-      if (mobileMenuToggle) {
-        mobileMenuToggle.addEventListener('click', function() {
-          sidebarMenu.classList.toggle('translate-x-0');
-          sidebarMenu.classList.toggle('-translate-x-full');
-        });
-      }
+      // Toggle sidebar on mobile
+      mobileMenuToggle.addEventListener('click', function() {
+        sidebarMenu.classList.toggle('-translate-x-full');
+        sidebarMenu.classList.toggle('translate-x-0');
+      });
+
+      closeMenuToggle.addEventListener('click', function() {
+        sidebarMenu.classList.add('-translate-x-full');
+        sidebarMenu.classList.remove('translate-x-0');
+      });
+
+      // Close sidebar when clicking outside on mobile
+      document.addEventListener('click', function(event) {
+        if (!sidebarMenu.contains(event.target) && !mobileMenuToggle.contains(event.target) && !sidebarMenu.classList.contains('-translate-x-full')) {
+          sidebarMenu.classList.add('-translate-x-full');
+          sidebarMenu.classList.remove('translate-x-0');
+        }
+      });
 
       // Navigation active state handling
       const navLinks = document.querySelectorAll('.nav-link');
       
-      // Function to set active link
       function setActiveLink(link) {
         navLinks.forEach(link => {
           link.classList.remove('bg-white', 'bg-opacity-20', 'text-white');
@@ -24,10 +38,14 @@
         link.classList.remove('text-gray-300');
       }
 
-      // Add click event listeners to nav links
       navLinks.forEach(link => {
         link.addEventListener('click', function(e) {
           setActiveLink(this);
+          // Close sidebar on mobile after clicking a link
+          if (window.innerWidth < 768) {
+            sidebarMenu.classList.add('-translate-x-full');
+            sidebarMenu.classList.remove('translate-x-0');
+          }
         });
       });
 
@@ -54,13 +72,25 @@
           modal.classList.add('hidden');
         }
         
-        // Close modal if clicking outside
         modal.onclick = function(event) {
           if (event.target === modal) {
             modal.classList.add('hidden');
           }
         }
       }
+
+      // Adjust main content margin based on sidebar visibility
+      function adjustMainContentMargin() {
+        const main = document.querySelector('main');
+        if (window.innerWidth >= 768) {
+          main.classList.add('md:ml-64');
+        } else {
+          main.classList.remove('md:ml-64');
+        }
+      }
+
+      window.addEventListener('resize', adjustMainContentMargin);
+      adjustMainContentMargin();
     });
   </script>
 </body>

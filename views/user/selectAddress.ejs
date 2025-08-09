@@ -4,8 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Address Selection (Checkout Step 1)</title>
-  </head>
-
+    <script defer src="/script/script.js"></script>
+    <link rel="icon" href="favicon/favicon.ico" type="ico">
   <body
     style="
       background-color: #ffffff;
@@ -873,7 +873,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 openModal(false, addressData);
             } catch (error) {
                 console.error('Error parsing address data:', error);
-                showNotification('Error loading address data', 'error');
+                showToast('Error loading address data', 'error');
             }
         });
     });
@@ -967,17 +967,17 @@ async function handleSubmit(event) {
         const result = await response.json();
 
         if (result.success) {
-            showNotification(result.message, 'success');
+            showToast(result.message, 'success');
             closeModal();
             setTimeout(() => {
                 location.reload();
             }, 1000);
         } else {
-            showNotification(result.message, 'error');
+            showToast(result.message, 'error');
         }
     } catch (error) {
         console.error('Error:', error);
-        showNotification('Something went wrong. Please try again.', 'error');
+        showToast('Something went wrong. Please try again.', 'error');
     } finally {
         submitButton.textContent = originalText;
         submitButton.disabled = false;
@@ -988,7 +988,7 @@ async function proceedToShipping() {
     const selectedAddress = document.querySelector('input[name="address"]:checked');
 
     if (!selectedAddress) {
-        showNotification('Please select an address', 'error');
+        showToast('Please select an address', 'error');
         return;
     }
 
@@ -1008,68 +1008,12 @@ async function proceedToShipping() {
         if (result.success) {
             window.location.href = result.redirectUrl;
         } else {
-            showNotification(result.message, 'error');
+            showToast(result.message, 'error');
         }
     } catch (error) {
         console.error('Error:', error);
-        showNotification('Something went wrong. Please try again.', 'error');
+        showToast('Something went wrong. Please try again.', 'error');
     }
-}
-
-function showNotification(message, type = 'info') {
-    // Your existing notification function remains the same
-    let container = document.querySelector('.notification-container');
-    if (!container) {
-        container = document.createElement('div');
-        container.className = 'notification-container';
-        container.style.position = 'fixed';
-        container.style.top = '20px';
-        container.style.right = '20px';
-        container.style.display = 'flex';
-        container.style.flexDirection = 'column';
-        container.style.gap = '10px';
-        container.style.zIndex = '9999';
-        document.body.appendChild(container);
-    }
-
-    const notification = document.createElement('div');
-    notification.style.cssText = `
-        padding: 8px 16px;
-        border-radius: 5px;
-        color: white;
-        font-weight: 500;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        max-width: 300px;
-        transition: opacity 0.3s ease, transform 0.3s ease;
-        opacity: 0;
-        transform: translateY(20px);
-    `;
-
-    switch (type) {
-        case 'success':
-            notification.style.backgroundColor = '#15803d';
-            break;
-        case 'error':
-            notification.style.backgroundColor = '#dc2626';
-            break;
-        case 'info':
-        default:
-            notification.style.backgroundColor = '#2563eb';
-    }
-
-    notification.textContent = message;
-    container.appendChild(notification);
-
-    setTimeout(() => {
-        notification.style.opacity = '1';
-        notification.style.transform = 'translateY(0)';
-    }, 50);
-
-    setTimeout(() => {
-        notification.style.opacity = '0';
-        notification.style.transform = 'translateY(-20px)';
-        setTimeout(() => notification.remove(), 300);
-    }, 3000);
 }
 
 // Close modal when clicking outside

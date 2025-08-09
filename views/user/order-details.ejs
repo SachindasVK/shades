@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Order Details</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="/script/script.js"></script>
+   <link rel="icon" href="favicon/favicon.ico" type="ico">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <style>
         
@@ -288,7 +290,7 @@
             <% order.orderedItems.forEach((item, index) => { %>
                 <div class="flex justify-between items-start mb-6 p-4 border rounded-lg <%= item.status === 'cancelled' ? 'cancelled-item' : '' %>">
                     <div class="flex items-start space-x-4">
-                        <img src="/<%= item.productImages && item.productImages[0] ? item.productImages[0] : 'default-image.jpg' %>"
+                        <img src="<%= item.productImages && item.productImages[0] ? item.productImages[0] : 'default-image.jpg' %>"
                             alt="<%= item.productName %>" class="w-40 h-20 object-contain">
                         <div class="flex-1">
                             <h3 class="text-sm font-medium mb-1"><%= item.productName %></h3>
@@ -462,7 +464,8 @@
 
         <!-- Address and Payment Info -->
         <div class="border-t pt-4 mt-4">
-            <div class="grid grid-cols-1 md:grid-cols-2 justify-items-center gap-96">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10 lg:gap-16 xl:gap-96">
+
                 <!-- Shipping Address -->
                 <div class="bg-gray-50 p-4 rounded-lg">
                     <h3 class="text-md font-semibold mb-3 flex items-center">
@@ -486,7 +489,7 @@
                 </div>
                 
                 <!-- Payment Info -->
-                <div class="bg-gray-50 p-4 rounded-lg">
+                <div class="bg-gray-50 p-4 rounded-lg xl:ml-12">
                     <h3 class="text-md font-semibold mb-3 flex items-center">
                         <i class="fas fa-credit-card mr-2 text-blue-600"></i>
                         Payment Information
@@ -499,15 +502,15 @@
                             </span>
                         </div>
                         <div class="flex items-center">
-  <span class="font-medium mr-2">Payment Status:</span>
-  <span class="inline-block mt-2 px-3 py-1 text-xs font-semibold rounded-full 
-    <%= order.paymentStatus === 'Failed' ? 'bg-red-100 text-red-800' :
-        order.paymentStatus === 'Refunded' ? 'bg-purple-100 text-purple-800' :
-        order.paymentStatus === 'Paid' ? 'bg-green-100 text-green-800' :
-        'bg-yellow-100 text-yellow-800' %>">
-    <%= order.paymentStatus %>
-  </span>
-</div>
+                         <span class="font-medium mr-2">Payment Status:</span>
+                            <span class="inline-block mt-2 px-3 py-1 text-xs font-semibold rounded-full 
+                                <%= order.paymentStatus === 'Failed' ? 'bg-red-100 text-red-800' :
+                                     order.paymentStatus === 'Refunded' ? 'bg-purple-100 text-purple-800' :
+                                      order.paymentStatus === 'Paid' ? 'bg-green-100 text-green-800' :
+                                         'bg-yellow-100 text-yellow-800' %>">
+                                             <%= order.paymentStatus %>
+                            </span>
+                            </div>
 
                         <p><span class="font-medium">Invoice Date:</span> 
                             <%= order.invoiceDate ? new Date(order.invoiceDate).toLocaleDateString('en-GB') : 'Not Available' %>
@@ -767,99 +770,7 @@
                 }
             });
         }
-        // Toast notification function
-       function showToast(message, type = 'info') {
-    let toastContainer = document.querySelector('.toast-container');
-    if (!toastContainer) {
-        toastContainer = document.createElement('div');
-        toastContainer.className = 'toast-container';
-        toastContainer.style.position = 'fixed';
-        toastContainer.style.top = '20px';
-        toastContainer.style.right = '20px';
-        toastContainer.style.zIndex = '9999';
-        toastContainer.style.display = 'flex';
-        toastContainer.style.flexDirection = 'column';
-        toastContainer.style.gap = '10px';
-        document.body.appendChild(toastContainer);
-    }
-
-    const toastId = 'toast-' + Date.now();
-    const toast = document.createElement('div');
-
-    let bgColor, borderColor, icon;
-    switch (type) {
-        case 'success':
-            bgColor = '#15803d'; // green
-            borderColor = '#15803d';
-            icon = '<i class="fas fa-check-circle" style="margin-right: 8px;"></i>';
-            break;
-        case 'error':
-            bgColor = '#dc2626'; // red
-            borderColor = '#dc2626';
-            icon = '<i class="fas fa-exclamation-circle" style="margin-right: 8px;"></i>';
-            break;
-        case 'info':
-        default:
-            bgColor = '#2563eb'; // blue
-            borderColor = '#2563eb';
-            icon = '<i class="fas fa-info-circle" style="margin-right: 8px;"></i>';
-    }
-
-    toast.style.cssText = `
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        background-color: ${bgColor};
-        border-left: 4px solid ${borderColor};
-        color: white;
-        padding: 8px 16px;
-        border-radius: 5px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        max-width: 300px;
-        width: 100%;
-        opacity: 0;
-        transform: translateY(20px);
-        transition: opacity 0.3s ease, transform 0.3s ease;
-    `;
-
-    toast.id = toastId;
-    toast.setAttribute('role', 'alert');
-    toast.setAttribute('aria-live', 'assertive');
-    toast.setAttribute('aria-atomic', 'true');
-
-    toast.innerHTML = `
-        <div style="display: flex; align-items: center; flex: 1; font-size: 14px;">
-            ${icon}<span>${message}</span>
-        </div>
-        <button type="button" style="margin-left: 12px; background: none; border: none; color: white; font-size: 16px; cursor: pointer;" data-toast-id="${toastId}">
-            &times;
-        </button>
-    `;
-
-    toastContainer.appendChild(toast);
-
-    // Animate in
-    setTimeout(() => {
-        toast.style.opacity = '1';
-        toast.style.transform = 'translateY(0)';
-    }, 100);
-
-    // Close button
-    const closeButton = toast.querySelector(`[data-toast-id="${toastId}"]`);
-    closeButton.addEventListener('click', () => {
-        toast.style.opacity = '0';
-        toast.style.transform = 'translateY(20px)';
-        setTimeout(() => toast.remove(), 300);
-    });
-
-    // Auto remove
-    setTimeout(() => {
-        toast.style.opacity = '0';
-        toast.style.transform = 'translateY(20px)';
-        setTimeout(() => toast.remove(), 300);
-    }, 1500);
-}
-
+      
         // Loading state management
         function setButtonLoading(button, loading) {
             if (loading) {

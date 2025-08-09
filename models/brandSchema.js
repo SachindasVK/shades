@@ -5,11 +5,9 @@ const brandSchema = new Schema({
   name: {
     type: String,
     required: true,
-    trim: true
   },
   description: {
     type: String,
-    trim: true
   },
   logo: {
     type: String

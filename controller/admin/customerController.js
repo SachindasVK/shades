@@ -58,7 +58,7 @@ const customerInfo = async (req, res) => {
     }
 };
 
-const viewCustomer = async (req, res) => {
+const customerDetails = async (req, res) => {
     try {
         const userId = req.params.id;
 
@@ -80,7 +80,7 @@ const viewCustomer = async (req, res) => {
             orderCount: orders.length
         };
 
-        res.render('customer-view', {
+        res.render('customer-details', {
             pageTitle: 'Customer Details',
             user: userWithStats,
             address: addresses,
@@ -128,7 +128,7 @@ const unblockUser = async (req, res) => {
 
 module.exports = {
     customerInfo,
-    viewCustomer,
+    customerDetails,
     blockUser,
     unblockUser
 };

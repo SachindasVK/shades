@@ -2,10 +2,8 @@ const Product = require('../../models/productSchema')
 const Category = require('../../models/categorySchema')
 const mongoose = require('mongoose');
 const Brand = require('../../models/brandSchema')
-const fs = require('fs')
-const path = require('path')
-const sharp = require('sharp')
 const logger = require('../../helpers/logger')
+const { cloudinary } = require('../../config/cloudinary')
 
 const getProductsAddPage = async (req, res) => {
   try {
@@ -32,13 +30,6 @@ const addProducts = async (req, res) => {
     const { productName, description, shape, brand, category, regularPrice, salePrice, quantity, color } = req.body;
     const files = req.files;
 
-    console.log("Product submission data:", {
-      productName, description, brand, category,
-      regularPrice, salePrice, quantity, color, shape,
-      fileCount: files ? Object.keys(files).length : 0
-    });
-
-
     if (!productName || !description || !brand || !category || !regularPrice || !quantity || !color || !shape) {
       return res.status(400).json({ success: false, message: "All fields are required" });
     }
@@ -48,97 +39,57 @@ const addProducts = async (req, res) => {
       return res.status(400).json({ success: false, message: "Please upload exactly 4 images with keys image1, image2, image3, and image4" });
     }
 
-
     const productExists = await Product.findOne({ productName });
     if (productExists) {
       return res.status(400).json({ success: false, message: "Product already exists, try another name" });
     }
 
-
-    const uploadDir = path.join(__dirname, "../../public/uploads/product-images");
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
-    }
-
-
-    const imageFilenames = [];
-
-    for (let key of expectedKeys) {
-      const file = files[key][0];
-      const filename = `${Date.now()}-${key}.webp`;
-      const filePath = path.join(uploadDir, filename);
-
-
-      await sharp(file.buffer)
-        .resize({
-          width: 1200,
-          height: 600,
-          fit: "contain",
-          background: { r: 255, g: 255, b: 255, alpha: 1 }
-        })
-        .webp({ quality: 80 })
-        .toFile(filePath);
-
-      imageFilenames.push(`uploads/product-images/${filename}`);
-    }
-
-
-    if (imageFilenames.length !== 4) {
-      return res.status(400).json({ success: false, message: "Failed to process all 4 product images" });
-    }
-
-
+    // Convert category & brand (name or ID to ObjectId)
     let categoryId;
     if (category.match(/^[0-9a-fA-F]{24}$/)) {
-
       const foundCategory = await Category.findById(category);
-      if (!foundCategory) {
-        return res.status(400).json({ success: false, message: "Category not found" });
-      }
+      if (!foundCategory) return res.status(400).json({ success: false, message: "Category not found" });
       categoryId = foundCategory._id;
     } else {
-
       const foundCategory = await Category.findOne({ name: category });
-      if (!foundCategory) {
-        return res.status(400).json({ success: false, message: "Category not found" });
-      }
+      if (!foundCategory) return res.status(400).json({ success: false, message: "Category not found" });
       categoryId = foundCategory._id;
     }
-
 
     let brandId;
     if (brand.match(/^[0-9a-fA-F]{24}$/)) {
-
       const foundBrand = await Brand.findById(brand);
-      if (!foundBrand) {
-        return res.status(400).json({ success: false, message: "Brand not found" });
-      }
+      if (!foundBrand) return res.status(400).json({ success: false, message: "Brand not found" });
       brandId = foundBrand._id;
     } else {
-
       const foundBrand = await Brand.findOne({ name: brand });
-      if (!foundBrand) {
-        return res.status(400).json({ success: false, message: "Brand not found" });
-      }
+      if (!foundBrand) return res.status(400).json({ success: false, message: "Brand not found" });
       brandId = foundBrand._id;
     }
 
-
+    // Price & quantity validations
     const parsedRegularPrice = parseFloat(regularPrice);
     const parsedSalePrice = parseFloat(salePrice || regularPrice);
     const parsedQuantity = parseInt(quantity);
+    if (isNaN(parsedRegularPrice) || parsedRegularPrice <= 0) return res.status(400).json({ success: false, message: "Regular price must be positive" });
+    if (isNaN(parsedSalePrice) || parsedSalePrice <= 0) return res.status(400).json({ success: false, message: "Sale price must be positive" });
+    if (isNaN(parsedQuantity) || parsedQuantity < 0) return res.status(400).json({ success: false, message: "Quantity must be non-negative" });
 
-    if (isNaN(parsedRegularPrice) || parsedRegularPrice <= 0) {
-      return res.status(400).json({ success: false, message: "Regular price must be a positive number" });
-    }
-    if (isNaN(parsedSalePrice) || parsedSalePrice <= 0) {
-      return res.status(400).json({ success: false, message: "Sale price must be a positive number" });
-    }
-    if (isNaN(parsedQuantity) || parsedQuantity < 0) {
-      return res.status(400).json({ success: false, message: "Quantity must be a non-negative integer" });
+    // Upload each image to Cloudinary with transformations
+    const imageFilenames = [];
+    for (const key of expectedKeys) {
+      const file = files[key][0];
+      const uploadedImage = await cloudinary.uploader.upload(file.path, {
+        folder: 'uploads/products',
+        transformation: [
+          { width: 1200, height: 600, crop: 'pad', background: 'white' },
+          { fetch_format: "webp", quality: "auto" }
+        ]
+      });
+      imageFilenames.push(uploadedImage.secure_url);
     }
 
-
+    // Save product
     const newProduct = new Product({
       productName,
       description,
@@ -154,48 +105,13 @@ const addProducts = async (req, res) => {
       isActive: true
     });
 
-    logger.info(`About to save product: ${newProduct}`);
     await newProduct.save();
-    logger.info("Product saved successfully");
-
     return res.status(200).json({ success: true, message: "Product added successfully" });
+
   } catch (error) {
-    logger.error("Error saving product:", error);
     return res.status(500).json({ success: false, message: "Error saving product: " + error.message });
   }
 };
-
-
-
-const saveImage = async (req, res) => {
-  try {
-    const file = req.file;
-    if (!file) {
-      return res.status(400).json({ success: false, message: "No image file provided" });
-    }
-
-
-    const filename = Date.now() + '-' + file.originalname.replace(/\s/g, "");
-    const filepath = path.join(__dirname, "../../public/uploads/product-images", filename);
-
-
-    await sharp(file.buffer)
-      .resize(1200, 600, { fit: "inside", withoutEnlargement: true })
-      .webp({ quality: 80 })
-      .toFile(filepath);
-
-    return res.status(200).json({
-      success: true,
-      message: "Image saved successfully",
-      filename: `uploads/product-images/${filename}`
-    });
-  } catch (error) {
-    logger.error("Error saving image:", error);
-    return res.status(500).json({ success: false, message: "Error saving image" });
-  }
-};
-
-
 
 
 
@@ -434,9 +350,8 @@ const editProduct = async (req, res) => {
     }
 
     const data = req.body;
-   logger.info(`Updating product: ${id}`);
-   logger.info(`New product data: ${data}`);
-
+    logger.info(`Updating product: ${id}`);
+    logger.info(`New product data: ${JSON.stringify(data)}`);
     const existingProduct = await Product.findOne({
       productName: data.productName,
       _id: { $ne: id }
@@ -498,47 +413,25 @@ const editProduct = async (req, res) => {
     const existingImages = product.productImage || [];
     const newProductImages = [];
 
-
     for (let i = 1; i <= 4; i++) {
-
       if (req.files && req.files[`image${i}`] && req.files[`image${i}`][0]) {
-
         const file = req.files[`image${i}`][0];
-        const filename = `${Date.now()}-image${i}.webp`;
-        const uploadDir = path.join(__dirname, "../../public/uploads/product-images");
-        const filePath = path.join(uploadDir, filename);
 
+        const uploadedImage = await cloudinary.uploader.upload(file.path, {
+          folder: 'uploads/products',
+          transformation: [
+            { width: 1200, height: 600, crop: 'pad', background: 'white' },
+            { fetch_format: "webp", quality: "auto" }
+          ]
+        });
 
-        if (!fs.existsSync(uploadDir)) {
-          fs.mkdirSync(uploadDir, { recursive: true });
-        }
+        newProductImages.push(uploadedImage.secure_url);
 
-
-        await sharp(file.buffer)
-          .resize({
-            width: 1200,
-            height: 600,
-            fit: "contain",
-            background: { r: 255, g: 255, b: 255, alpha: 1 }
-          })
-          .webp({ quality: 80 })
-          .toFile(filePath);
-
-        newProductImages.push(`uploads/product-images/${filename}`);
-
-
-        if (existingImages[i - 1]) {
-          const oldImagePath = path.join(__dirname, "../../public", existingImages[i - 1]);
-          if (fs.existsSync(oldImagePath)) {
-            fs.unlinkSync(oldImagePath);
-          }
-        }
       } else if (existingImages[i - 1]) {
-
         newProductImages.push(existingImages[i - 1]);
       }
-
     }
+
 
 
     if (newProductImages.length === 0) {
@@ -580,22 +473,6 @@ const editProduct = async (req, res) => {
   } catch (error) {
     logger.error('Error updating product:', error);
 
-
-    if (error.name === 'ValidationError') {
-      const errorMessages = Object.values(error.errors).map(err => err.message);
-      return res.status(400).json({
-        success: false,
-        message: `Validation error: ${errorMessages.join(', ')}`
-      });
-    }
-
-    if (error.name === 'CastError') {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid data format provided"
-      });
-    }
-
     res.status(500).json({
       success: false,
       message: "An error occurred while updating the product",
@@ -626,7 +503,7 @@ const loadProductDetails = async (req, res) => {
     if (!product) {
       return res.render('admin/productDetails', { product: null });
     }
-    res.render('product-details', { product ,pageTitle:'Product-details'});
+    res.render('product-details', { product, pageTitle: 'Product-details' });
   } catch (error) {
     logger.error(error);
     res.render('admin/productDetails', { product: null });
@@ -636,7 +513,6 @@ const loadProductDetails = async (req, res) => {
 module.exports = {
   getProductsAddPage,
   addProducts,
-  saveImage,
   getAllProducts,
   addProductOffer,
   removeProductOffer,

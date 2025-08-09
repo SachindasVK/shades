@@ -4,170 +4,98 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>SHADES - OTP Verification</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
-      rel="stylesheet"
-    />
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+
     <link
       href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap"
       rel="stylesheet"
     />
     <link
-      href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@700&display=swap"
       rel="stylesheet"
     />
-    <style>
-      body {
-        font-family: "Montserrat", sans-serif;
-        background-color: #000000;
-        position: relative;
-        overflow: hidden;
-      }
-
-      .background-text {
-        position: absolute;
-        font-size: 25vw;
-        font-weight: 700;
-        opacity: 0.05;
-        letter-spacing: -0.05em;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        white-space: nowrap;
-        pointer-events: none;
-        z-index: 0;
-      }
-
-      .glass-effect {
-        background: rgba(30, 30, 30, 0.7);
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-      }
-
-      .otp-input {
-        width: 3rem;
-        height: 3rem;
-        font-size: 1.25rem;
-        text-align: center;
-        border-radius: 0.5rem;
-        background-color: #000;
-        border: 1px solid #333;
-        color: white;
-      }
-
-      .otp-input:focus {
-        border-color: #3b82f6;
-        outline: none;
-        box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
-      }
-
-      .timer-circle {
-        width: 64px;
-        height: 64px;
-        border-radius: 50%;
-        background: conic-gradient(
-          var(--timer-color) var(--progress),
-          #1f1f1f 0deg
-        );
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.3s ease;
-      }
-
-      .timer-inner {
-        width: 56px;
-        height: 56px;
-        border-radius: 50%;
-        background-color: #111;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: 600;
-        color: var(--timer-text-color);
-        transition: color 0.3s ease;
-      }
-
-      .gradient-line {
-        height: 1px;
-        background: linear-gradient(
-          90deg,
-          rgba(59, 130, 246, 0) 0%,
-          rgba(59, 130, 246, 1) 50%,
-          rgba(59, 130, 246, 0) 100%
-        );
-      }
-    </style>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+      rel="stylesheet"
+    />
+   <link rel="icon" href="favicon/favicon.ico" type="ico">
+    <link rel="stylesheet" href="/css/auth.css">
   </head>
-  <body class="text-white min-h-screen flex items-center justify-center p-4">
-    <div class="background-text text-white">SHADES</div>
+  <body class="text-white">
+    <!-- Header -->
+    <%-include('../../views/partials/user/authHeader')%>
 
-    <div
-      class="glass-effect w-full max-w-md p-8 rounded-lg shadow-xl z-10 relative"
-    >
-      <div class="text-center mb-8">
-        <h2 class="text-3xl font-semibold text-white">Verification</h2>
-        <div class="gradient-line my-2 mx-auto w-16"></div>
-        <p class="text-sm text-white mt-4">
-          We've sent a verification code to<br />
-          <span class="font-medium"><%=email%></span>
-        </p>
-      </div>
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="background-text text-white">SHADES</div>
 
-      <div class="flex justify-center mb-8">
-        <div
-          class="timer-circle"
-          style="--progress: 100%; --timer-color: #10b981"
-        >
-          <div class="timer-inner" style="--timer-text-color: #10b981">
-            <span id="timer">01:00</span>
+      <div
+        class="glass-effect w-full max-w-md p-8 rounded-lg shadow-xl z-10 relative"
+      >
+        <div class="text-center mb-8">
+          <h2 class="text-3xl font-semibold text-white">Verification</h2>
+          <div class="gradient-line my-2 mx-auto w-16"></div>
+          <p class="text-sm text-white mt-4">
+            We've sent a verification code to<br />
+            <span class="font-medium"><%=email%></span>
+          </p>
+        </div>
+
+        <div class="flex justify-center mb-8">
+          <div
+            class="timer-circle"
+            style="--progress: 100%; --timer-color: #10b981"
+          >
+            <div class="timer-inner" style="--timer-text-color: #10b981">
+              <span id="timer">01:00</span>
+            </div>
           </div>
         </div>
-      </div>
 
-      <form
-        class="space-y-6"
-        id="otpform"
-        method="post"
-        onsubmit="event.preventDefault(); validateOtpForm();"
-      >
-        <div class="flex justify-between space-x-2">
-          <input
-            type="text"
-            maxlength="1"
-            class="otp-input"
-            required
-            autofocus
-          />
-          <input type="text" maxlength="1" class="otp-input" required />
-          <input type="text" maxlength="1" class="otp-input" required />
-          <input type="text" maxlength="1" class="otp-input" required />
-          <input type="text" maxlength="1" class="otp-input" required />
-          <input type="text" maxlength="1" class="otp-input" required />
+        <form
+          class="space-y-6"
+          id="otpform"
+          method="post"
+          onsubmit="event.preventDefault(); validateOtpForm();"
+        >
+          <div class="flex justify-between space-x-2">
+            <input
+              type="text"
+              maxlength="1"
+              class="otp-input"
+              required
+              autofocus
+            />
+            <input type="text" maxlength="1" class="otp-input" required />
+            <input type="text" maxlength="1" class="otp-input" required />
+            <input type="text" maxlength="1" class="otp-input" required />
+            <input type="text" maxlength="1" class="otp-input" required />
+            <input type="text" maxlength="1" class="otp-input" required />
+          </div>
+
+          <button
+            type="submit"
+            class="w-full bg-blue-500 text-white py-3 px-4 rounded-md hover:bg-blue-600 transition duration-300 text-sm font-medium mt-4"
+            id="verify-btn"
+          >
+            Verify
+          </button>
+        </form>
+
+        <div class="text-center mt-6">
+          <p class="text-sm text-gray-400">Didn't receive the code?</p>
+          <button
+            id="resend-btn"
+            class="text-blue-500 font-medium hover:underline text-sm mt-1"
+            onclick="resendOTP()"
+          >
+            Resend Code
+          </button>
         </div>
-
-        <button
-          type="submit"
-          class="w-full bg-blue-500 text-white py-3 px-4 rounded-md hover:bg-blue-600 transition duration-300 text-sm font-medium mt-4"
-          id="verify-btn"
-        >
-          Verify
-        </button>
-      </form>
-
-      <div class="text-center mt-6">
-        <p class="text-sm text-gray-400">Didn't receive the code?</p>
-        <button
-          id="resend-btn"
-          class="text-blue-500 font-medium hover:underline text-sm mt-1"
-          onclick="resendOTP()"
-        >
-          Resend Code
-        </button>
       </div>
-    </div>
-
+    </main>
+       <%-include("../../views/partials/user/footer")%>
     <!-- jQuery and SweetAlert2 Scripts -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -457,7 +385,7 @@
           type: "POST",
           url: "/resend-otp",
           data: {
-            requestTime: new Date().toISOString(), // Include timestamp for server verification
+            requestTime: new Date().toISOString(), 
           },
           success: function (response) {
             if (response.success) {

@@ -1,8 +1,7 @@
 const express = require('express')
 const productController = require('../../controller/admin/productController')
 const { adminAuth } = require('../../middlewares/auth')
-const multer = require("multer");
-const upload = multer();
+const {upload} = require('../../config/cloudinary');
 const router = express.Router()
 
 
@@ -24,7 +23,6 @@ router.post('/editProduct/:id', adminAuth, upload.fields([
 
 // add product management
 router.get("/addProducts", adminAuth, productController.getProductsAddPage);
-router.post("/saveImage", adminAuth, upload.single('image'), productController.saveImage);
 router.post("/addProducts", adminAuth, upload.fields([
     { name: 'image1', maxCount: 1 },
     { name: 'image2', maxCount: 1 },

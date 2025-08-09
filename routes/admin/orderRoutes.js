@@ -10,5 +10,6 @@ router.post('/return/accept-item/:orderId/:itemId',adminAuth,orderController.acc
 router.get('/order/:orderId', adminAuth, orderController.getOrderDetails);
 router.post('/return/reject-item/:orderId/:itemId',adminAuth, orderController.rejectItemReturnRequest)
 router.post('/return/reject/:orderId',adminAuth, orderController.rejectOrderReturn)
+router.patch('/orders/:orderId/cancel',adminAuth, orderController.updateOrderStatus)
 
 module.exports = router

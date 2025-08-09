@@ -1,4 +1,5 @@
 const Coupon = require('../../models/couponSchema')
+const logger = require('../../helpers/logger')
 
 const getCoupon = async(req,res)=>{
     try {
@@ -40,7 +41,7 @@ const getCoupon = async(req,res)=>{
 
 const createCoupon = async (req, res) => {
     try {
-        logger.log(`Coupon form submitted: ${req.body}`); 
+        logger.info(`Coupon form submitted: ${JSON.stringify(req.body)}`);
         const { name, startDate, endDate, discountPercentage, maxDiscount, minimumPrice } = req.body;
 
         if (!name || !startDate || !endDate || !discountPercentage || !maxDiscount || !minimumPrice) {

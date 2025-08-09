@@ -59,9 +59,14 @@ const viewAllOrders = async (req, res) => {
   }
 };
 
+
+
+
+
+
 const updateOrderStatus = async (req, res) => {
   const { orderId } = req.params;
-  const { status } = req.body;
+  const { status, reason } = req.body;
 
   try {
     const validStatuses = [
@@ -96,7 +101,7 @@ const updateOrderStatus = async (req, res) => {
 
     if (status === 'cancelled') {
       order.cancelledAt = Date.now();
-
+      order.cancelReason = reason
       // Restore product quantities if cancelled
       for (const item of order.orderedItems) {
         const product = await Product.findById(item.product);
@@ -112,6 +117,7 @@ const updateOrderStatus = async (req, res) => {
       // Process refund if payment was made online or via wallet
       const payment = ['online', 'wallet']
       if (payment.includes(order.paymentMethod)) {
+        order.paymentStatus = 'Refunded'
         await processRefund(order.userId._id, order.finalAmount, orderId, 'Order cancellation');
       }
 
@@ -172,10 +178,9 @@ async function processRefund(userId, amount, orderId, reason) {
       });
     }
 
-    // Add refund to wallet
+    // refund to wallet
     wallet.balance += amount;
     wallet.refundAmount += amount;
-
     // Add transaction record
     wallet.transactions.push({
       amount,
@@ -520,6 +525,7 @@ const rejectOrderReturn = async (req, res) => {
 };
 
 
+
 module.exports = {
   viewAllOrders,
   updateOrderStatus,
@@ -527,5 +533,5 @@ module.exports = {
   acceptReturnRequest,
   acceptReturnItemRequest,
   rejectItemReturnRequest,
-  rejectOrderReturn
+  rejectOrderReturn,
 };

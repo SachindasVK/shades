@@ -1,8 +1,13 @@
-<%- include('../partials/admin/header') %>
-
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SHADES - Admin Product edit</title>
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cropperjs@1.5.12/dist/cropper.min.css" />
+  <link rel="icon" href="favicon/favicon.ico" type="ico">
+  <script defer src="/admin.js"></script>
   <style>
     .image-upload-container {
       margin-bottom: 30px;
@@ -197,9 +202,9 @@
     }
   </style>
 </head>
-
 <body class="bg-gray-100">
-  <div id="toast-container" class="toast-container"></div>
+  <%- include('../partials/admin/header') %>
+    <div id="toast-container" class="toast-container"></div>
 
   <div class="p-6">
     <div class="bg-white rounded-lg shadow-sm overflow-hidden mb-6">
@@ -317,7 +322,7 @@
                 
                 <div class="current-image-container" id="current-image-container-<%= i %>">
                   <% if (product.productImage && product.productImage[i-1]) { %>
-                    <img src="/<%= product.productImage[i-1] %>" class="current-image" id="image<%= i %>-current" alt="Current product image <%= i %>" />
+                    <img src="<%= product.productImage[i-1] %>" class="current-image" id="image<%= i %>-current" alt="Current product image <%= i %>" />
                   <% } else { %>
                     <p class="text-sm text-gray-500">No image uploaded</p>
                   <% } %>
@@ -373,35 +378,6 @@
 <script>
   const croppers = {};
   const fileData = {};
-
-  function showToast(message, type) {
-    const toastContainer = document.getElementById('toast-container');
-    const toast = document.createElement('div');
-    toast.className = `toast toast-${type} show`;
-    
-    const icon = document.createElement('i');
-    icon.className = `fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'} toast-icon`;
-    
-    const messageDiv = document.createElement('div');
-    messageDiv.className = 'toast-message';
-    messageDiv.textContent = message;
-    
-    const closeBtn = document.createElement('button');
-    closeBtn.className = 'toast-close';
-    closeBtn.innerHTML = '×';
-    closeBtn.onclick = () => toast.remove();
-    
-    toast.appendChild(icon);
-    toast.appendChild(messageDiv);
-    toast.appendChild(closeBtn);
-    toastContainer.appendChild(toast);
-    
-    setTimeout(() => {
-      toast.style.transform = 'translateX(150%)';
-      setTimeout(() => toast.remove(), 300);
-    }, 3000);
-  }
-
   function initCropper(preview, index) {
     if (croppers[index]) {
       croppers[index].destroy();
@@ -752,3 +728,5 @@ document.getElementById("productForm").addEventListener("submit", async function
 </body>
 
 <%- include('../partials/admin/footer') %>
+</html>
+

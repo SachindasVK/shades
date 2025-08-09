@@ -31,7 +31,7 @@ const getSelectAddress = async (req, res) => {
     });
   } catch (error) {
     logger.error('Error loading addresses:', error);
-    res.redirect('/cart');
+    return res.status(500).render('page-404')
   }
 }
 
@@ -72,10 +72,7 @@ const selectAddress = async (req, res) => {
 
   } catch (error) {
     logger.error('Error selecting address:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Server error occurred while selecting address'
-    });
+    return res.status(500).render('page-404')
   }
 }
 
@@ -146,10 +143,7 @@ const loadShipping = async (req, res) => {
 
   } catch (error) {
     logger.error('Error proceeding to shipping:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Something went wrong. Please try again.'
-    });
+    res.status(500).render('page-404')
   }
 }
 
@@ -172,7 +166,7 @@ const getShipping = async (req, res) => {
     });
   } catch (error) {
     logger.error("Error loading shipping page:", error);
-    res.status(500).send("Internal Server Error");
+    res.status(500).render('page-404')
   }
 };
 
@@ -197,10 +191,7 @@ const proceedToPayment = async (req, res) => {
     });
   } catch (error) {
     logger.error("Error proceeding to payment:", error);
-    return res.status(500).json({
-      success: false,
-      message: "Something went wrong while proceeding to payment"
-    });
+    return res.status(500).render('page-404')
   }
 }
 
@@ -266,7 +257,7 @@ const loadPayment = async (req, res) => {
       ? shippingDetails.method.charAt(0).toUpperCase() + shippingDetails.method.slice(1)
       : "Free";
 
-    const maxCodAmount = 20000;
+    const maxCodAmount = 2000;
     const isCodEligible = totalAmount <= maxCodAmount;
 
     res.render("payment", {
@@ -285,7 +276,7 @@ const loadPayment = async (req, res) => {
 
   } catch (error) {
     logger.error("Error rendering payment page:", error.message);
-    res.status(500).send("Error loading payment page");
+    res.status(500).render('page-404')
   }
 };
 
@@ -358,10 +349,10 @@ const placeOrder = async (req, res) => {
 
 
     
-    if (paymentMethod === 'cod' && finalAmount > 20000) {
+    if (paymentMethod === 'cod' && finalAmount > 2000) {
       return res.status(400).json({
         success: false,
-        message: 'COD not allowed for orders above ₹20,000'
+        message: 'COD not allowed for orders above ₹2,000'
       });
     }
 
@@ -492,7 +483,7 @@ const placeOrder = async (req, res) => {
 
   } catch (error) {
     logger.error('Error placing order:', error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: 'Failed to place order. Please try again.',
       error: process.env.NODE_ENV === 'development' ? error.message : undefined
@@ -565,7 +556,7 @@ const confirmOrder = async (req, res) => {
 
   } catch (error) {
     logger.error("Order confirmation error:", error);
-    res.redirect('/pageNotFound');
+    return res.status(500).render('page-404')
   }
 };
 
@@ -604,7 +595,7 @@ const loadRazorpayPayment = async (req, res) => {
 
   } catch (error) {
     logger.error('Error loading Razorpay payment:', error);
-    res.status(500).json({ success: false, message: "Failed to load payment details" });
+    return res.status(500).render('page-404')
   }
 };
 
@@ -718,7 +709,7 @@ const paymentFailed = async (req, res) => {
     return res.json({ success: true, message: "Payment marked as failed" });
   } catch (error) {
     logger.error("Payment Failed Error:", error);
-    return res.status(500).json({ success: false, message: "Server error" });
+    return res.status(500).render('page-404')
   }
 };
 
@@ -748,7 +739,7 @@ const orderFailure = async (req, res) => {
     });
   } catch (error) {
     logger.error("Error in orderFailure controller:", error);
-    res.redirect('/shop');
+    return res.status(500).render('page-404')
   }
 };
 

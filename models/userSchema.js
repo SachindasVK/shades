@@ -4,7 +4,8 @@ const { Schema } = mongoose
 const userSchema = new Schema({
     name: {
         type: String,
-        required: true
+        required: true,
+        trim: true,
     },
     email: {
         type: String,
@@ -80,7 +81,7 @@ const userSchema = new Schema({
 
     redeemed: {
         type: Boolean,
-        default:false
+        default: false
     },
     redeemedUsers: [{
         type: Schema.Types.ObjectId,
@@ -88,9 +89,9 @@ const userSchema = new Schema({
         // required:true
     }],
     referredBy: {
-    type: String,
-    default: null
-},
+        type: String,
+        default: null
+    },
     searchHistory: [{
         category: {
             type: Schema.Types.ObjectId,

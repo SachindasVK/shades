@@ -1,709 +1,598 @@
-<%- include('../partials/admin/header')%>
-<!-- Brand Management Content -->
-<div class="p-6">
-  <div class="bg-white rounded-lg shadow-sm overflow-hidden mb-6">
-    <div class="px-6 py-4 flex justify-between items-center border-b border-gray-200">
-      <h3 class="text-lg font-semibold">Brand Management</h3>
-      <button id="addBrandBtn" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
-        <i class="fas fa-plus mr-2"></i> Add Brand
-      </button>
-    </div>
-    
-    <!-- Search Bar -->
-    <div class="p-4 border-b border-gray-200">
-      <form id="searchForm" action="/admin/brands" method="GET">
-        <div class="flex flex-col md:flex-row gap-3">
-          <div class="relative flex-grow">
-            <input 
-              type="text" 
-              id="searchInput"  
-              name="search"
-              value="<%= searchTerm || '' %>"
-              class="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
-              placeholder="Search brands..."
-            >
-            <div class="absolute left-3 top-2.5 text-gray-400">
-              <i class="fas fa-search"></i>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SHADES - Admin Brand management</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <script defer src="/admin.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="icon" href="favicon/favicon.ico" type="ico">
+  <style>
+    .hidden {
+      display: none !important;
+    }
+
+    .flex {
+      display: flex !important;
+    }
+  </style>
+</head>
+
+<body>
+  <%- include('../partials/admin/header')%>
+    <!-- Brand Management Content -->
+    <div class="p-4 sm:p-6 lg:p-8">
+      <div class="bg-white rounded-lg shadow-sm overflow-hidden mb-6">
+        <div class="px-4 sm:px-6 py-3 sm:py-4 flex flex-col sm:flex-row justify-between items-center border-b border-gray-200">
+          <h3 class="text-base sm:text-lg font-semibold">Brand Management</h3>
+          <button id="addBrandBtn"
+            class="mt-2 sm:mt-0 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 text-sm sm:text-base">
+            <i class="fas fa-plus mr-2"></i> Add Brand
+          </button>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="p-4 border-b border-gray-200">
+          <form id="searchForm" action="/admin/brands" method="GET">
+            <div class="flex flex-col sm:flex-row gap-3">
+              <div class="relative flex-grow">
+                <input type="text" id="searchInput" name="search" value="<%= searchTerm || '' %>"
+                  class="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
+                  placeholder="Search brands...">
+                <div class="absolute left-3 top-2.5 text-gray-400">
+                  <i class="fas fa-search"></i>
+                </div>
+              </div>
+              <div class="flex gap-2">
+                <button type="submit"
+                  class="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 text-sm sm:text-base">
+                  Search
+                </button>
+                <a href="/admin/brands"
+                  class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 inline-flex items-center justify-center text-sm sm:text-base">
+                  Clear
+                </a>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <!-- Brands Table -->
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-black">
+              <tr>
+                <th scope="col" class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                  ID
+                </th>
+                <th scope="col" class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                  Name
+                </th>
+                <th scope="col" class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider sm:table-cell">
+                  Description
+                </th>
+                <th scope="col" class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                  Status
+                </th>
+                <th scope="col" class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider hidden md:table-cell">
+                  Created Date
+                </th>
+                <th scope="col" class="px-4 sm:px-6 py-3 text-right text-xs font-medium text-white uppercase tracking-wider">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+              <% if(data && data.length> 0) { %>
+                <% data.forEach(brand=> { %>
+                  <tr class="hover:bg-gray-50">
+                    <td class="px-4 sm:px-6 py-4 whitespace-nowrap">
+                      <div class="text-sm font-medium text-gray-900">#<%= brand._id.toString().slice(-6).toUpperCase() %>
+                      </div>
+                    </td>
+                    <td class="px-4 sm:px-6 py-4 whitespace-nowrap">
+                      <div class="text-sm font-medium text-gray-900">
+                        <%= brand.name %>
+                      </div>
+                    </td>
+                    <td class="px-4 sm:px-6 py-4  sm:table-cell">
+                      <div class="text-sm text-gray-500">
+                        <%= brand.description || '-' %>
+                      </div>
+                    </td>
+                    <td class="px-4 sm:px-6 py-4 whitespace-nowrap">
+                      <span
+                        class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full <%= !brand.isDeleted ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' %>">
+                        <%= !brand.isDeleted ? 'Active' : 'Deleted' %>
+                      </span>
+                    </td>
+                    <td class="px-4 sm:px-6 py-4 whitespace-nowrap hidden md:table-cell">
+                      <div class="text-sm text-gray-500">
+                        <%= new Date(brand.createdAt).toLocaleDateString('en-US', { year: 'numeric' , month: 'short' , day: 'numeric' }) %>
+                      </div>
+                    </td>
+                    <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                      <button class="text-blue-600 hover:text-blue-900 mr-2 edit-button" data-id="<%= brand._id %>"
+                        data-name="<%= brand.name %>" data-description="<%= brand.description || '' %>"
+                        data-status="<%= brand.isDeleted ? 'Deleted' : 'active' %>" data-logo="<%= brand.logo || '' %>">
+                        <i class="fas fa-edit"></i>
+                      </button>
+                      <% if(!brand.isDeleted) { %>
+                        <button class="text-red-600 hover:text-red-900 mr-2 status-toggle-button" title="Delete Brand"
+                          data-action="delete" data-id="<%= brand._id %>" data-name="<%= brand.name %>">
+                          <i class="fas fa-trash-alt"></i>
+                        </button>
+                        <% } else { %>
+                          <button class="text-green-600 hover:text-green-900 mr-2 status-toggle-button"
+                            title="Recover Brand" data-action="recover" data-id="<%= brand._id %>"
+                            data-name="<%= brand.name %>">
+                            <i class="fas fa-undo"></i>
+                          </button>
+                          <% } %>
+                    </td>
+                  </tr>
+                  <% }) %>
+                    <% } else { %>
+                      <tr>
+                        <td colspan="7" class="px-4 sm:px-6 py-4 text-center text-sm text-gray-500">
+                          No brands found. <a href="#" id="noResultsAddBtn"
+                            class="text-blue-600 hover:text-blue-900">Add a new brand</a>
+                        </td>
+                      </tr>
+                      <% } %>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination -->
+        <% if(totalPages> 1) { %>
+          <div class="px-4 sm:px-6 py-4 border-t border-gray-200">
+            <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
+              <div class="text-sm text-gray-500">
+                Showing <span class="font-medium">
+                  <%= (currentPage - 1) * limit + 1 %>
+                </span> to
+                <span class="font-medium">
+                  <%= Math.min(currentPage * limit, totalItems) %>
+                </span> of
+                <span class="font-medium">
+                  <%= totalItems %>
+                </span> brands
+              </div>
+              <nav class="flex space-x-1">
+                <% if(currentPage> 1) { %>
+                  <a href="/admin/brands?page=<%= currentPage - 1 %><%= searchTerm ? `&search=${searchTerm}` : '' %>"
+                    class="px-3 py-1 rounded-md text-sm font-medium bg-gray-200 text-gray-700 hover:bg-gray-300">
+                    Previous
+                  </a>
+                  <% } else { %>
+                    <span class="px-3 py-1 rounded-md text-sm font-medium bg-gray-100 text-gray-400 cursor-not-allowed">
+                      Previous
+                    </span>
+                    <% } %>
+                      <% for(let i=1; i <=totalPages; i++) { %>
+                        <% if(i===currentPage) { %>
+                          <span class="px-3 py-1 rounded-md text-sm font-medium bg-blue-600 text-white">
+                            <%= i %>
+                          </span>
+                          <% } else if(i <=3 || i>= totalPages - 2 || Math.abs(i - currentPage) <= 1) { %>
+                              <a href="/admin/brands?page=<%= i %><%= searchTerm ? `&search=${searchTerm}` : '' %>"
+                                class="px-3 py-1 rounded-md text-sm font-medium bg-gray-200 text-gray-700 hover:bg-gray-300">
+                                <%= i %>
+                              </a>
+                              <% } else if(i===4 && currentPage> 5) { %>
+                                <span class="px-3 py-1 text-sm font-medium text-gray-500">...</span>
+                                <% } else if(i===totalPages - 3 && currentPage < totalPages - 4) { %>
+                                  <span class="px-3 py-1 text-sm font-medium text-gray-500">...</span>
+                                  <% } %>
+                                    <% } %>
+                                      <% if(currentPage < totalPages) { %>
+                                        <a href="/admin/brands?page=<%= currentPage + 1 %><%= searchTerm ? `&search=${searchTerm}` : '' %>"
+                                          class="px-3 py-1 rounded-md text-sm font-medium bg-gray-200 text-gray-700 hover:bg-gray-300">
+                                          Next
+                                        </a>
+                                        <% } else { %>
+                                          <span
+                                            class="px-3 py-1 rounded-md text-sm font-medium bg-gray-100 text-gray-400 cursor-not-allowed">
+                                            Next
+                                          </span>
+                                          <% } %>
+              </nav>
             </div>
           </div>
-          <div class="flex gap-2">
-            <button 
-              type="submit" 
-              class="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50"
-            >
-              Search
-            </button>
-            <a 
-              href="/admin/brands"
-              class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 inline-flex items-center justify-center"
-            >
-              Clear
-            </a>
-          </div>
-        </div>
-      </form>
-    </div>
-
-    <!-- Brands Table -->
-    <div class="overflow-x-auto">
-      <table class="min-w-full divide-y divide-gray-200">
-        <thead class="bg-black">
-          <tr>
-            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-              ID
-            </th>
-            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-              Logo
-            </th>
-            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-              Name
-            </th>
-            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-              Description
-            </th>
-            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-              Status
-            </th>
-            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-              Created Date
-            </th>
-            <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-white uppercase tracking-wider">
-              Actions
-            </th>
-          </tr>
-        </thead>
-        
-        <tbody class="bg-white divide-y divide-gray-200">
-          <% if(data && data.length > 0) { %>
-            <% data.forEach(brand => { %>
-              <tr class="hover:bg-gray-50">
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm font-medium text-gray-900">#<%= brand._id.toString().slice(-6).toUpperCase() %></div>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="h-12 w-12 overflow-hidden rounded-md">
-                    <% if(brand.logo) { %>
-                      <img src="/Uploads/brands/<%= brand.logo %>" alt="<%= brand.name %>" class="h-full w-full object-contain">
-                    <% } else { %>
-                      <div class="h-full w-full bg-gray-200 flex items-center justify-center text-gray-500">
-                        <i class="fas fa-image"></i>
-                      </div>
-                    <% } %>
-                  </div>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm font-medium text-gray-900"><%= brand.name %></div>
-                </td>
-                <td class="px-6 py-4">
-                  <div class="text-sm text-gray-500"><%= brand.description || '-' %></div>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-              <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full <%= !brand.isDeleted ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' %>">
-                <%= !brand.isDeleted ? 'Active' : 'Deleted' %>
-              </span>
-            </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm text-gray-500">
-                    <%= new Date(brand.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) %>
-                  </div>
-                </td>
-
-                <!-- Actions -->
-                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                  <!-- Edit Brand -->
-                  <button 
-                    class="text-blue-600 hover:text-blue-900 mr-2 edit-button" 
-                    data-id="<%= brand._id %>"
-                    data-name="<%= brand.name %>"
-                    data-description="<%= brand.description || '' %>"
-                    data-status="<%= brand.isDeleted ? 'Deleted' : 'active' %>"
-                    data-logo="<%= brand.logo || '' %>"
-                  >
-                  <i class="fas fa-edit"></i>
-                  </button>
-
-                  <!-- Delete Brand -->
-              <% if(!brand.isDeleted) { %>
-              <button
-                class="text-red-600 hover:text-red-900 mr-2 status-toggle-button"
-                title="Delete Brand"
-                data-action="delete"
-                data-id="<%= brand._id %>"
-                data-name="<%= brand.name %>"
-              >
-                <i class="fas fa-trash-alt"></i>
-              </button>
-              <% } else { %>
-              <button
-                class="text-green-600 hover:text-green-900 mr-2 status-toggle-button"
-                title="Recover Brand"
-                data-action="recover"
-                data-id="<%= brand._id %>"
-                data-name="<%= brand.name %>"
-              >
-                <i class="fas fa-undo"></i>
-              </button>
-              <% } %>
-                </td>
-              </tr>
-            <% }) %>
-          <% } else { %>
-            <tr>
-              <td colspan="7" class="px-6 py-4 text-center text-sm text-gray-500">
-                No brands found. <a href="#" id="noResultsAddBtn" class="text-blue-600 hover:text-blue-900">Add a new brand</a>
-              </td>
-            </tr>
           <% } %>
-        </tbody>
-      </table>
-    </div>
-    
-    <!-- Pagination -->
-    <% if(totalPages > 1) { %>
-      <div class="px-6 py-4 border-t border-gray-200">
-        <div class="flex justify-between items-center">
-          <div class="text-sm text-gray-500">
-            Showing <span class="font-medium"><%= (currentPage - 1) * limit + 1 %></span> to 
-            <span class="font-medium"><%= Math.min(currentPage * limit, totalItems) %></span> of 
-            <span class="font-medium"><%= totalItems %></span> brands
-          </div>
-          <nav class="flex space-x-1">
-            <% if(currentPage > 1) { %>
-              <a href="/admin/brands?page=<%= currentPage - 1 %><%= searchTerm ? `&search=${searchTerm}` : '' %>" class="px-3 py-1 rounded-md text-sm font-medium bg-gray-200 text-gray-700 hover:bg-gray-300">
-                Previous
-              </a>
-            <% } else { %>
-              <span class="px-3 py-1 rounded-md text-sm font-medium bg-gray-100 text-gray-400 cursor-not-allowed">
-                Previous
-              </span>
-            <% } %>
-            
-            <% for(let i = 1; i <= totalPages; i++) { %>
-              <% if(i === currentPage) { %>
-                <span class="px-3 py-1 rounded-md text-sm font-medium bg-blue-600 text-white">
-                  <%= i %>
-                </span>
-              <% } else if(i <= 3 || i >= totalPages - 2 || Math.abs(i - currentPage) <= 1) { %>
-                <a href="/admin/brands?page=<%= i %><%= searchTerm ? `&search=${searchTerm}` : '' %>" class="px-3 py-1 rounded-md text-sm font-medium bg-gray-200 text-gray-700 hover:bg-gray-300">
-                  <%= i %>
-                </a>
-              <% } else if(i === 4 && currentPage > 5) { %>
-                <span class="px-3 py-1 text-sm font-medium text-gray-500">...</span>
-              <% } else if(i === totalPages - 3 && currentPage < totalPages - 4) { %>
-                <span class="px-3 py-1 text-sm font-medium text-gray-500">...</span>
-              <% } %>
-            <% } %>
-            
-            <% if(currentPage < totalPages) { %>
-              <a href="/admin/brands?page=<%= currentPage + 1 %><%= searchTerm ? `&search=${searchTerm}` : '' %>" class="px-3 py-1 rounded-md text-sm font-medium bg-gray-200 text-gray-700 hover:bg-gray-300">
-                Next
-              </a>
-            <% } else { %>
-              <span class="px-3 py-1 rounded-md text-sm font-medium bg-gray-100 text-gray-400 cursor-not-allowed">
-                Next
-              </span>
-            <% } %>
-          </nav>
-        </div>
       </div>
-    <% } %>
-  </div>
-</div>
+    </div>
 
-<!-- Add/Edit Brand Modal -->
-<div id="brandModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center">
-  <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
-    <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
-      <h3 class="text-lg font-semibold" id="modalTitle">Add New Brand</h3>
-      <button class="text-gray-400 hover:text-gray-500 focus:outline-none" id="closeModal">
-        <i class="fas fa-times"></i>
-      </button>
-    </div>
-    <form id="brandForm" class="px-6 py-4" enctype="multipart/form-data">
-      <input type="hidden" id="brandId">
-      <div class="mb-4">
-        <label for="brandName" class="block text-sm font-medium text-gray-700 mb-1">Brand Name</label>
-        <input type="text" id="brandName" name="name" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-      </div>
-      <div class="mb-4">
-        <label for="brandDescription" class="block text-sm font-medium text-gray-700 mb-1">Description (Optional)</label>
-        <textarea id="brandDescription" name="description" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"></textarea>
-      </div>
-      <div class="mb-4">
-        <label for="brandLogo" class="block text-sm font-medium text-gray-700 mb-1">Logo</label>
-        <div class="flex items-center space-x-4 mb-2">
-          <div id="currentLogo" class="h-16 w-16 border rounded-md overflow-hidden hidden">
-            <img id="logoPreview" src="" alt="Brand Logo" class="h-full w-full object-contain">
+    <!-- Add/Edit Brand Modal -->
+    <div id="brandModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center">
+      <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 sm:mx-6">
+        <div class="px-4 sm:px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+          <h3 class="text-base sm:text-lg font-semibold" id="modalTitle">Add New Brand</h3>
+          <button class="text-gray-400 hover:text-gray-500 focus:outline-none" id="closeModal">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <form id="brandForm" class="px-4 sm:px-6 py-4" enctype="multipart/form-data">
+          <input type="hidden" id="brandId">
+          <div class="mb-4">
+            <label for="brandName" class="block text-sm font-medium text-gray-700 mb-1">Brand Name</label>
+            <input type="text" id="brandName" name="name" required
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base">
           </div>
-          <div id="noLogo" class="h-16 w-16 bg-gray-200 flex items-center justify-center text-gray-500 rounded-md">
-            <i class="fas fa-image"></i>
+          <div class="mb-4">
+            <label for="brandDescription" class="block text-sm font-medium text-gray-700 mb-1">Description
+              (Optional)</label>
+            <textarea id="brandDescription" name="description" rows="3"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"></textarea>
+          </div>
+          <div class="flex justify-end space-x-3">
+            <button type="button" id="cancelBtn"
+              class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 text-sm sm:text-base">
+              Cancel
+            </button>
+            <button type="submit" id="saveBtn"
+              class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 text-sm sm:text-base">
+              Save Brand
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Status Confirmation Modal -->
+    <div id="statusModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center">
+      <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 sm:mx-6">
+        <div class="px-4 sm:px-6 py-4 border-b border-gray-200">
+          <h3 class="text-base sm:text-lg font-semibold" id="statusModalTitle">Confirm Status Change</h3>
+        </div>
+        <div class="px-4 sm:px-6 py-4">
+          <p class="text-gray-700 text-sm sm:text-base" id="statusModalMessage">Are you sure you want to change the status of this category?</p>
+        </div>
+        <div class="px-4 sm:px-6 py-4 border-t border-gray-200 flex justify-end space-x-3">
+          <button id="cancelStatusBtn"
+            class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 text-sm sm:text-base">
+            Cancel
+          </button>
+          <button id="confirmStatusBtn"
+            class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 text-sm sm:text-base">
+            Confirm
+          </button>
+        </div>
+        <input type="hidden" id="statusId" />
+        <input type="hidden" id="statusAction" />
+      </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-4 right-4 z-50 hidden">
+      <div class="bg-white rounded-lg shadow-lg border-l-4 border-green-500 px-4 py-3 max-w-xs sm:max-w-sm">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <i class="fas fa-check-circle text-green-500"></i>
+          </div>
+          <div class="ml-3">
+            <p id="toastMessage" class="text-sm font-medium text-gray-900"></p>
+          </div>
+          <div class="ml-auto pl-3">
+            <button id="closeToast" class="text-gray-400 hover:text-gray-500">
+              <i class="fas fa-times"></i>
+            </button>
           </div>
         </div>
-        <div class="flex">
-          <input 
-            type="file" 
-            id="brandLogo" 
-            name="logo" 
-            class="hidden" 
-            accept="image/*"
-            onchange="previewImage(this)"
-          >
-          <label for="brandLogo" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 cursor-pointer">
-            Choose File
-          </label>
-          <span id="fileNameDisplay" class="ml-2 py-2 text-sm text-gray-500">No file chosen</span>
-        </div>
-      </div>
-      <div class="flex justify-end space-x-3">
-        <button type="button" id="cancelBtn" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50">
-          Cancel
-        </button>
-        <button type="submit" id="saveBtn" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
-          Save Brand
-        </button>
-      </div>
-    </form>
-  </div>
-</div>
-
-
-<!-- Status Confirmation Modal -->
-<div
-  id="statusModal"
-  class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center"
->
-  <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
-    <div class="px-6 py-4 border-b border-gray-200">
-      <h3 class="text-lg font-semibold" id="statusModalTitle">
-        Confirm Status Change
-      </h3>
-    </div>
-    <div class="px-6 py-4">
-      <p class="text-gray-700" id="statusModalMessage">
-        Are you sure you want to change the status of this category?
-      </p>
-    </div>
-    <div class="px-6 py-4 border-t border-gray-200 flex justify-end space-x-3">
-      <button
-        id="cancelStatusBtn"
-        class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50"
-      >
-        Cancel
-      </button>
-      <button
-        id="confirmStatusBtn"
-        class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
-      >
-        Confirm
-      </button>
-    </div>
-    <input type="hidden" id="statusId" />
-    <input type="hidden" id="statusAction" />
-  </div>
-</div>
-
-<!-- Toast Notification -->
-<div id="toast" class="fixed bottom-4 right-4 z-50 hidden">
-  <div class="bg-white rounded-lg shadow-lg border-l-4 border-green-500 px-4 py-3 max-w-sm">
-    <div class="flex items-center">
-      <div class="flex-shrink-0">
-        <i class="fas fa-check-circle text-green-500"></i>
-      </div>
-      <div class="ml-3">
-        <p id="toastMessage" class="text-sm font-medium text-gray-900"></p>
-      </div>
-      <div class="ml-auto pl-3">
-        <button id="closeToast" class="text-gray-400 hover:text-gray-500">
-          <i class="fas fa-times"></i>
-        </button>
       </div>
     </div>
-  </div>
-</div>
 
-<script>
-// Define utility functions in global scope
-const baseUrl = 'http://localhost:3000'; // Adjust to your server's URL
-let brandModal, statusModal, toast; // Global references to modals
+    <%- include('../partials/admin/footer') %>
+    <script>
+      let brandModal, statusModal, toast;
 
-// File preview function
-function previewImage(input) {
-  const fileNameDisplay = document.getElementById('fileNameDisplay');
-  const currentLogo = document.getElementById('currentLogo');
-  const noLogo = document.getElementById('noLogo');
-  const logoPreview = document.getElementById('logoPreview');
-  
-  if (input.files && input.files[0]) {
-    const fileName = input.files[0].name;
-    fileNameDisplay.textContent = fileName.length > 25 ? fileName.substring(0, 22) + '...' : fileName;
-    
-    const reader = new FileReader();
-    reader.onload = function(e) {
-      logoPreview.src = e.target.result;
-      currentLogo.classList.remove('hidden');
-      noLogo.classList.add('hidden');
-    };
-    reader.readAsDataURL(input.files[0]);
-  } else {
-    fileNameDisplay.textContent = 'No file chosen';
-    currentLogo.classList.add('hidden');
-    noLogo.classList.remove('hidden');
-  }
-}
-
-// API response handlers
-function handleResponse(response) {
-  if (!response.ok) {
-    if (response.status === 401) {
-      showToast('Session expired. Please log in again.', 'error');
-      setTimeout(() => {
-        window.location.href = '/admin/login';
-      }, 2000);
-      throw new Error('Unauthorized');
-    }
-    return response.json().then(data => {
-      throw new Error(data.message || 'Server returned an error');
-    });
-  }
-  return response.json();
-}
-
-function handleError(error) {
-  console.error('Fetch error:', error);
-  showToast(error.message || 'Failed to connect to server. Please try again.', 'error');
-}
-
-function reloadPageAfterDelay(delay = 1000) {
-  setTimeout(() => {
-    window.location.reload();
-  }, delay);
-}
-
-// Modal control functions
-function closeAllModals() {
-  if (brandModal) {
-    brandModal.classList.add('hidden');
-    brandModal.classList.remove('flex');
-  }
-  if (statusModal) {
-    statusModal.classList.add('hidden');
-    statusModal.classList.remove('flex');
-  }
-}
-
-function showToast(message, type = 'success') {
-  if (!toast) return;
-  
-  const toastMessage = document.getElementById('toastMessage');
-  const toastIcon = toast.querySelector('i.fas');
-  const toastBorder = toast.querySelector('div.border-l-4');
-  
-  // Set message
-  toastMessage.textContent = message;
-  
-  // Set toast appearance based on type
-  if (type === 'success') {
-    toastIcon.className = 'fas fa-check-circle text-green-500';
-    toastBorder.className = toastBorder.className.replace(/border-\w+-500/g, 'border-green-500');
-  } else if (type === 'error') {
-    toastIcon.className = 'fas fa-exclamation-circle text-red-500';
-    toastBorder.className = toastBorder.className.replace(/border-\w+-500/g, 'border-red-500');
-  } else if (type === 'warning') {
-    toastIcon.className = 'fas fa-exclamation-triangle text-amber-500';
-    toastBorder.className = toastBorder.className.replace(/border-\w+-500/g, 'border-amber-500');
-  } else if (type === 'info') {
-    toastIcon.className = 'fas fa-info-circle text-blue-500';
-    toastBorder.className = toastBorder.className.replace(/border-\w+-500/g, 'border-blue-500');
-  }
-  
-  // Show toast
-  toast.classList.remove('hidden');
-  
-  // Auto-hide after 3 seconds
-  setTimeout(() => {
-    toast.classList.add('hidden');
-  }, 3000);
-}
-
-// Main initialization
-document.addEventListener('DOMContentLoaded', function() {
-  // Modal elements
-  brandModal = document.getElementById('brandModal');
-  statusModal = document.getElementById('statusModal');
-  toast = document.getElementById('toast');
-  
-  // Form elements
-  const brandForm = document.getElementById('brandForm');
-  const modalTitle = document.getElementById('modalTitle');
-  const brandId = document.getElementById('brandId');
-  const brandName = document.getElementById('brandName');
-  const brandDescription = document.getElementById('brandDescription');
-  const brandLogo = document.getElementById('brandLogo');
-  const statusId = document.getElementById('statusId');
-  const statusAction = document.getElementById('statusAction');
-  const statusModalTitle = document.getElementById('statusModalTitle');
-  const statusModalMessage = document.getElementById('statusModalMessage');
-  const currentLogo = document.getElementById('currentLogo');
-  const noLogo = document.getElementById('noLogo');
-  const logoPreview = document.getElementById('logoPreview');
-  const fileNameDisplay = document.getElementById('fileNameDisplay');
-  
-  // Buttons
-  const addBrandBtn = document.getElementById('addBrandBtn');
-  const noResultsAddBtn = document.getElementById('noResultsAddBtn');
-  const closeModal = document.getElementById('closeModal');
-  const cancelBtn = document.getElementById('cancelBtn');
-  const closeToast = document.getElementById('closeToast');
-  const cancelStatusBtn = document.getElementById('cancelStatusBtn');
-  const confirmStatusBtn = document.getElementById('confirmStatusBtn');
-  
-  // File validation
-  if (brandLogo) {
-    brandLogo.addEventListener('change', function() {
-      const file = this.files[0];
-      if (file) {
-        const maxSize = 5 * 1024 * 1024; // 5MB
-        if (!file.type.startsWith('image/')) {
-          showToast('Only image files are allowed', 'error');
-          this.value = '';
-          previewImage(this);
-          return;
+      // API response handlers
+      function handleResponse(response) {
+        if (!response.ok) {
+          if (response.status === 401) {
+            showToast('Session expired. Please log in again.', 'error');
+            setTimeout(() => {
+              window.location.href = '/admin/login';
+            }, 2000);
+            throw new Error('Unauthorized');
+          }
+          return response.json().then(data => {
+            throw new Error(data.message || 'Server returned an error');
+          });
         }
-        if (file.size > maxSize) {
-          showToast('File size exceeds 5MB limit', 'error');
-          this.value = '';
-          previewImage(this);
-          return;
+        return response.json();
+      }
+
+      function handleError(error) {
+        console.error('Fetch error:', error);
+        showToast(error.message || 'Failed to connect to server. Please try again.', 'error');
+      }
+
+      function reloadPageAfterDelay(delay = 1000) {
+        setTimeout(() => {
+          window.location.reload();
+        }, delay);
+      }
+
+      // Modal control functions
+      function closeAllModals() {
+        if (brandModal) {
+          brandModal.classList.add('hidden');
+          brandModal.classList.remove('flex');
+        }
+        if (statusModal) {
+          statusModal.classList.add('hidden');
+          statusModal.classList.remove('flex');
         }
       }
-      previewImage(this);
-    });
-  }
+      // Main initialization
+      document.addEventListener('DOMContentLoaded', function () {
+        // Modal elements
+        brandModal = document.getElementById('brandModal');
+        statusModal = document.getElementById('statusModal');
+        toast = document.getElementById('toast');
 
-  // Open add modal
-  if (addBrandBtn) {
-    addBrandBtn.addEventListener('click', function() {
-      openAddModal();
-    });
-  }
-  
-  // Open add modal from no results
-  if (noResultsAddBtn) {
-    noResultsAddBtn.addEventListener('click', function(e) {
-      e.preventDefault();
-      openAddModal();
-    });
-  }
-  
-  // Close modals
-  if (closeModal) closeModal.addEventListener('click', closeAllModals);
-  if (cancelBtn) cancelBtn.addEventListener('click', closeAllModals);
-  if (cancelStatusBtn) cancelStatusBtn.addEventListener('click', closeAllModals);
-  
-  // Close toast
-  if (closeToast) {
-    closeToast.addEventListener('click', function() {
-      toast.classList.add('hidden');
-    });
-  }
-  
-  // Edit button functionality
-  document.querySelectorAll('.edit-button').forEach(button => {
-    button.addEventListener('click', function() {
-      const id = this.getAttribute('data-id');
-      const name = this.getAttribute('data-name');
-      const description = this.getAttribute('data-description');
-      const logo = this.getAttribute('data-logo');
-      
-      openEditModal(id, name, description, logo);
-    });
-  });
-  
-  // Status toggle button functionality (Delete/Recover)
-  document.querySelectorAll(".status-toggle-button").forEach((button) => {
-    button.addEventListener("click", function() {
-      const id = this.getAttribute("data-id");
-      const name = this.getAttribute("data-name");
-      const action = this.getAttribute("data-action");
-      openStatusModal(id, name, action);
-    });
-  });
-  
-  // Form validation and submission
-  if (brandForm) {
-    brandForm.addEventListener('submit', function(e) {
-      e.preventDefault();
-      
-      if (!validateForm()) {
-        return false;
-      }
-      
-      const formData = new FormData(this);
-      const id = brandId.value;
-      
-      if (id) {
-        formData.append('id', id);
-      }
-      
-      const endpoint = id ? `${baseUrl}/admin/brands/${id}` : `${baseUrl}/admin/brands`;
-      const method = id ? 'PUT' : 'POST';
-      
-      // Log the FormData for debugging
-      for (const pair of formData.entries()) {
-        console.log(pair[0] + ': ' + pair[1]);
-      }
-      
-      fetch(endpoint, {
-        method: method,
-        body: formData,
-        credentials: 'include' // Include cookies for session
-      })
-      .then(handleResponse)
-      .then(data => {
-        if (data.success) {
+        // Form elements
+        const brandForm = document.getElementById('brandForm');
+        const modalTitle = document.getElementById('modalTitle');
+        const brandId = document.getElementById('brandId');
+        const brandName = document.getElementById('brandName');
+        const brandDescription = document.getElementById('brandDescription');
+        const fileNameDisplay = document.getElementById('fileNameDisplay');
+        const statusId = document.getElementById('statusId');
+        const statusAction = document.getElementById('statusAction');
+        const statusModalTitle = document.getElementById('statusModalTitle');
+        const statusModalMessage = document.getElementById('statusModalMessage');
+
+        // Buttons
+        const addBrandBtn = document.getElementById('addBrandBtn');
+        const noResultsAddBtn = document.getElementById('noResultsAddBtn');
+        const closeModal = document.getElementById('closeModal');
+        const cancelBtn = document.getElementById('cancelBtn');
+        const closeToast = document.getElementById('closeToast');
+        const cancelStatusBtn = document.getElementById('cancelStatusBtn');
+        const confirmStatusBtn = document.getElementById('confirmStatusBtn');
+
+        // Debugging logs
+        console.log('brandModal:', brandModal);
+        console.log('addBrandBtn:', addBrandBtn);
+        console.log('fileNameDisplay:', fileNameDisplay);
+
+        // Open add modal
+        if (addBrandBtn) {
+          addBrandBtn.addEventListener('click', function () {
+            console.log('Add Brand button clicked');
+            openAddModal();
+          });
+        }
+
+        // Open add modal from no results
+        if (noResultsAddBtn) {
+          noResultsAddBtn.addEventListener('click', function (e) {
+            e.preventDefault();
+            console.log('No results Add button clicked');
+            openAddModal();
+          });
+        }
+
+        // Close modals
+        if (closeModal) closeModal.addEventListener('click', closeAllModals);
+        if (cancelBtn) cancelBtn.addEventListener('click', closeAllModals);
+        if (cancelStatusBtn) cancelStatusBtn.addEventListener('click', closeAllModals);
+
+        // Close toast
+        if (closeToast) {
+          closeToast.addEventListener('click', function () {
+            toast.classList.add('hidden');
+          });
+        }
+
+        // Edit button functionality
+        document.querySelectorAll('.edit-button').forEach(button => {
+          button.addEventListener('click', function () {
+            const id = this.getAttribute('data-id');
+            const name = this.getAttribute('data-name');
+            const description = this.getAttribute('data-description');
+            console.log('Edit button clicked:', id, name);
+            openEditModal(id, name, description);
+          });
+        });
+
+        // Status toggle button functionality (Delete/Recover)
+        document.querySelectorAll(".status-toggle-button").forEach((button) => {
+          button.addEventListener("click", function () {
+            const id = this.getAttribute("data-id");
+            const name = this.getAttribute("data-name");
+            const action = this.getAttribute("data-action");
+            console.log('Status toggle clicked:', id, name, action);
+            openStatusModal(id, name, action);
+          });
+        });
+
+        // Form validation and submission
+        if (brandForm) {
+          brandForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            console.log('Form submitted');
+
+            if (!validateForm()) {
+              console.log('Form validation failed');
+              return false;
+            }
+
+            const id = brandId.value;
+            const body = {
+              name: brandName.value.trim(),
+              description: brandDescription.value.trim()
+            };
+
+            const endpoint = id ? `brand/edit/${id}` : `brand/add`;
+            const method = id ? 'PUT' : 'POST';
+
+            fetch(endpoint, {
+              method: method,
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              credentials: 'include',
+              body: JSON.stringify(body)
+            })
+
+              .then(handleResponse)
+              .then(data => {
+                console.log('Form submission response:', data);
+                if (data.success) {
+                  closeAllModals();
+                  showToast(data.message);
+                  reloadPageAfterDelay();
+                } else {
+                  showToast(data.message || 'An error occurred', 'error');
+                }
+              })
+              .catch(handleError);
+
+            return false;
+          });
+        }
+
+        // Confirm status change (Delete/Recover)
+        if (confirmStatusBtn) {
+          confirmStatusBtn.addEventListener("click", function () {
+            const id = statusId.value;
+            const action = statusAction.value;
+            const endpoint = `brands/${id}/status`;
+            console.log('Confirm status change:', id, action);
+
+            fetch(endpoint, {
+              method: "PATCH",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              credentials: 'include',
+              body: JSON.stringify({
+                action: action,
+              }),
+            })
+              .then(handleResponse)
+              .then(data => {
+                console.log('Status change response:', data);
+                if (data.success) {
+                  closeAllModals();
+                  showToast(data.message);
+                  reloadPageAfterDelay();
+                } else {
+                  showToast(data.message || "An error occurred", "error");
+                }
+              })
+              .catch(handleError);
+          });
+        }
+
+        // Helper Functions
+        function validateForm() {
+          const name = document.getElementById('brandName').value.trim();
+          let isValid = true;
+
+          // Clear any existing error messages
+          const existingErrors = document.querySelectorAll('.error-message');
+          existingErrors.forEach(error => error.remove());
+
+          if (name === '') {
+            displayErrorMessage('brandName', 'Please enter a brand name');
+            isValid = false;
+          }
+
+          return isValid;
+        }
+
+        function displayErrorMessage(elementId, message) {
+          const inputField = document.getElementById(elementId);
+          const errorElement = document.createElement('div');
+          errorElement.className = 'text-red-500 text-sm mt-1 error-message';
+          errorElement.innerText = message;
+          inputField.parentNode.insertBefore(errorElement, inputField.nextSibling);
+        }
+
+        function openAddModal() {
+          try {
+            console.log('Opening Add Modal');
+            modalTitle.textContent = 'Add New Brand';
+            brandForm.reset();
+            brandId.value = '';
+            if (fileNameDisplay) {
+              fileNameDisplay.textContent = 'No file chosen';
+            }
+            console.log('Modal classes before:', brandModal.className);
+            brandModal.classList.remove('hidden');
+            brandModal.classList.add('flex');
+            console.log('Modal classes after:', brandModal.className);
+          } catch (error) {
+            console.error('Error in openAddModal:', error);
+            showToast('Failed to open modal. Please try again.', 'error');
+          }
+        }
+
+        function openEditModal(id, name, description) {
+          try {
+            console.log('Opening Edit Modal:', id);
+            modalTitle.textContent = 'Edit Brand';
+            brandId.value = id;
+            brandName.value = name;
+            brandDescription.value = description;
+            if (fileNameDisplay) {
+              fileNameDisplay.textContent = 'No file chosen';
+            }
+            brandModal.classList.remove('hidden');
+            brandModal.classList.add('flex');
+          } catch (error) {
+            console.error('Error in openEditModal:', error);
+            showToast('Failed to open modal. Please try again.', 'error');
+          }
+        }
+
+        function openStatusModal(id, name, action) {
+          try {
+            console.log('Opening Status Modal:', id, action);
+            statusId.value = id;
+            statusAction.value = action;
+            if (action === "delete") {
+              statusModalTitle.textContent = "Delete Brand";
+              statusModalMessage.innerHTML = `Are you sure you want to delete <span class="font-semibold">${name}</span>?`;
+              confirmStatusBtn.className =
+                "px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50";
+              confirmStatusBtn.textContent = "Delete";
+            } else {
+              statusModalTitle.textContent = "Recover Brand";
+              statusModalMessage.innerHTML = `Are you sure you want to recover <span class="font-semibold">${name}</span>?`;
+              confirmStatusBtn.className =
+                "px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50";
+              confirmStatusBtn.textContent = "Recover";
+            }
+            statusModal.classList.remove("hidden");
+            statusModal.classList.add("flex");
+          } catch (error) {
+            console.error('Error in openStatusModal:', error);
+            showToast('Failed to open modal. Please try again.', 'error');
+          }
+        }
+      });
+
+      // Close modals when clicking outside
+      window.addEventListener('click', function (event) {
+        if (event.target === brandModal || event.target === statusModal) {
           closeAllModals();
-          showToast(data.message);
-          reloadPageAfterDelay();
-        } else {
-          showToast(data.message || 'An error occurred', 'error');
         }
-      })
-      .catch(handleError);
-      
-      return false;
-    });
-  }
+      });
 
-  // Confirm status change (Delete/Recover)
-  if (confirmStatusBtn) {
-    confirmStatusBtn.addEventListener("click", function() {
-      const id = statusId.value;
-      const action = statusAction.value;
-      const endpoint = `${baseUrl}/admin/brands/${id}/status`;
-
-      fetch(endpoint, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: 'include', // Include cookies for session
-        body: JSON.stringify({
-          action: action,
-        }),
-      })
-      .then(handleResponse)
-      .then(data => {
-        if (data.success) {
+      // Keyboard shortcuts (escape to close modals)
+      document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape') {
           closeAllModals();
-          showToast(data.message);
-          reloadPageAfterDelay();
-        } else {
-          showToast(data.message || "An error occurred", "error");
         }
-      })
-      .catch(handleError);
-    });
-  }
-
-  // Helper Functions
-  function validateForm() {
-    const name = document.getElementById('brandName').value.trim();
-    let isValid = true;
-
-    // Clear any existing error messages
-    const existingErrors = document.querySelectorAll('.error-message');
-    existingErrors.forEach(error => error.remove());
-
-    if (name === '') {
-      displayErrorMessage('brandName', 'Please enter a brand name');
-      isValid = false;
-    }
-    
-    return isValid;
-  }
-
-  function displayErrorMessage(elementId, message) {
-    const inputField = document.getElementById(elementId);
-    
-    // Create error element
-    const errorElement = document.createElement('div');
-    errorElement.className = 'text-red-500 text-sm mt-1 error-message';
-    errorElement.innerText = message;
-    
-    // Insert after the input field
-    inputField.parentNode.insertBefore(errorElement, inputField.nextSibling);
-  } 
-
-  function openAddModal() {
-    modalTitle.textContent = 'Add New Brand';
-    brandForm.reset();
-    brandId.value = '';
-    // Reset logo preview
-    currentLogo.classList.add('hidden');
-    noLogo.classList.remove('hidden');
-    fileNameDisplay.textContent = 'No file chosen';
-    
-    brandModal.classList.remove('hidden');
-    brandModal.classList.add('flex');
-  }
-  
-  function openEditModal(id, name, description, logo) {
-    modalTitle.textContent = 'Edit Brand';
-    brandId.value = id;
-    brandName.value = name;
-    brandDescription.value = description;
-    
-    // Set logo preview if available
-    if (logo) {
-      logoPreview.src = `/Uploads/brands/${logo}`;
-      currentLogo.classList.remove('hidden');
-      noLogo.classList.add('hidden');
-      fileNameDisplay.textContent = logo.length > 25 ? logo.substring(0, 22) + '...' : logo;
-    } else {
-      currentLogo.classList.add('hidden');
-      noLogo.classList.remove('hidden');
-      fileNameDisplay.textContent = 'No file chosen';
-    }
-    
-    brandModal.classList.remove('hidden');
-    brandModal.classList.add('flex');
-  }
-  
-  function openStatusModal(id, name, action) {
-    statusId.value = id;
-    statusAction.value = action;
-    if (action === "delete") {
-      statusModalTitle.textContent = "Delete Brand";
-      statusModalMessage.innerHTML = `Are you sure you want to delete <span class="font-semibold">${name}</span>?`;
-      confirmStatusBtn.className =
-        "px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50";
-      confirmStatusBtn.textContent = "Delete";
-    } else {
-      statusModalTitle.textContent = "Recover Brand";
-      statusModalMessage.innerHTML = `Are you sure you want to recover <span class="font-semibold">${name}</span>?`;
-      confirmStatusBtn.className =
-        "px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50";
-      confirmStatusBtn.textContent = "Recover";
-    }
-
-    statusModal.classList.remove("hidden");
-    statusModal.classList.add("flex");
-  }
-});
-
-// Close modals when clicking outside
-window.addEventListener('click', function(event) {
-  if (event.target === brandModal || event.target === statusModal) {
-    closeAllModals();
-  }
-});
-
-// Keyboard shortcuts (escape to close modals)
-document.addEventListener('keydown', function(event) {
-  if (event.key === 'Escape') {
-    closeAllModals();
-  }
-});
-</script>
-
-<%- include('../partials/admin/footer') %>
+      });
+    </script>
+</body>
+</html>

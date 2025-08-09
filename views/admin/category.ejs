@@ -1,14 +1,21 @@
-<%- include('../partials/admin/header')%>
-<!-- Category Management Content -->
-<div class="p-6">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SHADES - Admin Category mangaement</title>
+  <script defer src="/admin.js"></script>
+  <link rel="icon" href="favicon/favicon.ico" type="ico">
+</head>
+<body>
+  <%- include('../partials/admin/header')%>
+<div class="p-4 sm:p-6 max-w-7xl mx-auto">
   <div class="bg-white rounded-lg shadow-sm overflow-hidden mb-6">
-    <div
-      class="px-6 py-4 flex justify-between items-center border-b border-gray-200"
-    >
+    <div class="px-4 py-4 sm:px-6 flex flex-col sm:flex-row justify-between items-center border-b border-gray-200 gap-4">
       <h3 class="text-lg font-semibold">Category Management</h3>
       <button
         id="addCategoryBtn"
-        class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+        class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 w-full sm:w-auto"
       >
         <i class="fas fa-plus mr-2"></i> Add Category
       </button>
@@ -17,7 +24,7 @@
     <!-- Search Bar -->
     <div class="p-4 border-b border-gray-200">
       <form id="searchForm" action="/admin/categories" method="GET">
-        <div class="flex flex-col md:flex-row gap-3">
+        <div class="flex flex-col sm:flex-row gap-3">
           <div class="relative flex-grow">
             <input
               type="text"
@@ -34,13 +41,13 @@
           <div class="flex gap-2">
             <button
               type="submit"
-              class="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50"
+              class="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 flex-1"
             >
               Search
             </button>
             <a
               href="/admin/categories"
-              class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 inline-flex items-center justify-center"
+              class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 flex-1 text-center"
             >
               Clear
             </a>
@@ -51,290 +58,263 @@
 
     <!-- Categories Table -->
     <div class="overflow-x-auto">
-      <table class="min-w-full divide-y divide-gray-200">
+      <table class="min-w-full divide-y divide-gray-200 hidden sm:table">
         <thead class="bg-black">
           <tr>
-            <th
-              scope="col"
-              class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider"
-            >
+            <th scope="col" class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
               ID
             </th>
-            <th
-              scope="col"
-              class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider"
-            >
+            <th scope="col" class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
               Name
             </th>
-            <th
-              scope="col"
-              class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider"
-            >
+            <th scope="col" class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
               Description
             </th>
-            <th
-              scope="col"
-              class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider"
-            >
+            <th scope="col" class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
               Offer
             </th>
-            <th
-              scope="col"
-              class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider"
-            >
+            <th scope="col" class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
               Offer Dates
             </th>
-            <th
-              scope="col"
-              class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider"
-            >
+            <th scope="col" class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
               Status
             </th>
-            <th
-              scope="col"
-              class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider"
-            >
+            <th scope="col" class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
               Created Date
             </th>
-            <th
-              scope="col"
-              class="px-6 py-3 text-right text-xs font-medium text-white uppercase tracking-wider"
-            >
+            <th scope="col" class="px-4 sm:px-6 py-3 text-right text-xs font-medium text-white uppercase tracking-wider">
               Actions
             </th>
           </tr>
         </thead>
-
         <tbody class="bg-white divide-y divide-gray-200">
-          <% if(category && category.length> 0) { %> <%
-          category.forEach(category=> { %>
-          <tr class="hover:bg-gray-50">
-            <td class="px-6 py-4 whitespace-nowrap">
-              <div class="text-sm font-medium text-gray-900">
-                #<%= category._id.toString().slice(-6).toUpperCase() %>
-              </div>
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap">
-              <div class="text-sm font-medium text-gray-900">
-                <%= category.name %>
-              </div>
-            </td>
-            <td class="px-6 py-4">
-              <div class="text-sm text-gray-500">
-                <%= category.description || '-' %>
-              </div>
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap">
-              <% if(category.hasOffer) { %>
-              <span
-                class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800"
-              >
-                <%= category.offerPercentage %>% Off
-              </span>
-              <% } else { %>
-              <span
-                class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800"
-              >
-                No Offer
-              </span>
-              <% } %>
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap">
-              <% if(category.offerStartDate && category.offerEndDate) { %>
-              <div class="text-sm text-gray-500">
-                <%= new
-                Date(category.offerStartDate).toLocaleDateString('en-US', {
-                year: 'numeric' , month: 'short' , day: 'numeric' }) %> - <%=
-                new Date(category.offerEndDate).toLocaleDateString('en-US', {
-                year: 'numeric' , month: 'short' , day: 'numeric' }) %>
-              </div>
-              <% } else { %>
-              <div class="text-sm text-gray-500">-</div>
-              <% } %>
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap">
-              <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full <%= !category.isDeleted ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' %>">
-                <%= !category.isDeleted ? 'Active' : 'Deleted' %>
-              </span>
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap">
-              <div class="text-sm text-gray-500">
-                <%= new Date(category.createdAt).toLocaleDateString('en-US', {
-                year: 'numeric' , month: 'short' , day: 'numeric' }) %>
-              </div>
-            </td>
-
-            <!-- Actions: Offer toggle, Delete/Recover, Edit -->
-            <td
-              class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium"
-            >
-              <% if(!category.hasOffer) { %>
-              <button
-                class="text-green-600 hover:text-green-900 mr-2 offer-toggle-button"
-                title="Add Offer"
-                data-action="add"
-                data-id="<%= category._id %>"
-                data-name="<%= category.name %>"
-              >
-                <i class="fas fa-tag"></i>
-              </button>
-              <% } else { %>
-              <button
-                class="text-amber-600 hover:text-amber-900 mr-2 offer-toggle-button"
-                title="Remove Offer"
-                data-action="remove"
-                data-id="<%= category._id %>"
-                data-name="<%= category.name %>"
-              >
-                <i class="fas fa-times"></i><i class="fas fa-tag ml-n1"></i>
-              </button>
-              <% } %>
-
-              <!-- Edit Category -->
-              <button
-                class="text-blue-600 hover:text-blue-900 mr-2 edit-button"
-                data-id="<%= category._id %>"
-                data-name="<%= category.name %>"
-                data-description="<%= category.description || '' %>"
-                data-status="<%= category.isDeleted ? 'active' : 'deleted' %>"
-              >
-                <i class="fas fa-edit"></i>
-              </button>
-
-              <% if(!category.isDeleted) { %>
-              <button
-                class="text-red-600 hover:text-red-900 mr-2 status-toggle-button"
-                title="Delete Category"
-                data-action="delete"
-                data-id="<%= category._id %>"
-                data-name="<%= category.name %>"
-              >
-                <i class="fas fa-trash-alt"></i>
-              </button>
-              <% } else { %>
-              <button
-                class="text-green-600 hover:text-green-900 mr-2 status-toggle-button"
-                title="Recover Category"
-                data-action="recover"
-                data-id="<%= category._id %>"
-                data-name="<%= category.name %>"
-              >
-                <i class="fas fa-undo"></i>
-              </button>
-              <% } %>
-            </td>
-          </tr>
-          <% }) %> <% } else { %>
-          <tr>
-            <td colspan="8" class="px-6 py-4 text-center text-sm text-gray-500">
-              No categories found.
-              <a
-                href="#"
-                id="noResultsAddBtn"
-                class="text-blue-600 hover:text-blue-900"
-                >Add a new category</a
-              >
-            </td>
-          </tr>
+          <% if(category && category.length > 0) { %>
+            <% category.forEach(category => { %>
+              <tr class="hover:bg-gray-50">
+                <td class="px-4 sm:px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm font-medium text-gray-900">
+                    #<%= category._id.toString().slice(-6).toUpperCase() %>
+                  </div>
+                </td>
+                <td class="px-4 sm:px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm font-medium text-gray-900">
+                    <%= category.name %>
+                  </div>
+                </td>
+                <td class="px-4 sm:px-6 py-4">
+                  <div class="text-sm text-gray-500">
+                    <%= category.description || '-' %>
+                  </div>
+                </td>
+                <td class="px-4 sm:px-6 py-4 whitespace-nowrap">
+                  <% if(category.hasOffer) { %>
+                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                      <%= category.offerPercentage %>% Off
+                    </span>
+                  <% } else { %>
+                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+                      No Offer
+                    </span>
+                  <% } %>
+                </td>
+                <td class="px-4 sm:px-6 py-4 whitespace-nowrap">
+                  <% if(category.offerStartDate && category.offerEndDate) { %>
+                    <div class="text-sm text-gray-500">
+                      <%= new Date(category.offerStartDate).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) %> - 
+                      <%= new Date(category.offerEndDate).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) %>
+                    </div>
+                  <% } else { %>
+                    <div class="text-sm text-gray-500">-</div>
+                  <% } %>
+                </td>
+                <td class="px-4 sm:px-6 py-4 whitespace-nowrap">
+                  <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full <%= !category.isDeleted ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' %>">
+                    <%= !category.isDeleted ? 'Active' : 'Deleted' %>
+                  </span>
+                </td>
+                <td class="px-4 sm:px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm text-gray-500">
+                    <%= new Date(category.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) %>
+                  </div>
+                </td>
+                <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                  <% if(!category.hasOffer) { %>
+                    <button class="text-green-600 hover:text-green-900 mr-2 offer-toggle-button" title="Add Offer" data-action="add" data-id="<%= category._id %>" data-name="<%= category.name %>">
+                      <i class="fas fa-tag"></i>
+                    </button>
+                  <% } else { %>
+                    <button class="text-amber-600 hover:text-amber-900 mr-2 offer-toggle-button" title="Remove Offer" data-action="remove" data-id="<%= category._id %>" data-name="<%= category.name %>">
+                      <i class="fas fa-times"></i><i class="fas fa-tag ml-n1"></i>
+                    </button>
+                  <% } %>
+                  <button class="text-blue-600 hover:text-blue-900 mr-2 edit-button" data-id="<%= category._id %>" data-name="<%= category.name %>" data-description="<%= category.description || '' %>" data-status="<%= category.isDeleted ? 'active' : 'deleted' %>">
+                    <i class="fas fa-edit"></i>
+                  </button>
+                  <% if(!category.isDeleted) { %>
+                    <button class="text-red-600 hover:text-red-900 mr-2 status-toggle-button" title="Delete Category" data-action="delete" data-id="<%= category._id %>" data-name="<%= category.name %>">
+                      <i class="fas fa-trash-alt"></i>
+                    </button>
+                  <% } else { %>
+                    <button class="text-green-600 hover:text-green-900 mr-2 status-toggle-button" title="Recover Category" data-action="recover" data-id="<%= category._id %>" data-name="<%= category.name %>">
+                      <i class="fas fa-undo"></i>
+                    </button>
+                  <% } %>
+                </td>
+              </tr>
+            <% }) %>
+          <% } else { %>
+            <tr>
+              <td colspan="8" class="px-4 sm:px-6 py-4 text-center text-sm text-gray-500">
+                No categories found.
+                <a href="#" id="noResultsAddBtn" class="text-blue-600 hover:text-blue-900">Add a new category</a>
+              </td>
+            </tr>
           <% } %>
         </tbody>
       </table>
+
+      <!-- Mobile Card View -->
+      <div class="sm:hidden divide-y divide-gray-200">
+        <% if(category && category.length > 0) { %>
+          <% category.forEach(category => { %>
+            <div class="p-4 hover:bg-gray-50">
+              <div class="flex justify-between items-center mb-2">
+                <div class="text-sm font-medium text-gray-900">
+                  #<%= category._id.toString().slice(-6).toUpperCase() %>
+                </div>
+                <div class="flex gap-2">
+                  <% if(!category.hasOffer) { %>
+                    <button class="text-green-600 hover:text-green-900 offer-toggle-button" title="Add Offer" data-action="add" data-id="<%= category._id %>" data-name="<%= category.name %>">
+                      <i class="fas fa-tag"></i>
+                    </button>
+                  <% } else { %>
+                    <button class="text-amber-600 hover:text-amber-900 offer-toggle-button" title="Remove Offer" data-action="remove" data-id="<%= category._id %>" data-name="<%= category.name %>">
+                      <i class="fas fa-times"></i><i class="fas fa-tag ml-n1"></i>
+                    </button>
+                  <% } %>
+                  <button class="text-blue-600 hover:text-blue-900 edit-button" data-id="<%= category._id %>" data-name="<%= category.name %>" data-description="<%= category.description || '' %>" data-status="<%= category.isDeleted ? 'active' : 'deleted' %>">
+                    <i class="fas fa-edit"></i>
+                  </button>
+                  <% if(!category.isDeleted) { %>
+                    <button class="text-red-600 hover:text-red-900 status-toggle-button" title="Delete Category" data-action="delete" data-id="<%= category._id %>" data-name="<%= category.name %>">
+                      <i class="fas fa-trash-alt"></i>
+                    </button>
+                  <% } else { %>
+                    <button class="text-green-600 hover:text-green-900 status-toggle-button" title="Recover Category" data-action="recover" data-id="<%= category._id %>" data-name="<%= category.name %>">
+                      <i class="fas fa-undo"></i>
+                    </button>
+                  <% } %>
+                </div>
+              </div>
+              <div class="text-sm font-medium text-gray-900 mb-1"><%= category.name %></div>
+              <div class="text-sm text-gray-500 mb-1"><%= category.description || '-' %></div>
+              <div class="text-sm text-gray-500 mb-1">
+                <% if(category.hasOffer) { %>
+                  <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                    <%= category.offerPercentage %>% Off
+                  </span>
+                <% } else { %>
+                  <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+                    No Offer
+                  </span>
+                <% } %>
+              </div>
+              <div class="text-sm text-gray-500 mb-1">
+                <% if(category.offerStartDate && category.offerEndDate) { %>
+                  <%= new Date(category.offerStartDate).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) %> - 
+                  <%= new Date(category.offerEndDate).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) %>
+                <% } else { %>
+                  -
+                <% } %>
+              </div>
+              <div class="text-sm text-gray-500 mb-1">
+                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full <%= !category.isDeleted ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' %>">
+                  <%= !category.isDeleted ? 'Active' : 'Deleted' %>
+                </span>
+              </div>
+              <div class="text-sm text-gray-500">
+                <%= new Date(category.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) %>
+              </div>
+            </div>
+          <% }) %>
+        <% } else { %>
+          <div class="p-4 text-center text-sm text-gray-500">
+            No categories found.
+            <a href="#" id="noResultsAddBtnMobile" class="text-blue-600 hover:text-blue-900">Add a new category</a>
+          </div>
+        <% } %>
+      </div>
     </div>
 
     <!-- Pagination -->
-    <% if(totalPages> 1) { %>
-    <div class="px-6 py-4 border-t border-gray-200">
-      <div class="flex justify-between items-center">
-        <div class="text-sm text-gray-500">
-          Showing
-          <span class="font-medium">
-            <%= (currentPage - 1) * limit + 1 %>
-          </span>
-          to
-          <span class="font-medium">
-            <%= Math.min(currentPage * limit, totalItems) %>
-          </span>
-          of <span class="font-medium"> <%= totalItems %> </span> categories
+    <% if(totalPages > 1) { %>
+      <div class="px-4 sm:px-6 py-4 border-t border-gray-200">
+        <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
+          <div class="text-sm text-gray-500">
+            Showing
+            <span class="font-medium">
+              <%= (currentPage - 1) * limit + 1 %>
+            </span>
+            to
+            <span class="font-medium">
+              <%= Math.min(currentPage * limit, totalItems) %>
+            </span>
+            of <span class="font-medium"> <%= totalItems %> </span> categories
+          </div>
+          <nav class="flex flex-wrap gap-1">
+            <% if(currentPage > 1) { %>
+              <a href="/admin/categories?page=<%= currentPage - 1 %><%= searchTerm ? `&search=${searchTerm}` : '' %>" class="px-3 py-1 rounded-md text-sm font-medium bg-gray-200 text-gray-700 hover:bg-gray-300">
+                Previous
+              </a>
+            <% } else { %>
+              <span class="px-3 py-1 rounded-md text-sm font-medium bg-gray-100 text-gray-400 cursor-not-allowed">
+                Previous
+              </span>
+            <% } %>
+            <% for(let i=1; i <= totalPages; i++) { %>
+              <% if(i === currentPage) { %>
+                <span class="px-3 py-1 rounded-md text-sm font-medium bg-blue-600 text-white">
+                  <%= i %>
+                </span>
+              <% } else if(i <= 3 || i >= totalPages - 2 || Math.abs(i - currentPage) <= 1) { %>
+                <a href="/admin/categories?page=<%= i %><%= searchTerm ? `&search=${searchTerm}` : '' %>" class="px-3 py-1 rounded-md text-sm font-medium bg-gray-200 text-gray-700 hover:bg-gray-300">
+                  <%= i %>
+                </a>
+              <% } else if(i === 4 && currentPage > 5) { %>
+                <span class="px-3 py-1 text-sm font-medium text-gray-500">...</span>
+              <% } else if(i === totalPages - 3 && currentPage < totalPages - 4) { %>
+                <span class="px-3 py-1 text-sm font-medium text-gray-500">...</span>
+              <% } %>
+            <% } %>
+            <% if(currentPage < totalPages) { %>
+              <a href="/admin/categories?page=<%= currentPage + 1 %><%= searchTerm ? `&search=${searchTerm}` : '' %>" class="px-3 py-1 rounded-md text-sm font-medium bg-gray-200 text-gray-700 hover:bg-gray-300">
+                Next
+              </a>
+            <% } else { %>
+              <span class="px-3 py-1 rounded-md text-sm font-medium bg-gray-100 text-gray-400 cursor-not-allowed">
+                Next
+              </span>
+            <% } %>
+          </nav>
         </div>
-        <nav class="flex space-x-1">
-          <% if(currentPage> 1 ) { %>
-          <a
-            href="/admin/categories?page=<%= currentPage - 1 %><%= searchTerm ? `&search=${searchTerm}` : '' %>"
-            class="px-3 py-1 rounded-md text-sm font-medium bg-gray-200 text-gray-700 hover:bg-gray-300"
-          >
-            Previous
-          </a>
-          <% } else { %>
-          <span
-            class="px-3 py-1 rounded-md text-sm font-medium bg-gray-100 text-gray-400 cursor-not-allowed"
-          >
-            Previous
-          </span>
-          <% } %> <% for(let i=1; i <=totalPages; i++) { %> <%
-          if(i===currentPage) { %>
-          <span
-            class="px-3 py-1 rounded-md text-sm font-medium bg-blue-600 text-white"
-          >
-            <%= i %>
-          </span>
-          <% } else if(i <=3 || i>= totalPages - 2 || Math.abs(i - currentPage)
-          <= 1) { %>
-          <a
-            href="/admin/categories?page=<%= i %><%= searchTerm ? `&search=${searchTerm}` : '' %>"
-            class="px-3 py-1 rounded-md text-sm font-medium bg-gray-200 text-gray-700 hover:bg-gray-300"
-          >
-            <%= i %>
-          </a>
-          <% } else if(i===4 && currentPage> 5) { %>
-          <span class="px-3 py-1 text-sm font-medium text-gray-500">...</span>
-          <% } else if(i===totalPages - 3 && currentPage < totalPages - 4) { %>
-          <span class="px-3 py-1 text-sm font-medium text-gray-500">...</span>
-          <% } %> <% } %> <% if(currentPage < totalPages) { %>
-          <a
-            href="/admin/categories?page=<%= currentPage + 1 %><%= searchTerm ? `&search=${searchTerm}` : '' %>"
-            class="px-3 py-1 rounded-md text-sm font-medium bg-gray-200 text-gray-700 hover:bg-gray-300"
-          >
-            Next
-          </a>
-          <% } else { %>
-          <span
-            class="px-3 py-1 rounded-md text-sm font-medium bg-gray-100 text-gray-400 cursor-not-allowed"
-          >
-            Next
-          </span>
-          <% } %>
-        </nav>
       </div>
-    </div>
     <% } %>
   </div>
 </div>
 
 <!-- Add Category Modal -->
-<div
-  id="categoryModal"
-  class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center"
->
-  <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
-    <div
-      class="px-6 py-4 border-b border-gray-200 flex justify-between items-center"
-    >
+<div id="categoryModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center">
+  <div class="bg-white rounded-lg shadow-xl w-full max-w-md mx-4">
+    <div class="px-4 sm:px-6 py-4 border-b border-gray-200 flex justify-between items-center">
       <h3 class="text-lg font-semibold" id="modalTitle">Add New Category</h3>
-      <button
-        class="text-gray-400 hover:text-gray-500 focus:outline-none"
-        id="closeModal"
-      >
+      <button class="text-gray-400 hover:text-gray-500 focus:outline-none" id="closeModal">
         <i class="fas fa-times"></i>
       </button>
     </div>
-    <form id="categoryForm" class="px-6 py-4">
+    <form id="categoryForm" class="px-4 sm:px-6 py-4">
       <input type="hidden" id="categoryId" />
       <div class="mb-4">
-        <label
-          for="categoryName"
-          class="block text-sm font-medium text-gray-700 mb-1"
-          >Category Name</label
-        >
+        <label for="categoryName" class="block text-sm font-medium text-gray-700 mb-1">Category Name</label>
         <input
           type="text"
           id="categoryName"
@@ -343,13 +323,8 @@
           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         />
       </div>
-      
       <div class="mb-4">
-        <label
-          for="categoryDescription"
-          class="block text-sm font-medium text-gray-700 mb-1"
-          >Description</label
-        >
+        <label for="categoryDescription" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
         <textarea
           id="categoryDescription"
           name="description"
@@ -357,18 +332,18 @@
           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         ></textarea>
       </div>
-      <div class="flex justify-end space-x-3">
+      <div class="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-3">
         <button
           type="button"
           id="cancelBtn"
-          class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50"
+          class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 w-full sm:w-auto"
         >
           Cancel
         </button>
         <button
           type="submit"
           id="saveBtn"
-          class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+          class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 w-full sm:w-auto"
         >
           Save Category
         </button>
@@ -378,39 +353,23 @@
 </div>
 
 <!-- Add Offer Modal -->
-<div
-  id="offerModal"
-  class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center"
->
-  <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
-    <div
-      class="px-6 py-4 border-b border-gray-200 flex justify-between items-center"
-    >
-      <h3 class="text-lg font-semibold" id="offerModalTitle">
-        Add Offer to Category
-      </h3>
-      <button
-        class="text-gray-400 hover:text-gray-500 focus:outline-none"
-        id="closeOfferModal"
-      >
+<div id="offerModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center">
+  <div class="bg-white rounded-lg shadow-xl w-full max-w-md mx-4">
+    <div class="px-4 sm:px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+      <h3 class="text-lg font-semibold" id="offerModalTitle">Add Offer to Category</h3>
+      <button class="text-gray-400 hover:text-gray-500 focus:outline-none" id="closeOfferModal">
         <i class="fas fa-times"></i>
       </button>
     </div>
-    <form id="offerForm" class="px-6 py-4">
+    <form id="offerForm" class="px-4 sm:px-6 py-4">
       <input type="hidden" id="offerCategoryId" />
       <div class="mb-4">
-        <label class="block text-sm font-medium text-gray-700 mb-1"
-          >Category</label
-        >
+        <label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
         <div class="text-gray-700 font-medium" id="offerCategoryName"></div>
       </div>
-      <div class="mb-4 grid grid-cols-2 gap-4">
+      <div class="mb-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label
-            for="offerStartDate"
-            class="block text-sm font-medium text-gray-700 mb-1"
-            >Start Date</label
-          >
+          <label for="offerStartDate" class="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
           <input
             type="date"
             id="offerStartDate"
@@ -420,11 +379,7 @@
           />
         </div>
         <div>
-          <label
-            for="offerEndDate"
-            class="block text-sm font-medium text-gray-700 mb-1"
-            >End Date</label
-          >
+          <label for="offerEndDate" class="block text-sm font-medium text-gray-700 mb-1">End Date</label>
           <input
             type="date"
             id="offerEndDate"
@@ -435,11 +390,7 @@
         </div>
       </div>
       <div class="mb-4">
-        <label
-          for="offerPercentage"
-          class="block text-sm font-medium text-gray-700 mb-1"
-          >Offer Percentage (%)</label
-        >
+        <label for="offerPercentage" class="block text-sm font-medium text-gray-700 mb-1">Offer Percentage (%)</label>
         <input
           type="number"
           id="offerPercentage"
@@ -451,18 +402,18 @@
           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         />
       </div>
-      <div class="flex justify-end space-x-3">
+      <div class="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-3">
         <button
           type="button"
           id="cancelOfferBtn"
-          class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50"
+          class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 w-full sm:w-auto"
         >
           Cancel
         </button>
         <button
           type="submit"
           id="saveOfferBtn"
-          class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+          class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 w-full sm:w-auto"
         >
           Save Offer
         </button>
@@ -472,31 +423,24 @@
 </div>
 
 <!-- Status Confirmation Modal -->
-<div
-  id="statusModal"
-  class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center"
->
-  <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
-    <div class="px-6 py-4 border-b border-gray-200">
-      <h3 class="text-lg font-semibold" id="statusModalTitle">
-        Confirm Status Change
-      </h3>
+<div id="statusModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center">
+  <div class="bg-white rounded-lg shadow-xl w-full max-w-md mx-4">
+    <div class="px-4 sm:px-6 py-4 border-b border-gray-200">
+      <h3 class="text-lg font-semibold" id="statusModalTitle">Confirm Status Change</h3>
     </div>
-    <div class="px-6 py-4">
-      <p class="text-gray-700" id="statusModalMessage">
-        Are you sure you want to change the status of this category?
-      </p>
+    <div class="px-4 sm:px-6 py-4">
+      <p class="text-gray-700" id="statusModalMessage">Are you sure you want to change the status of this category?</p>
     </div>
-    <div class="px-6 py-4 border-t border-gray-200 flex justify-end space-x-3">
+    <div class="px-4 sm:px-6 py-4 border-t border-gray-200 flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-3">
       <button
         id="cancelStatusBtn"
-        class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50"
+        class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 w-full sm:w-auto"
       >
         Cancel
       </button>
       <button
         id="confirmStatusBtn"
-        class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+        class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 w-full sm:w-auto"
       >
         Confirm
       </button>
@@ -507,30 +451,27 @@
 </div>
 
 <!-- Remove Offer Confirmation Modal -->
-<div
-  id="removeOfferModal"
-  class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center"
->
-  <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
-    <div class="px-6 py-4 border-b border-gray-200">
+<div id="removeOfferModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center">
+  <div class="bg-white rounded-lg shadow-xl w-full max-w-md mx-4">
+    <div class="px-4 sm:px-6 py-4 border-b border-gray-200">
       <h3 class="text-lg font-semibold text-amber-600">Remove Offer</h3>
     </div>
-    <div class="px-6 py-4">
+    <div class="px-4 sm:px-6 py-4">
       <p class="text-gray-700">
         Are you sure you want to remove the offer from
         <span id="removeOfferCategoryName" class="font-semibold"></span>?
       </p>
     </div>
-    <div class="px-6 py-4 border-t border-gray-200 flex justify-end space-x-3">
+    <div class="px-4 sm:px-6 py-4 border-t border-gray-200 flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-3">
       <button
         id="cancelRemoveOfferBtn"
-        class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50"
+        class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 w-full sm:w-auto"
       >
         Cancel
       </button>
       <button
         id="confirmRemoveOfferBtn"
-        class="px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-opacity-50"
+        class="px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-opacity-50 w-full sm:w-auto"
       >
         Remove Offer
       </button>
@@ -541,9 +482,7 @@
 
 <!-- Toast Notification -->
 <div id="toast" class="fixed bottom-4 right-4 z-50 hidden">
-  <div
-    class="bg-white rounded-lg shadow-lg border-l-4 border-green-500 px-4 py-3 max-w-sm"
-  >
+  <div class="bg-white rounded-lg shadow-lg border-l-4 border-green-500 px-4 py-3 max-w-sm w-full">
     <div class="flex items-center">
       <div class="flex-shrink-0">
         <i class="fas fa-check-circle text-green-500"></i>
@@ -560,6 +499,7 @@
   </div>
 </div>
 
+<%- include('../partials/admin/footer')%>
 <script>
   document.addEventListener("DOMContentLoaded", function () {
     // Modal elements
@@ -575,7 +515,6 @@
     const modalTitle = document.getElementById("modalTitle");
     const categoryId = document.getElementById("categoryId");
     const categoryName = document.getElementById("categoryName");
-  
     const categoryDescription = document.getElementById("categoryDescription");
     const statusId = document.getElementById("statusId");
     const statusAction = document.getElementById("statusAction");
@@ -584,9 +523,7 @@
     const offerCategoryId = document.getElementById("offerCategoryId");
     const offerCategoryName = document.getElementById("offerCategoryName");
     const removeOfferId = document.getElementById("removeOfferId");
-    const removeOfferCategoryName = document.getElementById(
-      "removeOfferCategoryName"
-    );
+    const removeOfferCategoryName = document.getElementById("removeOfferCategoryName");
 
     // Set minimum date for offer start and end dates
     const today = new Date().toISOString().split("T")[0];
@@ -600,6 +537,7 @@
     // Buttons
     const addCategoryBtn = document.getElementById("addCategoryBtn");
     const noResultsAddBtn = document.getElementById("noResultsAddBtn");
+    const noResultsAddBtnMobile = document.getElementById("noResultsAddBtnMobile");
     const closeModal = document.getElementById("closeModal");
     const closeOfferModal = document.getElementById("closeOfferModal");
     const cancelBtn = document.getElementById("cancelBtn");
@@ -607,18 +545,12 @@
     const closeToast = document.getElementById("closeToast");
     const cancelStatusBtn = document.getElementById("cancelStatusBtn");
     const confirmStatusBtn = document.getElementById("confirmStatusBtn");
-    const cancelRemoveOfferBtn = document.getElementById(
-      "cancelRemoveOfferBtn"
-    );
-    const confirmRemoveOfferBtn = document.getElementById(
-      "confirmRemoveOfferBtn"
-    );
+    const cancelRemoveOfferBtn = document.getElementById("cancelRemoveOfferBtn");
+    const confirmRemoveOfferBtn = document.getElementById("confirmRemoveOfferBtn");
 
     // Open add category modal
     if (addCategoryBtn) {
-      addCategoryBtn.addEventListener("click", function () {
-        openAddModal();
-      });
+      addCategoryBtn.addEventListener("click", openAddModal);
     }
 
     // Open add modal from no results
@@ -629,17 +561,20 @@
       });
     }
 
+    if (noResultsAddBtnMobile) {
+      noResultsAddBtnMobile.addEventListener("click", function (e) {
+        e.preventDefault();
+        openAddModal();
+      });
+    }
+
     // Close modals
     if (closeModal) closeModal.addEventListener("click", closeAllModals);
-    if (closeOfferModal)
-      closeOfferModal.addEventListener("click", closeAllModals);
+    if (closeOfferModal) closeOfferModal.addEventListener("click", closeAllModals);
     if (cancelBtn) cancelBtn.addEventListener("click", closeAllModals);
-    if (cancelOfferBtn)
-      cancelOfferBtn.addEventListener("click", closeAllModals);
-    if (cancelStatusBtn)
-      cancelStatusBtn.addEventListener("click", closeAllModals);
-    if (cancelRemoveOfferBtn)
-      cancelRemoveOfferBtn.addEventListener("click", closeAllModals);
+    if (cancelOfferBtn) cancelOfferBtn.addEventListener("click", closeAllModals);
+    if (cancelStatusBtn) cancelStatusBtn.addEventListener("click", closeAllModals);
+    if (cancelRemoveOfferBtn) cancelRemoveOfferBtn.addEventListener("click", closeAllModals);
 
     // Close toast
     if (closeToast) {
@@ -654,7 +589,6 @@
         const id = this.getAttribute("data-id");
         const name = this.getAttribute("data-name");
         const description = this.getAttribute("data-description");
-
         openEditModal(id, name, description);
       });
     });
@@ -665,19 +599,16 @@
         const id = this.getAttribute("data-id");
         const name = this.getAttribute("data-name");
         const action = this.getAttribute("data-action");
-
         openStatusModal(id, name, action);
       });
     });
 
-    
     // Offer toggle button functionality (Add/Remove Offer)
     document.querySelectorAll(".offer-toggle-button").forEach((button) => {
       button.addEventListener("click", function () {
         const id = this.getAttribute("data-id");
         const name = this.getAttribute("data-name");
         const action = this.getAttribute("data-action");
-
         if (action === "add") {
           openAddOfferModal(id, name);
         } else {
@@ -686,31 +617,20 @@
       });
     });
 
-    // Category form validation and submission
+    // Category form submission
     if (categoryForm) {
       categoryForm.addEventListener("submit", function (e) {
         e.preventDefault();
-
-        if (!validateCategoryForm()) {
-          return false;
-        }
-
+        if (!validateCategoryForm()) return false;
         const id = categoryId.value;
         const name = categoryName.value;
         const description = categoryDescription.value;
-
         const endpoint = id ? `/admin/categories/edit/${id}` : "/admin/categories/add";
         const method = id ? "PUT" : "POST";
-
         fetch(endpoint, {
           method: method,
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            name,
-            description,
-          }),
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, description }),
         })
           .then(handleResponse)
           .then((data) => {
@@ -727,25 +647,18 @@
       });
     }
 
-    
+    // Offer form submission
     if (offerForm) {
       offerForm.addEventListener("submit", function (e) {
         e.preventDefault();
-
-        if (!validateOfferForm()) {
-          return false;
-        }
-
+        if (!validateOfferForm()) return false;
         const id = offerCategoryId.value;
         const startDate = document.getElementById("offerStartDate").value;
         const endDate = document.getElementById("offerEndDate").value;
         const percentage = document.getElementById("offerPercentage").value;
-
         fetch(`/admin/categories/${id}/offer`, {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             offerStartDate: startDate,
             offerEndDate: endDate,
@@ -763,26 +676,19 @@
             }
           })
           .catch(handleError);
-
         return false;
       });
     }
 
-  
+    // Status confirmation
     if (confirmStatusBtn) {
       confirmStatusBtn.addEventListener("click", function () {
         const id = statusId.value;
         const action = statusAction.value;
-        const endpoint = `/admin/categories/${id}/status`;
-
-        fetch(endpoint, {
+        fetch(`/admin/categories/${id}/status`, {
           method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            action: action,
-          }),
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: action }),
         })
           .then(handleResponse)
           .then((data) => {
@@ -798,11 +704,10 @@
       });
     }
 
-   
+    // Remove offer confirmation
     if (confirmRemoveOfferBtn) {
       confirmRemoveOfferBtn.addEventListener("click", function () {
         const id = removeOfferId.value;
-
         fetch(`/admin/categories/${id}/offer`, {
           method: "DELETE",
         })
@@ -820,24 +725,20 @@
       });
     }
 
-    
     function openAddModal() {
       modalTitle.textContent = "Add New Category";
       categoryId.value = "";
       categoryName.value = "";
       categoryDescription.value = "";
-
       categoryModal.classList.remove("hidden");
       categoryModal.classList.add("flex");
     }
 
-   
     function openEditModal(id, name, description) {
       modalTitle.textContent = "Edit Category";
       categoryId.value = id;
       categoryName.value = name;
       categoryDescription.value = description;
-
       categoryModal.classList.remove("hidden");
       categoryModal.classList.add("flex");
     }
@@ -848,17 +749,14 @@
       if (action === "delete") {
         statusModalTitle.textContent = "Delete Category";
         statusModalMessage.innerHTML = `Are you sure you want to delete <span class="font-semibold">${name}</span>?`;
-        confirmStatusBtn.className =
-          "px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50";
+        confirmStatusBtn.className = "px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 w-full sm:w-auto";
         confirmStatusBtn.textContent = "Delete";
       } else {
         statusModalTitle.textContent = "Recover Category";
         statusModalMessage.innerHTML = `Are you sure you want to recover <span class="font-semibold">${name}</span>?`;
-        confirmStatusBtn.className =
-          "px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50";
+        confirmStatusBtn.className = "px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 w-full sm:w-auto";
         confirmStatusBtn.textContent = "Recover";
       }
-
       statusModal.classList.remove("hidden");
       statusModal.classList.add("flex");
     }
@@ -866,16 +764,13 @@
     function openAddOfferModal(id, name) {
       offerCategoryId.value = id;
       offerCategoryName.textContent = name;
-
       const tomorrow = new Date();
       tomorrow.setDate(tomorrow.getDate() + 1);
       const nextMonth = new Date();
       nextMonth.setMonth(nextMonth.getMonth() + 1);
-
       document.getElementById("offerStartDate").value = formatDate(tomorrow);
       document.getElementById("offerEndDate").value = formatDate(nextMonth);
       document.getElementById("offerPercentage").value = "";
-
       offerModal.classList.remove("hidden");
       offerModal.classList.add("flex");
     }
@@ -883,7 +778,6 @@
     function openRemoveOfferModal(id, name) {
       removeOfferId.value = id;
       removeOfferCategoryName.textContent = name;
-
       removeOfferModal.classList.remove("hidden");
       removeOfferModal.classList.add("flex");
     }
@@ -891,108 +785,56 @@
     function closeAllModals() {
       categoryModal.classList.add("hidden");
       categoryModal.classList.remove("flex");
-
       offerModal.classList.add("hidden");
       offerModal.classList.remove("flex");
-
       statusModal.classList.add("hidden");
       statusModal.classList.remove("flex");
-
       removeOfferModal.classList.add("hidden");
       removeOfferModal.classList.remove("flex");
     }
 
-    function showToast(message, type = "success") {
-      const toastMessage = document.getElementById("toastMessage");
-      const toastElement = document.getElementById("toast");
-
-      toastMessage.textContent = message;
-
-      if (type === "error") {
-        toastElement.querySelector("div").classList.remove("border-green-500");
-        toastElement.querySelector("div").classList.add("border-red-500");
-        toastElement.querySelector("i").classList.remove("text-green-500");
-        toastElement.querySelector("i").classList.add("text-red-500");
-        toastElement.querySelector("i").classList.remove("fa-check-circle");
-        toastElement.querySelector("i").classList.add("fa-exclamation-circle");
-      } else {
-        toastElement.querySelector("div").classList.remove("border-red-500");
-        toastElement.querySelector("div").classList.add("border-green-500");
-        toastElement.querySelector("i").classList.remove("text-red-500");
-        toastElement.querySelector("i").classList.add("text-green-500");
-        toastElement
-          .querySelector("i")
-          .classList.remove("fa-exclamation-circle");
-        toastElement.querySelector("i").classList.add("fa-check-circle");
-      }
-
-      toastElement.classList.remove("hidden");
-
-      setTimeout(() => {
-        toastElement.classList.add("hidden");
-      }, 5000);
-    }
-
-   
     function validateCategoryForm() {
       const name = categoryName.value.trim();
       const description = categoryDescription.value.trim();
-
       if (!name) {
         showToast("Category name is required", "error");
         return false;
       } else if (!/^[a-zA-Z0-9\s]+$/.test(name)) {
-        showToast(
-          "Category name should contain only letters and numbers",
-          "error"
-        );
+        showToast("Category name should contain only letters and numbers", "error");
         return false;
       }
-
       if (!description) {
         showToast("Please enter a description", "error");
         return false;
       }
-
       return true;
     }
 
     function validateOfferForm() {
-      const startDate = new Date(
-        document.getElementById("offerStartDate").value
-      );
+      const startDate = new Date(document.getElementById("offerStartDate").value);
       const endDate = new Date(document.getElementById("offerEndDate").value);
-      const percentage = parseFloat(
-        document.getElementById("offerPercentage").value
-      );
-
+      const percentage = parseFloat(document.getElementById("offerPercentage").value);
       if (isNaN(startDate.getTime())) {
         showToast("Please select a valid start date", "error");
         return false;
       }
-
       if (isNaN(endDate.getTime())) {
         showToast("Please select a valid end date", "error");
         return false;
       }
-
       if (startDate > endDate) {
         showToast("End date must be after start date", "error");
         return false;
       }
-
       if (isNaN(percentage) || percentage < 1 || percentage > 99) {
         showToast("Please enter a valid percentage between 1 and 99", "error");
         return false;
       }
-
       return true;
     }
 
     function handleResponse(response) {
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
+      if (!response.ok) throw new Error("Network response was not ok");
       return response.json();
     }
 
@@ -1012,30 +854,19 @@
     }
   });
 
-
+  // Initialize default dates for offer modal
   document.addEventListener("DOMContentLoaded", function () {
-    if (
-      document.getElementById("offerStartDate") &&
-      !document.getElementById("offerStartDate").value
-    ) {
+    if (document.getElementById("offerStartDate") && !document.getElementById("offerStartDate").value) {
       const tomorrow = new Date();
       tomorrow.setDate(tomorrow.getDate() + 1);
-      document.getElementById("offerStartDate").value = tomorrow
-        .toISOString()
-        .split("T")[0];
+      document.getElementById("offerStartDate").value = tomorrow.toISOString().split("T")[0];
     }
-
-    if (
-      document.getElementById("offerEndDate") &&
-      !document.getElementById("offerEndDate").value
-    ) {
+    if (document.getElementById("offerEndDate") && !document.getElementById("offerEndDate").value) {
       const nextMonth = new Date();
       nextMonth.setMonth(nextMonth.getMonth() + 1);
-      document.getElementById("offerEndDate").value = nextMonth
-        .toISOString()
-        .split("T")[0];
+      document.getElementById("offerEndDate").value = nextMonth.toISOString().split("T")[0];
     }
   });
 </script>
-
-<%- include('../partials/admin/footer')%>
+</body>
+</html>

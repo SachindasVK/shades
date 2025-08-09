@@ -1,53 +1,79 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Manage Addresses - SHADES</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="/script/script.js"></script>
+  <link rel="icon" href="favicon/favicon.ico" type="ico">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
   <link
     href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@700&display=swap"
     rel="stylesheet" />
   <style>
+    :root {
+      --primary-color: #191a1d;
+    }
+
     body {
       font-family: "Inter", sans-serif;
+      background-color: #f5f5f5;
     }
 
     .page-body {
       background-color: #ffffff;
     }
 
-    .containeer {
+    .container {
       max-width: 95%;
       margin-left: auto;
       margin-right: auto;
+      padding: 0.5rem;
       display: flex;
-      padding: 1px;
+      flex-direction: column;
+      gap: 1rem;
     }
 
     .sidebar {
-      width: 20rem;
+      width: 100%;
       background-color: #ffffff;
       border-radius: 0.5rem;
       box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
         0 2px 4px -1px rgba(0, 0, 0, 0.06);
       height: fit-content;
+      display: none;
+    }
+
+    .sidebar.active {
+      display: block;
+    }
+
+    .sidebar-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.5rem;
+      background-color: var(--primary-color);
+      color: white;
+      border-radius: 0.25rem;
+      cursor: pointer;
+      font-size: 0.9rem;
+      touch-action: manipulation;
     }
 
     .profile-header {
-      padding: 1.5rem;
+      padding: 1rem;
       border-bottom: 1px solid #e5e7eb;
       display: flex;
       align-items: center;
-      gap: 0.75rem;
+      gap: 0.5rem;
       position: relative;
     }
 
     .profile-icon {
-      width: 3rem;
-      height: 3rem;
+      width: 2.5rem;
+      height: 2.5rem;
       background-color: #a1a1a1;
       border-radius: 9999px;
       display: flex;
@@ -66,22 +92,22 @@
 
     .profile-icon i {
       color: #ffffff;
-      font-size: 1.125rem;
+      font-size: 1rem;
     }
 
     .greeting {
       color: #6b7280;
-      font-size: 0.875rem;
+      font-size: 0.8rem;
     }
 
     .username {
       color: #1f2937;
       font-weight: 600;
+      font-size: 0.9rem;
     }
 
     .menu {
-      padding-top: 0;
-      padding-bottom: 0;
+      padding: 0;
     }
 
     .menu-list {
@@ -95,9 +121,10 @@
     .menu-link {
       display: flex;
       align-items: center;
-      padding: 1rem 1.5rem;
+      padding: 0.8rem 1rem;
       color: #000000;
-      font-size: 0.875rem;
+      font-size: 0.8rem;
+      touch-action: manipulation;
     }
 
     .menu-link:hover {
@@ -106,20 +133,21 @@
 
     .menu-link.active {
       background-color: #eff6ff;
-      color: #2563eb;
+      color: var(--primary-color);
     }
 
     .menu-icon {
-      width: 1.25rem;
-      margin-right: 0.75rem;
+      width: 1rem;
+      margin-right: 0.5rem;
     }
 
     .logout-link {
       display: flex;
       align-items: center;
-      padding: 1rem 1.5rem;
+      padding: 0.8rem 1rem;
       color: #dc2626;
-      font-size: 0.875rem;
+      font-size: 0.8rem;
+      touch-action: manipulation;
     }
 
     .logout-link:hover {
@@ -132,18 +160,18 @@
       border-radius: 0.5rem;
       box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
         0 2px 4px -1px rgba(0, 0, 0, 0.06);
-      padding: 2rem;
+      padding: 1rem;
     }
 
     .section-title {
-      font-size: 1.125rem;
+      font-size: 1rem;
       font-weight: 600;
       color: #1f2937;
-      margin-bottom: 1.5rem;
+      margin-bottom: 1rem;
     }
 
     .form-group {
-      margin-bottom: 1.25rem;
+      margin-bottom: 1rem;
     }
 
     .form-label {
@@ -161,10 +189,10 @@
     .form-select {
       margin-top: 0.25rem;
       width: 100%;
-      padding: 0.5rem;
+      padding: 0.4rem;
       border: 1px solid #d1d5db;
       border-radius: 0.5rem;
-      font-size: 0.9rem;
+      font-size: 0.8rem;
       transition: all 0.2s ease;
     }
 
@@ -182,14 +210,14 @@
     .radio-group,
     .checkbox-group {
       display: flex;
-      gap: 1rem;
+      gap: 0.75rem;
       align-items: center;
       margin-top: 0.5rem;
     }
 
     .radio-label,
     .checkbox-label {
-      font-size: 0.8125rem;
+      font-size: 0.75rem;
       color: #1f2937;
       display: flex;
       align-items: center;
@@ -199,18 +227,18 @@
     .form-radio,
     .form-checkbox {
       accent-color: #002fff;
-      margin-right: 0.5rem;
+      margin-right: 0.25rem;
     }
 
     .form-row {
       display: flex;
-      gap: 2rem;
+      gap: 1rem;
       flex-wrap: wrap;
     }
 
     .form-row .form-group {
       flex: 1;
-      min-width: 180px;
+      min-width: 160px;
     }
 
     .button-group {
@@ -222,10 +250,9 @@
 
     .btn {
       width: auto;
-      max-width: 30rem;
-      padding: 0.8rem 1.4rem;
+      padding: 0.6rem 1.2rem;
       border-radius: 0.25rem;
-      font-size: 0.9rem;
+      font-size: 0.8rem;
       cursor: pointer;
       transition: all 0.2s ease;
     }
@@ -260,26 +287,23 @@
     }
 
     .add-button {
-      width: auto;
-      max-width: 30rem;
-
       color: #006eff;
       padding: 0.25rem 0.5rem;
       border-radius: 0.25rem;
       background-color: transparent;
       cursor: pointer;
-      font-size: 0.9rem;
+      font-size: 0.8rem;
       text-align: center;
       transition: all 0.2s ease;
       display: block;
-      margin-bottom: 1rem;
+      margin-bottom: 0.75rem;
     }
 
     .address-item {
       display: flex;
       align-items: flex-start;
       background-color: #f9fafb;
-      padding: 1rem;
+      padding: 0.75rem;
       border-radius: 0.5rem;
       margin-bottom: 0.75rem;
       border: 1px solid #e5e7eb;
@@ -287,7 +311,7 @@
     }
 
     .address-details {
-      margin-left: 0.75rem;
+      margin-left: 0.5rem;
       flex: 1;
     }
 
@@ -299,7 +323,7 @@
     .action-button {
       color: #000000;
       text-decoration: none;
-      font-size: 0.9rem;
+      font-size: 0.8rem;
       background: none;
       border: none;
       cursor: pointer;
@@ -313,21 +337,19 @@
     }
 
     .address-type-badge {
-      font-size: 0.6875rem;
+      font-size: 0.65rem;
       padding: 0.2rem 0.5rem;
       border-radius: 0.25rem;
       margin-left: 0.5rem;
-      background-color: #919191;
-      color: white;
     }
 
     .default-badge {
-      font-size: 0.6875rem;
+      font-size: 0.65rem;
       padding: 0.2rem 0.5rem;
       border-radius: 0.25rem;
       margin-left: 0.5rem;
-      background-color: #1f2937;
-      color: white;
+      background-color: #fef3c7;
+      color: #92400e;
     }
 
     .address-radio {
@@ -336,7 +358,6 @@
     }
 
     .modal-overlay {
-      display: none;
       position: fixed;
       top: 0;
       left: 0;
@@ -346,62 +367,40 @@
       justify-content: center;
       align-items: center;
       z-index: 1000;
-    }
-
-    .modal-content {
-      background-color: white;
-      padding: 1.5rem;
-      border-radius: 0.75rem;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
-      width: 100%;
-      max-width: 40rem;
-      max-height: 90vh;
-      overflow-y: auto;
+      display: none;
     }
 
     .modal-overlay.modal-visible {
       display: flex;
     }
 
+    .modal-content {
+      background-color: white;
+      padding: 1rem;
+      border-radius: 0.75rem;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+      width: 100%;
+      max-width: 32rem;
+      max-height: 85vh;
+      overflow-y: auto;
+    }
+
     .modal-header {
-      padding-bottom: 1rem;
-      margin-bottom: 1.5rem;
+      padding-bottom: 0.75rem;
+      margin-bottom: 1rem;
     }
 
     .modal-title {
-      font-size: 1.125rem;
+      font-size: 1rem;
       font-weight: 600;
       color: #1f2937;
     }
+
     .error-message {
       color: #ef4444;
-      font-size: 0.875rem;
+      font-size: 0.75rem;
       margin-top: 0.25rem;
       display: none;
-    }
-
-    .input-field {
-      background-color: transparent;
-      border: none;
-      border-bottom: 1px solid #555;
-      color: white;
-      padding: 0.5rem 0;
-      width: 100%;
-    }
-
-    .input-field:focus {
-      border-bottom: 1px solid white;
-      outline: none;
-    }
-
-    .input-button {
-      background-color: transparent;
-      border: none;
-      color: white;
-      cursor: pointer;
-      position: absolute;
-      right: 0;
-      top: 0.5rem;
     }
 
     .font-playfair {
@@ -421,931 +420,534 @@
     }
 
     @media (min-width: 768px) {
+      .container {
+        flex-direction: row;
+        padding: 1rem;
+        gap: 1rem;
+      }
+
+      .sidebar {
+        width: 20rem;
+        display: block;
+      }
+
+      .sidebar-toggle {
+        display: none;
+      }
+
+      .main-content {
+        padding: 1.5rem;
+      }
+
+      .section-title {
+        font-size: 1.125rem;
+        margin-bottom: 1.25rem;
+      }
+
+      .form-group {
+        margin-bottom: 1.25rem;
+      }
+
+      .form-label {
+        font-size: 0.875rem;
+      }
+
+      .form-input,
+      .form-select {
+        padding: 0.5rem;
+        font-size: 0.875rem;
+      }
+
+      .radio-label,
+      .checkbox-label {
+        font-size: 0.875rem;
+      }
+
+      .form-row .form-group {
+        min-width: 180px;
+      }
+
+      .btn {
+        padding: 0.8rem 1.4rem;
+        font-size: 0.875rem;
+      }
+
+      .add-button {
+        font-size: 0.875rem;
+        padding: 0.5rem 1rem;
+      }
+
+      .address-item {
+        padding: 1rem;
+      }
+
+      .address-details {
+        margin-left: 0.75rem;
+      }
+
+      .action-button {
+        font-size: 0.875rem;
+      }
+
+      .address-type-badge {
+        font-size: 0.75rem;
+      }
+
+      .modal-content {
+        padding: 1.5rem;
+        max-width: 40rem;
+      }
+
+      .modal-title {
+        font-size: 1.125rem;
+      }
+
+      .error-message {
+        font-size: 0.875rem;
+      }
+
+      .profile-header {
+        padding: 1.25rem;
+        gap: 0.75rem;
+      }
+
+      .profile-icon {
+        width: 3rem;
+        height: 3rem;
+      }
+
+      .profile-icon i {
+        font-size: 1.125rem;
+      }
+
+      .greeting {
+        font-size: 0.875rem;
+      }
+
+      .username {
+        font-size: 1rem;
+      }
+
+      .menu-link,
+      .logout-link {
+        padding: 1rem 1.25rem;
+        font-size: 0.875rem;
+      }
+
+      .menu-icon {
+        width: 1.25rem;
+        margin-right: 0.75rem;
+      }
+
       .hidden.md\:flex {
         display: flex !important;
       }
     }
 
-   
+    @media (max-width: 479px) {
+      .section-title {
+        font-size: 0.9rem;
+      }
 
-    .breadcrumb-item+.breadcrumb-item::before {
-      content: ">";
+      .form-group {
+        margin-bottom: 0.75rem;
+      }
+
+      .form-label {
+        font-size: 0.75rem;
+      }
+
+      .form-input,
+      .form-select {
+        padding: 0.3rem;
+        font-size: 0.75rem;
+      }
+
+      .radio-label,
+      .checkbox-label {
+        font-size: 0.7rem;
+      }
+
+      .form-row .form-group {
+        min-width: 140px;
+      }
+
+      .btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.75rem;
+      }
+
+      .add-button {
+        font-size: 0.75rem;
+        padding: 0.25rem 0.5rem;
+      }
+
+      .address-item {
+        padding: 0.5rem;
+      }
+
+      .address-details {
+        margin-left: 0.5rem;
+      }
+
+      .action-button {
+        font-size: 0.75rem;
+        padding: 0.2rem 0.4rem;
+      }
+
+      .address-type-badge {
+        font-size: 0.6rem;
+        padding: 0.15rem 0.4rem;
+      }
+
+      .default-badge {
+        font-size: 0.6rem;
+        padding: 0.15rem 0.4rem;
+      }
+
+      .modal-content {
+        padding: 0.75rem;
+        max-width: 95%;
+      }
+
+      .modal-title {
+        font-size: 0.9rem;
+      }
+
+      .error-message {
+        font-size: 0.7rem;
+      }
+
+      .profile-header {
+        padding: 0.75rem;
+      }
+
+      .profile-icon {
+        width: 2rem;
+        height: 2rem;
+      }
+
+      .profile-icon i {
+        font-size: 0.9rem;
+      }
+
+      .greeting,
+      .username {
+        font-size: 0.75rem;
+      }
+
+      .menu-link,
+      .logout-link {
+        padding: 0.6rem 0.8rem;
+        font-size: 0.75rem;
+      }
+
+      .menu-icon {
+        width: 0.9rem;
+        margin-right: 0.4rem;
+      }
     }
   </style>
 </head>
-
 <body class="page-body">
   <!-- Header Partial -->
   <%- include("../../views/partials/user/header") %>
-    
-    <div class="containeer ">
-      <div class="sidebar">
-        <div class="profile-header">
-          <div class="profile-icon">
-            <% if (user.image) { %>
-              <img src="/Uploads/userProfileimages/<%= user.image %>" alt="Profile Image" class="profile-image" />
-              <% } else { %>
-                <i class="fas fa-user" style="color: #ffffff; font-size: 1.125rem"></i>
-                <% } %>
-          </div>
-          <div>
-            <div class="greeting">Hello,</div>
-            <div class="username">
-              <%= user.name %>
-            </div>
+
+  <div class="container">
+    <button class="sidebar-toggle md:hidden" onclick="toggleSidebar()">
+      <i class="fas fa-bars mr-2"></i> Menu
+    </button>
+    <div class="sidebar" id="sidebar">
+      <div class="profile-header">
+        <div class="profile-icon">
+          <% if (user.image) { %>
+            <img src="<%= user.image %>" alt="Profile Image" class="profile-image"
+                 onerror="this.src='https://via.placeholder.com/80?text=Profile'" />
+          <% } else { %>
+            <i class="fas fa-user"></i>
+          <% } %>
+        </div>
+        <div>
+          <div class="greeting">Hello,</div>
+          <div class="username">
+            <%= user.name %>
           </div>
         </div>
-        <nav class="menu">
-          <ul class="menu-list">
-            <li class="menu-item">
-              <a href="/profile" class="menu-link">
-                <i class="fas fa-user menu-icon"></i>
-                Profile Information
-              </a>
-            </li>
-            <li class="menu-item">
-              <a href="/orders" class="menu-link">
-                <i class="fas fa-box menu-icon"></i>
-                My orders
-              </a>
-            </li>
-            <li class="menu-item">
-              <a href="/address" class="menu-link active">
-                <i class="fas fa-home menu-icon"></i>
-                Manage Addresses
-              </a>
-            </li>
-            <li class="menu-item">
-              <a href="/wallet" class="menu-link">
-                <i class="fas fa-wallet menu-icon"></i>
-                My Wallet
-              </a>
-            </li>
-            <li class="menu-item">
-              <a href="/wishlist" class="menu-link">
-                <i class="fas fa-heart menu-icon"></i>
-                My Wishlist
-              </a>
-            </li>
-            <li class="menu-item">
-              <a href="/referrals" class="menu-link">
-                <i class="fas fa-users menu-icon"></i>
-                Refer Friends
-              </a>
-            </li>
-            <li class="menu-item">
-              <a href="/changepassword" class="menu-link">
-                <i class="fas fa-lock menu-icon"></i>
-                Change Password
-              </a>
-            </li>
-            <li class="menu-item">
-              <a href="/logout" class="logout-link">
-                <i class="fas fa-sign-out-alt menu-icon"></i>
-                Log out
-              </a>
-            </li>
-          </ul>
-        </nav>
+      </div>
+      <nav class="menu">
+        <ul class="menu-list">
+          <li class="menu-item">
+            <a href="/profile" class="menu-link">
+              <i class="fas fa-user menu-icon"></i>
+              Profile Information
+            </a>
+          </li>
+          <li class="menu-item">
+            <a href="/orders" class="menu-link">
+              <i class="fas fa-box menu-icon"></i>
+              My Orders
+            </a>
+          </li>
+          <li class="menu-item">
+            <a href="/address" class="menu-link active">
+              <i class="fas fa-home menu-icon"></i>
+              Manage Addresses
+            </a>
+          </li>
+          <li class="menu-item">
+            <a href="/wallet" class="menu-link">
+              <i class="fas fa-wallet menu-icon"></i>
+              My Wallet
+            </a>
+          </li>
+          <li class="menu-item">
+            <a href="/wishlist" class="menu-link">
+              <i class="fas fa-heart menu-icon"></i>
+              My Wishlist
+            </a>
+          </li>
+          <li class="menu-item">
+            <a href="/referrals" class="menu-link">
+              <i class="fas fa-users menu-icon"></i>
+              Refer Friends
+            </a>
+          </li>
+          <li class="menu-item">
+            <a href="/changepassword" class="menu-link">
+              <i class="fas fa-lock menu-icon"></i>
+              Change Password
+            </a>
+          </li>
+          <li class="menu-item">
+            <a href="/logout" class="logout-link">
+              <i class="fas fa-sign-out-alt menu-icon"></i>
+              Log Out
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <h2 class="section-title">
+          <i class="fas fa-map-marker-alt mr-2 text-red-600"></i>Manage Addresses
+        </h2>
+        <button class="add-button" onclick="openAddAddressModal()">
+          <i class="fas fa-plus mr-1"></i> Add New Address
+        </button>
       </div>
 
-      <!-- Main Content (Updated UI for Manage Addresses Section) -->
-      <div class="main-content">
-        <div style="
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-          ">
-          <h2 class="section-title" style="font-size: 1.25rem; font-weight: 600">
-            <i class="fas fa-map-marker-alt mr-2 text-red-600"></i>Manage
-            Addresses
-          </h2>
-
-          <button class="add-button" onclick="openAddAddressModal()" style="
-              padding: 0.5rem 1rem;
-              color: #006eff;
-              border-radius: 0.375rem;
-              font-size: 0.875rem;
-              font-weight: 500;
-            ">
-            <i class="fas fa-plus mr-1"></i> Add New Address
-          </button>
-        </div>
-
-        <div id="addressList">
-          <% if (user.addresses && user.addresses.length> 0) { %> <% user.addresses.forEach((address, index)=> { %>
-              <div class="address-item" data-id="<%= address._id %>" style="
-              border: 1px solid #e5e7eb;
-              border-radius: 0.5rem;
-              padding: 1rem;
-              margin-bottom: 1rem;
-              background-color: #fff;
-            ">
-                <div style="display: flex; align-items: flex-start">
-                  <!-- <input type="radio" name="address" id="address<%= index %>" class="address-radio" <%=address.isDefault
-                    ? 'checked' : '' %>
-                  style="margin-top: 4px; margin-right: 1rem;" /> -->
-
-                  <div class="address-details" style="flex: 1">
-                    <div style="
-                    display: flex;
-                    justify-content: start;
-                    gap:20px;
-                    align-items: center;
-                    margin-bottom: 0.5rem;
-                  ">
-                      <div>
-                        <span style="
-                        font-weight: 600;
-                        font-size: 0.95rem;
-                        color: #1f2937;
-                      ">
-                          <%= address.fullName %>
+      <div id="addressList">
+        <% if (user.addresses && user.addresses.length > 0) { %>
+          <% user.addresses.forEach((address, index) => { %>
+            <div class="address-item" data-id="<%= address._id %>">
+              <div style="display: flex; align-items: flex-start">
+                <div class="address-details">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; flex-wrap: wrap; gap: 0.5rem;">
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                      <span style="font-weight: 600; font-size: 0.9rem; color: #1f2937;">
+                        <%= address.fullName %>
+                      </span>
+                      <% if (address.addressType === 'Home') { %>
+                        <span class="address-type-badge" style="background-color: #dbeafe; color: #1e3a8a;">
+                          <i class="fas fa-home mr-1"></i> HOME
                         </span>
-
-                        <% if (address.addressType==='Home' ) { %>
-                          <span class="address-type-badge" style="
-                        margin-left: 0.5rem;
-                        background-color: #dbeafe;
-                        color: #1e3a8a;
-                        font-size: 0.75rem;
-                        padding: 2px 8px;
-                        border-radius: 0.25rem;
-                      ">
-                            <i class="fas fa-home mr-1"></i> HOME
-                          </span>
-                          <% } else { %>
-                            <span class="address-type-badge" style="
-                        margin-left: 0.5rem;
-                        background-color: #d1fae5;
-                        color: #065f46;
-                        font-size: 0.75rem;
-                        padding: 2px 8px;
-                        border-radius: 0.25rem;
-                      ">
-                              <i class="fas fa-briefcase mr-1"></i> WORK
-                            </span>
-                            <% } %>
-                              <% if (address.isDefault) { %>
-                                <span class="default-badge" style="
-                        margin-left: 0.5rem;
-                        background-color: #fef3c7;
-                        color: #92400e;
-                        font-size: 0.75rem;
-                        padding: 2px 8px;
-                        border-radius: 0.25rem;
-                      ">
-                                  <i class="fas fa-check mr-1"></i> DEFAULT
-                                </span>
-                                <% } %>
-                      </div>
-
-                      <div class="address-actions">
-                        <button class="action-button" style="
-                        color: #6b7280;
-                        font-size: 0.85rem;
-                        margin-right: 0.75rem;
-                        font-weight: 500;
-                      " onclick="openEditAddressModal(
-                      '<%= address._id %>', 
-                      '<%= address.fullName %>', 
-                      '<%= address.phone %>', 
-                      '<%= address.flat %>', 
-                      '<%= address.area %>', 
-                      '<%= address.pincode %>', 
-                      '<%= address.landmark %>', 
-                      '<%= address.city %>', 
-                      '<%= address.state %>', 
-                      '<%= address.addressType %>', 
-                      '<%= address.isDefault %>'
-                    )">
-                          <i class="fas fa-edit mr-1"></i> Edit
-                        </button>
-                        <button class="action-button" style="
-                        color: #000000;
-                        font-size: 0.85rem;
-                        font-weight: 500;
-                      " onclick="openDeleteAddressModal('<%= address._id %>')">
-                          <i class="fas fa-trash-alt mr-1"></i> Delete
-                        </button>
-                      </div>
+                      <% } else { %>
+                        <span class="address-type-badge" style="background-color: #d1fae5; color: #065f46;">
+                          <i class="fas fa-briefcase mr-1"></i> WORK
+                        </span>
+                      <% } %>
+                      <% if (address.isDefault) { %>
+                        <span class="default-badge">
+                          <i class="fas fa-check mr-1"></i> DEFAULT
+                        </span>
+                      <% } %>
                     </div>
-
-                    <p style="color: #4b5563; font-size: 0.9rem; margin: 0.2rem 0">
-                      <%= address.flat %>, <%= address.area %>, <%= address.landmark ? address.landmark + ',' : '' %>
-                            <%= address.city %>, <%= address.state %>
-                    </p>
-                    <p style="color: #4b5563; font-size: 0.9rem; margin: 0.2rem 0">
-                      PIN: <%= address.pincode %>
-                    </p>
-                    <p style="color: #4b5563; font-size: 0.9rem; margin: 0.2rem 0">
-                      Phone: <%= address.phone %>
-                    </p>
+                    <div class="address-actions">
+                      <button class="action-button" onclick="openEditAddressModal(
+                        '<%= address._id %>', 
+                        '<%= address.fullName %>', 
+                        '<%= address.phone %>', 
+                        '<%= address.flat %>', 
+                        '<%= address.area %>', 
+                        '<%= address.pincode %>', 
+                        '<%= address.landmark %>', 
+                        '<%= address.city %>', 
+                        '<%= address.state %>', 
+                        '<%= address.addressType %>', 
+                        '<%= address.isDefault %>'
+                      )">
+                        <i class="fas fa-edit mr-1"></i> Edit
+                      </button>
+                      <button class="action-button" onclick="openDeleteAddressModal('<%= address._id %>')">
+                        <i class="fas fa-trash-alt mr-1"></i> Delete
+                      </button>
+                    </div>
                   </div>
+                  <p style="color: #4b5563; font-size: 0.85rem; margin: 0.2rem 0;">
+                    <%= address.flat %>, <%= address.area %>, <%= address.landmark ? address.landmark + ',' : '' %>
+                    <%= address.city %>, <%= address.state %>
+                  </p>
+                  <p style="color: #4b5563; font-size: 0.85rem; margin: 0.2rem 0;">
+                    PIN: <%= address.pincode %>
+                  </p>
+                  <p style="color: #4b5563; font-size: 0.85rem; margin: 0.2rem 0;">
+                    Phone: <%= address.phone %>
+                  </p>
                 </div>
               </div>
-              <% }); %>
-                <% } else { %>
-                  <p class="text-gray-500 italic">
-                    No addresses found. Add a new address to get started.
-                  </p>
-                  <% } %>
-        </div>
+            </div>
+          <% }); %>
+        <% } else { %>
+          <p class="text-gray-500 italic">
+            No addresses found. Add a new address to get started.
+          </p>
+        <% } %>
       </div>
     </div>
+  </div>
 
-    <!-- Add/Edit Address Modal -->
-    <div id="addressModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden z-50">
-      <div class="bg-white rounded-lg p-6 w-full max-w-2xl mx-4 shadow-xl overflow-y-auto max-h-[90vh]">
-        <div class="flex items-center mb-4">
-          <i class="fas fa-address-card text-blue-600 text-xl mr-3"></i>
-          <h2 class="text-lg font-semibold" id="addressModalTitle">
-            Add Address
-          </h2>
+  <!-- Add/Edit Address Modal -->
+  <div id="addressModal" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <i class="fas fa-address-card text-blue-600 text-lg mr-2"></i>
+        <h2 class="modal-title" id="addressModalTitle">Add Address</h2>
+      </div>
+      <form id="addressForm" class="space-y-3">
+        <input type="hidden" id="addressId"/>
+        <div class="form-group">
+          <label class="form-label" for="fullName">Full Name <span class="required">*</span></label>
+          <input type="text" id="fullName" name="name" class="form-input" placeholder="Enter your full name" required />
+          <span class="error-message" id="error-fullName"></span>
         </div>
-
-        <form id="addressForm" class="space-y-4">
-          <input type="hidden" id="addressId"/>
-
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1" for="fullName">Full Name <span
-                class="text-red-500">*</span></label>
-            <input type="text" id="fullName" name="name"
-              class="w-full p-2 border rounded-md focus:ring-blue-500 focus:border-blue-500"
-              placeholder="Enter your full name" required />
-            <span class="text-sm text-red-500" id="error-fullName"></span>
+        <div class="form-group">
+          <label class="form-label" for="phone">Phone Number <span class="required">*</span></label>
+          <input type="tel" id="phone" name="phone" class="form-input" placeholder="10 digit mobile number" pattern="\d{10}" title="Please enter a 10-digit mobile number" />
+          <span class="error-message" id="error-phone"></span>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="flat">Flat, House no., Building, Company <span class="required">*</span></label>
+          <input type="text" id="flat" name="flat" class="form-input" placeholder="Enter house details" required />
+          <span class="error-message" id="error-flat"></span>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="area">Area, Street, Sector, Village <span class="required">*</span></label>
+          <input type="text" id="area" name="area" class="form-input" placeholder="Enter area details" required />
+          <span class="error-message" id="error-area"></span>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="pincode">Pincode <span class="required">*</span></label>
+            <input type="text" id="pincode" name="pincode" class="form-input" placeholder="6 digits [0-9] PIN code" required pattern="\d{6}" title="Please enter a 6-digit PIN code" />
+            <span class="error-message" id="error-pincode"></span>
           </div>
-
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1" for="phone">Phone Number <span
-                class="text-red-500">*</span></label>
-            <input type="tel" id="phone" name="phone" class="w-full p-2 border rounded-md focus:ring-blue-500 focus:border-blue-500"
-              placeholder="10 digit mobile number" title="Please enter a 10-digit mobile number" />
-            <span class="text-sm text-red-500" id="error-phone"></span>
+          <div class="form-group">
+            <label class="form-label" for="landmark">Landmark (optional)</label>
+            <input type="text" id="landmark" name="landmark" class="form-input" placeholder="e.g., near Apollo Hospital" />
+            <span class="error-message" id="error-landmark"></span>
           </div>
-
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1" for="flat">Flat, House no., Building, Company
-              <span class="text-red-500">*</span></label>
-            <input type="text" id="flat" name="flat" class="w-full p-2 border rounded-md focus:ring-blue-500 focus:border-blue-500"
-              placeholder="Enter house details" required />
-            <span class="text-sm text-red-500" id="error-flat"></span>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="city">City/Town <span class="required">*</span></label>
+            <input type="text" id="city" name="city" class="form-input" placeholder="Enter city/town" required />
+            <span class="error-message" id="error-city"></span>
           </div>
-
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1" for="area">Area, Street, Sector, Village
-              <span class="text-red-500">*</span></label>
-            <input type="text" id="area" name="area" class="w-full p-2 border rounded-md focus:ring-blue-500 focus:border-blue-500"
-              placeholder="Enter area details" required />
-            <span class="text-sm text-red-500" id="error-area"></span>
+          <div class="form-group">
+            <label class="form-label" for="state">State <span class="required">*</span></label>
+            <select id="state" name="state" class="form-select" required>
+              <option value="">Select your state</option>
+              <option value="Andhra Pradesh">Andhra Pradesh</option>
+              <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+              <option value="Assam">Assam</option>
+              <option value="Bihar">Bihar</option>
+              <option value="Chhattisgarh">Chhattisgarh</option>
+              <option value="Goa">Goa</option>
+              <option value="Gujarat">Gujarat</option>
+              <option value="Haryana">Haryana</option>
+              <option value="Himachal Pradesh">Himachal Pradesh</option>
+              <option value="Jharkhand">Jharkhand</option>
+              <option value="Karnataka">Karnataka</option>
+              <option value="Kerala">Kerala</option>
+              <option value="Madhya Pradesh">Madhya Pradesh</option>
+              <option value="Maharashtra">Maharashtra</option>
+              <option value="Manipur">Manipur</option>
+              <option value="Meghalaya">Meghalaya</option>
+              <option value="Mizoram">Mizoram</option>
+              <option value="Nagaland">Nagaland</option>
+              <option value="Odisha">Odisha</option>
+              <option value="Punjab">Punjab</option>
+              <option value="Rajasthan">Rajasthan</option>
+              <option value="Sikkim">Sikkim</option>
+              <option value="Tamil Nadu">Tamil Nadu</option>
+              <option value="Telangana">Telangana</option>
+              <option value="Tripura">Tripura</option>
+              <option value="Uttar Pradesh">Uttar Pradesh</option>
+              <option value="Uttarakhand">Uttarakhand</option>
+              <option value="West Bengal">West Bengal</option>
+              <option value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</option>
+              <option value="Chandigarh">Chandigarh</option>
+              <option value="Dadra and Nagar Haveli and Daman and Diu">Dadra and Nagar Haveli and Daman and Diu</option>
+              <option value="Delhi">Delhi</option>
+              <option value="Jammu and Kashmir">Jammu and Kashmir</option>
+              <option value="Ladakh">Ladakh</option>
+              <option value="Lakshadweep">Lakshadweep</option>
+              <option value="Puducherry">Puducherry</option>
+            </select>
+            <span class="error-message" id="error-state"></span>
           </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1" for="pincode">Pincode <span
-                  class="text-red-500">*</span></label>
-              <input type="text" id="pincode" name="pincode"
-                class="w-full p-2 border rounded-md focus:ring-blue-500 focus:border-blue-500"
-                placeholder="6 digits [0-9] PIN code" required pattern="\d{6}"
-                title="Please enter a 6-digit PIN code" />
-              <span class="text-sm text-red-500" id="error-pincode"></span>
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1" for="landmark">Landmark (optional)</label>
-              <input type="text" id="landmark" name="landmark"
-                class="w-full p-2 border rounded-md focus:ring-blue-500 focus:border-blue-500"
-                placeholder="e.g., near Apollo Hospital" />
-              <span class="text-sm text-red-500" id="error-landmark"></span>
-            </div>
-          </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1" for="city">City/Town <span
-                  class="text-red-500">*</span></label>
-              <input type="text" id="city" name="city"
-                class="w-full p-2 border rounded-md focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Enter city/town" required />
-              <span class="text-sm text-red-500" id="error-city"></span>
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1" for="state">State <span
-                  class="text-red-500">*</span></label>
-              <select id="state" name="state" class="w-full p-2 border rounded-md focus:ring-blue-500 focus:border-blue-500"
-                required>
-                <option value="">Select your state</option>
-                <option value="Andhra Pradesh">Andhra Pradesh</option>
-                <option value="Arunachal Pradesh">Arunachal Pradesh</option>
-                <option value="Assam">Assam</option>
-                <option value="Bihar">Bihar</option>
-                <option value="Chhattisgarh">Chhattisgarh</option>
-                <option value="Goa">Goa</option>
-                <option value="Gujarat">Gujarat</option>
-                <option value="Haryana">Haryana</option>
-                <option value="Himachal Pradesh">Himachal Pradesh</option>
-                <option value="Jharkhand">Jharkhand</option>
-                <option value="Karnataka">Karnataka</option>
-                <option value="Kerala">Kerala</option>
-                <option value="Madhya Pradesh">Madhya Pradesh</option>
-                <option value="Maharashtra">Maharashtra</option>
-                <option value="Manipur">Manipur</option>
-                <option value="Meghalaya">Meghalaya</option>
-                <option value="Mizoram">Mizoram</option>
-                <option value="Nagaland">Nagaland</option>
-                <option value="Odisha">Odisha</option>
-                <option value="Punjab">Punjab</option>
-                <option value="Rajasthan">Rajasthan</option>
-                <option value="Sikkim">Sikkim</option>
-                <option value="Tamil Nadu">Tamil Nadu</option>
-                <option value="Telangana">Telangana</option>
-                <option value="Tripura">Tripura</option>
-                <option value="Uttar Pradesh">Uttar Pradesh</option>
-                <option value="Uttarakhand">Uttarakhand</option>
-                <option value="West Bengal">West Bengal</option>
-                <option value="Andaman and Nicobar Islands">
-                  Andaman and Nicobar Islands
-                </option>
-                <option value="Chandigarh">Chandigarh</option>
-                <option value="Dadra and Nagar Haveli and Daman and Diu">
-                  Dadra and Nagar Haveli and Daman and Diu
-                </option>
-                <option value="Delhi">Delhi</option>
-                <option value="Jammu and Kashmir">Jammu and Kashmir</option>
-                <option value="Ladakh">Ladakh</option>
-                <option value="Lakshadweep">Lakshadweep</option>
-                <option value="Puducherry">Puducherry</option>
-
-              </select>
-              <span class="text-sm text-red-500" id="error-state"></span>
-            </div>
-          </div>
-
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Address Type</label>
-            <div class="flex space-x-6">
-              <label class="inline-flex items-center text-sm text-gray-700">
-                <input type="radio" name="addressType" value="Home" class="form-radio mr-2" required />
-                <i class="fas fa-home text-black mr-1"></i> Home
-              </label>
-              <label class="inline-flex items-center text-sm text-gray-700">
-                <input type="radio" name="addressType" value="Work" class="form-radio mr-2" />
-                <i class="fas fa-briefcase text-black mr-1"></i> Work
-              </label>
-            </div>
-          </div>
-
-          <div>
-            <label class="inline-flex items-center text-sm text-gray-700">
-              <input type="checkbox" id="isDefault" class="form-checkbox mr-2" />
-              Make this my default address
+        </div>
+        <div class="form-group">
+          <label class="form-label">Address Type</label>
+          <div class="radio-group">
+            <label class="radio-label">
+              <input type="radio" name="addressType" value="Home" class="form-radio" required />
+              <i class="fas fa-home text-black mr-1"></i> Home
+            </label>
+            <label class="radio-label">
+              <input type="radio" name="addressType" value="Work" class="form-radio" />
+              <i class="fas fa-briefcase text-black mr-1"></i> Work
             </label>
           </div>
-
-          <div class="flex justify-end space-x-3 pt-4">
-           
-            <button type="submit" style="
-                  width: auto;
-                  max-width: 30rem;
-                  padding: 0.8rem 1.4rem;
-                  border-radius: 0.25rem;
-                  font-size: 0.9rem;
-                  cursor: pointer;
-                  transition: all 0.2s ease;
-                  background-color: #000000;
-                  color: white;
-                  border: none;
-                " onmouseover="this.style.backgroundColor='#272727';"
-              onmouseout="this.style.backgroundColor='#000000';">
-              Save Address
-            </button>
-            <button type="button" onclick="closeAddressModal()" style="
-                  width: auto;
-                  max-width: 30rem;
-                  padding: 0.8rem 1.4rem;
-                  border-radius: 0.25rem;
-                  font-size: 0.9rem;
-                  cursor: pointer;
-                  transition: all 0.2s ease;
-                  border: 1px solid #ffffff;
-                  color: #ffffff;
-                  background-color: gray;
-                " onmouseover="this.style.backgroundColor='#9c9c9c';" onmouseout="this.style.backgroundColor='gray';">
-              Cancel
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-
-    <!-- Delete Address Confirmation Modal -->
-    <div id="deleteAddressModal"
-      class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden z-50">
-      <div class="bg-white rounded-lg p-6 w-full max-w-md mx-4 shadow-xl">
-        <div class="flex items-center mb-4">
-          <i class="fas fa-map-marker-alt text-red-600 mr-3"></i>
-          <h2 class="text-lg font-semibold">Confirm Deletion</h2>
         </div>
-        <p class="text-sm text-gray-700 mb-4">
-          Are you sure you want to delete this address?
-        </p>
-        <div class="flex justify-end space-x-3">
-          <button type="button" class="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400 transition-colors"
-            onclick="closeDeleteAddressModal()">
-            Cancel
-          </button>
-          <button type="button" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
-            onclick="confirmDeleteAddress()">
-            <i class="fas fa-trash-alt mr-2"></i>Confirm
-          </button>
+        <div class="form-group">
+          <label class="checkbox-label">
+            <input type="checkbox" id="isDefault" class="form-checkbox" />
+            Make this my default address
+          </label>
         </div>
-      </div>
+        <div class="button-group">
+          <button type="submit" class="btn btn-primary">Save Address</button>
+          <button type="button" onclick="closeAddressModal()" class="btn btn-secondary">Cancel</button>
+        </div>
+      </form>
     </div>
+  </div>
 
-    <!-- Toast Container -->
-    <div id="toastContainer"></div>
-
-    <!-- Footer Partial -->
-    <%- include("../../views/partials/user/footer") %>
-
-      <script>
-        let currentAddressId = "";
-
-        function showToast(message, type = "info") {
-          let toastContainer = document.querySelector(".toast-container");
-          if (!toastContainer) {
-            toastContainer = document.createElement("div");
-            toastContainer.className = "toast-container";
-            toastContainer.style.position = "fixed";
-            toastContainer.style.top = "20px";
-            toastContainer.style.right = "20px";
-            toastContainer.style.zIndex = "9999";
-            toastContainer.style.display = "flex";
-            toastContainer.style.flexDirection = "column";
-            toastContainer.style.gap = "10px";
-            document.body.appendChild(toastContainer);
-          }
-
-          const toastId = "toast-" + Date.now();
-          const toast = document.createElement("div");
-
-          // Set colors based on toast type
-          let bgColor, borderColor;
-          switch (type) {
-            case "success":
-              bgColor = "#15803d"; // green
-              borderColor = "#15803d";
-              break;
-            case "error":
-              bgColor = "#dc2626"; // red
-              borderColor = "#dc2626";
-              break;
-            case "info":
-            default:
-              bgColor = "#2563eb"; // blue
-              borderColor = "#2563eb";
-          }
-
-          // Toast style
-          toast.style.cssText = `
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        background-color: ${bgColor};
-        border-left: 4px solid ${borderColor};
-        color: white;
-        padding: 8px 16px;
-        border-radius: 5px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        max-width: 300px;
-        width: 100%;
-        opacity: 0;
-        transform: translateY(20px);
-        transition: opacity 0.3s ease, transform 0.3s ease;
-    `;
-
-          toast.id = toastId;
-          toast.setAttribute("role", "alert");
-          toast.setAttribute("aria-live", "assertive");
-          toast.setAttribute("aria-atomic", "true");
-
-          toast.innerHTML = `
-        <div style="flex: 1; font-size: 14px;">${message}</div>
-        <button type="button" style="margin-left: 12px; background: none; border: none; color: white; font-size: 16px; cursor: pointer;" data-toast-id="${toastId}">
-            &times;
+  <!-- Delete Address Confirmation Modal -->
+  <div id="deleteAddressModal" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <i class="fas fa-map-marker-alt text-red-600 mr-2"></i>
+        <h2 class="modal-title">Confirm Deletion</h2>
+      </div>
+      <p class="text-sm text-gray-700 mb-4">Are you sure you want to delete this address?</p>
+      <div class="button-group">
+        <button type="button" class="btn btn-secondary" onclick="closeDeleteAddressModal()">Cancel</button>
+        <button type="button" class="btn btn-danger" onclick="confirmDeleteAddress()">
+          <i class="fas fa-trash-alt mr-2"></i>Confirm
         </button>
-    `;
+      </div>
+    </div>
+  </div>
 
-          toastContainer.appendChild(toast);
+  <!-- Toast Container -->
+  <div id="toastContainer"></div>
 
-          // Fade in + slide up
-          setTimeout(() => {
-            toast.style.opacity = "1";
-            toast.style.transform = "translateY(0)";
-          }, 100);
-
-          // Close button logic
-          const closeButton = toast.querySelector(`[data-toast-id="${toastId}"]`);
-          closeButton.addEventListener("click", () => {
-            toast.style.opacity = "0";
-            toast.style.transform = "translateY(20px)";
-            setTimeout(() => toast.remove(), 300);
-          });
-
-          // Auto dismiss after 1.5 seconds
-          setTimeout(() => {
-            toast.style.opacity = "0";
-            toast.style.transform = "translateY(20px)";
-            setTimeout(() => toast.remove(), 300);
-          }, 1500);
-        }
-
-        function openAddAddressModal() {
-          document.getElementById("addressModalTitle").textContent =
-            "Add Address";
-          document.getElementById("addressId").value = "";
-          document.getElementById("fullName").value = "";
-          document.getElementById("phone").value = "";
-          document.getElementById("flat").value = "";
-          document.getElementById("area").value = "";
-          document.getElementById("pincode").value = "";
-          document.getElementById("landmark").value = "";
-          document.getElementById("city").value = "";
-          document.getElementById("state").value = "";
-          document.querySelector(
-            'input[name="addressType"][value="Home"]'
-          ).checked = true;
-          document.getElementById("isDefault").checked = false;
-          document.getElementById("addressModal").classList.remove("hidden");
-          document.getElementById("addressModal").classList.add("modal-visible");
-          document.getElementById("fullName").focus();
-          [
-            "fullName",
-            "phone",
-            "flat",
-            "area",
-            "pincode",
-            "landmark",
-            "city",
-            "state",
-          ].forEach((id) => {
-            const errorEl = document.getElementById(`error-${id}`);
-            if (errorEl) {
-              errorEl.textContent = "";
-              errorEl.style.display = "none";
-            }
-          });
-        }
-
-        function openEditAddressModal(
-          id,
-          fullName,
-          phone,
-          flat,
-          area,
-          pincode,
-          landmark,
-          city,
-          state,
-          addressType,
-          isDefault
-        ) {
-          document.getElementById("addressModalTitle").textContent =
-            "Edit Address";
-          document.getElementById("addressId").value = id;
-          document.getElementById("fullName").value = fullName;
-          document.getElementById("phone").value = phone;
-          document.getElementById("flat").value = flat;
-          document.getElementById("area").value = area;
-          document.getElementById("pincode").value = pincode;
-          document.getElementById("landmark").value = landmark || "";
-          document.getElementById("city").value = city;
-          document.getElementById("state").value = state;
-          document.querySelector(
-            `input[name="addressType"][value="${addressType}"]`
-          ).checked = true;
-          document.getElementById("isDefault").checked = isDefault === "true";
-          document.getElementById("addressModal").classList.remove("hidden");
-          document.getElementById("addressModal").classList.add("modal-visible");
-          document.getElementById("fullName").focus();
-          [
-            "fullName",
-            "phone",
-            "flat",
-            "area",
-            "pincode",
-            "landmark",
-            "city",
-            "state",
-          ].forEach((id) => {
-            const errorEl = document.getElementById(`error-${id}`);
-            if (errorEl) {
-              errorEl.textContent = "";
-              errorEl.style.display = "none";
-            }
-          });
-        }
-
-        function closeAddressModal() {
-          document.getElementById("addressModal").classList.add("hidden");
-          document
-            .getElementById("addressModal")
-            .classList.remove("modal-visible");
-          [
-            "fullName",
-            "phone",
-            "flat",
-            "area",
-            "pincode",
-            "landmark",
-            "city",
-            "state",
-          ].forEach((id) => {
-            const errorEl = document.getElementById(`error-${id}`);
-            if (errorEl) {
-              errorEl.textContent = "";
-              errorEl.style.display = "none";
-            }
-          });
-        }
-
-        function openDeleteAddressModal(id) {
-          currentAddressId = id;
-          document
-            .getElementById("deleteAddressModal")
-            .classList.remove("hidden");
-          document
-            .getElementById("deleteAddressModal")
-            .classList.add("modal-visible");
-        }
-
-        function closeDeleteAddressModal() {
-          document.getElementById("deleteAddressModal").classList.add("hidden");
-          document
-            .getElementById("deleteAddressModal")
-            .classList.remove("modal-visible");
-          currentAddressId = "";
-        }
-
-        function confirmDeleteAddress() {
-          fetch(`/address/delete/${currentAddressId}`, {
-            method: "DELETE",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          })
-            .then((res) => res.json())
-            .then((data) => {
-              if (data.success) {
-                showToast("Address deleted successfully", "success");
-                document
-                  .querySelector(`.address-item[data-id="${currentAddressId}"]`)
-                  .remove();
-                if (!document.querySelector(".address-item")) {
-                  document.getElementById("addressList").innerHTML =
-                    '<p class="text-gray-500 italic">No addresses found. Add a new address to get started.</p>';
-                }
-              } else {
-                showToast(data.message || "Failed to delete address", "error");
-              }
-              closeDeleteAddressModal();
-            })
-            .catch((err) => {
-              console.error("Delete address error:", err);
-              showToast("Failed to delete address", "error");
-              closeDeleteAddressModal();
-            });
-        }
-
-        function validateAddressForm() {
-          let isValid = true;
-
-          function setError(id, message) {
-            const errorEl = document.getElementById(`error-${id}`);
-            if (errorEl) {
-              errorEl.textContent = message;
-              errorEl.classList.add("text-red-500", "text-sm");
-              errorEl.style.display = "block";
-            }
-            isValid = false;
-          }
-
-          function clearError(id) {
-            const errorEl = document.getElementById(`error-${id}`);
-            if (errorEl) {
-              errorEl.textContent = "";
-              errorEl.style.display = "none";
-            }
-          }
-
-          [
-            "fullName",
-            "phone",
-            "flat",
-            "area",
-            "pincode",
-            "landmark",
-            "city",
-            "state",
-          ].forEach(clearError);
-
-          const fullName = document.getElementById("fullName").value.trim();
-          const phone = document.getElementById("phone").value.trim();
-          const flat = document.getElementById("flat").value.trim();
-          const area = document.getElementById("area").value.trim();
-          const pincode = document.getElementById("pincode").value.trim();
-          const landmark = document.getElementById("landmark").value.trim();
-          const city = document.getElementById("city").value.trim();
-          const state = document.getElementById("state").value;
-          const addressType = document.querySelector(
-            'input[name="addressType"]:checked'
-          );
-
-          if (!fullName) {
-            setError("fullName", "Full Name is required");
-          } else if (fullName.length < 2) {
-            setError("fullName", "Full Name must be at least 2 characters long");
-          } else if (!/^[a-zA-Z\s.]+$/.test(fullName)) {
-            setError(
-              "fullName",
-              "Full Name can only contain letters, spaces, and periods"
-            );
-          }
-
-          if (!phone) {
-            setError("phone", "Phone number is required");
-          } else if (!/^\d{10}$/.test(phone)) {
-            setError("phone", "Enter a valid 10-digit mobile number");
-          }else if(!/^[6-9]\d{9}$/.test(phone)){
-            setError("phone", "Enter a valid number");
-          }
-
-          if (!flat) {
-            setError("flat", "Flat/House number is required");
-          } else if (flat.length < 2) {
-            setError("flat", "Flat/House number must be at least 2 characters");
-          }
-
-          if (!area) {
-            setError("area", "Area/Street is required");
-          } else if (area.length < 3) {
-            setError("area", "Area/Street must be at least 3 characters");
-          }
-
-          if (!pincode) {
-            setError("pincode", "Pincode is required");
-          } else if (!/^\d{6}$/.test(pincode)) {
-            setError("pincode", "Enter a valid 6-digit PIN code");
-          }
-
-          if (!city) {
-            setError("city", "City is required");
-          } else if (city.length < 2) {
-            setError("city", "City must be at least 2 characters");
-          } else if (!/^[a-zA-Z\s]+$/.test(city)) {
-            setError("city", "City can only contain letters and spaces");
-          }
-
-          if (!state) {
-            setError("state", "Please select a state");
-          }
-
-          if (!addressType) {
-            showToast("Please select an address type", "error");
-            isValid = false;
-          }
-
-          if (landmark && landmark.length < 3) {
-            setError(
-              "landmark",
-              "Landmark must be at least 3 characters if provided"
-            );
-          }
-
-          return isValid;
-        }
-
-        document
-          .getElementById("addressForm")
-          .addEventListener("submit", function (e) {
-            e.preventDefault();
-
-            if (!validateAddressForm()) {
-              showToast("Please fix the errors in the form", "error");
-              return;
-            }
-
-            const id = document.getElementById("addressId").value;
-            const fullName = document.getElementById("fullName").value.trim();
-            const phone = document.getElementById("phone").value.trim();
-            const flat = document.getElementById("flat").value.trim();
-            const area = document.getElementById("area").value.trim();
-            const pincode = document.getElementById("pincode").value.trim();
-            const landmark = document.getElementById("landmark").value.trim();
-            const city = document.getElementById("city").value.trim();
-            const state = document.getElementById("state").value;
-            const addressType = document.querySelector(
-              'input[name="addressType"]:checked'
-            ).value;
-            const isDefault = document.getElementById("isDefault").checked;
-
-            const addressData = {
-              fullName,
-              phone,
-              flat,
-              area,
-              pincode,
-              landmark,
-              city,
-              state,
-              addressType,
-              isDefault,
-            };
-            const method = id ? "PUT" : "POST";
-            const url = id ? `/address/update/${id}` : "/address/add";
-
-            fetch(url, {
-              method: method,
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify(addressData),
-            })
-              .then((res) => res.json())
-              .then((data) => {
-                if (data.success) {
-                  showToast(
-                    id
-                      ? "Address updated successfully"
-                      : "Address added successfully",
-                    "success"
-                  );
-                  location.reload();
-                } else {
-                  showToast(
-                    data.message ||
-                    (id ? "Failed to update address" : "Failed to add address"),
-                    "error"
-                  );
-                }
-                closeAddressModal();
-              })
-              .catch((err) => {
-                console.error("Address save error:", err);
-                showToast(
-                  id ? "Failed to update address" : "Failed to add address",
-                  "error"
-                );
-                closeAddressModal();
-              });
-          });
-
-        document
-          .getElementById("addressModal")
-          .addEventListener("click", function (e) {
-            if (e.target === this) {
-              closeAddressModal();
-            }
-          });
-
-        document
-          .getElementById("deleteAddressModal")
-          .addEventListener("click", function (e) {
-            if (e.target === this) {
-              closeDeleteAddressModal();
-            }
-          });
-
-        window.addEventListener("click", function (event) {
-          const dropdowns = document.querySelectorAll(".dropdown-content");
-          dropdowns.forEach((dropdown) => {
-            if (
-              dropdown.classList.contains("show") &&
-              !event.target.closest(".dropdown")
-            ) {
-              dropdown.classList.remove("show");
-            }
-          });
-        });
-
-        function toggleDropdown(dropdownId) {
-          event.stopPropagation();
-          const dropdowns = document.querySelectorAll(".dropdown-content");
-          dropdowns.forEach((dropdown) => {
-            if (
-              dropdown.id !== dropdownId &&
-              dropdown.classList.contains("show")
-            ) {
-              dropdown.classList.remove("show");
-            }
-          });
-          document.getElementById(dropdownId).classList.toggle("show");
-        }
-
-        function toggleMobileMenu() {
-          console.log("Mobile menu toggled");
-        }
-      </script>
+  <!-- Footer Partial -->
+  <%- include("../../views/partials/user/footer") %>
 </body>
-
 </html>

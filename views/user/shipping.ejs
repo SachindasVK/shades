@@ -5,6 +5,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Shipping Selection (Checkout Step 2)</title>
+    <script defer src="/script/script.js"></script>
+    <link rel="icon" href="favicon/favicon.ico" type="ico">
 </head>
 
 <body style="
@@ -316,7 +318,7 @@
                         if (selectedMethod === "schedule") {
                             deliveryDate = document.getElementById("deliveryDate").value;
                             if (!deliveryDate) {
-                                showNotification("Please select a delivery date.", "error");
+                                showToast("Please select a delivery date.", "error");
                                 return;
                             }
                         }
@@ -340,53 +342,16 @@
                             if (result.success) {
                                 window.location.href = result.redirectUrl;
                             } else {
-                                showNotification(result.message, "error");
+                                showToast(result.message, "error");
                             }
                         } catch (error) {
                             console.error("Error:", error);
-                            showNotification(
+                            showToast(
                                 "Something went wrong. Please try again.",
                                 "error"
                             );
                         }
-                    });
-
-                function showNotification(message, type = "info") {
-                    const notification = document.createElement("div");
-                    notification.style.cssText = `
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                padding: 1rem 1.5rem;
-                border-radius: 0.5rem;
-                color: white;
-                font-weight: 500;
-                z-index: 9999;
-                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-                transition: all 0.3s ease;
-            `;
-
-                    if (type === "success") {
-                        notification.style.backgroundColor = "#10b981";
-                    } else if (type === "error") {
-                        notification.style.backgroundColor = "#ef4444";
-                    } else {
-                        notification.style.backgroundColor = "#3b82f6";
-                    }
-
-                    notification.textContent = message;
-                    document.body.appendChild(notification);
-
-                    setTimeout(() => {
-                        notification.style.opacity = "0";
-                        notification.style.transform = "translateY(-20px)";
-                        setTimeout(() => {
-                            document.body.removeChild(notification);
-                        }, 300);
-                    }, 3000);
-                }
-
-        
+                    });        
   document.querySelectorAll('.shipping-option').forEach(option => {
     option.addEventListener('click', function (e) {
       // Avoid selecting radio when clicking inside the date picker
@@ -416,7 +381,7 @@
   });
 
 
-            </script>
+</script>
 </body>
 
 </html>

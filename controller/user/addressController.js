@@ -1,5 +1,6 @@
 const Address = require('../../models/addressSchema')
 const User = require('../../models/userSchema')
+const logger = require('../../helpers/logger')
 
 
 const getAddress = async (req, res) => {
@@ -22,7 +23,7 @@ const getAddress = async (req, res) => {
                 fullName: addr.name,
                 phone: addr.phone,
                 flat: addr.flat,
-                area: addr.area || '', 
+                area: addr.area || '',
                 city: addr.city,
                 state: addr.state,
                 pincode: addr.pincode,
@@ -41,7 +42,7 @@ const getAddress = async (req, res) => {
         })
     } catch (error) {
         logger.error('Get address error:', error);
-        res.redirect('/pageNotFound')
+        return res.status(500).render('page-404')
     }
 }
 
@@ -82,7 +83,7 @@ const addAddress = async (req, res) => {
             });
         }
 
-         if  (!/^[6-9]\d{9}$/.test(phone)) {
+        if (!/^[6-9]\d{9}$/.test(phone)) {
             return res.status(400).json({
                 success: false,
                 message: 'please enter a valid phone number'
@@ -101,7 +102,7 @@ const addAddress = async (req, res) => {
             return res.status(404).json({ success: false, message: 'User not found' });
         }
 
-      
+
         const newAddress = {
             name: fullName.trim(),
             phone: phone.trim(),
@@ -113,38 +114,36 @@ const addAddress = async (req, res) => {
             state: state,
             addressType: addressType,
             isDefault: isDefault || false,
-            country: 'India', 
+            country: 'India',
             email: user.email
         };
 
-     
-     let addressDoc = await Address.findOne({ userId });
 
-if (addressDoc && Array.isArray(addressDoc.address)) {
-  const isDuplicate = addressDoc.address.some(addr => {
-    return (
-      addr.name === newAddress.name &&
-      addr.phone === newAddress.phone &&
-      addr.area === newAddress.area &&
-      addr.flat === newAddress.flat &&
-      addr.pincode === newAddress.pincode &&
-      addr.landMark === newAddress.landMark &&
-      addr.city === newAddress.city &&
-      addr.state === newAddress.state &&
-      addr.country === newAddress.country &&
-      addr.email === newAddress.email
-    );
-  });
+        let addressDoc = await Address.findOne({ userId });
 
-  if (isDuplicate) {
-    return res.status(400).json({
-      success: false,
-      message: 'This address already exists, please choose another address'
-    });
-  }
-}
+        if (addressDoc && Array.isArray(addressDoc.address)) {
+            const isDuplicate = addressDoc.address.some(addr => {
+                return (
+                    addr.name === newAddress.name &&
+                    addr.phone === newAddress.phone &&
+                    addr.area === newAddress.area &&
+                    addr.flat === newAddress.flat &&
+                    addr.pincode === newAddress.pincode &&
+                    addr.landMark === newAddress.landMark &&
+                    addr.city === newAddress.city &&
+                    addr.state === newAddress.state &&
+                    addr.country === newAddress.country &&
+                    addr.email === newAddress.email
+                );
+            });
 
-
+            if (isDuplicate) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'This address already exists, please choose another address'
+                });
+            }
+        }
 
         if (!addressDoc) {
             addressDoc = new Address({
@@ -154,14 +153,14 @@ if (addressDoc && Array.isArray(addressDoc.address)) {
 
             addressDoc.address[0].isDefault = true;
         } else {
-    
+
             if (isDefault) {
                 addressDoc.address.forEach(addr => {
                     addr.isDefault = false;
                 });
             }
 
-            
+
             const hasDefault = addressDoc.address.some(addr => addr.isDefault);
             if (!hasDefault) {
                 newAddress.isDefault = true;
@@ -180,10 +179,7 @@ if (addressDoc && Array.isArray(addressDoc.address)) {
 
     } catch (error) {
         logger.error('Error adding address:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Server error occurred while adding address'
-        });
+        return res.status(500).render('page-404')
     }
 }
 
@@ -212,14 +208,14 @@ const updateAddress = async (req, res) => {
             });
         }
 
-          if (!/^\d{10}$/.test(phone)) {
+        if (!/^\d{10}$/.test(phone)) {
             return res.status(400).json({
                 success: false,
                 message: 'Phone number must be 10 digits'
             });
         }
 
-         if  (!/^[6-9]\d{9}$/.test(phone)) {
+        if (!/^[6-9]\d{9}$/.test(phone)) {
             return res.status(400).json({
                 success: false,
                 message: 'please enter a valid phone number'
@@ -270,7 +266,7 @@ const updateAddress = async (req, res) => {
         addrToUpdate.name = fullName.trim();
         addrToUpdate.phone = phone.trim();
         addrToUpdate.flat = flat.trim();
-        addrToUpdate.area = area.trim(); 
+        addrToUpdate.area = area.trim();
         addrToUpdate.pincode = parseInt(pincode);
         addrToUpdate.city = city.trim();
         addrToUpdate.state = state.trim();
@@ -291,10 +287,7 @@ const updateAddress = async (req, res) => {
 
     } catch (error) {
         logger.error('Update address error:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Failed to update address. Please try again.'
-        });
+        return res.status(500).render('page-404')
     }
 };
 
@@ -334,10 +327,7 @@ const deleteAddress = async (req, res) => {
 
     } catch (error) {
         logger.error('Delete address error:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Failed to delete address. Please try again.'
-        });
+        return res.status(500).render('page-404')
     }
 };
 module.exports = {

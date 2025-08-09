@@ -18,7 +18,7 @@ const pageNotFound = async (req, res) => {
       message: 'Page not found'
     });
   } catch (error) {
-    logger.error('404 page error:', error.message);
+    logger.error('404 page error:', error);
     res.status(500).send('Server error');
   }
 };
@@ -72,7 +72,7 @@ const securePassword = async (password) => {
     const passwordHash = await bcrypt.hash(password, 10);
     return passwordHash;
   } catch (error) {
-    logger.error('Error hashing password:', error.message);
+    logger.error('Error hashing password:', error);
     throw error;
   }
 };
@@ -91,12 +91,8 @@ const loadSignup = async (req, res) => {
       message: null
     });
   } catch (error) {
-    logger.error('Signup page error:', error.message);
-    res.status(500).render('page-404', {
-      isLoggedIn: false,
-      username: '',
-      message: 'Server error'
-    });
+    logger.error('Signup page error:', error);
+    return res.status(500).render('page-404');
   }
 };
 
@@ -176,7 +172,7 @@ const signup = async (req, res) => {
     // Force session save before rendering
     req.session.save((error) => {
       if (error) {
-        logger.error('Session save error:', error.message);
+        logger.error('Session save error:', error);
         return res.render('signup', {
           isLoggedIn: false,
           username: '',
@@ -195,12 +191,8 @@ const signup = async (req, res) => {
     logger.info(`OTP: ${otp}`);
 
   } catch (error) {
-    logger.error('Signup error:', + error.message);
-    res.status(500).render('page-404', {
-      isLoggedIn: false,
-      username: '',
-      message: 'Server error'
-    });
+    logger.error('Signup error:',error);
+   return res.status(500).render('page-404');
   }
 };
 
@@ -289,7 +281,7 @@ const verifyOtp = async (req, res) => {
       delete req.session.referredBy;
 
       req.session.user = savedUser._id;
-      res.json({ success: true, redirectUrl: '/shop' });
+      res.json({ success: true, redirectUrl: '/' });
 
     } else {
       res.status(400).json({
@@ -299,11 +291,8 @@ const verifyOtp = async (req, res) => {
     }
 
   } catch (error) {
-    logger.error('Verify OTP error:', error.message);
-    res.status(500).json({
-      success: false,
-      message: 'An error occurred!'
-    });
+    logger.error('Verify OTP error:', error);
+    return res.status(500).render('page-404')
   }
 };
 
@@ -387,7 +376,7 @@ const resendOtp = async (req, res) => {
     // Save session explicity
     req.session.save((error) => {
       if (error) {
-        logger.error('Session save error:', error.message);
+        logger.error('Session save error:', error);
       } else {
         logger.info('Session saved successfully');
       }
@@ -412,11 +401,8 @@ const resendOtp = async (req, res) => {
     }
 
   } catch (error) {
-    logger.error('Error in resendOtp:', error.message);
-    res.status(500).json({
-      success: false,
-      message: 'Internal server error. Please try again.'
-    });
+    logger.error('Error in resendOtp:', error);
+    return res.status(500).render('page-404')
   }
 };
 
@@ -440,12 +426,8 @@ const loadLogin = async (req, res) => {
       message
     });
   } catch (error) {
-    logger.error('Login page error:', error.message);
-    res.status(500).render('page-404', {
-      isLoggedIn: false,
-      username: '',
-      message: 'Server error'
-    });
+    logger.error('Login page error:', error);
+    return res.status(500).render('page-404');
   }
 };
 
@@ -512,9 +494,9 @@ const login = async (req, res) => {
     });
 
   } catch (error) {
-    logger.error('Login error: ', error.message);
+    logger.error('Login error: ', error);
     req.session.errorMessage = 'Login failed. Please try again later.';
-    res.redirect('/login');
+    return res.status(500).render('page-404')
   }
 };
 
@@ -559,12 +541,8 @@ const logout = async (req, res) => {
       const userId = req.session.user;
       req.session.destroy((error) => {
         if (error) {
-          logger.error('Session destroy error: ', error.message);
-          return res.status(500).render('page-404', {
-            isLoggedIn: false,
-            username: '',
-            message: 'Session destroy failed',
-          });
+          logger.error('Session destroy error: ', error);
+          return res.status(500).render('page-404');
         }
         res.clearCookie('connect.sid');
         logger.info(`User logged out successfully: ${userId}`);
@@ -575,12 +553,8 @@ const logout = async (req, res) => {
       res.redirect('/');
     }
   } catch (error) {
-    logger.error('Logout error: ', error.message);
-    res.status(500).render('page-404', {
-      isLoggedIn: false,
-      username: '',
-      message: 'Server error',
-    });
+    logger.error('Logout error: ', error);
+    return res.status(500).render('page-404');
   }
 };
 
@@ -649,15 +623,10 @@ const loadHomepage = async (req, res) => {
     });
 
   } catch (error) {
-    logger.error('Home page error: ', error.message);
-    res.status(500).render('page-404', {
-      isLoggedIn: false,
-      username: '',
-      message: 'Server error'
-    });
+    logger.error('Home page error: ', error);
+    return res.status(500).render('page-404');
   }
 };
-
 
 const loadShoppingPage = async (req, res) => {
   try {
@@ -771,9 +740,6 @@ const loadShoppingPage = async (req, res) => {
         break;
       case 'name-desc':
         aggregatePipeline.push({ $sort: { sortName: -1, _id: 1 } });
-        break;
-      case 'popularity':
-        aggregatePipeline.push({ $sort: { views: -1, _id: 1 } });
         break;
       default:
         aggregatePipeline.push({ $sort: { createdAt: -1, _id: 1 } });
@@ -932,7 +898,7 @@ const loadShoppingPage = async (req, res) => {
     });
   } catch (error) {
     logger.error('Error in loadShoppingPage: ', error.message);
-    res.redirect('/pageNotFound');
+    return res.status(500).render('page-404')
   }
 };
 
@@ -941,7 +907,7 @@ const productDetails = async (req, res) => {
   try {
     const userId = req.session.user
     const userData = await User.findById(userId)
-    const productId = req.query.id
+    const productId = req.params.id
     const product = await Product.findById(productId).populate('category').populate('brand')
 
     if (!product || product.isDeleted) {
@@ -971,7 +937,7 @@ const productDetails = async (req, res) => {
     })
   } catch (error) {
     logger.error('error for fetching product details ', error.message)
-    res.redirect('/pageNotFound')
+    return res.status(500).render('page-404')
   }
 }
 

@@ -2,7 +2,7 @@ const Wallet = require('../../models/walletSchema')
 const User = require('../../models/userSchema')
 const razorpay = require('../../config/razorpay')
 const crypto = require('crypto');
-
+const logger = require('../../helpers/logger')
 
 
 
@@ -57,7 +57,7 @@ const getWallet = async (req, res) => {
 
   } catch (err) {
     logger.error(err);
-    res.status(500).send('Error loading wallet');
+    return res.status(500).render('page-404')
   }
 };
 
@@ -87,7 +87,7 @@ const createWalletRazorpayOrder = async (req, res) => {
     });
   } catch (err) {
     logger.error("Create Razorpay order error:", err);
-    res.json({ success: false });
+    return res.status(500).render('page-404')
   }
 }
 
@@ -131,7 +131,7 @@ const verifyWalletPayment = async (req, res) => {
 
   } catch (err) {
     logger.error("Verify payment error:", err);
-    res.json({ success: false });
+    return res.status(500).render('page-404')
   }
 }
 
@@ -163,11 +163,7 @@ const getReferrals = async (req, res) => {
 
   } catch (error) {
     logger.error("Error in getReferrals:", error);
-    res.status(500).render('page-500', {
-      isLoggedIn: true,
-      username: '',
-      message: 'Internal Server Error'
-    });
+    return res.status(500).render('page-404')
   }
 };
 

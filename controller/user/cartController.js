@@ -1,6 +1,7 @@
 const User = require("../../models/userSchema");
 const Product = require("../../models/productSchema");
 const Cart = require("../../models/cartSchema");
+const logger = require('../../helpers/logger')
 
 const getCart = async (req, res) => {
   try {
@@ -65,10 +66,7 @@ const getCart = async (req, res) => {
     });
   } catch (error) {
     logger.log("Error in getCart:", error);
-    res.status(500).render("error", {
-      message: "Something went wrong loading your cart",
-      error: process.env.NODE_ENV === "development" ? error : {},
-    });
+    return res.status(500).render('page-404');
   }
 };
 
@@ -85,7 +83,7 @@ const cartCount = async (req, res) => {
     res.json({ count });
   } catch (error) {
     logger.error('Error fetching cart count:', error);
-    res.status(500).json({ count: 0 });
+    return res.status(500).render('page-404')
   }
 };
 
@@ -154,7 +152,7 @@ const addToCart = async (req, res) => {
     res.json({ success: true, cartCount });
   } catch (error) {
     logger.error("Add to Cart Error:", error);
-    res.status(500).json({ success: false, message: "Something went wrong" });
+    return res.status(500).render('page-404')
   }
 };
 
@@ -184,7 +182,7 @@ const removeCart = async (req, res) => {
     res.json({ success: true });
   } catch (error) {
     logger.error(error);
-    res.status(500).json({ success: false, message: "Server error" });
+    return res.status(500).render('page-404')
   }
 };
 
@@ -245,9 +243,7 @@ const updateQuantity = async (req, res) => {
     });
   } catch (error) {
     logger.error("update quantity error", error);
-    return res
-      .status(500)
-      .json({ success: false, message: "Something went wrong" });
+    return res.status(500).render('page-404')
   }
 };
 
@@ -280,7 +276,7 @@ const getCartStatus = async (req, res) => {
     res.status(200).json({ success: true, cartStatus });
   } catch (error) {
     logger.error("Cart status error:", error);
-    res.status(500).json({ success: false, message: "Internal Server Error" });
+    return res.status(500).render('page-404')
   }
 };
 

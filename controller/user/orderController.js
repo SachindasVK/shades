@@ -5,6 +5,7 @@ const PDFDocument = require('pdfkit');
 const Wallet = require('../../models/walletSchema')
 const razorpay = require('../../config/razorpay')
 const Coupon = require('../../models/couponSchema')
+const logger = require('../../helpers/logger')
 
 const getOrders = async (req, res) => {
     try {
@@ -95,15 +96,7 @@ const getOrders = async (req, res) => {
 
     } catch (error) {
         logger.error('Get Orders Error:', error);
-
-        if (req.xhr || req.headers.accept.indexOf('json') > -1) {
-            return res.status(500).json({
-                success: false,
-                message: 'Error fetching orders'
-            });
-        }
-
-        res.redirect('/pageNotFound');
+        return res.status(500).render('page-404')
     }
 };
 
@@ -140,7 +133,7 @@ const getOrderDetails = async (req, res) => {
 
     } catch (error) {
         logger.error('Get Order Details Error:', error);
-        res.redirect('/pageNotFound');
+        return res.status(500).render('page-404')
     }
 };
 
@@ -277,7 +270,7 @@ const downloadInvoice = async (req, res) => {
 
     } catch (err) {
         logger.error("Invoice error:", err);
-        res.status(500).send("Internal Server Error");
+        return res.status(500).render('page-404')
     }
 };
 
@@ -376,10 +369,7 @@ const cancelOrder = async (req, res) => {
 
     } catch (error) {
         logger.error('Cancel Order Error:', error);
-        res.status(500).json({
-            success: false,
-            message: 'An error occurred while cancelling the order'
-        });
+        return res.status(500).render('page-404')
     }
 };
 
@@ -497,7 +487,7 @@ const cancelSingleItem = async (req, res) => {
         res.status(200).json({ success: true, message: "Item cancelled successfully" });
     } catch (error) {
         logger.error("Cancel item error:", error);
-        res.status(500).json({ success: false, message: "Server error" });
+        return res.status(500).render('page-404')
     }
 }
 
@@ -555,7 +545,7 @@ const requestReturn = async (req, res) => {
 
     } catch (error) {
         logger.error('Return Request Error:', error);
-        res.status(500).json({ success: false, message: 'Server error' });
+        return res.status(500).render('page-404')
     }
 };
 
@@ -578,7 +568,7 @@ const getRazorpayOrder = async (req, res) => {
         });
     } catch (error) {
         logger.error(error);
-        res.json({ success: false });
+        return res.status(500).render('page-404')
     }
 }
 
@@ -636,7 +626,7 @@ const returnOrderItem = async (req, res) => {
         });
     } catch (error) {
         logger.error('Return item error:', error);
-        return res.status(500).json({ success: false, message: 'Internal server error', error });
+        return res.status(500).render('page-404')
     }
 };
 

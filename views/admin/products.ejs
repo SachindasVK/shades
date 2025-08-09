@@ -1,22 +1,30 @@
-<%- include('../partials/admin/header')%>
-  <!-- Product Management Content -->
-  <div class="p-6">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SHADES - Admin Product management</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+  <link rel="icon" href="favicon/favicon.ico" type="ico">
+  <script defer src="/admin.js"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+  <%- include('../partials/admin/header')%>
+  <div class="p-4 sm:p-6 max-w-7xl mx-auto">
     <div class="bg-white rounded-lg shadow-sm overflow-hidden mb-6">
-      <div class="px-6 py-4 flex justify-between items-center border-b border-gray-200">
-        <h3 class="text-lg font-semibold">Product Management</h3>
+      <div class="px-4 py-4 sm:px-6 flex flex-col sm:flex-row justify-between items-center border-b border-gray-200">
+        <h3 class="text-lg font-semibold mb-4 sm:mb-0">Product Management</h3>
         <a href="/admin/addProducts">
-          <button
-            class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+          <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 w-full sm:w-auto">
             <i class="fas fa-plus mr-2"></i> Add Product
           </button>
         </a>
-
       </div>
 
       <!-- Search Bar -->
       <div class="p-4 border-b border-gray-200">
         <form id="searchForm" action="/admin/products" method="GET">
-          <div class="flex flex-col md:flex-row gap-3">
+          <div class="flex flex-col sm:flex-row gap-3">
             <div class="relative flex-grow">
               <input type="text" id="searchInput" name="search" value="<%= searchTerm || '' %>"
                 class="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -27,11 +35,11 @@
             </div>
             <div class="flex gap-2">
               <button type="submit"
-                class="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50">
+                class="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 w-full sm:w-auto">
                 Search
               </button>
               <a href="/admin/products"
-                class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 inline-flex items-center justify-center">
+                class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 inline-flex items-center justify-center w-full sm:w-auto">
                 Clear
               </a>
             </div>
@@ -47,20 +55,17 @@
               <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                 Product Name</th>
               <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                Product image</th>
-              <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                 Regular Price</th>
-              <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Sales
-                Price</th>
-              <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Offer
-              </th>
-              <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Status
-              </th>
+              <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-white uppercase tracking-wider hidden md:table-cell">
+                Sales Price</th>
+              <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-white uppercase tracking-wider hidden md:table-cell">
+                Offer</th>
               <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                Status</th>
+              <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-white uppercase tracking-wider hidden lg:table-cell">
                 Quantity</th>
-              <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                PRODUCT DETAILS</th>
-
+              <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-white uppercase tracking-wider hidden lg:table-cell">
+                Product Details</th>
               <th scope="col" class="px-3 py-3 text-right text-xs font-medium text-white uppercase tracking-wider">
                 Actions</th>
             </tr>
@@ -68,116 +73,94 @@
           <tbody class="bg-white divide-y divide-gray-200">
             <% if(products && products.length> 0) { %>
               <% products.forEach(product=> { %>
-                <tr class="hover:bg-gray-50">
-                  <td class="px-2 py-3 whitespace-normal max-w-xs">
+                <tr class="hover:bg-gray-50 flex flex-col sm:table-row">
+                  <td class="px-3 py-3 whitespace-normal" data-label="Product Name">
                     <div class="text-sm font-medium text-gray-900 break-words">
                       <%= product.productName %>
                     </div>
                   </td>
-                  <td class="px-3 py-3 whitespace-normal max-w-xs">
-                    <div class="text-sm font-medium text-gray-900 break-words">
-                      <img src="/<%= product.productImage[0] %>" alt="<%= product.productName %>"
-                        class="w-52 h-16 object-contain">
-                    </div>
+                  <td class="px-3 py-3 whitespace-nowrap" data-label="Regular Price">
+                    <div class="text-sm text-gray-500">₹<%= product.regularPrice.toFixed(2) %></div>
                   </td>
-
-                  <td class="px-3 py-3 whitespace-nowrap">
-                    <div class="text-sm text-gray-500">₹<%= product.regularPrice.toFixed(2) %>
-                    </div>
+                  <td class="px-3 py-3 whitespace-nowrap hidden md:table-cell" data-label="Sales Price">
+                    <div class="text-sm text-gray-500">₹<%= product.salePrice.toFixed(2) %></div>
                   </td>
-                  <td class="px-3 py-3 whitespace-nowrap">
-                    <div class="text-sm text-gray-500">₹<%= product.salePrice.toFixed(2) %>
-                    </div>
-                  </td>
-                  <td class="px-3 py-3 whitespace-nowrap">
+                  <td class="px-3 py-3 whitespace-nowrap hidden md:table-cell" data-label="Offer">
                     <% if(product.hasOffer) { %>
-                      <span
-                        class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                      <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
                         <%= product.offerPercentage %>% Off
                       </span>
-                      <% } else { %>
-                        <span
-                          class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">No
-                          Offer</span>
-                        <% } %>
+                    <% } else { %>
+                      <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+                        No Offer
+                      </span>
+                    <% } %>
                   </td>
-                  <td class="px-3 py-3 whitespace-nowrap">
-                    <span
-                      class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full <%= !product.isDeleted ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' %>">
+                  <td class="px-3 py-3 whitespace-nowrap" data-label="Status">
+                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full <%= !product.isDeleted ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' %>">
                       <%= !product.isDeleted ? 'Active' : 'Deleted' %>
                     </span>
                   </td>
-                  <td class="px-3 py-3 whitespace-nowrap">
+                  <td class="px-3 py-3 whitespace-nowrap hidden lg:table-cell" data-label="Quantity">
                     <div class="flex items-center space-x-2">
-                      <button type="button" class="px-2 py-1 bg-gray-200 rounded"
-                        onclick="decreaseQty('<%= product._id %>')">-</button>
-
+                      <button type="button" class="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300" onclick="decreaseQty('<%= product._id %>')">-</button>
                       <input type="number" id="qty-<%= product._id %>" value="<%= product.quantity %>" min="1"
-                        class="w-16 text-center border rounded" onchange="handleQtyChange('<%= product._id %>')">
-
-                      <button type="button" class="px-2 py-1 bg-gray-200 rounded"
-                        onclick="increaseQty('<%= product._id %>')">+</button>
+                        class="w-16 text-center border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" onchange="handleQtyChange('<%= product._id %>')">
+                      <button type="button" class="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300" onclick="increaseQty('<%= product._id %>')">+</button>
                     </div>
                   </td>
-                  <td class="px-3 py-3 whitespace-nowrap text-sm font-medium">
+                  <td class="px-3 py-3 whitespace-nowrap text-sm font-medium hidden lg:table-cell" data-label="Product Details">
                     <a href="/admin/product-details/<%= product._id %>">
-                       <button class="text-black hover:underline">View</button>
+                      <button class="text-black hover:underline">View</button>
                     </a>
                   </td>
-                  <td class="px-3 py-3 whitespace-nowrap text-right text-sm font-medium">
+                  <td class="px-3 py-3 whitespace-nowrap text-right text-sm font-medium" data-label="Actions">
                     <% if(!product.hasOffer) { %>
                       <button class="text-green-600 hover:text-green-900 mr-2 offer-toggle-button" title="Add Offer"
-                        data-action="add" data-id="<%= product._id %>" Lawyer.com" data-name="<%= product.name %>">
+                        data-action="add" data-id="<%= product._id %>" data-name="<%= product.productName %>">
                         <i class="fas fa-tag"></i>
                       </button>
-                      <% } else { %>
-                        <button class="text-amber-600 hover:text-amber-900 mr-2 offer-toggle-button"
-                          title="Remove Offer" data-action="remove" data-id="<%= product._id %>"
-                          data-name="<%= product.name %>">
-                          <i class="fas fa-times"></i><i class="fas fa-tag ml-n1"></i>
-                        </button>
-                        <% } %>
-
-                          <a href="/admin/productEdit/<%= product._id %>">
-                            <button class="text-blue-600 hover:text-blue-900 mr-2 edit-button">
-                              <i class="fas fa-edit"></i>
-                            </button>
-                          </a>
-
-
-
-                          <% if(!product.isDeleted) { %>
-                            <button class="text-red-600 hover:text-red-900 mr-2 status-toggle-button"
-                              title="Delete Product" data-action="delete" data-id="<%= product._id %>"
-                              data-name="<%= product.name %>">
-                              <i class="fas fa-trash-alt"></i>
-                            </button>
-                            <% } else { %>
-                              <button class="text-green-600 hover:text-green-900 mr-2 status-toggle-button"
-                                title="Recover Product" data-action="recover" data-id="<%= product._id %>"
-                                data-name="<%= product.name %>">
-                                <i class="fas fa-undo"></i>
-                              </button>
-                              <% } %>
+                    <% } else { %>
+                      <button class="text-amber-600 hover:text-amber-900 mr-2 offer-toggle-button" title="Remove Offer"
+                        data-action="remove" data-id="<%= product._id %>" data-name="<%= product.productName %>">
+                        <i class="fas fa-times"></i><i class="fas fa-tag ml-1"></i>
+                      </button>
+                    <% } %>
+                    <a href="/admin/productEdit/<%= product._id %>">
+                      <button class="text-blue-600 hover:text-blue-900 mr-2 edit-button">
+                        <i class="fas fa-edit"></i>
+                      </button>
+                    </a>
+                    <% if(!product.isDeleted) { %>
+                      <button class="text-red-600 hover:text-red-900 mr-2 status-toggle-button" title="Delete Product"
+                        data-action="delete" data-id="<%= product._id %>" data-name="<%= product.productName %>">
+                        <i class="fas fa-trash-alt"></i>
+                      </button>
+                    <% } else { %>
+                      <button class="text-green-600 hover:text-green-900 mr-2 status-toggle-button" title="Recover Product"
+                        data-action="recover" data-id="<%= product._id %>" data-name="<%= product.productName %>">
+                        <i class="fas fa-undo"></i>
+                      </button>
+                    <% } %>
                   </td>
                 </tr>
-                <% }) %>
-                  <% } else { %>
-                    <tr>
-                      <td colspan="10" class="px-6 py-4 text-center text-sm text-gray-500">
-                        No products found.
-                        <a href="/admin/addProducts" class="text-blue-600 hover:text-blue-900">Add a new product</a>
-                      </td>
-                    </tr>
-                    <% } %>
+              <% }) %>
+            <% } else { %>
+              <tr>
+                <td colspan="8" class="px-6 py-4 text-center text-sm text-gray-500">
+                  No products found.
+                  <a href="/admin/addProducts" class="text-blue-600 hover:text-blue-900">Add a new product</a>
+                </td>
+              </tr>
+            <% } %>
           </tbody>
         </table>
       </div>
 
       <!-- Pagination -->
       <% if(totalPages> 1) { %>
-        <div class="px-6 py-4 border-t border-gray-200">
-          <div class="flex justify-between items-center">
+        <div class="px-4 py-4 sm:px-6 border-t border-gray-200">
+          <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
             <div class="text-sm text-gray-500">
               Showing <span class="font-medium">
                 <%= (currentPage - 1) * limit + 1 %>
@@ -189,57 +172,59 @@
                 <%= totalItems %>
               </span> products
             </div>
-            <nav class="flex space-x-1">
+            <nav class="flex flex-wrap gap-2">
               <% if(currentPage> 1) { %>
                 <a href="/admin/products?page=<%= currentPage - 1 %><%= searchTerm ? `&search=${searchTerm}` : '' %>"
                   class="px-3 py-1 rounded-md text-sm font-medium bg-gray-200 text-gray-700 hover:bg-gray-300">Previous</a>
-                <% } else { %>
-                  <span
-                    class="px-3 py-1 rounded-md text-sm font-medium bg-gray-100 text-gray-400 cursor-not-allowed">Previous</span>
-                  <% } %>
-                    <% for(let i=1; i <=totalPages; i++) { %>
-                      <% if(i===currentPage) { %>
-                        <span class="px-3 py-1 rounded-md text-sm font-medium bg-blue-600 text-white">
-                          <%= i %>
-                        </span>
-                        <% } else if(i <=3 || i>= totalPages - 2 || Math.abs(i - currentPage) <= 1) { %>
-                            <a href="/admin/products?page=<%= i %><%= searchTerm ? `&search=${searchTerm}` : '' %>"
-                              class="px-3 py-1 rounded-md text-sm font-medium bg-gray-200 text-gray-700 hover:bg-gray-300">
-                              <%= i %>
-                            </a>
-                            <% } else if(i===4 && currentPage> 5) { %>
-                              <span class="px-3 py-1 text-sm font-medium text-gray-500">...</span>
-                              <% } else if(i===totalPages - 3 && currentPage < totalPages - 4) { %>
-                                <span class="px-3 py-1 text-sm font-medium text-gray-500">...</span>
-                                <% } %>
-                                  <% } %>
-                                    <% if(currentPage < totalPages) { %>
-                                      <a href="/admin/products?page=<%= currentPage + 1 %><%= searchTerm ? `&search=${searchTerm}` : '' %>"
-                                        class="px-3 py-1 rounded-md text-sm font-medium bg-gray-200 text-gray-700 hover:bg-gray-300">Next</a>
-                                      <% } else { %>
-                                        <span
-                                          class="px-3 py-1 rounded-md text-sm font-medium bg-gray-100 text-gray-400 cursor-not-allowed">Next</span>
-                                        <% } %>
+              <% } else { %>
+                <span class="px-3 py-1 rounded-md text-sm font-medium bg-gray-100 text-gray-400 cursor-not-allowed">Previous</span>
+              <% } %>
+              <% for(let i=1; i <=totalPages; i++) { %>
+                <% if(i===currentPage) { %>
+                  <span class="px-3 py-1 rounded-md text-sm font-medium bg-blue-600 text-white">
+                    <%= i %>
+                  </span>
+                <% } else if(i <=3 || i>= totalPages - 2 || Math.abs(i - currentPage) <= 1) { %>
+                  <a href="/admin/products?page=<%= i %><%= searchTerm ? `&search=${searchTerm}` : '' %>"
+                    class="px-3 py-1 rounded-md text-sm font-medium bg-gray-200 text-gray-700 hover:bg-gray-300">
+                    <%= i %>
+                  </a>
+                <% } else if(i===4 && currentPage> 5) { %>
+                  <span class="px-3 py-1 text-sm font-medium text-gray-500">...</span>
+                <% } else if(i===totalPages - 3 && currentPage < totalPages - 4) { %>
+                  <span class="px-3 py-1 text-sm font-medium text-gray-500">...</span>
+                <% } %>
+              <% } %>
+              <% if(currentPage < totalPages) { %>
+                <a href="/admin/products?page=<%= currentPage + 1 %><%= searchTerm ? `&search=${searchTerm}` : '' %>"
+                  class="px-3 py-1 rounded-md text-sm font-medium bg-gray-200 text-gray-700 hover:bg-gray-300">Next</a>
+              <% } else { %>
+                <span class="px-3 py-1 rounded-md text-sm font-medium bg-gray-100 text-gray-400 cursor-not-allowed">Next</span>
+              <% } %>
             </nav>
           </div>
         </div>
-        <% } %>
+      <% } %>
     </div>
   </div>
 
   <!-- Add Product Modal -->
-  <div id="productModal"></div>
+  <div id="productModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center">
+    <div class="bg-white rounded-lg shadow-xl w-full max-w-md mx-4 sm:mx-auto">
+      <!-- Modal content will be dynamically populated -->
+    </div>
+  </div>
 
   <!-- Add Offer Modal -->
-  <div id="offerModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center">
-    <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
-      <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+  <div id="offerModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center">
+    <div class="bg-white rounded-lg shadow-xl w-full max-w-md mx-4 sm:mx-auto">
+      <div class="px-4 py-4 sm:px-6 border-b border-gray-200 flex justify-between items-center">
         <h3 class="text-lg font-semibold" id="offerModalTitle">Add Offer to Product</h3>
         <button class="text-gray-400 hover:text-gray-500 focus:outline-none" id="closeOfferModal">
           <i class="fas fa-times"></i>
         </button>
       </div>
-      <form id="offerForm" class="px-6 py-4">
+      <form id="offerForm" class="px-4 py-4 sm:px-6">
         <input type="hidden" id="offerProductId" />
         <div class="mb-4">
           <label class="block text-sm font-medium text-gray-700 mb-1">Product</label>
@@ -254,23 +239,22 @@
           <button type="button" id="cancelOfferBtn"
             class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50">Cancel</button>
           <button type="submit" id="saveOfferBtn"
-            class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">Save
-            Offer</button>
+            class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">Save Offer</button>
         </div>
       </form>
     </div>
   </div>
 
   <!-- Status Confirmation Modal -->
-  <div id="statusModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center">
-    <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
-      <div class="px-6 py-4 border-b border-gray-200">
+  <div id="statusModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center">
+    <div class="bg-white rounded-lg shadow-xl w-full max-w-md mx-4 sm:mx-auto">
+      <div class="px-4 py-4 sm:px-6 border-b border-gray-200">
         <h3 class="text-lg font-semibold" id="statusModalTitle">Confirm Status Change</h3>
       </div>
-      <div class="px-6 py-4">
+      <div class="px-4 py-4 sm:px-6">
         <p class="text-gray-700" id="statusModalMessage">Are you sure you want to change the status of this product?</p>
       </div>
-      <div class="px-6 py-4 border-t border-gray-200 flex justify-end space-x-3">
+      <div class="px-4 py-4 sm:px-6 border-t border-gray-200 flex justify-end space-x-3">
         <button id="cancelStatusBtn"
           class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50">Cancel</button>
         <button id="confirmStatusBtn"
@@ -282,23 +266,22 @@
   </div>
 
   <!-- Remove Offer Confirmation Modal -->
-  <div id="removeOfferModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center">
-    <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
-      <div class="px-6 py-4 border-b border-gray-200">
+  <div id="removeOfferModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center">
+    <div class="bg-white rounded-lg shadow-xl w-full max-w-md mx-4 sm:mx-auto">
+      <div class="px-4 py-4 sm:px-6 border-b border-gray-200">
         <h3 class="text-lg font-semibold text-amber-600">Remove Offer</h3>
       </div>
-      <div class="px-6 py-4">
+      <div class="px-4 py-4 sm:px-6">
         <p class="text-gray-700">
           Are you sure you want to remove the offer from
           <span id="removeOfferProductName" class="font-semibold"></span>?
         </p>
       </div>
-      <div class="px-6 py-4 border-t border-gray-200 flex justify-end space-x-3">
+      <div class="px-4 py-4 sm:px-6 border-t border-gray-200 flex justify-end space-x-3">
         <button id="cancelRemoveOfferBtn"
           class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50">Cancel</button>
         <button id="confirmRemoveOfferBtn"
-          class="px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-opacity-50">Remove
-          Offer</button>
+          class="px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-opacity-50">Remove Offer</button>
       </div>
       <input type="hidden" id="removeOfferId" />
     </div>
@@ -323,6 +306,120 @@
     </div>
   </div>
 
+  <style>
+    /* Ensure body and html take full height for proper modal centering */
+    html, body {
+      height: 100%;
+      margin: 0;
+      overflow-x: hidden;
+    }
+
+    /* Improved table responsiveness */
+    @media (max-width: 640px) {
+      table {
+        display: block;
+        overflow-x: auto;
+        width: 100%;
+      }
+      thead {
+        display: none;
+      }
+      tbody tr {
+        display: flex;
+        flex-direction: column;
+        border-bottom: 1px solid #e5e7eb;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        background-color: #fff;
+        border-radius: 0.375rem;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+      }
+      tbody td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.5rem 0;
+        font-size: 0.875rem;
+      }
+      tbody td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: #374151;
+        flex: 1;
+        min-width: 120px;
+      }
+      tbody td img {
+        max-width: 100%;
+        height: auto;
+      }
+      /* Ensure action buttons stack vertically on mobile */
+      tbody td[data-label="Actions"] {
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 0.5rem;
+      }
+      tbody td[data-label="Actions"] button,
+      tbody td[data-label="Actions"] a {
+        width: 100%;
+        text-align: right;
+      }
+    }
+
+    @media (min-width: 641px) {
+      tbody tr {
+        display: table-row;
+      }
+      tbody td::before {
+        content: none;
+      }
+      tbody td[data-label="Actions"] {
+        flex-direction: row;
+        justify-content: flex-end;
+      }
+    }
+
+    /* Modal responsiveness */
+    .modal {
+      display: none;
+    }
+    .modal.flex {
+      display: flex;
+    }
+    @media (max-width: 640px) {
+      .modal .bg-white {
+        width: 90%;
+        max-height: 80vh;
+        overflow-y: auto;
+      }
+    }
+
+    /* Improve toast positioning on mobile */
+    @media (max-width: 640px) {
+      #toast {
+        bottom: 1rem;
+        right: 1rem;
+        left: 1rem;
+        max-width: none;
+      }
+    }
+
+    /* Ensure buttons and inputs are touch-friendly */
+    button, input, a {
+      min-height: 44px;
+      font-size: 0.875rem;
+    }
+
+    /* Prevent horizontal overflow */
+    .max-w-full {
+      max-width: 100%;
+    }
+
+    /* Smooth scrolling for mobile */
+    .overflow-x-auto {
+      -webkit-overflow-scrolling: touch;
+    }
+  </style>
+
   <script>
     document.addEventListener("DOMContentLoaded", function () {
       // Modal elements
@@ -333,16 +430,7 @@
       const toast = document.getElementById("toast");
 
       // Form elements
-      const productForm = document.getElementById("productForm");
       const offerForm = document.getElementById("offerForm");
-      const modalTitle = document.getElementById("modalTitle");
-      const productId = document.getElementById("productId");
-      const productName = document.getElementById("productName");
-      const productBrand = document.getElementById("productBrand");
-      const productCategory = document.getElementById("productCategory");
-      const regularPrice = document.getElementById("regularPrice");
-      const salesPrice = document.getElementById("salesPrice");
-      const quantity = document.getElementById("quantity");
       const statusId = document.getElementById("statusId");
       const statusAction = document.getElementById("statusAction");
       const statusModalTitle = document.getElementById("statusModalTitle");
@@ -353,9 +441,7 @@
       const removeOfferProductName = document.getElementById("removeOfferProductName");
 
       // Buttons
-      const closeModal = document.getElementById("closeModal");
       const closeOfferModal = document.getElementById("closeOfferModal");
-      const cancelBtn = document.getElementById("cancelBtn");
       const cancelOfferBtn = document.getElementById("cancelOfferBtn");
       const closeToast = document.getElementById("closeToast");
       const cancelStatusBtn = document.getElementById("cancelStatusBtn");
@@ -363,11 +449,8 @@
       const cancelRemoveOfferBtn = document.getElementById("cancelRemoveOfferBtn");
       const confirmRemoveOfferBtn = document.getElementById("confirmRemoveOfferBtn");
 
-
       // Close modals
-      if (closeModal) closeModal.addEventListener("click", closeAllModals);
       if (closeOfferModal) closeOfferModal.addEventListener("click", closeAllModals);
-      if (cancelBtn) cancelBtn.addEventListener("click", closeAllModals);
       if (cancelOfferBtn) cancelOfferBtn.addEventListener("click", closeAllModals);
       if (cancelStatusBtn) cancelStatusBtn.addEventListener("click", closeAllModals);
       if (cancelRemoveOfferBtn) cancelRemoveOfferBtn.addEventListener("click", closeAllModals);
@@ -385,7 +468,6 @@
           const id = this.getAttribute("data-id");
           const name = this.getAttribute("data-name");
           const action = this.getAttribute("data-action");
-
           openStatusModal(id, name, action);
         });
       });
@@ -396,7 +478,6 @@
           const id = this.getAttribute("data-id");
           const name = this.getAttribute("data-name");
           const action = this.getAttribute("data-action");
-
           if (action === "add") {
             openAddOfferModal(id, name);
           } else {
@@ -405,76 +486,17 @@
         });
       });
 
-      // Product form validation and submission
-      if (productForm) {
-        productForm.addEventListener("submit", function (e) {
-          e.preventDefault();
-
-          if (!validateProductForm()) {
-            return false;
-          }
-
-          const id = productId.value;
-          const name = productName.value;
-          const brand = productBrand.value;
-          const category = productCategory.value;
-          const regularPriceVal = parseFloat(regularPrice.value);
-          const salesPriceVal = parseFloat(salesPrice.value);
-          const quantityVal = parseInt(quantity.value);
-
-          const endpoint = id ? `/admin/products/${id}` : "/admin/products";
-          const method = id ? "PUT" : "POST";
-
-          fetch(endpoint, {
-            method: method,
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              name,
-              brand,
-              category,
-              regularPrice: regularPriceVal,
-              salesPrice: salesPriceVal,
-              quantity: quantityVal,
-            }),
-          })
-            .then(handleResponse)
-            .then((data) => {
-              if (data.success) {
-                closeAllModals();
-                showToast(data.message);
-                reloadPageAfterDelay();
-              } else {
-                showToast(data.message || "An error occurred", "error");
-              }
-            })
-            .catch(handleError);
-
-          return false;
-        });
-      }
-
-      // Offer form validation and submission
+      // Offer form submission
       if (offerForm) {
         offerForm.addEventListener("submit", function (e) {
           e.preventDefault();
-
-          if (!validateOfferForm()) {
-            return false;
-          }
-
+          if (!validateOfferForm()) return;
           const id = offerProductId.value;
           const percentage = parseFloat(document.getElementById("offerPercentage").value);
-
           fetch(`/admin/products/${id}/offer`, {
             method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              offerPercentage: percentage,
-            }),
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ offerPercentage: percentage })
           })
             .then(handleResponse)
             .then((data) => {
@@ -487,8 +509,6 @@
               }
             })
             .catch(handleError);
-
-          return false;
         });
       }
 
@@ -497,16 +517,10 @@
         confirmStatusBtn.addEventListener("click", function () {
           const id = statusId.value;
           const action = statusAction.value;
-          const endpoint = `/admin/products/${id}/status`;
-
-          fetch(endpoint, {
+          fetch(`/admin/products/${id}/status`, {
             method: "PATCH",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              action: action,
-            }),
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ action })
           })
             .then(handleResponse)
             .then((data) => {
@@ -526,10 +540,7 @@
       if (confirmRemoveOfferBtn) {
         confirmRemoveOfferBtn.addEventListener("click", function () {
           const id = removeOfferId.value;
-
-          fetch(`/admin/products/${id}/offer`, {
-            method: "DELETE",
-          })
+          fetch(`/admin/products/${id}/offer`, { method: "DELETE" })
             .then(handleResponse)
             .then((data) => {
               if (data.success) {
@@ -544,25 +555,13 @@
         });
       }
 
-
-
-
-      // DELETE RECOVER
       function openStatusModal(id, name, action) {
         statusId.value = id;
         statusAction.value = action;
-        if (action === "delete") {
-          statusModalTitle.textContent = "Delete Product";
-          statusModalMessage.innerHTML = `Are you sure you want to delete <span class="font-semibold">${name}</span>?`;
-          confirmStatusBtn.className = "px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50";
-          confirmStatusBtn.textContent = "Delete";
-        } else {
-          statusModalTitle.textContent = "Recover Product";
-          statusModalMessage.innerHTML = `Are you sure you want to recover <span class="font-semibold">${name}</span>?`;
-          confirmStatusBtn.className = "px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50";
-          confirmStatusBtn.textContent = "Recover";
-        }
-
+        statusModalTitle.textContent = action === "delete" ? "Delete Product" : "Recover Product";
+        statusModalMessage.innerHTML = `Are you sure you want to ${action} <span class="font-semibold">${name}</span>?`;
+        confirmStatusBtn.className = `px-4 py-2 ${action === "delete" ? "bg-red-600 hover:bg-red-700 focus:ring-red-500" : "bg-green-600 hover:bg-green-700 focus:ring-green-500"} text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-opacity-50`;
+        confirmStatusBtn.textContent = action === "delete" ? "Delete" : "Recover";
         statusModal.classList.remove("hidden");
         statusModal.classList.add("flex");
       }
@@ -571,7 +570,6 @@
         offerProductId.value = id;
         offerProductName.textContent = name;
         document.getElementById("offerPercentage").value = "";
-
         offerModal.classList.remove("hidden");
         offerModal.classList.add("flex");
       }
@@ -579,7 +577,6 @@
       function openRemoveOfferModal(id, name) {
         removeOfferId.value = id;
         removeOfferProductName.textContent = name;
-
         removeOfferModal.classList.remove("hidden");
         removeOfferModal.classList.add("flex");
       }
@@ -595,82 +592,17 @@
         removeOfferModal.classList.remove("flex");
       }
 
-      function showToast(message, type = "success") {
-        const toastMessage = document.getElementById("toastMessage");
-        const toastElement = document.getElementById("toast");
-
-        toastMessage.textContent = message;
-
-        if (type === "error") {
-          toastElement.querySelector("div").classList.remove("border-green-500");
-          toastElement.querySelector("div").classList.add("border-red-500");
-          toastElement.querySelector("i").classList.remove("text-green-500");
-          toastElement.querySelector("i").classList.add("text-red-500");
-          toastElement.querySelector("i").classList.remove("fa-check-circle");
-          toastElement.querySelector("i").classList.add("fa-exclamation-circle");
-        } else {
-          toastElement.querySelector("div").classList.remove("border-red-500");
-          toastElement.querySelector("div").classList.add("border-green-500");
-          toastElement.querySelector("i").classList.remove("text-red-500");
-          toastElement.querySelector("i").classList.add("text-green-500");
-          toastElement.querySelector("i").classList.remove("fa-exclamation-circle");
-          toastElement.querySelector("i").classList.add("fa-check-circle");
-        }
-
-        toastElement.classList.remove("hidden");
-
-        setTimeout(() => {
-          toastElement.classList.add("hidden");
-        }, 5000);
-      }
-
-      function validateProductForm() {
-        const name = productName.value.trim();
-        const regularPriceVal = parseFloat(regularPrice.value);
-        const salesPriceVal = parseFloat(salesPrice.value);
-        const quantityVal = parseInt(quantity.value);
-
-        if (!name) {
-          showToast("Product name is required", "error");
-          return false;
-        } else if (!/^[a-zA-Z\s]+$/.test(name)) {
-          showToast("Product name should contain only alphabetic characters", "error");
-          return false;
-        }
-
-        if (isNaN(regularPriceVal) || regularPriceVal < 0) {
-          showToast("Please enter a valid regular price", "error");
-          return false;
-        }
-
-        if (isNaN(salesPriceVal) || salesPriceVal < 0) {
-          showToast("Please enter a valid sales price", "error");
-          return false;
-        }
-
-        if (isNaN(quantityVal) || quantityVal < 0) {
-          showToast("Please enter a valid quantity", "error");
-          return false;
-        }
-
-        return true;
-      }
-
       function validateOfferForm() {
         const percentage = parseFloat(document.getElementById("offerPercentage").value);
-
         if (isNaN(percentage) || percentage < 1 || percentage > 99) {
           showToast("Please enter a valid percentage between 1 and 99", "error");
           return false;
         }
-
         return true;
       }
 
       function handleResponse(response) {
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
+        if (!response.ok) throw new Error("Network response was not ok");
         return response.json();
       }
 
@@ -680,12 +612,15 @@
       }
 
       function reloadPageAfterDelay(delay = 1000) {
-        setTimeout(() => {
-          window.location.reload();
-        }, delay);
+        setTimeout(() => window.location.reload(), delay);
       }
-    });
 
+      // Add data-label attributes for mobile view
+      document.querySelectorAll('tbody td').forEach((td, index) => {
+        const labels = ['Product Name', 'Regular Price', 'Sales Price', 'Offer', 'Status', 'Quantity', 'Product Details', 'Actions'];
+        td.setAttribute('data-label', labels[index % labels.length]);
+      });
+    });
 
     function increaseQty(id) {
       const input = document.getElementById(`qty-${id}`);
@@ -714,23 +649,17 @@
     function updateQuantity(productId, quantity) {
       fetch(`/admin/update-quantity/${productId}`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ quantity })
       })
         .then(res => res.json())
         .then(data => {
-          if (data.success) {
-            showToast("Quantity updated", 'success');
-          } else {
-            showToast("Update failed", 'error');
-          }
+          showToast(data.success ? "Quantity updated" : "Update failed", data.success ? "success" : "error");
         })
-        .catch(err => {
-          showToast("Error updating quantity", 'error');
-        });
+        .catch(() => showToast("Error updating quantity", "error"));
     }
   </script>
 
   <%- include('../partials/admin/footer')%>
+</body>
+</html>

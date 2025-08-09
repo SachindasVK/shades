@@ -4,9 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Product Details - <%= product.name || product.productName %> - Your Store</title>
+    <title>SHADES - <%= product.name || product.productName %> - Your Store</title>
+    <link rel="icon" href="favicon/favicon.ico" type="ico">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script defer src="/script/script.js"></script>
     <style>
         :root {
             --primary-color: #000000;
@@ -231,9 +233,8 @@
                             <div class="image-zoom-container mb-4">
                                 <div class="product-img-container" id="imageContainer" role="region"
                                     aria-label="Product image with zoom">
-                                    <img src="<%= product.productImage?.[0] || product.images?.[0] || '/images/default-product.jpg' %>"
-                                        class="product-img" alt="<%= product.name || product.productName %>"
-                                        id="mainImage">
+                                    <img src="<%= product.productImage[0] %>" class="product-img"
+                                        alt="<%= product.name || product.productName %>" id="mainImage">
                                 </div>
                             </div>
                             <div class="flex items-center text-gray-500 text-sm mb-4">
@@ -243,8 +244,7 @@
                             <div class="flex gap-2 overflow-x-auto" role="tablist">
                                 <% (product.productImage || product.images || []).slice(0, 5).forEach((img, index)=> {
                                     %>
-                                    <img src="<%= img || '/images/default-product.jpg' %>"
-                                        class="thumbnail-img <%= index === 0 ? 'active' : '' %>"
+                                    <img src="<%= img %>" class="thumbnail-img <%= index === 0 ? 'active' : '' %>"
                                         alt="Thumbnail <%= index + 1 %> of <%= product.name || product.productName %>"
                                         data-index="<%= index %>" role="tab"
                                         aria-selected="<%= index === 0 ? 'true' : 'false' %>">
@@ -488,10 +488,9 @@
                                         </button>
 
                                         <!-- Product Image -->
-                                        <a href="/productDetails?id=<%= rec._id %>"
+                                        <a href="/product/details/<%= rec._id %>"
                                             aria-label="View <%= rec.name || rec.productName %>">
-                                            <img src="<%= rec.productImage?.[0] || rec.images?.[0] || '/images/default-product.jpg' %>"
-                                                class="w-full h-48 object-cover"
+                                            <img src="<%= rec.productImage[0] %>" class="w-full h-48 object-cover"
                                                 alt="<%= rec.name || rec.productName %>">
                                         </a>
 
@@ -510,7 +509,7 @@
                                                 </div>
                                             </div>
 
-                                            <a href="/productDetails?id=<%= rec._id%>">
+                                            <a href="/product/details/<%= rec._id%>">
                                                 <h6 class="text-lg font-semibold mb-1 truncate">
                                                     <%= rec.name || rec.productName %>
                                                 </h6>
@@ -870,125 +869,17 @@
                             }
                         })
                         .catch(error => {
-                            console.error('Error:', error);
-                            // Revert UI on exception
                             button.innerHTML = originalHTML;
                             if (wasActive) button.classList.add('active');
                             else button.classList.remove('active');
+                            console.error('wishlist error:', error);
+                            showToast('Please login & try again', 'error');
+                            setTimeout(() => window.location.href = '/login', 2000);
 
-                            showToast('An error occurred. Please try again.', 'error');
                         })
                         .finally(() => {
                             button.disabled = false;
                         });
-                }
-
-                // Show toast notification
-                function showToast(message, type = 'info') {
-                    let toastContainer = document.querySelector('.toast-container');
-                    if (!toastContainer) {
-                        toastContainer = document.createElement('div');
-                        toastContainer.className = 'toast-container';
-                        toastContainer.style.position = 'fixed';
-                        toastContainer.style.top = '20px';
-                        toastContainer.style.right = '20px';
-                        toastContainer.style.zIndex = '9999';
-                        toastContainer.style.display = 'flex';
-                        toastContainer.style.flexDirection = 'column';
-                        toastContainer.style.gap = '10px';
-                        document.body.appendChild(toastContainer);
-                    }
-
-                    const toastId = 'toast-' + Date.now();
-                    const toast = document.createElement('div');
-
-                    // Background color and border based on type
-                    let bgColor, borderColor;
-                    switch (type) {
-                        case 'success':
-                            bgColor = '#15803d';  // green
-                            borderColor = '#15803d';
-                            break;
-                        case 'error':
-                            bgColor = '#dc2626';  // red
-                            borderColor = '#dc2626';
-                            break;
-                        case 'info':
-                        default:
-                            bgColor = '#2563eb';  // blue
-                            borderColor = '#2563eb';
-                    }
-
-                    // Toast styles (no slide, only fade + slight vertical shift)
-                    toast.style.cssText = `
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        background-color: ${bgColor};
-        border-left: 4px solid ${borderColor};
-        color: white;
-        padding: 8px 16px;
-        border-radius: 5px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        max-width: 300px;
-        width: 100%;
-        opacity: 0;
-        transform: translateY(20px);
-        transition: opacity 0.3s ease, transform 0.3s ease;
-    `;
-
-                    toast.id = toastId;
-                    toast.setAttribute('role', 'alert');
-                    toast.setAttribute('aria-live', 'assertive');
-                    toast.setAttribute('aria-atomic', 'true');
-
-                    toast.innerHTML = `
-        <div style="flex: 1; font-size: 14px;">${message}</div>
-        <button type="button" style="margin-left: 12px; background: none; border: none; color: white; font-size: 16px; cursor: pointer;" data-toast-id="${toastId}">
-            &times;
-        </button>
-    `;
-
-                    toastContainer.appendChild(toast);
-
-                    // Fade in + move up
-                    setTimeout(() => {
-                        toast.style.opacity = '1';
-                        toast.style.transform = 'translateY(0)';
-                    }, 100);
-
-                    // Close button
-                    const closeButton = toast.querySelector(`[data-toast-id="${toastId}"]`);
-                    closeButton.addEventListener('click', () => {
-                        toast.style.opacity = '0';
-                        toast.style.transform = 'translateY(20px)';
-                        setTimeout(() => toast.remove(), 300);
-                    });
-
-                    // Auto remove after 1.5s
-                    setTimeout(() => {
-                        toast.style.opacity = '0';
-                        toast.style.transform = 'translateY(20px)';
-                        setTimeout(() => toast.remove(), 300);
-                    }, 1500);
-                }
-
-                // Update cart counter
-                function updateCartCounter(count) {
-                    const cartCounter = document.querySelector('.cart-counter');
-                    if (cartCounter) {
-                        cartCounter.textContent = count;
-                        cartCounter.classList.toggle('hidden', count <= 0);
-                    }
-                }
-
-                // Update wishlist counter
-                function updateWishlistCounter(count) {
-                    const wishlistCounter = document.querySelector('.wishlist-counter');
-                    if (wishlistCounter) {
-                        wishlistCounter.textContent = count;
-                        wishlistCounter.classList.toggle('hidden', count <= 0);
-                    }
                 }
             });
         </script>

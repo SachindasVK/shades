@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>My Wallet - SHADES</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="/script/script.js"></script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <link rel="icon" href="favicon/favicon.ico" type="ico">
     <link
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
       rel="stylesheet"
@@ -13,43 +16,68 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@700&display=swap"
       rel="stylesheet"
     />
-
-    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-
     <style>
+      :root {
+        --primary-color: #191a1d;
+      }
+
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: #f5f5f5;
+      }
+
       .page-body {
         background-color: #ffffff;
       }
 
-      .containeer {
+      .container {
         max-width: 95%;
         margin-left: auto;
         margin-right: auto;
+        padding: 0.5rem;
         display: flex;
-
-        padding: 1px;
+        flex-direction: column;
+        gap: 1rem;
       }
 
       .sidebar {
-        width: 20rem;
+        width: 100%;
         background-color: #ffffff;
         border-radius: 0.5rem;
         box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
           0 2px 4px -1px rgba(0, 0, 0, 0.06);
         height: fit-content;
+        display: none;
+      }
+
+      .sidebar.active {
+        display: block;
+      }
+
+      .sidebar-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.5rem;
+        background-color: var(--primary-color);
+        color: white;
+        border-radius: 0.25rem;
+        cursor: pointer;
+        font-size: 0.9rem;
+        touch-action: manipulation;
       }
 
       .profile-header {
-        padding: 1.5rem;
+        padding: 1rem;
         border-bottom: 1px solid #e5e7eb;
         display: flex;
         align-items: center;
-        gap: 0.75rem;
+        gap: 0.5rem;
       }
 
       .profile-icon {
-        width: 3rem;
-        height: 3rem;
+        width: 2.5rem;
+        height: 2.5rem;
         background-color: #a1a1a1;
         border-radius: 9999px;
         display: flex;
@@ -64,22 +92,29 @@
         border-radius: 9999px;
       }
 
+      .profile-icon i {
+        color: #ffffff;
+        font-size: 1rem;
+      }
+
       .greeting {
         color: #6b7280;
-        font-size: 0.875rem;
+        font-size: 0.8rem;
       }
 
       .username {
         color: #1f2937;
         font-weight: 600;
+        font-size: 0.9rem;
       }
 
       .menu-link {
         display: flex;
         align-items: center;
-        padding: 1rem 1.5rem;
+        padding: 0.8rem 1rem;
         color: #000000;
-        font-size: 0.875rem;
+        font-size: 0.8rem;
+        touch-action: manipulation;
       }
 
       .menu-link:hover {
@@ -88,20 +123,21 @@
 
       .menu-link.active {
         background-color: #eff6ff;
-        color: #2563eb;
+        color: var(--primary-color);
       }
 
       .menu-icon {
-        width: 1.25rem;
-        margin-right: 0.75rem;
+        width: 1rem;
+        margin-right: 0.5rem;
       }
 
       .logout-link {
         display: flex;
         align-items: center;
-        padding: 1rem 1.5rem;
+        padding: 0.8rem 1rem;
         color: #dc2626;
-        font-size: 0.875rem;
+        font-size: 0.8rem;
+        touch-action: manipulation;
       }
 
       .logout-link:hover {
@@ -114,31 +150,31 @@
         border-radius: 0.5rem;
         box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
           0 2px 4px -1px rgba(0, 0, 0, 0.06);
-        padding: 2rem;
+        padding: 1rem;
       }
 
       .section-title {
-        font-size: 1.125rem;
+        font-size: 1rem;
         font-weight: 600;
         color: #1f2937;
-        margin-bottom: 1.5rem;
+        margin-bottom: 1rem;
       }
 
       .wallet-balance {
         background: linear-gradient(135deg, #1a1a1a 0%, #333333 100%);
         color: white;
-        padding: 1.5rem;
+        padding: 1rem;
         border-radius: 0.5rem;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
       }
 
       .balance-amount {
-        font-size: 2rem;
+        font-size: 1.5rem;
         font-weight: 700;
       }
 
       .limit-note {
-        font-size: 0.875rem;
+        font-size: 0.8rem;
         color: #d1d5db;
         margin-top: 0.5rem;
         display: flex;
@@ -147,11 +183,11 @@
       }
 
       .btn {
-        padding: 0.75rem 1.5rem;
+        padding: 0.6rem 1.2rem;
         border: none;
         border-radius: 6px;
         cursor: pointer;
-        font-size: 0.875rem;
+        font-size: 0.8rem;
         font-weight: 500;
         transition: background-color 0.2s ease;
       }
@@ -159,12 +195,11 @@
       .btn-primary {
         background-color: #374151;
         color: #ffffff;
-       
         transition: all 0.2s ease;
       }
 
       .btn-primary:hover {
-        background-color: rgb(27, 39, 56);
+        background-color: #1f2937;
       }
 
       .modal-overlay {
@@ -174,44 +209,50 @@
         right: 0;
         bottom: 0;
         background-color: rgba(0, 0, 0, 0.6);
-        display: flex;
+        display: none;
         align-items: center;
         justify-content: center;
         z-index: 1000;
       }
 
+      .modal-overlay.modal-visible {
+        display: flex;
+      }
+
       .modal-content {
         background: white;
-        padding: 1.5rem;
+        padding: 1rem;
         border-radius: 12px;
-        width: 90%;
-        max-width: 500px;
+        width: 95%;
+        max-width: 400px;
         box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        max-height: 85vh;
+        overflow-y: auto;
       }
 
       .modal-header {
-        padding-bottom: 1rem;
+        padding-bottom: 0.75rem;
         border-bottom: 1px solid #e5e7eb;
-        margin-bottom: 1.5rem;
+        margin-bottom: 1rem;
       }
 
       .modal-title {
-        font-size: 1.5rem;
+        font-size: 1rem;
         font-weight: 600;
         color: #1f2937;
       }
 
       .modal-message {
-        font-size: 1rem;
+        font-size: 0.9rem;
         color: #374151;
-        margin-bottom: 1rem;
+        margin-bottom: 0.75rem;
       }
 
       .button-group {
         display: flex;
-        gap: 1rem;
+        gap: 0.75rem;
         justify-content: flex-end;
-        margin-top: 1.5rem;
+        margin-top: 1rem;
       }
 
       .btn-secondary {
@@ -225,9 +266,9 @@
       }
 
       .badge {
-        padding: 0.25rem 0.75rem;
+        padding: 0.2rem 0.6rem;
         border-radius: 9999px;
-        font-size: 0.75rem;
+        font-size: 0.7rem;
         font-weight: 500;
       }
 
@@ -254,12 +295,12 @@
       .transaction-table {
         width: 100%;
         border-collapse: collapse;
-        margin-top: 1rem;
+        margin-top: 0.75rem;
       }
 
       .transaction-table th,
       .transaction-table td {
-        padding: 0.75rem;
+        padding: 0.5rem;
         text-align: left;
         border-bottom: 1px solid #e5e7eb;
       }
@@ -267,37 +308,41 @@
       .transaction-table th {
         font-weight: 600;
         color: #1f2937;
+        font-size: 0.8rem;
       }
 
       .filter-group {
         display: flex;
-        gap: 1rem;
-        margin-bottom: 1.5rem;
+        gap: 0.75rem;
+        margin-bottom: 1rem;
         flex-wrap: wrap;
-        justify-content: flex-end;
+        justify-content: space-between;
+        align-items: center;
       }
 
       .filter-group select,
       .filter-group input {
-        padding: 0.5rem;
+        padding: 0.4rem;
         border: 1px solid #d1d5db;
         border-radius: 6px;
-        font-size: 0.875rem;
+        font-size: 0.8rem;
+        max-width: 100%;
       }
 
       .pagination {
         display: flex;
         gap: 0.5rem;
         justify-content: center;
-        margin-top: 1.5rem;
+        margin-top: 1rem;
       }
 
       .pagination button {
-        padding: 0.5rem 1rem;
+        padding: 0.4rem 0.8rem;
         border: 1px solid #d1d5db;
         border-radius: 6px;
         background-color: white;
         cursor: pointer;
+        font-size: 0.8rem;
       }
 
       .pagination button:disabled {
@@ -306,85 +351,365 @@
       }
 
       .stats-card {
-       background: linear-gradient(135deg, #001947 0%, #090083 100%);
-        padding: 1rem;
+        background: linear-gradient(135deg, #001947 0%, #090083 100%);
+        padding: 0.75rem;
         border-radius: 0.5rem;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
       }
 
       .stats-card h3 {
-        font-size: 0.9rem;
+        font-size: 0.8rem;
         color: #d4d4d4;
         margin-bottom: 0.5rem;
       }
 
       .stats-card p {
-        font-size: 1.25rem;
+        font-size: 1rem;
         font-weight: 600;
         color: #ffffff;
-      }
-
-      .shop-header {
-        background-color: white;
-        padding: 1.5rem 0;
       }
 
       .transaction-item {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 0.75rem 0;
+        padding: 0.5rem 0;
         border-bottom: 1px solid #e5e7eb;
+        flex-wrap: wrap;
+        gap: 0.5rem;
       }
 
       .transaction-details {
         display: flex;
         align-items: center;
-        gap: 0.75rem;
+        gap: 0.5rem;
+        flex: 1;
       }
 
       .transaction-icon {
-        width: 2rem;
-        height: 2rem;
+        width: 1.5rem;
+        height: 1.5rem;
         border-radius: 9999px;
         display: flex;
         align-items: center;
         justify-content: center;
         background-color: #22c55e;
         color: white;
+        font-size: 0.8rem;
       }
 
       .transaction-date {
-        font-size: 0.875rem;
+        font-size: 0.8rem;
         color: #6b7280;
       }
 
       .transaction-amount {
         font-weight: 700;
         color: #02871a;
+        font-size: 0.85rem;
+      }
+
+      @media (min-width: 768px) {
+        .container {
+          flex-direction: row;
+          padding: 1rem;
+          gap: 1rem;
+        }
+
+        .sidebar {
+          width: 20rem;
+          display: block;
+        }
+
+        .sidebar-toggle {
+          display: none;
+        }
+
+        .main-content {
+          padding: 1.5rem;
+        }
+
+        .section-title {
+          font-size: 1.125rem;
+          margin-bottom: 1.25rem;
+        }
+
+        .wallet-balance {
+          padding: 1.5rem;
+        }
+
+        .balance-amount {
+          font-size: 2rem;
+        }
+
+        .limit-note {
+          font-size: 0.875rem;
+        }
+
+        .btn {
+          padding: 0.75rem 1.5rem;
+          font-size: 0.875rem;
+        }
+
+        .modal-content {
+          padding: 1.5rem;
+          max-width: 500px;
+        }
+
+        .modal-title {
+          font-size: 1.5rem;
+        }
+
+        .modal-message {
+          font-size: 1rem;
+          margin-bottom: 1rem;
+        }
+
+        .button-group {
+          gap: 1rem;
+          margin-top: 1.5rem;
+        }
+
+        .transaction-table th,
+        .transaction-table td {
+          padding: 0.75rem;
+        }
+
+        .transaction-table th {
+          font-size: 0.875rem;
+        }
+
+        .filter-group {
+          gap: 1rem;
+          margin-bottom: 1.5rem;
+        }
+
+        .filter-group select,
+        .filter-group input {
+          padding: 0.5rem;
+          font-size: 0.875rem;
+        }
+
+        .pagination button {
+          padding: 0.5rem 1rem;
+          font-size: 0.875rem;
+        }
+
+        .stats-card {
+          padding: 1rem;
+        }
+
+        .stats-card h3 {
+          font-size: 0.9rem;
+        }
+
+        .stats-card p {
+          font-size: 1.25rem;
+        }
+
+        .transaction-item {
+          padding: 0.75rem 0;
+          flex-wrap: nowrap;
+        }
+
+        .transaction-details {
+          gap: 0.75rem;
+        }
+
+        .transaction-icon {
+          width: 2rem;
+          height: 2rem;
+          font-size: 1rem;
+        }
+
+        .transaction-date {
+          font-size: 0.875rem;
+        }
+
+        .transaction-amount {
+          font-size: 0.9rem;
+        }
+
+        .profile-header {
+          padding: 1.25rem;
+          gap: 0.75rem;
+        }
+
+        .profile-icon {
+          width: 3rem;
+          height: 3rem;
+        }
+
+        .profile-icon i {
+          font-size: 1.125rem;
+        }
+
+        .greeting {
+          font-size: 0.875rem;
+        }
+
+        .username {
+          font-size: 1rem;
+        }
+
+        .menu-link,
+        .logout-link {
+          padding: 1rem 1.25rem;
+          font-size: 0.875rem;
+        }
+
+        .menu-icon {
+          width: 1.25rem;
+          margin-right: 0.75rem;
+        }
+      }
+
+      @media (max-width: 479px) {
+        .section-title {
+          font-size: 0.9rem;
+        }
+
+        .wallet-balance {
+          padding: 0.75rem;
+        }
+
+        .balance-amount {
+          font-size: 1.25rem;
+        }
+
+        .limit-note {
+          font-size: 0.75rem;
+        }
+
+        .btn {
+          padding: 0.5rem 1rem;
+          font-size: 0.75rem;
+        }
+
+        .modal-content {
+          padding: 0.75rem;
+          max-width: 90%;
+        }
+
+        .modal-title {
+          font-size: 0.9rem;
+        }
+
+        .modal-message {
+          font-size: 0.8rem;
+          margin-bottom: 0.5rem;
+        }
+
+        .button-group {
+          gap: 0.5rem;
+          margin-top: 0.75rem;
+        }
+
+        .transaction-table th,
+        .transaction-table td {
+          padding: 0.4rem;
+        }
+
+        .transaction-table th {
+          font-size: 0.75rem;
+        }
+
+        .filter-group {
+          gap: 0.5rem;
+          margin-bottom: 0.75rem;
+        }
+
+        .filter-group select,
+        .filter-group input {
+          padding: 0.3rem;
+          font-size: 0.75rem;
+        }
+
+        .pagination button {
+          padding: 0.3rem 0.6rem;
+          font-size: 0.75rem;
+        }
+
+        .stats-card {
+          padding: 0.5rem;
+        }
+
+        .stats-card h3 {
+          font-size: 0.75rem;
+        }
+
+        .stats-card p {
+          font-size: 0.9rem;
+        }
+
+        .transaction-item {
+          padding: 0.4rem 0;
+        }
+
+        .transaction-details {
+          gap: 0.4rem;
+        }
+
+        .transaction-icon {
+          width: 1.25rem;
+          height: 1.25rem;
+          font-size: 0.7rem;
+        }
+
+        .transaction-date {
+          font-size: 0.75rem;
+        }
+
+        .transaction-amount {
+          font-size: 0.8rem;
+        }
+
+        .profile-header {
+          padding: 0.75rem;
+        }
+
+        .profile-icon {
+          width: 2rem;
+          height: 2rem;
+        }
+
+        .profile-icon i {
+          font-size: 0.9rem;
+        }
+
+        .greeting,
+        .username {
+          font-size: 0.75rem;
+        }
+
+        .menu-link,
+        .logout-link {
+          padding: 0.6rem 0.8rem;
+          font-size: 0.75rem;
+        }
+
+        .menu-icon {
+          width: 0.9rem;
+          margin-right: 0.4rem;
+        }
       }
     </style>
   </head>
-
   <body class="page-body">
     <%- include("../../views/partials/user/header") %>
-    
 
-    <div class="containeer">
-      <div class="sidebar">
+    <div class="container">
+      <button class="sidebar-toggle md:hidden" onclick="toggleSidebar()">
+        <i class="fas fa-bars mr-2"></i> Menu
+      </button>
+      <div class="sidebar" id="sidebar">
         <div class="profile-header">
           <div class="profile-icon">
             <% if (user.image) { %>
-            <img
-              src="/uploads/userProfileimages/<%= user.image %>"
-              alt="Profile Image"
-              class="profile-image"
-            />
+              <img src="<%= user.image %>" alt="Profile Image" class="profile-image"
+                   onerror="this.src='https://via.placeholder.com/80?text=Profile'" />
             <% } else { %>
-            <i
-              class="fas fa-user"
-              style="color: #ffffff; font-size: 1.125rem"
-            ></i>
+              <i class="fas fa-user"></i>
             <% } %>
           </div>
           <div>
@@ -431,7 +756,7 @@
             </li>
             <li class="menu-item">
               <a href="/logout" class="logout-link">
-                <i class="fas fa-sign-out-alt menu-icon"></i> Log out
+                <i class="fas fa-sign-out-alt menu-icon"></i> Log Out
               </a>
             </li>
           </ul>
@@ -440,7 +765,7 @@
 
       <div class="main-content">
         <h2 class="section-title">
-          <i class="fas fa-wallet mr-2 text-shadow-amber-700"></i> My Wallet
+          <i class="fas fa-wallet mr-2 text-amber-700"></i> My Wallet
         </h2>
 
         <!-- Wallet Balance and Rewards Section -->
@@ -448,8 +773,7 @@
           <div class="wallet-balance">
             <h3 class="section-title text-white">Available Balance</h3>
             <p class="balance-amount">
-              ₹<%= user.wallet ? user.wallet.balance.toLocaleString('en-IN') :
-              '0' %>
+              ₹<%= user.wallet ? user.wallet.balance.toLocaleString('en-IN') : '0' %>
             </p>
             <p class="limit-note">
               <i class="fas fa-info-circle"></i>
@@ -462,130 +786,108 @@
           <div class="stats-card">
             <h3 class="section-title">Rewards</h3>
             <div>
-              <h3 class="text-sm text-gray-600">Cashback Earned</h3>
-              <p class="text-lg font-semibold"> ₹<%= totalEarned || 0%></p>
+              <h3 class="text-sm text-gray-300">Cashback Earned</h3>
+              <p class="text-lg font-semibold text-white"> ₹<%= totalEarned || 0 %></p>
             </div>
             <div class="mt-4">
-              <h3 class="text-sm text-gray-600">Total Referrals</h3>
-              <p class="text-lg font-semibold">
+              <h3 class="text-sm text-gray-300">Total Referrals</h3>
+              <p class="text-lg font-semibold text-white">
                 <%= user.referrals ? user.referrals.length : 0 %>
               </p>
-              <a href="/referrals" class="text-blue-500 hover:underline text-sm"
-                >View Referral Program</a
-              >
+              <a href="/referrals" class="text-blue-400 hover:underline text-sm">
+                View Referral Program
+              </a>
             </div>
           </div>
         </div>
 
         <!-- Recent Transactions -->
-
-        <div
-          class="filter-group flex items-center justify-between flex-wrap gap-4"
-        >
-          <h3
-            class="section-title flex items-center text-lg font-semibold text-gray-800"
-          >
+        <div class="filter-group">
+          <h3 class="section-title flex items-center">
             <i class="fas fa-hand-holding-usd text-green-700 mr-2"></i>
             Recent Transactions
           </h3>
-
           <div class="flex items-center gap-2">
-            <select
-              id="transactionFilter"
-              onchange="filterTransactions()"
-              class="border rounded px-2 py-1"
-            >
+            <select id="transactionFilter" onchange="filterTransactions()" class="border rounded">
               <option value="all">All Transactions</option>
               <option value="added">Money Added</option>
               <option value="reward">Rewards</option>
               <option value="used">Used</option>
             </select>
-
-           
           </div>
         </div>
 
         <div id="transactionList">
-          <% if (transactions && transactions.length > 0) { %> <%
-          transactions.forEach((transaction) => { %>
-          <div class="transaction-item">
-            <% if (transaction.transactionType === "credit") { %>
-            <div class="transaction-details">
-              <div class="transaction-icon">
-                <i class="fas fa-arrow-up"></i>
+          <% if (transactions && transactions.length > 0) { %>
+            <% transactions.forEach((transaction) => { %>
+              <div class="transaction-item">
+                <% if (transaction.transactionType === "credit") { %>
+                  <div class="transaction-details">
+                    <div class="transaction-icon">
+                      <i class="fas fa-arrow-up"></i>
+                    </div>
+                    <div>
+                      <p class="font-medium">
+                        Credited for <%= transaction.transactionPurpose %>
+                      </p>
+                      <p class="transaction-date">
+                        <%= new Date(transaction.createdAt).toLocaleString('en-IN', {
+                            dateStyle: 'medium', timeStyle: 'short' }) %>
+                      </p>
+                    </div>
+                  </div>
+                  <p class="transaction-amount">
+                    + ₹<%= transaction.amount.toLocaleString('en-IN') %>
+                  </p>
+                <% } else { %>
+                  <div class="transaction-details">
+                    <div class="transaction-icon" style="background-color: rgb(255, 136, 0)">
+                      <i class="fas fa-arrow-down"></i>
+                    </div>
+                    <div>
+                      <p class="font-medium">
+                        Debited for <%= transaction.transactionPurpose %>
+                      </p>
+                      <p class="transaction-date">
+                        <%= new Date(transaction.createdAt).toLocaleString('en-IN', {
+                            dateStyle: 'medium', timeStyle: 'short' }) %>
+                      </p>
+                    </div>
+                  </div>
+                  <p class="transaction-amount" style="color: rgb(255, 136, 0)">
+                    - ₹<%= transaction.amount.toLocaleString('en-IN') %>
+                  </p>
+                <% } %>
               </div>
-              <div>
-                <p class="font-medium">
-                  Credited for <%= transaction.transactionPurpose %>
-                </p>
-                <p class="transaction-date">
-                  <%= new Date(transaction.createdAt).toLocaleString('en-IN', {
-                  dateStyle: 'medium', timeStyle: 'short' }) %>
-                </p>
-              </div>
-            </div>
-            <p class="transaction-amount">
-              + ₹<%= transaction.amount.toLocaleString('en-IN') %>
-            </p>
-            <% } else { %>
-            <div class="transaction-details">
-              <div class="transaction-icon">
-                <i class="fas fa-arrow-down"></i>
-              </div>
-              <div>
-                <p class="font-medium">
-                  Debited for <%= transaction.transactionPurpose %>
-                </p>
-                <p class="transaction-date">
-                  <%= new Date(transaction.createdAt).toLocaleString('en-IN', {
-                  dateStyle: 'medium', timeStyle: 'short' }) %>
-                </p>
-              </div>
-            </div>
-            <p class="transaction-amount">
-              - ₹<%= transaction.amount.toLocaleString('en-IN') %>
-            </p>
-            <% } %>
-          </div>
-          <% }); %> <% } else { %>
-          <p class="text-gray-500 italic text-center">No transactions found</p>
+            <% }); %>
+          <% } else { %>
+            <p class="text-gray-500 italic text-center">No transactions found</p>
           <% } %>
         </div>
 
         <!-- Pagination -->
         <div class="pagination">
-          <div class="pagination flex items-center gap-4 justify-center mt-4">
-            <button onclick="prevPage()" class="btn btn-secondary" id="prevBtn">
-              <i class="fas fa-chevron-left mr-1"></i>
-            </button>
-
-            <div class="flex items-center gap-2">
-              <span
-                id="pageInfo"
-                class="text-sm font-medium text-gray-600"
-              ></span>
-            </div>
-
-            <button onclick="nextPage()" class="btn btn-secondary" id="nextBtn">
-              <i class="fas fa-chevron-right ml-1"></i>
-            </button>
-          </div>
+          <button onclick="prevPage()" class="btn btn-secondary" id="prevBtn">
+            <i class="fas fa-chevron-left mr-1"></i>
+          </button>
+          <span id="pageInfo" class="text-sm font-medium text-gray-600"></span>
+          <button onclick="nextPage()" class="btn btn-secondary" id="nextBtn">
+            <i class="fas fa-chevron-right ml-1"></i>
+          </button>
         </div>
       </div>
     </div>
 
     <!-- Add Money Modal -->
-    <div id="addMoneyModal" class="modal-overlay hidden">
+    <div id="addMoneyModal" class="modal-overlay">
       <div class="modal-content">
         <div class="modal-header">
           <h3 class="modal-title">Add Money to Wallet</h3>
         </div>
         <div class="modal-message">
-          <label
-            for="amountInput"
-            class="block text-sm font-medium text-gray-700"
-            >Enter Amount</label
-          >
+          <label for="amountInput" class="block text-sm font-medium text-gray-700">
+            Enter Amount
+          </label>
           <input
             type="number"
             id="amountInput"
@@ -594,25 +896,16 @@
             min="1"
             max="250000"
           />
-          <p class="mt-2 text-sm text-gray-600 flex items-center">    
-                                        <img src="https://razorpay.com/assets/razorpay-glyph.svg" alt="Razorpay" class="h-10 w-10">
-           
+          <p class="mt-2 text-sm text-gray-600 flex items-center">
+            <img src="https://razorpay.com/assets/razorpay-glyph.svg" alt="Razorpay" class="h-6 w-6 mr-2">
             Payment Method: Razorpay
           </p>
         </div>
         <div class="button-group">
-          <button
-            type="button"
-            class="btn btn-secondary"
-            onclick="closeAddMoneyModal()"
-          >
+          <button type="button" class="btn btn-secondary" onclick="closeAddMoneyModal()">
             Cancel
           </button>
-          <button
-            type="button"
-            class="btn btn-primary"
-            onclick="proceedToPay()"
-          >
+          <button type="button" class="btn btn-primary" onclick="proceedToPay()">
             Proceed to Pay
           </button>
         </div>
@@ -625,231 +918,138 @@
     <%- include("../../views/partials/user/footer") %>
 
     <script>
+      let currentPage = 1;
+      const transactionsPerPage = 5;
+      let allTransactions = <%- JSON.stringify(transactions || []) %>;
+      let filteredTransactions = [...allTransactions];
 
-                      let currentPage = 1;
-                  const transactionsPerPage = 5;
-                  let allTransactions = <%- JSON.stringify(transactions || []) %>;
-                  let filteredTransactions = [...allTransactions]; // Keep track of filtered data
+      function toggleSidebar() {
+        const sidebar = document.getElementById("sidebar");
+        sidebar.classList.toggle("active");
+      }
 
-                  function prevPage() {
-                      if (currentPage > 1) {
-                          currentPage--;
-                          renderTransactions();
-                          updatePaginationInfo();
-                      }
-                  }
+      function prevPage() {
+        if (currentPage > 1) {
+          currentPage--;
+          renderTransactions();
+          updatePaginationInfo();
+        }
+      }
 
-                  function nextPage() {
-                      const totalPages = Math.ceil(filteredTransactions.length / transactionsPerPage);
-                      if (currentPage < totalPages) {
-                          currentPage++;
-                          renderTransactions();
-                          updatePaginationInfo();
-                      }
-                  }
+      function nextPage() {
+        const totalPages = Math.ceil(filteredTransactions.length / transactionsPerPage);
+        if (currentPage < totalPages) {
+          currentPage++;
+          renderTransactions();
+          updatePaginationInfo();
+        }
+      }
 
-                  function goToPage(page) {
-                      const totalPages = Math.ceil(filteredTransactions.length / transactionsPerPage);
-                      if (page >= 1 && page <= totalPages) {
-                          currentPage = page;
-                          renderTransactions();
-                          updatePaginationInfo();
-                      }
-                  }
+      function goToPage(page) {
+        const totalPages = Math.ceil(filteredTransactions.length / transactionsPerPage);
+        if (page >= 1 && page <= totalPages) {
+          currentPage = page;
+          renderTransactions();
+          updatePaginationInfo();
+        }
+      }
 
-                  function renderTransactions() {
-                      const start = (currentPage - 1) * transactionsPerPage;
-                      const end = start + transactionsPerPage;
-                      const paginatedTransactions = filteredTransactions.slice(start, end);
+      function renderTransactions() {
+        const start = (currentPage - 1) * transactionsPerPage;
+        const end = start + transactionsPerPage;
+        const paginatedTransactions = filteredTransactions.slice(start, end);
+        const transactionList = document.getElementById('transactionList');
 
-                      const transactionList = document.getElementById('transactionList');
+        if (paginatedTransactions.length > 0) {
+          transactionList.innerHTML = paginatedTransactions.map(transaction => {
+            if (transaction.transactionType === "credit") {
+              return `
+                <div class="transaction-item">
+                  <div class="transaction-details">
+                    <div class="transaction-icon">
+                      <i class="fas fa-arrow-up"></i>
+                    </div>
+                    <div>
+                      <p class="font-medium">Credited for ${transaction.transactionPurpose}</p>
+                      <p class="transaction-date">
+                        ${new Date(transaction.createdAt).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })}
+                      </p>
+                    </div>
+                  </div>
+                  <p class="transaction-amount">+ ₹${transaction.amount.toLocaleString('en-IN')}</p>
+                </div>
+              `;
+            } else {
+              return `
+                <div class="transaction-item">
+                  <div class="transaction-details">
+                    <div class="transaction-icon" style="background-color: rgb(255, 136, 0)">
+                      <i class="fas fa-arrow-down"></i>
+                    </div>
+                    <div>
+                      <p class="font-medium">Debited for ${transaction.transactionPurpose}</p>
+                      <p class="transaction-date">
+                        ${new Date(transaction.createdAt).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })}
+                      </p>
+                    </div>
+                  </div>
+                  <p class="transaction-amount" style="color: rgb(255, 136, 0)">- ₹${transaction.amount.toLocaleString('en-IN')}</p>
+                </div>
+              `;
+            }
+          }).join('');
+        } else {
+          transactionList.innerHTML = '<p class="text-gray-500 italic text-center">No transactions found</p>';
+        }
+      }
 
-                      if (paginatedTransactions.length > 0) {
-                          transactionList.innerHTML = paginatedTransactions.map(transaction => {
-                              if (transaction.transactionType === "credit") {
-                                  return `
-                                      <div class="transaction-item">
-                                          <div class="transaction-details">
-                                              <div class="transaction-icon">
-                                                  <i class="fas fa-arrow-up"></i>
-                                              </div>
-                                              <div>
-                                                  <p class="font-medium">Credited for ${transaction.transactionPurpose}</p>
-                                                <p class="transaction-date">
-            ${new Date(transaction.createdAt).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })}
-          </p>
+      function updatePaginationInfo() {
+        const totalPages = Math.ceil(filteredTransactions.length / transactionsPerPage) || 1;
+        document.getElementById('pageInfo').textContent = `${currentPage} of ${totalPages}`;
+        const prevBtn = document.querySelector('.pagination button:first-child');
+        const nextBtn = document.querySelector('.pagination button:last-child');
+        prevBtn.disabled = currentPage === 1;
+        nextBtn.disabled = currentPage === totalPages;
+      }
 
-                                              </div>
-                                          </div>
-                                          <p class="transaction-amount">+ ₹${transaction.amount.toLocaleString('en-IN')}</p>
-                                      </div>
-                                  `;
-                              } else {
-                                  return `
-                                      <div class="transaction-item">
-                                          <div class="transaction-details">
-                                              <div class="transaction-icon" style="background-color: rgb(255, 136, 0)">
-                                                  <i class="fas fa-arrow-down"></i>
-                                              </div>
-                                              <div>
-                                                  <p class="font-medium">Debited for ${transaction.transactionPurpose}</p>
-                                                 <p class="transaction-date">
-            ${new Date(transaction.createdAt).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })}
-          </p>
+      function filterTransactions() {
+        const filter = document.getElementById('transactionFilter').value;
+        if (filter === 'all') {
+          filteredTransactions = [...allTransactions];
+        } else if (filter === 'added') {
+          filteredTransactions = allTransactions.filter(t => t.transactionType === 'credit');
+        } else if (filter === 'used') {
+          filteredTransactions = allTransactions.filter(t => t.transactionType === 'debit');
+        } else if (filter === 'reward') {
+          filteredTransactions = allTransactions.filter(t =>
+            t.transactionType === 'credit' &&
+            t.transactionPurpose &&
+            t.transactionPurpose.toLowerCase().includes('referrals')
+          );
+        }
+        currentPage = 1;
+        renderTransactions();
+        updatePaginationInfo();
+      }
 
-                                              </div>
-                                          </div>
-                                          <p class="transaction-amount" style="color: rgb(255, 136, 0)">- ₹${transaction.amount.toLocaleString('en-IN')}</p>
-                                      </div>
-                                  `;
-                              }
-                          }).join('');
-                      } else {
-                          transactionList.innerHTML = '<p class="text-gray-500 italic text-center">No transactions found</p>';
-                      }
-                  }
+      function openAddMoneyModal() {
+        document.getElementById('addMoneyModal').classList.remove('hidden');
+        document.getElementById('addMoneyModal').classList.add('modal-visible');
+      }
 
-                  function updatePaginationInfo() {
-                      const totalPages = Math.ceil(filteredTransactions.length / transactionsPerPage) || 1;
-                      document.getElementById('pageInfo').textContent = `${currentPage} of ${totalPages}`;
+      function closeAddMoneyModal() {
+        document.getElementById('addMoneyModal').classList.add('hidden');
+        document.getElementById('addMoneyModal').classList.remove('modal-visible');
+        document.getElementById('amountInput').value = '';
+      }
 
-                      // Update button states
-                      const prevBtn = document.querySelector('.pagination button:first-child');
-                      const nextBtn = document.querySelector('.pagination button:last-child');
-
-                      prevBtn.disabled = currentPage === 1;
-                      nextBtn.disabled = currentPage === totalPages;
-                  }
-
-                  function filterTransactions() {
-                      const filter = document.getElementById('transactionFilter').value;
-
-                      // Filter transactions based on selected filter
-                      if (filter === 'all') {
-                          filteredTransactions = [...allTransactions];
-                      } else if (filter === 'added') {
-                          filteredTransactions = allTransactions.filter(t => t.transactionType === 'credit');
-                      } else if (filter === 'used') {
-                          filteredTransactions = allTransactions.filter(t => t.transactionType === 'debit');
-                      } else if (filter === 'reward') {
-                          filteredTransactions = allTransactions.filter(t =>
-                              t.transactionType === 'credit' &&
-                              t.transactionPurpose &&
-                              t.transactionPurpose.toLowerCase().includes('referrals')
-                          );
-                      }
-
-                      // Reset to first page when filtering
-                      currentPage = 1;
-                      renderTransactions();
-                      updatePaginationInfo();
-                  }
-
-                 function showToast(message, type = 'info') {
-                                let toastContainer = document.querySelector('.toast-container');
-                                if (!toastContainer) {
-                                    toastContainer = document.createElement('div');
-                                    toastContainer.className = 'toast-container';
-                                    toastContainer.style.position = 'fixed';
-                                    toastContainer.style.top = '20px';
-                                    toastContainer.style.right = '20px';
-                                    toastContainer.style.zIndex = '9999';
-                                    toastContainer.style.display = 'flex';
-                                    toastContainer.style.flexDirection = 'column';
-                                    toastContainer.style.gap = '10px';
-                                    document.body.appendChild(toastContainer);
-                                }
-
-                                const toastId = 'toast-' + Date.now();
-                                const toast = document.createElement('div');
-
-                                // Background color and border based on type
-                                let bgColor, borderColor;
-                                switch (type) {
-                                    case 'success':
-                                        bgColor = '#15803d';  // green
-                                        borderColor = '#15803d';
-                                        break;
-                                    case 'error':
-                                        bgColor = '#dc2626';  // red
-                                        borderColor = '#dc2626';
-                                        break;
-                                    case 'info':
-                                    default:
-                                        bgColor = '#2563eb';  // blue
-                                        borderColor = '#2563eb';
-                                }
-                                toast.style.cssText = `
-                    display: flex;
-                    align-items: center;
-                    justify-content: space-between;
-                    background-color: ${bgColor};
-                    border-left: 4px solid ${borderColor};
-                    color: white;
-                    padding: 8px 16px;
-                    border-radius: 65x;
-                    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-                    max-width: 400px;
-                    width: 100%;
-                    opacity: 0;
-                    transform: translateY(20px);
-                    transition: opacity 0.3s ease, transform 0.3s ease;
-                `;
-
-                                toast.id = toastId;
-                                toast.setAttribute('role', 'alert');
-                                toast.setAttribute('aria-live', 'assertive');
-                                toast.setAttribute('aria-atomic', 'true');
-
-                                toast.innerHTML = `
-                    <div style="flex: 1; font-size: 14px;">${message}</div>
-                    <button type="button" style="margin-left: 12px; background: none; border: none; color: white; font-size: 16px; cursor: pointer;" data-toast-id="${toastId}">
-                        &times;
-                    </button>
-                `;
-
-                                toastContainer.appendChild(toast);
-
-                                // Fade in + move up
-                                setTimeout(() => {
-                                    toast.style.opacity = '1';
-                                    toast.style.transform = 'translateY(0)';
-                                }, 100);
-
-                                // Close button
-                                const closeButton = toast.querySelector(`[data-toast-id="${toastId}"]`);
-                                closeButton.addEventListener('click', () => {
-                                    toast.style.opacity = '0';
-                                    toast.style.transform = 'translateY(20px)';
-                                    setTimeout(() => toast.remove(), 300);
-                                });
-
-                                // Auto remove after 1.5s
-                                setTimeout(() => {
-                                    toast.style.opacity = '0';
-                                    toast.style.transform = 'translateY(20px)';
-                                    setTimeout(() => toast.remove(), 300);
-                                }, 1500);
-                            }
-
-                  function openAddMoneyModal() {
-                      document.getElementById('addMoneyModal').classList.remove('hidden');
-                  }
-
-                  function closeAddMoneyModal() {
-                      document.getElementById('addMoneyModal').classList.add('hidden');
-                      document.getElementById('amountInput').value = '';
-                  }
-
-                async function proceedToPay() {
-                      const amount = document.getElementById('amountInput').value;
-                      if (!amount || amount <= 0 || amount > 250000) {
-                          showToast('Please enter a valid amount below ₹250000', 'error');
-                          return;
-                      }
-
-                       try {
-          // 1. Create Razorpay Order (call backend)
+      async function proceedToPay() {
+        const amount = document.getElementById('amountInput').value;
+        if (!amount || amount <= 0 || amount > 250000) {
+          showToast('Please enter a valid amount below ₹250000', 'error');
+          return;
+        }
+        try {
           const res = await fetch("/wallet/create-order", {
             method: "POST",
             headers: {
@@ -857,16 +1057,12 @@
             },
             body: JSON.stringify({ amount: parseInt(amount) })
           });
-
           const data = await res.json();
           if (!data.success) {
-            showToast("Failed to create Razorpay order");
+            showToast("Failed to create Razorpay order", 'error');
             return;
           }
-
           const { razorpayOrderId, keyId, amountInPaise, user } = data;
-
-          // 2. Open Razorpay payment modal
           const options = {
             key: keyId,
             amount: amountInPaise,
@@ -875,7 +1071,6 @@
             description: "Secure payment",
             order_id: razorpayOrderId,
             handler: async function (response) {
-              // 3. After payment success
               const verify = await fetch("/wallet/verify-payment", {
                 method: "POST",
                 headers: {
@@ -888,13 +1083,12 @@
                   amount: parseInt(amount)
                 })
               });
-
               const result = await verify.json();
               if (result.success) {
-                showToast("Money added successfully!");
+                showToast("Money added successfully!", 'success');
                 location.reload();
               } else {
-                showToast("Payment verification failed!");
+                showToast("Payment verification failed!", 'error');
               }
             },
             prefill: {
@@ -905,28 +1099,25 @@
               color: "#4F46E5"
             }
           };
-
           const rzp = new Razorpay(options);
           rzp.open();
-
         } catch (err) {
           console.error("Payment error:", err);
-          showToast("Something went wrong");
+          showToast("Something went wrong", 'error');
         }
       }
 
-                  // Initialize pagination on page load
-                  document.addEventListener('DOMContentLoaded', function() {
-                      filteredTransactions = [...allTransactions];
-                      renderTransactions();
-                      updatePaginationInfo();
-                  });
+      document.addEventListener('DOMContentLoaded', function() {
+        filteredTransactions = [...allTransactions];
+        renderTransactions();
+        updatePaginationInfo();
+      });
 
-                  document.getElementById('addMoneyModal').addEventListener('click', function (e) {
-                      if (e.target === this) {
-                          closeAddMoneyModal();
-                      }
-                  });
+      document.getElementById('addMoneyModal').addEventListener('click', function (e) {
+        if (e.target === this) {
+          closeAddMoneyModal();
+        }
+      });
     </script>
   </body>
 </html>
