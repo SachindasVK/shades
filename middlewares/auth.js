@@ -1,6 +1,6 @@
-const User = require('../models/userSchema')
-const Cart = require('../models/cartSchema')
-const logger = require('../helpers/logger')
+const User = require('../models/userSchema');
+const Cart = require('../models/cartSchema');
+const logger = require('../helpers/logger');
 
 const userAuth = async (req, res, next) => {
   try {
@@ -8,7 +8,7 @@ const userAuth = async (req, res, next) => {
     res.locals.user = null;
 
     if (!req.session.user) {
-      return res.redirect('/login')
+      return res.redirect('/login');
     }
 
     const userId = req.session.user?._id || req.session.user;
@@ -16,7 +16,7 @@ const userAuth = async (req, res, next) => {
 
     if (!user) {
       req.session.destroy((error) => {
-        if (error) logger.error('Error destroying session:', + error.message)
+        if (error) logger.error('Error destroying session:', +error.message);
         res.redirect('/login');
       });
       return;
@@ -25,7 +25,7 @@ const userAuth = async (req, res, next) => {
     if (user.isBlocked) {
       req.session.message = 'Access denied. Your account has been blocked.';
       req.session.destroy((error) => {
-        if (error) logger.error('Error destroying session:', + error.message)
+        if (error) logger.error('Error destroying session:', +error.message);
         res.redirect('/login');
       });
       return;
@@ -37,39 +37,34 @@ const userAuth = async (req, res, next) => {
 
     next();
   } catch (error) {
-    logger.error('Error in userAuth middleware:', + error.message)
+    logger.error('Error in userAuth middleware:', +error.message);
     req.session.destroy((error) => {
-      if (error) logger.error('Error destroying session:', + error.message)
-      res.status(500).send('Internal server error')
+      if (error) logger.error('Error destroying session:', +error.message);
+      res.status(500).send('Internal server error');
     });
   }
 };
-
-
 
 const adminAuth = async (req, res, next) => {
   try {
     const adminId = req.session.admin;
 
     if (!adminId) {
-      return res.redirect('/admin/login')
+      return res.redirect('/admin/login');
     }
 
-    const adminUser = await User.findById(adminId)
+    const adminUser = await User.findById(adminId);
 
     if (adminUser && adminUser.isAdmin) {
       next();
     } else {
-      res.redirect('/admin/login')
+      res.redirect('/admin/login');
     }
   } catch (error) {
-    logger.error('Error in adminAuth middleware:', + error.message)
-    res.status(500).send('Internal Server Error!')
+    logger.error('Error in adminAuth middleware:', +error.message);
+    res.status(500).send('Internal Server Error!');
   }
 };
-
-
-
 
 const validateCartStock = async (req, res, next) => {
   try {
@@ -80,19 +75,19 @@ const validateCartStock = async (req, res, next) => {
       return res.redirect('/cart'); // redirect if empty
     }
 
-    const outOfStockItems = cart.items.filter(item => {
+    const outOfStockItems = cart.items.filter((item) => {
       const product = item.productId;
       return !product || product.quantity < item.quantity;
     });
 
     if (outOfStockItems.length > 0) {
-      req.session.cartError = "Some items in your cart are out of stock. Please update your cart.";
+      req.session.cartError = 'Some items in your cart are out of stock. Please update your cart.';
       return res.redirect('/cart');
     }
 
     next(); // everything ok
   } catch (error) {
-    console.error("Checkout stock validation failed:", error);
+    console.error('Checkout stock validation failed:', error);
     res.redirect('/cart');
   }
 };
@@ -100,5 +95,5 @@ const validateCartStock = async (req, res, next) => {
 module.exports = {
   userAuth,
   adminAuth,
-  validateCartStock
-}
+  validateCartStock,
+};

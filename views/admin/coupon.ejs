@@ -1,692 +1,878 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SHADES - Admin Coupon mangaement</title>
-  <script defer src="/admin.js"></script>
-  <link rel="icon" href="favicon/favicon.ico" type="ico">
-  
-<style>
-  /* Custom styles for responsive table */
-  @media (max-width: 640px) {
-    .responsive-table tbody tr {
-      display: flex;
-      flex-direction: column;
-      margin-bottom: 1rem;
-      padding: 1rem;
-      border: 1px solid #e5e7eb;
-      border-radius: 0.5rem;
-    }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SHADES - Admin Coupon mangaement</title>
+    <link rel="icon" href="/favicon-16x16.png" type="image/png">
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <script defer src="/script/admin.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              'shades-black': '#111111',
+              'shades-gray': '#F5F5F7',
+            },
+          },
+        },
+      };
+    </script>
 
-    .responsive-table th,
-    .responsive-table td {
-      display: block;
-      width: 100%;
-      text-align: left !important;
-    }
+    <style>
+      /* Custom styles for responsive table */
+      @media (max-width: 640px) {
+        .responsive-table tbody tr {
+          display: flex;
+          flex-direction: column;
+          margin-bottom: 1rem;
+          padding: 1rem;
+          border: 1px solid #e5e7eb;
+          border-radius: 0.5rem;
+        }
 
-    .responsive-table th {
-      display: none; /* Hide headers on mobile */
-    }
+        .responsive-table th,
+        .responsive-table td {
+          display: block;
+          width: 100%;
+          text-align: left !important;
+        }
 
-    .responsive-table td {
-      padding: 0.5rem 0;
-    }
+        .responsive-table th {
+          display: none;
+          /* Hide headers on mobile */
+        }
 
-    .responsive-table td::before {
-      content: attr(data-label);
-      font-weight: 600;
-      color: #374151;
-      margin-right: 0.5rem;
-    }
+        .responsive-table td {
+          padding: 0.5rem 0;
+        }
 
-    .responsive-table td:last-child {
-      display: flex;
-      justify-content: flex-end;
-      gap: 0.5rem;
-    }
-  }
+        .responsive-table td::before {
+          content: attr(data-label);
+          font-weight: 600;
+          color: #374151;
+          margin-right: 0.5rem;
+        }
 
-  /* Ensure modals are responsive */
-  @media (max-width: 640px) {
-    #couponModal .max-w-md,
-    #statusModal .max-w-md {
-      max-width: 90%;
-      margin: 0 auto;
-    }
+        .responsive-table td:last-child {
+          display: flex;
+          justify-content: flex-end;
+          gap: 0.5rem;
+        }
+      }
 
-    #couponModal form,
-    #statusModal .px-6 {
-      padding: 1rem;
-    }
-  }
-</style>
-</head>
-<body>
-  <%- include('../partials/admin/header') %>
-<div class="p-4 sm:p-6 max-w-7xl mx-auto">
-  <div class="bg-white rounded-lg shadow-sm overflow-hidden mb-6">
-    <div class="px-4 py-4 sm:px-6 flex justify-between items-center border-b border-gray-200">
-      <h3 class="text-base sm:text-lg font-semibold">Coupon Management</h3>
-      <button id="addCouponBtn"
-        class="px-3 py-1.5 sm:px-4 sm:py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 text-sm sm:text-base">
-        <i class="fas fa-plus mr-1 sm:mr-2"></i> Add Coupon
-      </button>
-    </div>
+      /* Ensure modals are responsive */
+      @media (max-width: 640px) {
+        #couponModal .max-w-md,
+        #statusModal .max-w-md {
+          max-width: 90%;
+          margin: 0 auto;
+        }
 
-    <!-- Search Bar -->
-    <div class="p-4 border-b border-gray-200">
-      <form id="searchForm" action="/admin/coupons" method="GET">
-        <div class="flex flex-col sm:flex-row gap-3">
-          <div class="relative flex-grow">
-            <input type="text" id="searchInput" name="search" value="<%= searchTerm || '' %>"
-              class="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
-              placeholder="Search coupons...">
-            <div class="absolute left-3 top-2.5 text-gray-400">
-              <i class="fas fa-search"></i>
-            </div>
-          </div>
-          <div class="flex gap-2">
-            <button type="submit"
-              class="px-3 py-2 bg-black text-white rounded-lg hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 text-sm sm:text-base">
-              Search
-            </button>
-            <a href="/admin/coupons"
-              class="px-3 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 inline-flex items-center justify-center text-sm sm:text-base">
-              Clear
-            </a>
-          </div>
+        #couponModal form,
+        #statusModal .px-6 {
+          padding: 1rem;
+        }
+      }
+    </style>
+  </head>
+
+  <body class="bg-shades-black">
+    <%- include('../partials/admin/header') %>
+    <!-- Main Content -->
+    <main class="flex-1 md:ml-64 transition-all duration-300">
+      <!-- Top Header -->
+      <header class="sticky top-0 z-40 bg-shades-black shadow-sm">
+        <div class="flex justify-between items-center px-4 sm:px-6 py-4">
+          <button id="mobile-menu-toggle" class="md:hidden text-gray-800 focus:outline-none">
+            <i class="fas fa-bars text-xl"></i>
+          </button>
+          <h1 class="text-white font-medium">Admin Dashboard</h1>
         </div>
-      </form>
-    </div>
+      </header>
+      <div class="p-4 sm:p-6 max-w-7xl mx-auto">
+        <div class="bg-black rounded-lg shadow-sm overflow-hidden mb-6">
+          <div class="px-4 py-4 sm:px-6 flex justify-between items-center border-b border-gray-200">
+            <h3 class="text-base sm:text-lg font-semibold text-white">Coupon Management</h3>
+            <button
+              id="addCouponBtn"
+              class="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition ease-in focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 w-full sm:w-auto"
+            >
+              <i class="fas fa-plus mr-1 sm:mr-2"></i> Add Coupon
+            </button>
+          </div>
 
-    <!-- Coupons Table -->
-    <div class="overflow-x-auto">
-      <table class="min-w-full divide-y divide-gray-200 responsive-table">
-        <thead class="bg-black">
-          <tr>
-            <th scope="col" class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-              ID
-            </th>
-            <th scope="col" class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-              Coupon Name
-            </th>
-            <th scope="col" class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-              Start Date
-            </th>
-            <th scope="col" class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-              End Date
-            </th>
-            <th scope="col" class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-              Discount (% / Max ₹)
-            </th>
-            <th scope="col" class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-              Minimum Price
-            </th>
-            <th scope="col" class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-              Status
-            </th>
-            <th scope="col" class="px-4 sm:px-6 py-3 text-right text-xs font-medium text-white uppercase tracking-wider">
-              Actions
-            </th>
-          </tr>
-        </thead>
-        <tbody class="bg-white divide-y divide-gray-200">
-          <% if(data && data.length > 0) { %>
-            <% data.forEach(coupon => { %>
-              <tr class="hover:bg-gray-50">
-                <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900" data-label="ID">
-                  #<%= coupon._id.toString().slice(-6).toUpperCase() %>
-                </td>
-                <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900" data-label="Coupon Name">
-                  <%= coupon.name %>
-                </td>
-                <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500" data-label="Start Date">
-                  <%= new Date(coupon.createdOn).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) %>
-                </td>
-                <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500" data-label="End Date">
-                  <%= new Date(coupon.expireOn).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) %>
-                </td>
-                <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500" data-label="Discount">
-                  <%= coupon.discountPercentage %>% (Max ₹<%= coupon.maxDiscount.toFixed(2) %>)
-                </td>
-                <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500" data-label="Minimum Price">
-                  ₹<%= coupon.minimumPrice.toFixed(2) %>
-                </td>
-                <td class="px-4 sm:px-6 py-4 whitespace-nowrap" data-label="Status">
-                  <span
-                    class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full <%= !coupon.isDeleted ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' %>">
-                    <%= !coupon.isDeleted ? 'Active' : 'Deleted' %>
-                  </span>
-                </td>
-                <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-right text-sm font-medium" data-label="Actions">
-                  <!-- Edit Coupon -->
-                  <button class="text-blue-600 hover:text-blue-900 mr-2 edit-button" data-id="<%= coupon._id %>"
-                    data-name="<%= coupon.name %>"
-                    data-start-date="<%= coupon.createdOn.toISOString().split('T')[0] %>"
-                    data-end-date="<%= coupon.expireOn.toISOString().split('T')[0] %>"
-                    data-discount-percentage="<%= coupon.discountPercentage %>"
-                    data-max-discount="<%= coupon.maxDiscount %>" data-minimum-price="<%= coupon.minimumPrice %>">
-                    <i class="fas fa-edit"></i>
+          <!-- Search Bar -->
+          <div class="p-4 border-b border-gray-200">
+            <form id="searchForm" action="/admin/coupons" method="GET">
+              <div class="flex flex-col sm:flex-row gap-3">
+                <div class="relative flex-grow">
+                  <input
+                    type="text"
+                    id="searchInput"
+                    name="search"
+                    value="<%= searchTerm || '' %>"
+                    class="bg-black text-white w-full pl-10 pr-4 py-2 rounded-lg border border-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
+                    placeholder="Search coupons..."
+                  />
+                  <div class="absolute left-3 top-2.5 text-gray-400">
+                    <i class="fas fa-search"></i>
+                  </div>
+                </div>
+                <div class="flex gap-2">
+                  <button
+                    type="submit"
+                    class="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition ease-in focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 w-full sm:w-auto"
+                  >
+                    Search
                   </button>
-                  <!-- Delete/Recover Coupon -->
-                  <% if(!coupon.isDeleted) { %>
-                    <button class="text-red-600 hover:text-red-900 mr-2 status-toggle-button" title="Delete Coupon"
-                      data-action="delete" data-id="<%= coupon._id %>" data-name="<%= coupon.name %>">
+                  <a
+                    href="/admin/coupons"
+                    class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 inline-flex items-center justify-center w-full sm:w-auto"
+                  >
+                    Clear
+                  </a>
+                </div>
+              </div>
+            </form>
+          </div>
+
+          <!-- Coupons Table -->
+          <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200 responsive-table">
+              <thead class="bg-gray-950">
+                <tr>
+                  <th
+                    scope="col"
+                    class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider"
+                  >
+                    ID
+                  </th>
+                  <th
+                    scope="col"
+                    class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider"
+                  >
+                    Coupon Name
+                  </th>
+                  <th
+                    scope="col"
+                    class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider"
+                  >
+                    Start Date
+                  </th>
+                  <th
+                    scope="col"
+                    class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider"
+                  >
+                    End Date
+                  </th>
+                  <th
+                    scope="col"
+                    class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider"
+                  >
+                    Discount (% / Max ₹)
+                  </th>
+                  <th
+                    scope="col"
+                    class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider"
+                  >
+                    Minimum Price
+                  </th>
+                  <th
+                    scope="col"
+                    class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider"
+                  >
+                    Status
+                  </th>
+                  <th
+                    scope="col"
+                    class="px-4 sm:px-6 py-3 text-right text-xs font-medium text-white uppercase tracking-wider"
+                  >
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody class="bg-black divide-y divide-gray-200">
+                <% if(data && data.length> 0) { %> <% data.forEach(coupon=> { %>
+                <tr class="hover:bg-gray-950">
+                  <td
+                    class="px-4 sm:px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-200"
+                    data-label="ID"
+                  >
+                    #<%= coupon._id.toString().slice(-6).toUpperCase() %>
+                  </td>
+                  <td
+                    class="px-4 sm:px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-200"
+                    data-label="Coupon Name"
+                  >
+                    <%= coupon.name %>
+                  </td>
+                  <td
+                    class="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-200"
+                    data-label="Start Date"
+                  >
+                    <%= new Date(coupon.createdOn).toLocaleDateString('en-US', { year: 'numeric' ,
+                    month: 'short' , day: 'numeric' }) %>
+                  </td>
+                  <td
+                    class="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-200"
+                    data-label="End Date"
+                  >
+                    <%= new Date(coupon.expireOn).toLocaleDateString('en-US', { year: 'numeric' ,
+                    month: 'short' , day: 'numeric' }) %>
+                  </td>
+                  <td
+                    class="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-200"
+                    data-label="Discount"
+                  >
+                    <%= coupon.discountPercentage %>% (Max ₹<%= coupon.maxDiscount.toFixed(2) %>)
+                  </td>
+                  <td
+                    class="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-200"
+                    data-label="Minimum Price"
+                  >
+                    ₹<%= coupon.minimumPrice.toFixed(2) %>
+                  </td>
+                  <td class="px-4 sm:px-6 py-4 whitespace-nowrap" data-label="Status">
+                    <span
+                      class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full <%= !coupon.isDeleted ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' %>"
+                    >
+                      <%= !coupon.isDeleted ? 'Active' : 'Deleted' %>
+                    </span>
+                  </td>
+                  <td
+                    class="px-4 sm:px-6 py-4 whitespace-nowrap text-right text-sm font-medium"
+                    data-label="Actions"
+                  >
+                    <!-- Edit Coupon -->
+                    <button
+                      class="text-blue-600 hover:text-blue-900 mr-2 edit-button"
+                      data-id="<%= coupon._id %>"
+                      data-name="<%= coupon.name %>"
+                      data-start-date="<%= coupon.createdOn.toISOString().split('T')[0] %>"
+                      data-end-date="<%= coupon.expireOn.toISOString().split('T')[0] %>"
+                      data-discount-percentage="<%= coupon.discountPercentage %>"
+                      data-max-discount="<%= coupon.maxDiscount %>"
+                      data-minimum-price="<%= coupon.minimumPrice %>"
+                    >
+                      <i class="fas fa-edit"></i>
+                    </button>
+                    <!-- Delete/Recover Coupon -->
+                    <% if(!coupon.isDeleted) { %>
+                    <button
+                      class="text-red-600 hover:text-red-900 mr-2 status-toggle-button"
+                      title="Delete Coupon"
+                      data-action="delete"
+                      data-id="<%= coupon._id %>"
+                      data-name="<%= coupon.name %>"
+                    >
                       <i class="fas fa-trash-alt"></i>
                     </button>
-                  <% } else { %>
-                    <button class="text-green-600 hover:text-green-900 mr-2 status-toggle-button" title="Recover Coupon"
-                      data-action="recover" data-id="<%= coupon._id %>" data-name="<%= coupon.name %>">
+                    <% } else { %>
+                    <button
+                      class="text-green-600 hover:text-green-900 mr-2 status-toggle-button"
+                      title="Recover Coupon"
+                      data-action="recover"
+                      data-id="<%= coupon._id %>"
+                      data-name="<%= coupon.name %>"
+                    >
                       <i class="fas fa-undo"></i>
                     </button>
-                  <% } %>
-                </td>
-              </tr>
-            <% }) %>
-          <% } else { %>
-            <tr>
-              <td colspan="8" class="px-4 sm:px-6 py-4 text-center text-sm text-gray-500">
-                No coupons found. <a href="#" id="noResultsAddBtn" class="text-blue-600 hover:text-blue-900">Add a new coupon</a>
-              </td>
-            </tr>
-          <% } %>
-        </tbody>
-      </table>
-    </div>
-
-    <!-- Pagination -->
-    <% if(totalPages > 1) { %>
-      <div class="px-4 sm:px-6 py-4 border-t border-gray-200">
-        <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
-          <div class="text-sm text-gray-500">
-            Showing <span class="font-medium">
-              <%= (currentPage - 1) * limit + 1 %>
-            </span> to
-            <span class="font-medium">
-              <%= Math.min(currentPage * limit, totalItems) %>
-            </span> of
-            <span class="font-medium">
-              <%= totalItems %>
-            </span> coupons
+                    <% } %>
+                  </td>
+                </tr>
+                <% }) %>
+                <% } else { %>
+                <tr>
+                  <td colspan="8" class="px-4 sm:px-6 py-4 text-center text-sm text-gray-500">
+                    No coupons found.
+                    <a href="#" id="noResultsAddBtn" class="text-blue-600 hover:text-blue-900"
+                      >Add a new coupon</a
+                    >
+                  </td>
+                </tr>
+                <% } %>
+              </tbody>
+            </table>
           </div>
-          <nav class="flex flex-wrap gap-1">
-            <% if(currentPage > 1) { %>
-              <a href="/admin/coupons?page=<%= currentPage - 1 %><%= searchTerm ? `&search=${searchTerm}` : '' %>"
-                class="px-2 sm:px-3 py-1 rounded-md text-sm font-medium bg-gray-200 text-gray-700 hover:bg-gray-300">
-                Previous
-              </a>
-            <% } else { %>
-              <span class="px-2 sm:px-3 py-1 rounded-md text-sm font-medium bg-gray-100 text-gray-400 cursor-not-allowed">
-                Previous
-              </span>
-            <% } %>
 
-            <% for(let i = 1; i <= totalPages; i++) { %>
-              <% if(i === currentPage) { %>
-                <span class="px-2 sm:px-3 py-1 rounded-md text-sm font-medium bg-blue-600 text-white">
+          <!-- Pagination -->
+          <% if(totalPages> 1) { %>
+          <div class="px-4 sm:px-6 py-4 border-t border-gray-200">
+            <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
+              <div class="text-sm text-gray-500">
+                Showing <span class="font-medium"> <%= (currentPage - 1) * limit + 1 %> </span> to
+                <span class="font-medium"> <%= Math.min(currentPage * limit, totalItems) %> </span>
+                of <span class="font-medium"> <%= totalItems %> </span> coupons
+              </div>
+              <nav class="flex flex-wrap gap-1">
+                <% if(currentPage> 1) { %>
+                <a
+                  href="/admin/coupons?page=<%= currentPage - 1 %><%= searchTerm ? `&search=${searchTerm}` : '' %>"
+                  class="px-3 py-1 rounded-md text-sm font-medium bg-black text-gray-300 hover:bg-gray-950 transition ease-in"
+                >
+                  Previous
+                </a>
+                <% } else { %>
+                <span
+                  class="px-3 py-1 rounded-md text-sm font-medium bg-black text-gray-300 hover:bg-gray-950 transition ease-in cursor-not-allowed"
+                >
+                  Previous
+                </span>
+                <% } %>
+
+                <% for(let i=1; i <=totalPages; i++) { %>
+                <% if(i===currentPage) { %>
+                <span
+                  class="px-2 sm:px-3 py-1 rounded-md text-sm font-medium bg-blue-600 text-white"
+                >
                   <%= i %>
                 </span>
-              <% } else if(i <= 3 || i >= totalPages - 2 || Math.abs(i - currentPage) <= 1) { %>
-                <a href="/admin/coupons?page=<%= i %><%= searchTerm ? `&search=${searchTerm}` : '' %>"
-                  class="px-2 sm:px-3 py-1 rounded-md text-sm font-medium bg-gray-200 text-gray-700 hover:bg-gray-300">
+                <% } else if(i <=3 || i>= totalPages - 2 || Math.abs(i - currentPage) <= 1) { %>
+                <a
+                  href="/admin/coupons?page=<%= i %><%= searchTerm ? `&search=${searchTerm}` : '' %>"
+                  class="px-2 sm:px-3 py-1 rounded-md text-sm font-medium bg-gray-200 text-gray-700 hover:bg-gray-300"
+                >
                   <%= i %>
                 </a>
-              <% } else if(i === 4 && currentPage > 5) { %>
+                <% } else if(i===4 && currentPage> 5) { %>
                 <span class="px-2 sm:px-3 py-1 text-sm font-medium text-gray-500">...</span>
-              <% } else if(i === totalPages - 3 && currentPage < totalPages - 4) { %>
+                <% } else if(i===totalPages - 3 && currentPage < totalPages - 4) { %>
                 <span class="px-2 sm:px-3 py-1 text-sm font-medium text-gray-500">...</span>
-              <% } %>
-            <% } %>
+                <% } %>
+                <% } %>
 
-            <% if(currentPage < totalPages) { %>
-              <a href="/admin/coupons?page=<%= currentPage + 1 %><%= searchTerm ? `&search=${searchTerm}` : '' %>"
-                class="px-2 sm:px-3 py-1 rounded-md text-sm font-medium bg-gray-200 text-gray-700 hover:bg-gray-300">
-                Next
-              </a>
-            <% } else { %>
-              <span class="px-2 sm:px-3 py-1 rounded-md text-sm font-medium bg-gray-100 text-gray-400 cursor-not-allowed">
-                Next
-              </span>
-            <% } %>
-          </nav>
+                <% if(currentPage < totalPages) { %>
+                <a
+                  href="/admin/coupons?page=<%= currentPage + 1 %><%= searchTerm ? `&search=${searchTerm}` : '' %>"
+                  class="px-3 py-1 rounded-md text-sm font-medium bg-black text-gray-300 hover:bg-gray-950 transition ease-in"
+                >
+                  Next
+                </a>
+                <% } else { %>
+                <span
+                  class="px-3 py-1 rounded-md text-sm font-medium bg-black text-gray-300 hover:bg-gray-950 transition ease-in cursor-not-allowed"
+                >
+                  Next
+                </span>
+                <% } %>
+              </nav>
+            </div>
+          </div>
+          <% } %>
         </div>
       </div>
-    <% } %>
-  </div>
-</div>
 
-<!-- Add/Edit Coupon Modal -->
-<div id="couponModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center">
-  <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
-    <div class="px-4 sm:px-6 py-4 border-b border-gray-200 flex justify-between items-center">
-      <h3 class="text-base sm:text-lg font-semibold" id="modalTitle">Add New Coupon</h3>
-      <button class="text-gray-400 hover:text-gray-500 focus:outline-none" id="closeModal">
-        <i class="fas fa-times"></i>
-      </button>
-    </div>
-    <form id="couponForm" class="px-4 sm:px-6 py-4">
-      <input type="hidden" id="couponId">
-      <div class="mb-4">
-        <label for="couponName" class="block text-sm font-medium text-gray-700 mb-1">Coupon Name</label>
-        <input type="text" id="couponName" name="name" required
-          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base">
+      <!-- Add/Edit Coupon Modal -->
+      <div
+        id="couponModal"
+        class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center"
+      >
+        <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
+          <div class="px-4 sm:px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+            <h3 class="text-base sm:text-lg font-semibold" id="modalTitle">Add New Coupon</h3>
+            <button class="text-gray-400 hover:text-gray-500 focus:outline-none" id="closeModal">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+          <form id="couponForm" class="px-4 sm:px-6 py-4">
+            <input type="hidden" id="couponId" />
+            <div class="mb-4">
+              <label for="couponName" class="block text-sm font-medium text-gray-700 mb-1"
+                >Coupon Name</label
+              >
+              <input
+                type="text"
+                id="couponName"
+                name="name"
+                required
+                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
+              />
+            </div>
+            <div class="mb-4">
+              <label for="startDate" class="block text-sm font-medium text-gray-700 mb-1"
+                >Start Date</label
+              >
+              <input
+                type="date"
+                id="startDate"
+                name="startDate"
+                required
+                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
+              />
+            </div>
+            <div class="mb-4">
+              <label for="endDate" class="block text-sm font-medium text-gray-700 mb-1"
+                >End Date</label
+              >
+              <input
+                type="date"
+                id="endDate"
+                name="endDate"
+                required
+                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
+              />
+            </div>
+            <div class="mb-4">
+              <label for="discountPercentage" class="block text-sm font-medium text-gray-700 mb-1"
+                >Discount Percentage (%)</label
+              >
+              <input
+                type="number"
+                id="discountPercentage"
+                name="discountPercentage"
+                step="1"
+                min="1"
+                max="100"
+                required
+                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
+              />
+            </div>
+            <div class="mb-4">
+              <label for="maxDiscount" class="block text-sm font-medium text-gray-700 mb-1"
+                >Max Discount (₹)</label
+              >
+              <input
+                type="number"
+                id="maxDiscount"
+                name="maxDiscount"
+                step="0.01"
+                min="1"
+                required
+                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
+              />
+            </div>
+            <div class="mb-4">
+              <label for="minimumPrice" class="block text-sm font-medium text-gray-700 mb-1"
+                >Minimum Price (₹)</label
+              >
+              <input
+                type="number"
+                id="minimumPrice"
+                name="minimumPrice"
+                step="0.01"
+                min="1"
+                required
+                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
+              />
+            </div>
+            <div class="flex justify-end space-x-3">
+              <button
+                type="button"
+                id="cancelBtn"
+                class="px-3 sm:px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 text-sm sm:text-base"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                id="saveBtn"
+                class="px-3 sm:px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 text-sm sm:text-base"
+              >
+                Save Coupon
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
-      <div class="mb-4">
-        <label for="startDate" class="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
-        <input type="date" id="startDate" name="startDate" required
-          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base">
+
+      <!-- Status Confirmation Modal -->
+      <div
+        id="statusModal"
+        class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center"
+      >
+        <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
+          <div class="px-4 sm:px-6 py-4 border-b border-gray-200">
+            <h3 class="text-base sm:text-lg font-semibold" id="statusModalTitle">
+              Confirm Status Change
+            </h3>
+          </div>
+          <div class="px-4 sm:px-6 py-4">
+            <p class="text-gray-700 text-sm sm:text-base" id="statusModalMessage">
+              Are you sure you want to change the status of this coupon?
+            </p>
+          </div>
+          <div class="px-4 sm:px-6 py-4 border-t border-gray-200 flex justify-end space-x-3">
+            <button
+              id="cancelStatusBtn"
+              class="px-3 sm:px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 text-sm sm:text-base"
+            >
+              Cancel
+            </button>
+            <button
+              id="confirmStatusBtn"
+              class="px-3 sm:px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 text-sm sm:text-base"
+            >
+              Confirm
+            </button>
+          </div>
+          <input type="hidden" id="statusId" />
+          <input type="hidden" id="statusAction" />
+        </div>
       </div>
-      <div class="mb-4">
-        <label for="endDate" class="block text-sm font-medium text-gray-700 mb-1">End Date</label>
-        <input type="date" id="endDate" name="endDate" required
-          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base">
+
+      <!-- Toast Notification -->
+      <div id="toast" class="fixed bottom-4 right-4 z-50 hidden">
+        <div class="bg-white rounded-lg shadow-lg border-l-4 border-green-500 px-4 py-3 max-w-sm">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <i class="fas fa-check-circle text-green-500"></i>
+            </div>
+            <div class="ml-3">
+              <p id="toastMessage" class="text-sm font-medium text-gray-900"></p>
+            </div>
+            <div class="ml-auto pl-3">
+              <button id="closeToast" class="text-gray-400 hover:text-gray-500">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="mb-4">
-        <label for="discountPercentage" class="block text-sm font-medium text-gray-700 mb-1">Discount Percentage (%)</label>
-        <input type="number" id="discountPercentage" name="discountPercentage" step="1" min="1" max="100" required
-          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base">
-      </div>
-      <div class="mb-4">
-        <label for="maxDiscount" class="block text-sm font-medium text-gray-700 mb-1">Max Discount (₹)</label>
-        <input type="number" id="maxDiscount" name="maxDiscount" step="0.01" min="1" required
-          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base">
-      </div>
-      <div class="mb-4">
-        <label for="minimumPrice" class="block text-sm font-medium text-gray-700 mb-1">Minimum Price (₹)</label>
-        <input type="number" id="minimumPrice" name="minimumPrice" step="0.01" min="1" required
-          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base">
-      </div>
-      <div class="flex justify-end space-x-3">
-        <button type="button" id="cancelBtn"
-          class="px-3 sm:px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 text-sm sm:text-base">
-          Cancel
-        </button>
-        <button type="submit" id="saveBtn"
-          class="px-3 sm:px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 text-sm sm:text-base">
-          Save Coupon
-        </button>
-      </div>
-    </form>
-  </div>
-</div>
-
-<!-- Status Confirmation Modal -->
-<div id="statusModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center">
-  <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
-    <div class="px-4 sm:px-6 py-4 border-b border-gray-200">
-      <h3 class="text-base sm:text-lg font-semibold" id="statusModalTitle">Confirm Status Change</h3>
-    </div>
-    <div class="px-4 sm:px-6 py-4">
-      <p class="text-gray-700 text-sm sm:text-base" id="statusModalMessage">Are you sure you want to change the status of this coupon?</p>
-    </div>
-    <div class="px-4 sm:px-6 py-4 border-t border-gray-200 flex justify-end space-x-3">
-      <button id="cancelStatusBtn"
-        class="px-3 sm:px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 text-sm sm:text-base">
-        Cancel
-      </button>
-      <button id="confirmStatusBtn"
-        class="px-3 sm:px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 text-sm sm:text-base">
-        Confirm
-      </button>
-    </div>
-    <input type="hidden" id="statusId" />
-    <input type="hidden" id="statusAction" />
-  </div>
-</div>
-
-<!-- Toast Notification -->
-<div id="toast" class="fixed bottom-4 right-4 z-50 hidden">
-  <div class="bg-white rounded-lg shadow-lg border-l-4 border-green-500 px-4 py-3 max-w-sm">
-    <div class="flex items-center">
-      <div class="flex-shrink-0">
-        <i class="fas fa-check-circle text-green-500"></i>
-      </div>
-      <div class="ml-3">
-        <p id="toastMessage" class="text-sm font-medium text-gray-900"></p>
-      </div>
-      <div class="ml-auto pl-3">
-        <button id="closeToast" class="text-gray-400 hover:text-gray-500">
-          <i class="fas fa-times"></i>
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
-
-  <%- include('../partials/admin/footer') %>
-  <script>
-let couponModal, statusModal, toast;
-// API response handlers
-function handleResponse(response) {
-  if (!response.ok) {
-    if (response.status === 401) {
-      showToast('Session expired. Please log in again.', 'error');
-      setTimeout(() => {
-        window.location.href = '/admin/login';
-      }, 2000);
-      throw new Error('Unauthorized');
-    }
-    return response.json().then(data => {
-      throw new Error(data.message || 'Server returned an error');
-    });
-  }
-  return response.json();
-}
-
-function handleError(error) {
-  console.error('Fetch error:', error);
-  showToast(error.message || 'Failed to connect to server. Please try again.', 'error');
-}
-
-function reloadPageAfterDelay(delay = 1000) {
-  setTimeout(() => {
-    window.location.reload();
-  }, delay);
-}
-
-// Modal control functions
-function closeAllModals() {
-  if (couponModal) {
-    couponModal.classList.add('hidden');
-    couponModal.classList.remove('flex');
-  }
-  if (statusModal) {
-    statusModal.classList.add('hidden');
-    statusModal.classList.remove('flex');
-  }
-}
-
-// Main initialization
-document.addEventListener('DOMContentLoaded', function () {
-  // Modal elements
-  couponModal = document.getElementById('couponModal');
-  statusModal = document.getElementById('statusModal');
-  toast = document.getElementById('toast');
-
-  // Form elements
-  const couponForm = document.getElementById('couponForm');
-  const modalTitle = document.getElementById('modalTitle');
-  const couponId = document.getElementById('couponId');
-  const couponName = document.getElementById('couponName');
-  const startDate = document.getElementById('startDate');
-  const endDate = document.getElementById('endDate');
-  const offerPrice = document.getElementById('offerPrice');
-  const minimumPrice = document.getElementById('minimumPrice');
-  const statusId = document.getElementById('statusId');
-  const statusAction = document.getElementById('statusAction');
-  const statusModalTitle = document.getElementById('statusModalTitle');
-  const statusModalMessage = document.getElementById('statusModalMessage');
-
-  // Buttons
-  const addCouponBtn = document.getElementById('addCouponBtn');
-  const noResultsAddBtn = document.getElementById('noResultsAddBtn');
-  const closeModal = document.getElementById('closeModal');
-  const cancelBtn = document.getElementById('cancelBtn');
-  const closeToast = document.getElementById('closeToast');
-  const cancelStatusBtn = document.getElementById('cancelStatusBtn');
-  const confirmStatusBtn = document.getElementById('confirmStatusBtn');
-
-  // Open add modal
-  if (addCouponBtn) {
-    addCouponBtn.addEventListener('click', function () {
-      openAddModal();
-    });
-  }
-
-  // Open add modal from no results
-  if (noResultsAddBtn) {
-    noResultsAddBtn.addEventListener('click', function (e) {
-      e.preventDefault();
-      openAddModal();
-    });
-  }
-
-  // Close modals
-  if (closeModal) closeModal.addEventListener('click', closeAllModals);
-  if (cancelBtn) cancelBtn.addEventListener('click', closeAllModals);
-  if (cancelStatusBtn) cancelStatusBtn.addEventListener('click', closeAllModals);
-
-  // Close toast
-  if (closeToast) {
-    closeToast.addEventListener('click', function () {
-      toast.classList.add('hidden');
-    });
-  }
-
-  // Edit button functionality
-  document.querySelectorAll('.edit-button').forEach(button => {
-    button.addEventListener('click', function () {
-      const id = this.getAttribute('data-id');
-      const name = this.getAttribute('data-name');
-      const startDateValue = this.getAttribute('data-start-date');
-      const endDateValue = this.getAttribute('data-end-date');
-      const discountPercentageValue = this.getAttribute('data-discount-percentage');
-      const maxDiscountValue = this.getAttribute('data-max-discount');
-      const minimumPriceValue = this.getAttribute('data-minimum-price');
-
-      openEditModal(
-        id,
-        name,
-        startDateValue,
-        endDateValue,
-        discountPercentageValue,
-        maxDiscountValue,
-        minimumPriceValue
-      );
-    });
-  });
-
-  // Status toggle button functionality (Delete/Recover)
-  document.querySelectorAll(".status-toggle-button").forEach((button) => {
-    button.addEventListener("click", function () {
-      const id = this.getAttribute("data-id");
-      const name = this.getAttribute("data-name");
-      const action = this.getAttribute("data-action");
-      openStatusModal(id, name, action);
-    });
-  });
-
-  // Form validation and submission
-  if (couponForm) {
-    couponForm.addEventListener('submit', function (e) {
-      e.preventDefault();
-
-      if (!validateForm()) {
-        return false;
+      <div class="p-4 sm:p-6"></div>
+    </main>
+    <%- include('../partials/admin/footer') %>
+    <script>
+      let couponModal, statusModal, toast;
+      // API response handlers
+      function handleResponse(response) {
+        if (!response.ok) {
+          if (response.status === 401) {
+            showToast('Session expired. Please log in again.', 'error');
+            setTimeout(() => {
+              window.location.href = '/admin/login';
+            }, 2000);
+            throw new Error('Unauthorized');
+          }
+          return response.json().then((data) => {
+            throw new Error(data.message || 'Server returned an error');
+          });
+        }
+        return response.json();
       }
 
-      // Get form data as JSON instead of FormData
-      const formData = {
-        name: document.getElementById('couponName').value.trim(),
-        startDate: document.getElementById('startDate').value,
-        endDate: document.getElementById('endDate').value,
-        discountPercentage: parseFloat(document.getElementById('discountPercentage').value),
-        maxDiscount: parseFloat(document.getElementById('maxDiscount').value),
-        minimumPrice: parseFloat(document.getElementById('minimumPrice').value)
-      };
-
-      const id = couponId.value;
-
-      if (id) {
-        formData.id = id;
+      function handleError(error) {
+        console.error('Fetch error:', error);
+        showToast(error.message || 'Failed to connect to server. Please try again.', 'error');
       }
 
-      const endpoint = id ? `coupons/edit/${id}` : `coupons/add`;
-      const method = id ? 'PUT' : 'POST';
+      // Modal control functions
+      function closeAllModals() {
+        if (couponModal) {
+          couponModal.classList.add('hidden');
+          couponModal.classList.remove('flex');
+        }
+        if (statusModal) {
+          statusModal.classList.add('hidden');
+          statusModal.classList.remove('flex');
+        }
+      }
 
-      fetch(endpoint, {
-        method: method,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-        credentials: 'include' // Include cookies for session
-      })
-        .then(handleResponse)
-        .then(data => {
-          if (data.success) {
-            closeAllModals();
-            showToast(data.message);
-            reloadPageAfterDelay();
-          } else {
-            showToast(data.message || 'An error occurred', 'error');
+      // Main initialization
+      document.addEventListener('DOMContentLoaded', function () {
+        // Modal elements
+        couponModal = document.getElementById('couponModal');
+        statusModal = document.getElementById('statusModal');
+        toast = document.getElementById('toast');
+
+        // Form elements
+        const couponForm = document.getElementById('couponForm');
+        const modalTitle = document.getElementById('modalTitle');
+        const couponId = document.getElementById('couponId');
+        const couponName = document.getElementById('couponName');
+        const startDate = document.getElementById('startDate');
+        const endDate = document.getElementById('endDate');
+        const offerPrice = document.getElementById('offerPrice');
+        const minimumPrice = document.getElementById('minimumPrice');
+        const statusId = document.getElementById('statusId');
+        const statusAction = document.getElementById('statusAction');
+        const statusModalTitle = document.getElementById('statusModalTitle');
+        const statusModalMessage = document.getElementById('statusModalMessage');
+
+        // Buttons
+        const addCouponBtn = document.getElementById('addCouponBtn');
+        const noResultsAddBtn = document.getElementById('noResultsAddBtn');
+        const closeModal = document.getElementById('closeModal');
+        const cancelBtn = document.getElementById('cancelBtn');
+        const closeToast = document.getElementById('closeToast');
+        const cancelStatusBtn = document.getElementById('cancelStatusBtn');
+        const confirmStatusBtn = document.getElementById('confirmStatusBtn');
+
+        // Open add modal
+        if (addCouponBtn) {
+          addCouponBtn.addEventListener('click', function () {
+            openAddModal();
+          });
+        }
+
+        // Open add modal from no results
+        if (noResultsAddBtn) {
+          noResultsAddBtn.addEventListener('click', function (e) {
+            e.preventDefault();
+            openAddModal();
+          });
+        }
+
+        // Close modals
+        if (closeModal) closeModal.addEventListener('click', closeAllModals);
+        if (cancelBtn) cancelBtn.addEventListener('click', closeAllModals);
+        if (cancelStatusBtn) cancelStatusBtn.addEventListener('click', closeAllModals);
+
+        // Close toast
+        if (closeToast) {
+          closeToast.addEventListener('click', function () {
+            toast.classList.add('hidden');
+          });
+        }
+
+        // Edit button functionality
+        document.querySelectorAll('.edit-button').forEach((button) => {
+          button.addEventListener('click', function () {
+            const id = this.getAttribute('data-id');
+            const name = this.getAttribute('data-name');
+            const startDateValue = this.getAttribute('data-start-date');
+            const endDateValue = this.getAttribute('data-end-date');
+            const discountPercentageValue = this.getAttribute('data-discount-percentage');
+            const maxDiscountValue = this.getAttribute('data-max-discount');
+            const minimumPriceValue = this.getAttribute('data-minimum-price');
+
+            openEditModal(
+              id,
+              name,
+              startDateValue,
+              endDateValue,
+              discountPercentageValue,
+              maxDiscountValue,
+              minimumPriceValue
+            );
+          });
+        });
+
+        // Status toggle button functionality (Delete/Recover)
+        document.querySelectorAll('.status-toggle-button').forEach((button) => {
+          button.addEventListener('click', function () {
+            const id = this.getAttribute('data-id');
+            const name = this.getAttribute('data-name');
+            const action = this.getAttribute('data-action');
+            openStatusModal(id, name, action);
+          });
+        });
+
+        // Form validation and submission
+        if (couponForm) {
+          couponForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            if (!validateForm()) {
+              return false;
+            }
+
+            // Get form data as JSON instead of FormData
+            const formData = {
+              name: document.getElementById('couponName').value.trim(),
+              startDate: document.getElementById('startDate').value,
+              endDate: document.getElementById('endDate').value,
+              discountPercentage: parseFloat(document.getElementById('discountPercentage').value),
+              maxDiscount: parseFloat(document.getElementById('maxDiscount').value),
+              minimumPrice: parseFloat(document.getElementById('minimumPrice').value),
+            };
+
+            const id = couponId.value;
+
+            if (id) {
+              formData.id = id;
+            }
+
+            const endpoint = id ? `coupons/edit/${id}` : `coupons/add`;
+            const method = id ? 'PUT' : 'POST';
+
+            fetch(endpoint, {
+              method: method,
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(formData),
+              credentials: 'include', // Include cookies for session
+            })
+              .then(handleResponse)
+              .then((data) => {
+                if (data.success) {
+                  closeAllModals();
+                  showToast(data.message);
+                  reloadPageAfterDelay();
+                } else {
+                  showToast(data.message || 'An error occurred', 'error');
+                }
+              })
+              .catch(handleError);
+
+            return false;
+          });
+        }
+
+        if (confirmStatusBtn) {
+          confirmStatusBtn.addEventListener('click', function () {
+            const id = statusId.value;
+            const action = statusAction.value;
+            const endpoint = `coupons/${id}/status`;
+
+            fetch(endpoint, {
+              method: 'PATCH',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              credentials: 'include', // Include cookies for session
+              body: JSON.stringify({
+                action: action,
+              }),
+            })
+              .then(handleResponse)
+              .then((data) => {
+                if (data.success) {
+                  closeAllModals();
+                  showToast(data.message);
+                  reloadPageAfterDelay();
+                } else {
+                  showToast(data.message || 'An error occurred', 'error');
+                }
+              })
+              .catch(handleError);
+          });
+        }
+
+        // Helper Functions
+        function validateForm() {
+          const name = document.getElementById('couponName').value.trim();
+          const startDateValue = document.getElementById('startDate').value;
+          const endDateValue = document.getElementById('endDate').value;
+          const discountPercentageValue = document.getElementById('discountPercentage').value;
+          const maxDiscountValue = document.getElementById('maxDiscount').value;
+          let isValid = true;
+
+          // Clear any existing error messages
+          const existingErrors = document.querySelectorAll('.error-message');
+          existingErrors.forEach((error) => error.remove());
+
+          if (name === '') {
+            displayErrorMessage('couponName', 'Please enter a coupon name');
+            isValid = false;
           }
-        })
-        .catch(handleError);
 
-      return false;
-    });
-  }
-
- 
-  if (confirmStatusBtn) {
-    confirmStatusBtn.addEventListener("click", function () {
-      const id = statusId.value;
-      const action = statusAction.value;
-      const endpoint = `coupons/${id}/status`;
-
-      fetch(endpoint, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: 'include', // Include cookies for session
-        body: JSON.stringify({
-          action: action,
-        }),
-      })
-        .then(handleResponse)
-        .then(data => {
-          if (data.success) {
-            closeAllModals();
-            showToast(data.message);
-            reloadPageAfterDelay();
-          } else {
-            showToast(data.message || "An error occurred", "error");
+          if (!startDateValue) {
+            displayErrorMessage('startDate', 'Please select a start date');
+            isValid = false;
           }
-        })
-        .catch(handleError);
-    });
-  }
 
-  // Helper Functions
-  function validateForm() {
-    const name = document.getElementById('couponName').value.trim();
-    const startDateValue = document.getElementById('startDate').value;
-    const endDateValue = document.getElementById('endDate').value;
-    const discountPercentageValue = document.getElementById('discountPercentage').value;
-    const maxDiscountValue = document.getElementById('maxDiscount').value;
-    let isValid = true;
+          if (!endDateValue) {
+            displayErrorMessage('endDate', 'Please select an end date');
+            isValid = false;
+          }
 
-    // Clear any existing error messages
-    const existingErrors = document.querySelectorAll('.error-message');
-    existingErrors.forEach(error => error.remove());
+          if (startDateValue && endDateValue && new Date(startDateValue) > new Date(endDateValue)) {
+            displayErrorMessage('endDate', 'End date must be after start date');
+            isValid = false;
+          }
 
-    if (name === '') {
-      displayErrorMessage('couponName', 'Please enter a coupon name');
-      isValid = false;
-    }
+          if (
+            !discountPercentageValue ||
+            discountPercentageValue <= 0 ||
+            discountPercentageValue > 100
+          ) {
+            displayErrorMessage('discountPercentage', 'Enter a valid discount percentage (1–100)');
+            isValid = false;
+          }
 
-    if (!startDateValue) {
-      displayErrorMessage('startDate', 'Please select a start date');
-      isValid = false;
-    }
+          if (!maxDiscountValue || maxDiscountValue <= 0) {
+            displayErrorMessage('maxDiscount', 'Enter a valid max discount amount');
+            isValid = false;
+          }
 
-    if (!endDateValue) {
-      displayErrorMessage('endDate', 'Please select an end date');
-      isValid = false;
-    }
+          return isValid;
+        }
 
-    if (startDateValue && endDateValue && new Date(startDateValue) > new Date(endDateValue)) {
-      displayErrorMessage('endDate', 'End date must be after start date');
-      isValid = false;
-    }
+        function displayErrorMessage(elementId, message) {
+          const inputField = document.getElementById(elementId);
 
-    if (!discountPercentageValue || discountPercentageValue <= 0 || discountPercentageValue > 100) {
-      displayErrorMessage('discountPercentage', 'Enter a valid discount percentage (1–100)');
-      isValid = false;
-    }
+          // Create error element
+          const errorElement = document.createElement('div');
+          errorElement.className = 'text-red-500 text-sm mt-1 error-message';
+          errorElement.innerText = message;
 
-    if (!maxDiscountValue || maxDiscountValue <= 0) {
-      displayErrorMessage('maxDiscount', 'Enter a valid max discount amount');
-      isValid = false;
-    }
+          // Insert after the input field
+          inputField.parentNode.insertBefore(errorElement, inputField.nextSibling);
+        }
 
-    return isValid;
-  }
+        function openAddModal() {
+          modalTitle.textContent = 'Add New Coupon';
+          couponForm.reset();
+          couponId.value = '';
 
-  function displayErrorMessage(elementId, message) {
-    const inputField = document.getElementById(elementId);
+          couponModal.classList.remove('hidden');
+          couponModal.classList.add('flex');
+        }
 
-    // Create error element
-    const errorElement = document.createElement('div');
-    errorElement.className = 'text-red-500 text-sm mt-1 error-message';
-    errorElement.innerText = message;
+        function openEditModal(
+          id,
+          name,
+          startDateValue,
+          endDateValue,
+          discountPercentageValue,
+          maxDiscountValue,
+          minimumPriceValue
+        ) {
+          modalTitle.textContent = 'Edit Coupon';
+          couponId.value = id;
+          couponName.value = name;
+          startDate.value = startDateValue;
+          endDate.value = endDateValue;
+          document.getElementById('discountPercentage').value = discountPercentageValue;
+          document.getElementById('maxDiscount').value = maxDiscountValue;
+          minimumPrice.value = minimumPriceValue;
 
-    // Insert after the input field
-    inputField.parentNode.insertBefore(errorElement, inputField.nextSibling);
-  }
+          couponModal.classList.remove('hidden');
+          couponModal.classList.add('flex');
+        }
 
-  function openAddModal() {
-    modalTitle.textContent = 'Add New Coupon';
-    couponForm.reset();
-    couponId.value = '';
+        function openStatusModal(id, name, action) {
+          statusId.value = id;
+          statusAction.value = action;
+          if (action === 'delete') {
+            statusModalTitle.textContent = 'Delete Coupon';
+            statusModalMessage.innerHTML = `Are you sure you want to delete <span class="font-semibold">${name}</span>?`;
+            confirmStatusBtn.className =
+              'px-3 sm:px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 text-sm sm:text-base';
+            confirmStatusBtn.textContent = 'Delete';
+          } else {
+            statusModalTitle.textContent = 'Recover Coupon';
+            statusModalMessage.innerHTML = `Are you sure you want to recover <span class="font-semibold">${name}</span>?`;
+            confirmStatusBtn.className =
+              'px-3 sm:px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 text-sm sm:text-base';
+            confirmStatusBtn.textContent = 'Recover';
+          }
 
-    couponModal.classList.remove('hidden');
-    couponModal.classList.add('flex');
-  }
+          statusModal.classList.remove('hidden');
+          statusModal.classList.add('flex');
+        }
+      });
 
-  function openEditModal(id, name, startDateValue, endDateValue, discountPercentageValue, maxDiscountValue, minimumPriceValue) {
-    modalTitle.textContent = 'Edit Coupon';
-    couponId.value = id;
-    couponName.value = name;
-    startDate.value = startDateValue;
-    endDate.value = endDateValue;
-    document.getElementById('discountPercentage').value = discountPercentageValue;
-    document.getElementById('maxDiscount').value = maxDiscountValue;
-    minimumPrice.value = minimumPriceValue;
+      // Close modals when clicking outside
+      window.addEventListener('click', function (event) {
+        if (event.target === couponModal || event.target === statusModal) {
+          closeAllModals();
+        }
+      });
 
-    couponModal.classList.remove('hidden');
-    couponModal.classList.add('flex');
-  }
-
-  function openStatusModal(id, name, action) {
-    statusId.value = id;
-    statusAction.value = action;
-    if (action === "delete") {
-      statusModalTitle.textContent = "Delete Coupon";
-      statusModalMessage.innerHTML = `Are you sure you want to delete <span class="font-semibold">${name}</span>?`;
-      confirmStatusBtn.className =
-        "px-3 sm:px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 text-sm sm:text-base";
-      confirmStatusBtn.textContent = "Delete";
-    } else {
-      statusModalTitle.textContent = "Recover Coupon";
-      statusModalMessage.innerHTML = `Are you sure you want to recover <span class="font-semibold">${name}</span>?`;
-      confirmStatusBtn.className =
-        "px-3 sm:px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 text-sm sm:text-base";
-      confirmStatusBtn.textContent = "Recover";
-    }
-
-    statusModal.classList.remove("hidden");
-    statusModal.classList.add("flex");
-  }
-});
-
-// Close modals when clicking outside
-window.addEventListener('click', function (event) {
-  if (event.target === couponModal || event.target === statusModal) {
-    closeAllModals();
-  }
-});
-
-// Keyboard shortcuts (escape to close modals)
-document.addEventListener('keydown', function (event) {
-  if (event.key === 'Escape') {
-    closeAllModals();
-  }
-});
-</script>
-</body>
+      // Keyboard shortcuts (escape to close modals)
+      document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape') {
+          closeAllModals();
+        }
+      });
+    </script>
+  </body>
 </html>

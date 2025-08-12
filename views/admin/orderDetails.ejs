@@ -1,307 +1,457 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>SHADES - Admin Order details</title>
+    <link rel="icon" href="/favicon-16x16.png" type="image/png">
     <script defer src="/admin.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link rel="icon" href="favicon/favicon.ico" type="ico">
-</head>
-<body class="bg-gray-100 font-sans">
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <script defer src="/script/admin.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              'shades-black': '#111111',
+              'shades-gray': '#F5F5F7',
+            },
+          },
+        },
+      };
+    </script>
+  </head>
+
+  <body class="bg-shades-black">
     <%- include('../../views/partials/admin/header') %>
-    <div class="p-4 sm:p-6 max-w-7xl mx-auto">
+    <!-- Main Content -->
+    <main class="flex-1 md:ml-64 transition-all duration-300">
+      <!-- Top Header -->
+      <header class="sticky top-0 z-40 bg-shades-black shadow-sm">
+        <div class="flex justify-between items-center px-4 sm:px-6 py-4">
+          <button id="mobile-menu-toggle" class="md:hidden text-gray-800 focus:outline-none">
+            <i class="fas fa-bars text-xl"></i>
+          </button>
+
+          <h1 class="text-white font-medium">Admin Dashboard</h1>
+        </div>
+      </header>
+      <div class="p-4 sm:p-6 max-w-7xl mx-auto">
         <!-- Order Details Header -->
-        <div class="bg-white rounded-lg shadow-sm p-4 sm:p-6 mb-6">
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 space-y-4 sm:space-y-0">
-                <h3 class="text-lg sm:text-xl font-semibold text-gray-900">#<%= order.orderId %></h3>
-                <a href="/admin/orders" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 text-sm w-full sm:w-auto text-center">Back to Orders</a>
-            </div>
+        <div class="bg-black rounded-t-lg shadow-sm p-4 sm:p-4 mb-1">
+          <div
+            class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 space-y-4 sm:space-y-0"
+          >
+            <h3 class="text-lg sm:text-xl font-semibold text-white">#<%= order.orderId %></h3>
+            <a
+              href="/admin/orders"
+              class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-200 bg-gray-800 rounded-lg hover:bg-gray-900 transition ease-in w-full sm:w-auto text-center"
+              ><i class="fas fa-arrow-left mr-2"></i>Back to Orders</a
+            >
+          </div>
         </div>
 
         <!-- Order Information -->
-        <div class="bg-white rounded-lg shadow-sm p-4 sm:p-6 mb-6">
-            <h4 class="text-md sm:text-lg font-semibold mb-4">Order Information</h4>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <!-- Order ID -->
-                <div>
-                    <p class="text-sm font-medium text-gray-600">Order ID</p>
-                    <p class="text-sm text-gray-900">#<%= order.orderId %></p>
-                </div>
-                <!-- Payment Status -->
-                <div>
-                    <p class="text-sm font-medium text-gray-600">Payment Status</p>
-                    <% if (order.paymentStatus === 'Failed') { %>
-                        <span class="text-xs px-3 py-1 font-semibold rounded-full bg-red-200 text-red-800">
-                            <%= order.paymentStatus || 'Pending' %>
-                        </span>
-                    <% } else if (order.paymentStatus === 'Paid' || order.paymentStatus === 'Refunded') { %>
-                        <span class="text-xs px-3 py-1 font-semibold rounded-full bg-green-100 text-green-800">
-                            <%= order.paymentStatus || 'Pending' %>
-                        </span>
-                    <% } else { %>
-                        <span class="text-xs px-3 py-1 font-semibold rounded-full bg-yellow-100 text-yellow-800">
-                            <%= order.paymentStatus || 'Pending' %>
-                        </span>
-                    <% } %>
-                </div>
-                <!-- Order Status -->
-                <div>
-                    <p class="text-sm font-medium text-gray-600">Order Status</p>
-                    <span class="px-2 py-1 text-xs font-semibold rounded-full 
-                        <%= order.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                            order.status === 'confirmed' ? 'bg-blue-100 text-blue-800' :
-                            order.status === 'shipped' ? 'bg-purple-100 text-purple-800' :
-                            order.status === 'delivered' ? 'bg-green-100 text-green-800' :
-                            order.status === 'cancelled' ? 'bg-red-100 text-red-800' :
-                            order.status === 'return_requested' ? 'bg-orange-100 text-orange-800' :
-                            'bg-gray-100 text-gray-800' %>">
-                        <%= order.status.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase()) %>
-                    </span>
-                    <% if (order.cancelReason) { %>
-                        <p class="text-xs text-red-800 mt-1">Reason: <%= order.cancelReason %></p>
-                    <% } %>
-                </div>
-                <!-- Return Summary -->
-                <div>
-                    <p class="text-sm font-medium text-gray-600">Return Summary</p>
-                    <% const returnedItemCount = order.orderedItems.filter(items => items.status === 'return_requested').length;
-                       const isFullOrderReturned = order.status === 'returned';
-                       const isFullOrderReturnRequested = order.status === 'return_requested'; %>
-                    <p class="text-sm text-gray-900">
-                        <% if (isFullOrderReturned) { %>
-                            <span class="bg-green-100 text-green-600 font-semibold px-2 py-1 rounded-full">Entire order returned</span>
-                        <% } else if (order.status === 'return_rejected') { %>
-                            <span class="bg-orange-100 text-red-600 font-semibold px-2 py-1 rounded-full">Entire order return rejected</span>
-                        <% } else if (isFullOrderReturnRequested) { %>
-                            <span class="bg-orange-100 text-orange-600 font-semibold px-2 py-1 rounded-full">Entire order return requested</span>
-                        <% } else if (returnedItemCount > 0) { %>
-                            <span class="bg-orange-100 text-orange-600 font-semibold px-2 py-1 rounded-full">
-                                <%= returnedItemCount %> item(s) Return requested
-                            </span>
-                        <% } else if (order.requestStatus && order.status === 'return_requested') { %>
-                            <p class="text-sm text-gray-500 font-bold">Return Status:
-                                <span class="px-2 py-1 text-xs font-semibold rounded-full 
-                                    <%= order.requestStatus === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                                        order.requestStatus === 'approved' ? 'bg-green-100 text-green-800' :
-                                        order.requestStatus === 'rejected' ? 'bg-red-100 text-red-800' :
-                                        'bg-gray-100 text-gray-800' %>">
-                                    <%= order.requestStatus.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase()) %>
-                                </span>
-                            </p>
-                        <% } else { %>
-                            <span class="bg-green-100 text-green-600 font-semibold px-2 py-1 rounded-full">No returns</span>
-                        <% } %>
-                    </p>
-                </div>
-                <!-- Order Date -->
-                <div>
-                    <p class="text-sm font-medium text-gray-600">Order Date</p>
-                    <p class="text-sm text-gray-900">
-                        <%= new Date(order.createdAt).toLocaleDateString('en-GB') %>
-                    </p>
-                </div>
-                <!-- Payment Method -->
-                <div>
-                    <p class="text-sm font-medium text-gray-600">Payment Method</p>
-                    <p class="text-sm text-gray-900">
-                        <%= order.paymentMethod || 'Not Specified' %>
-                    </p>
-                </div>
-                <!-- Expected Delivery -->
-                <div>
-                    <p class="text-sm font-medium text-gray-600">Expected Delivery Date</p>
-                    <p class="text-sm text-gray-900">
-                        <%= order.expectedDelivery ? new Date(order.expectedDelivery).toLocaleDateString('en-GB') : 'Not Set' %>
-                    </p>
-                </div>
-                <% if (isFullOrderReturnRequested) { %>
-                    <div class="space-y-2">
-                        <p><i class="text-gray-500">Reason: <%= order.returnReason || 'Not Specified' %></i></p>
-                        <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
-                            <button class="accept-return px-3 py-2 text-blue-800 text-sm font-semibold rounded-md hover:underline transition w-full sm:w-auto" data-order-id="<%= order.orderId %>" data-return-reason="<%= order.returnReason || 'Not Specified' %>">Accept</button>
-                            <button class="reject-return px-3 py-2 text-red-800 text-sm font-semibold rounded-md hover:underline transition w-full sm:w-auto" data-order-id="<%= order.orderId %>" data-return-reason="<%= order.returnReason || 'Not Specified' %>">Reject</button>
-                        </div>
-                    </div>
-                <% } %>
+        <div class="bg-black rounded-b-lg shadow-sm p-4 sm:p-6 mb-6">
+          <h4 class="text-md sm:text-lg font-semibold mb-4 text-white">Order Information</h4>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <!-- Order ID -->
+            <div>
+              <p class="text-sm font-medium text-gray-200">Order ID</p>
+              <p class="text-sm text-gray-200">#<%= order.orderId %></p>
             </div>
+            <!-- Payment Status -->
+            <div>
+              <p class="text-sm font-medium text-gray-200">Payment Status</p>
+              <% if (order.paymentStatus==='Failed' ) { %>
+              <span class="text-xs px-3 py-1 font-semibold rounded-full bg-red-200 text-red-800">
+                <%= order.paymentStatus || 'Pending' %>
+              </span>
+              <% } else if (order.paymentStatus==='Paid' || order.paymentStatus==='Refunded' ) { %>
+              <span
+                class="text-xs px-3 py-1 font-semibold rounded-full bg-green-100 text-green-800"
+              >
+                <%= order.paymentStatus || 'Pending' %>
+              </span>
+              <% } else { %>
+              <span
+                class="text-xs px-3 py-1 font-semibold rounded-full bg-yellow-100 text-yellow-800"
+              >
+                <%= order.paymentStatus || 'Pending' %>
+              </span>
+              <% } %>
+            </div>
+            <!-- Order Status -->
+            <div>
+              <p class="text-sm font-medium text-gray-200">Order Status</p>
+              <span
+                class="px-2 py-1 text-xs font-semibold rounded-full <%= order.status === 'pending' ? 'bg-yellow-100 text-yellow-800' : order.status === 'confirmed' ? 'bg-blue-100 text-blue-800' : order.status === 'shipped' ? 'bg-purple-100 text-purple-800' : order.status === 'delivered' ? 'bg-green-100 text-green-800' : order.status === 'cancelled' ? 'bg-red-100 text-red-800' : order.status === 'return_requested' ? 'bg-orange-100 text-orange-800' : 'bg-gray-100 text-gray-800' %>"
+              >
+                <%= order.status.replace('_', ' ' ).replace(/\b\w/g, c=> c.toUpperCase()) %>
+              </span>
+              <% if (order.cancelReason) { %>
+              <p class="text-xs text-red-800 mt-1">Reason: <%= order.cancelReason %></p>
+              <% } %>
+            </div>
+            <!-- Return Summary -->
+            <div>
+              <p class="text-sm font-medium text-gray-200">Return Summary</p>
+              <% const returnedItemCount=order.orderedItems.filter(items=> items.status ===
+              'return_requested').length; const isFullOrderReturned = order.status === 'returned';
+              const isFullOrderReturnRequested = order.status === 'return_requested'; %>
+
+              <% if (isFullOrderReturned) { %>
+              <span class="bg-green-100 text-green-600 font-semibold px-2 py-1 rounded-full"
+                >Entire order returned</span
+              >
+              <% } else if (order.status==='return_rejected' ) { %>
+              <span class="bg-orange-100 text-red-600 font-semibold px-2 py-1 rounded-full"
+                >Entire order return rejected</span
+              >
+              <% } else if (isFullOrderReturnRequested) { %>
+              <span class="bg-orange-100 text-orange-600 font-semibold px-2 py-1 rounded-full"
+                >Entire order return requested</span
+              >
+              <% } else if (returnedItemCount> 0) { %>
+              <span class="bg-orange-100 text-orange-600 font-semibold px-2 py-1 rounded-full">
+                <%= returnedItemCount %> item(s) Return requested
+              </span>
+              <% } else if (order.requestStatus && order.status==='return_requested' )
+                                                    { %>
+              <p class="text-sm text-gray-500 font-bold">
+                Return Status:
+                <span
+                  class="px-2 py-1 text-xs font-semibold rounded-full <%= order.requestStatus === 'pending' ? 'bg-yellow-100 text-yellow-800' : order.requestStatus === 'approved' ? 'bg-green-100 text-green-800' : order.requestStatus === 'rejected' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800' %>"
+                >
+                  <%= order.requestStatus.replace('_', ' ' ).replace(/\b\w/g, c=> c.toUpperCase())
+                  %>
+                </span>
+              </p>
+              <% } else { %>
+              <span class="bg-green-100 text-green-600 font-medium text-sm px-2 py-1 rounded-full"
+                >No returns</span
+              >
+              <% } %>
+            </div>
+            <!-- Order Date -->
+            <div>
+              <p class="text-sm font-medium text-gray-200">Order Date</p>
+              <p class="text-sm text-gray-200">
+                <%= new Date(order.createdAt).toLocaleDateString('en-GB') %>
+              </p>
+            </div>
+            <!-- Payment Method -->
+            <div>
+              <p class="text-sm font-medium text-gray-200">Payment Method</p>
+              <p class="text-sm text-gray-200"><%= order.paymentMethod || 'Not Specified' %></p>
+            </div>
+            <!-- Expected Delivery -->
+            <div>
+              <p class="text-sm font-medium text-gray-200">Expected Delivery Date</p>
+              <p class="text-sm text-gray-200">
+                <%= order.expectedDelivery ? new
+                Date(order.expectedDelivery).toLocaleDateString('en-GB') : 'Not Set' %>
+              </p>
+            </div>
+            <% if (isFullOrderReturnRequested) { %>
+            <div class="space-y-2">
+              <p>
+                <i class="text-gray-200">Reason: <%= order.returnReason || 'Not Specified' %></i>
+              </p>
+              <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
+                <button
+                  class="accept-return px-3 py-2 text-blue-800 text-sm font-semibold rounded-md hover:underline transition w-full sm:w-auto"
+                  data-order-id="<%= order.orderId %>"
+                  data-return-reason="<%= order.returnReason || 'Not Specified' %>"
+                >
+                  Accept
+                </button>
+                <button
+                  class="reject-return px-3 py-2 text-red-800 text-sm font-semibold rounded-md hover:underline transition w-full sm:w-auto"
+                  data-order-id="<%= order.orderId %>"
+                  data-return-reason="<%= order.returnReason || 'Not Specified' %>"
+                >
+                  Reject
+                </button>
+              </div>
+            </div>
+            <% } %>
+          </div>
         </div>
 
         <!-- Order Items -->
-        <div class="bg-white rounded-lg shadow-sm p-4 sm:p-6 mb-6">
-            <h4 class="text-md sm:text-lg font-semibold mb-4">Order Items</h4>
-            <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th scope="col" class="px-4 sm:px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Product Image</th>
-                            <th scope="col" class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product Name</th>
-                            <th scope="col" class="px-4 sm:px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
-                            <th scope="col" class="px-4 sm:px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
-                            <th scope="col" class="px-4 sm:px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Total</th>
-                            <th scope="col" class="px-4 sm:px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Return Status</th>
-                            <th scope="col" class="px-4 sm:px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Return Item</th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
-                        <% order.orderedItems.forEach(item => { %>
-                            <tr>
-                                <td class="px-4 sm:px-6 py-4 whitespace-nowrap">
-                                    <img src="/<%= item.productImages[0] %>" alt="<%= item.productName %>" class="w-20 sm:w-28 h-12 sm:h-16 object-contain mx-auto">
-                                </td>
-                                <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-left">
-                                    <div class="text-sm font-medium text-gray-900">
-                                        <%= item.product.productName %>
-                                    </div>
-                                </td>
-                                <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-center">
-                                    <div class="text-sm text-gray-900">
-                                        <%= item.quantity %>
-                                    </div>
-                                </td>
-                                <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-center">
-                                    <div class="text-sm text-gray-900">₹<%= item.price %></div>
-                                </td>
-                                <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-center">
-                                    <div class="text-sm text-gray-900">₹<%= item.price * item.quantity %></div>
-                                </td>
-                                <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-center">
-                                    <% if (item.requestStatus) { %>
-                                        <div class="inline-block px-3 py-1 text-xs font-semibold rounded-full
-                                            <%= item.requestStatus === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                                                item.requestStatus === 'approved' ? 'bg-green-100 text-green-800' :
-                                                item.requestStatus === 'rejected' ? 'bg-red-100 text-red-800' :
-                                                'bg-gray-100 text-gray-800' %>">
-                                            <%= item.requestStatus.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase()) %>
-                                        </div>
-                                    <% } else { %>
-                                        <div class="inline-block px-3 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">N/A</div>
-                                    <% } %>
-                                </td>
-                                <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-center">
-                                    <div class="flex flex-col sm:flex-row gap-2 justify-center">
-                                        <% if (order.status !== 'returned' && item.status === 'return_requested') { %>
-                                            <button class="accept-return-item px-3 py-2 text-blue-800 text-sm font-semibold rounded-md hover:underline transition" data-order-id="<%= order.orderId %>" data-item-id="<%= item._id %>" data-return-reason="<%= item.returnReason || 'Not Specified' %>">Accept</button>
-                                            <button class="reject-return-item px-3 py-2 text-red-800 text-sm font-semibold rounded-md hover:underline transition" data-order-id="<%= order.orderId %>" data-item-id="<%= item._id %>" data-return-reason="<%= item.returnReason || 'Not Specified' %>">Reject</button>
-                                        <% } else { %>
-                                            <p class="text-gray-500 italic">No Actions</p>
-                                        <% } %>
-                                    </div>
-                                </td>
-                            </tr>
-                        <% }) %>
-                    </tbody>
-                </table>
-            </div>
-            <!-- Order Total -->
-            <div class="mt-4 text-right">
-                <p class="text-sm font-medium text-gray-600">Order Total</p>
-                <p class="text-lg font-semibold text-gray-900">₹<%= order.finalAmount %></p>
-            </div>
+        <div class="bg-black rounded-lg shadow-sm p-4 sm:p-6 mb-6">
+          <h4 class="text-md sm:text-lg font-semibold mb-4 text-white">Order Items</h4>
+          <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+              <thead class="bg-black">
+                <tr>
+                  <th
+                    scope="col"
+                    class="px-4 sm:px-6 py-3 text-center text-xs font-medium text-white uppercase tracking-wider"
+                  >
+                    Product Image
+                  </th>
+                  <th
+                    scope="col"
+                    class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider"
+                  >
+                    Product Name
+                  </th>
+                  <th
+                    scope="col"
+                    class="px-4 sm:px-6 py-3 text-center text-xs font-medium text-white uppercase tracking-wider"
+                  >
+                    Quantity
+                  </th>
+                  <th
+                    scope="col"
+                    class="px-4 sm:px-6 py-3 text-center text-xs font-medium text-white uppercase tracking-wider"
+                  >
+                    Price
+                  </th>
+                  <th
+                    scope="col"
+                    class="px-4 sm:px-6 py-3 text-center text-xs font-medium text-white uppercase tracking-wider"
+                  >
+                    Total
+                  </th>
+                  <th
+                    scope="col"
+                    class="px-4 sm:px-6 py-3 text-center text-xs font-medium text-white uppercase tracking-wider"
+                  >
+                    Return Status
+                  </th>
+                  <th
+                    scope="col"
+                    class="px-4 sm:px-6 py-3 text-center text-xs font-medium text-white uppercase tracking-wider"
+                  >
+                    Action
+                  </th>
+                </tr>
+              </thead>
+              <tbody class="bg-black divide-y divide-gray-200">
+                <% order.orderedItems.forEach(item=> { %>
+                <tr>
+                  <td class="px-4 sm:px-6 py-4 whitespace-nowrap">
+                    <img
+                      src="<%= item.productImages[0] %>"
+                      alt="<%= item.productName %>"
+                      class="w-20 sm:w-28 h-12 sm:h-16 object-contain mx-auto"
+                    />
+                  </td>
+                  <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-left">
+                    <div class="text-sm font-medium text-gray-200">
+                      <%= item.product.productName %>
+                    </div>
+                  </td>
+                  <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-center">
+                    <div class="text-sm text-gray-200"><%= item.quantity %></div>
+                  </td>
+                  <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-center">
+                    <div class="text-sm text-gray-200">₹<%= item.price %></div>
+                  </td>
+                  <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-center">
+                    <div class="text-sm text-gray-200">₹<%= item.price * item.quantity %></div>
+                  </td>
+                  <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-center">
+                    <% if (item.requestStatus) { %>
+                    <div
+                      class="inline-block px-3 py-1 text-xs font-semibold rounded-full <%= item.requestStatus === 'pending' ? 'bg-yellow-100 text-yellow-800' : item.requestStatus === 'approved' ? 'bg-green-100 text-green-800' : item.requestStatus === 'rejected' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800' %>"
+                    >
+                      <%= item.requestStatus.replace('_', ' ' ).replace(/\b\w/g, c=>
+                      c.toUpperCase()) %>
+                    </div>
+                    <% } else { %>
+                    <div
+                      class="inline-block px-3 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800"
+                    >
+                      N/A
+                    </div>
+                    <% } %>
+                  </td>
+                  <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-center">
+                    <div class="flex flex-col sm:flex-row gap-2 justify-center">
+                      <% if (order.status !=='returned' && item.status==='return_requested' ) { %>
+                      <button
+                        class="accept-return-item px-3 py-2 text-green-600 text-sm font-semibold rounded-md hover:underline transition"
+                        data-order-id="<%= order.orderId %>"
+                        data-item-id="<%= item._id %>"
+                        data-return-reason="<%= item.returnReason || 'Not Specified' %>"
+                      >
+                        Accept
+                      </button>
+                      <button
+                        class="reject-return-item px-3 py-2 text-red-600 text-sm font-semibold rounded-md hover:underline transition"
+                        data-order-id="<%= order.orderId %>"
+                        data-item-id="<%= item._id %>"
+                        data-return-reason="<%= item.returnReason || 'Not Specified' %>"
+                      >
+                        Reject
+                      </button>
+                      <% } else { %>
+                      <p class="text-gray-300 italic">No Actions</p>
+                      <% } %>
+                    </div>
+                  </td>
+                </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          </div>
+          <!-- Order Total -->
+          <div class="mt-4 text-right">
+            <p class="text-sm font-medium text-gray-200">Order Total</p>
+            <p class="text-lg font-semibold text-gray-200">₹<%= order.finalAmount %></p>
+          </div>
         </div>
 
         <!-- Customer Details -->
-        <div class="bg-white rounded-lg shadow-sm p-4 sm:p-6 mb-6">
-            <h4 class="text-md sm:text-lg font-semibold mb-3">Customer Details</h4>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                <div>
-                    <p class="text-sm font-medium text-gray-600">Customer Name</p>
-                    <p class="text-sm text-gray-900"><%= order.userId?.name || 'Unknown' %></p>
-                </div>
-                <div>
-                    <p class="text-sm font-medium text-gray-600">Email</p>
-                    <p class="text-sm text-gray-900"><%= order.userId?.email || 'N/A' %></p>
-                </div>
-                <div>
-                    <p class="text-sm font-medium text-gray-600">Phone Number</p>
-                    <p class="text-sm text-gray-900"><%= order.address?.phone || 'N/A' %></p>
-                </div>
+        <div class="bg-black rounded-t-lg shadow-sm p-4 sm:p-6">
+          <h4 class="text-md sm:text-lg font-semibold mb-3 text-white">Customer Details</h4>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            <div>
+              <p class="text-sm font-medium text-gray-200">Customer Name</p>
+              <p class="text-sm text-gray-200"><%= order.userId?.name || 'Unknown' %></p>
             </div>
+            <div>
+              <p class="text-sm font-medium text-gray-200">Email</p>
+              <p class="text-sm text-gray-200"><%= order.userId?.email || 'N/A' %></p>
+            </div>
+            <div>
+              <p class="text-sm font-medium text-gray-200">Phone Number</p>
+              <p class="text-sm text-gray-200"><%= order.address?.phone || 'N/A' %></p>
+            </div>
+          </div>
         </div>
 
         <!-- Shipping Address -->
-        <div class="bg-white rounded-lg shadow-sm p-4 sm:p-6 mb-6">
-            <h4 class="text-md sm:text-lg font-semibold mb-3">Shipping Address</h4>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                <div>
-                    <p class="text-sm font-medium text-gray-600">Address Line</p>
-                    <p class="text-sm text-gray-900">
-                        <%= [order.address?.flat, order.address?.area, order.address?.landMark].filter(Boolean).join(', ') || 'N/A' %>
-                    </p>
-                </div>
-                <div>
-                    <p class="text-sm font-medium text-gray-600">City, State, Pincode</p>
-                    <p class="text-sm text-gray-900">
-                        <%= [order.address?.city, order.address?.state, order.address?.pincode].filter(Boolean).join(', ') || 'N/A' %>
-                    </p>
-                </div>
+        <div class="bg-black rounded-b-lg shadow-sm p-4 sm:p-6 mb-6">
+          <h4 class="text-md sm:text-lg font-semibold mb-3 text-white">Shipping Address</h4>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            <div>
+              <p class="text-sm font-medium text-gray-200">Address Line</p>
+              <p class="text-sm text-gray-200">
+                <%= [order.address?.flat, order.address?.area,
+                order.address?.landMark].filter(Boolean).join(', ') || ' N/A' %>
+              </p>
             </div>
+            <div>
+              <p class="text-sm font-medium text-gray-200">City, State, Pincode</p>
+              <p class="text-sm text-gray-200">
+                <%= [order.address?.city, order.address?.state,
+                order.address?.pincode].filter(Boolean).join(', ') || ' N/A' %>
+              </p>
+            </div>
+          </div>
         </div>
 
         <!-- Toast Notification -->
         <div id="toast" class="fixed bottom-4 right-4 z-50 hidden">
-            <div class="bg-white rounded-lg shadow-lg border-l-4 border-green-500 px-4 py-3 max-w-sm w-full">
-                <div class="flex items-center">
-                    <div class="flex-shrink-0">
-                        <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                        </svg>
-                    </div>
-                    <div class="ml-3">
-                        <p id="toastMessage" class="text-sm font-medium text-gray-900"></p>
-                    </div>
-                    <div class="ml-auto pl-3">
-                        <button id="closeToast" class="text-gray-400 hover:text-gray-500">
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
-                            </svg>
-                        </button>
-                    </div>
-                </div>
+          <div class="bg-white rounded-lg shadow-lg border-l-4 border-green-500 px-4 py-3 max-w-sm">
+            <div class="flex items-center">
+              <div class="flex-shrink-0">
+                <i class="fas fa-check-circle text-green-500"></i>
+              </div>
+              <div class="ml-3">
+                <p id="toastMessage" class="text-sm font-medium text-gray-900"></p>
+              </div>
+              <div class="ml-auto pl-3">
+                <button id="closeToast" class="text-gray-400 hover:text-gray-500">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
             </div>
+          </div>
         </div>
 
         <!-- Confirm Modal -->
-        <div id="confirmModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
-            <div class="bg-white rounded-lg shadow-xl p-6 max-w-md w-full">
-                <h3 class="text-lg font-bold mb-4 text-center" id="modalTitle">Confirm Action</h3>
-                <p id="modalReturnReason" class="text-center bg-red-100 text-red-600 font-semibold rounded-full mb-4 px-3 py-1 hidden">
-                    Reason: <span id="modalReturnReasonText"></span>
-                </p>
-                <p class="text-gray-700 mb-6 text-center" id="modalMessage">Are you sure you want to accept this return?</p>
-                <div class="flex flex-col sm:flex-row justify-center space-y-3 sm:space-y-0 sm:space-x-4">
-                    <button id="cancelBtn" class="px-5 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors w-full sm:w-auto">Cancel</button>
-                    <button id="confirmBtn" class="px-5 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors w-full sm:w-auto">Confirm</button>
-                </div>
+        <div
+          id="confirmModal"
+          class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4"
+        >
+          <div class="bg-white rounded-lg shadow-xl p-6 max-w-md w-full">
+            <h3 class="text-lg font-bold mb-4 text-center" id="modalTitle">Confirm Action</h3>
+            <p
+              id="modalReturnReason"
+              class="text-center bg-red-100 text-red-600 font-semibold rounded-full mb-4 px-3 py-1 hidden"
+            >
+              Reason: <span id="modalReturnReasonText"></span>
+            </p>
+            <p class="text-gray-700 mb-6 text-center" id="modalMessage">
+              Are you sure you want to accept this return?
+            </p>
+            <div
+              class="flex flex-col sm:flex-row justify-center space-y-3 sm:space-y-0 sm:space-x-4"
+            >
+              <button
+                id="cancelBtn"
+                class="px-5 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors w-full sm:w-auto"
+              >
+                Cancel
+              </button>
+              <button
+                id="confirmBtn"
+                class="px-5 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors w-full sm:w-auto"
+              >
+                Confirm
+              </button>
             </div>
+          </div>
         </div>
 
         <!-- Reject Modal -->
-        <div id="rejectModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden z-50 p-4">
-            <div class="bg-white rounded-lg p-6 w-full max-w-md">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-lg font-semibold">Reject Return Request</h3>
-                    <button id="closeRejectModal" class="text-gray-500 hover:text-black">
-                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
-                        </svg>
-                    </button>
-                </div>
-                <p class="text-sm text-gray-700 mb-4">Order #<span id="rejectOrderId"></span></p>
-                <div class="mb-4">
-                    <label for="rejectReason" class="block text-sm font-medium text-gray-700 mb-2">Reason for Rejection:</label>
-                    <textarea id="rejectReason" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" rows="4" placeholder="Enter reason for rejection"></textarea>
-                </div>
-                <div class="flex justify-end">
-                    <button id="submitRejectReason" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 w-full sm:w-auto">Submit Rejection</button>
-                </div>
+        <div
+          id="rejectModal"
+          class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden z-50 p-4"
+        >
+          <div class="bg-white rounded-lg p-6 w-full max-w-md">
+            <div class="flex justify-between items-center mb-4">
+              <h3 class="text-lg font-semibold">Reject Return Request</h3>
+              <button id="closeRejectModal" class="text-gray-500 hover:text-black">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                  <path
+                    fill-rule="evenodd"
+                    d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+              </button>
             </div>
+            <p class="text-sm text-gray-700 mb-4">Order #<span id="rejectOrderId"></span></p>
+            <div class="mb-4">
+              <label for="rejectReason" class="block text-sm font-medium text-gray-700 mb-2"
+                >Reason for Rejection:</label
+              >
+              <textarea
+                id="rejectReason"
+                class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                rows="4"
+                placeholder="Enter reason for rejection"
+              ></textarea>
+            </div>
+            <div class="flex justify-end">
+              <button
+                id="submitRejectReason"
+                class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 w-full sm:w-auto"
+              >
+                Submit Rejection
+              </button>
+            </div>
+          </div>
         </div>
 
         <%- include('../../views/partials/admin/footer') %>
-    </div>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        <script>
+          document.addEventListener('DOMContentLoaded', function () {
             const toastElement = document.getElementById('toast');
             const toastMessage = document.getElementById('toastMessage');
             const confirmModal = document.getElementById('confirmModal');
@@ -315,158 +465,223 @@
             const rejectReason = document.getElementById('rejectReason');
             const rejectOrderIdElement = document.getElementById('rejectOrderId');
 
+            // Show toast function
+            function showToast(message, type = 'success') {
+              if (!toastElement) {
+                console.error('Toast element not found');
+                return;
+              }
+
+              const toastIcon = toastElement.querySelector('i.fas');
+              const toastBorder = toastElement.querySelector('div.border-l-4');
+
+              // Set message
+              toastMessage.textContent = message;
+
+              // Set toast appearance based on type
+              if (type === 'success') {
+                toastIcon.className = 'fas fa-check-circle text-green-500';
+                toastBorder.className = toastBorder.className.replace(
+                  /border-\w+-500/g,
+                  'border-green-500'
+                );
+              } else if (type === 'error') {
+                toastIcon.className = 'fas fa-exclamation-circle text-red-500';
+                toastBorder.className = toastBorder.className.replace(
+                  /border-\w+-500/g,
+                  'border-red-500'
+                );
+              } else if (type === 'warning') {
+                toastIcon.className = 'fas fa-exclamation-triangle text-amber-500';
+                toastBorder.className = toastBorder.className.replace(
+                  /border-\w+-500/g,
+                  'border-amber-500'
+                );
+              } else if (type === 'info') {
+                toastIcon.className = 'fas fa-info-circle text-blue-500';
+                toastBorder.className = toastBorder.className.replace(
+                  /border-\w+-500/g,
+                  'border-blue-500'
+                );
+              }
+
+              // Show toast
+              toastElement.classList.remove('hidden');
+
+              // Hide toast after 3 seconds
+              setTimeout(() => {
+                toastElement.classList.add('hidden');
+              }, 3000);
+            }
+
             // Close toast manually
             document.getElementById('closeToast').addEventListener('click', () => {
-                toastElement.classList.add('hidden');
+              toastElement.classList.add('hidden');
             });
 
-            // Handle Accept Order Return
-            document.querySelectorAll('.accept-return').forEach(button => {
-                button.addEventListener('click', function () {
-                    const orderId = this.dataset.orderId;
-                    const returnReason = this.dataset.returnReason || 'Not Specified';
-                    confirmModal.classList.remove('hidden');
-                    confirmBtn.dataset.orderId = orderId;
-                    delete confirmBtn.dataset.itemId; // Clear itemId for order-level action
-                    document.getElementById('modalMessage').textContent = 'Are you sure you want to accept this order return?';
-                    modalReturnReasonText.textContent = returnReason;
-                    modalReturnReason.classList.toggle('hidden', returnReason === 'Not Specified');
-                });
-            });
-
-            // Handle Accept Item Return
-            document.querySelectorAll('.accept-return-item').forEach(button => {
-                button.addEventListener('click', function () {
-                    const orderId = this.dataset.orderId;
-                    const itemId = this.dataset.itemId;
-                    const returnReason = this.dataset.returnReason || 'Not Specified';
-                    confirmModal.classList.remove('hidden');
-                    confirmBtn.dataset.orderId = orderId;
-                    confirmBtn.dataset.itemId = itemId;
-                    document.getElementById('modalMessage').textContent = 'Are you sure you want to accept this item return?';
-                    modalReturnReasonText.textContent = returnReason;
-                    modalReturnReason.classList.toggle('hidden', returnReason === 'Not Specified');
-                });
-            });
-
-            // Handle Reject Order Return
-            document.querySelectorAll('.reject-return').forEach(button => {
-                button.addEventListener('click', function () {
-                    const orderId = this.dataset.orderId;
-                    rejectModal.classList.remove('hidden');
-                    rejectOrderIdElement.textContent = orderId;
-                    submitRejectReason.dataset.orderId = orderId;
-                    delete submitRejectReason.dataset.itemId; // Clear itemId for order-level action
-                });
-            });
-
-            // Handle Reject Item Return
-            document.querySelectorAll('.reject-return-item').forEach(button => {
-                button.addEventListener('click', function () {
-                    const orderId = this.dataset.orderId;
-                    const itemId = this.dataset.itemId;
-                    rejectModal.classList.remove('hidden');
-                    rejectOrderIdElement.textContent = orderId;
-                    submitRejectReason.dataset.orderId = orderId;
-                    submitRejectReason.dataset.itemId = itemId;
-                });
+            // Event delegation for accept and reject buttons
+            document.body.addEventListener('click', function (event) {
+              // Handle Accept Order Return
+              if (event.target.classList.contains('accept-return')) {
+                const orderId = event.target.dataset.orderId;
+                const returnReason = event.target.dataset.returnReason || 'Not Specified';
+                confirmModal.classList.remove('hidden');
+                confirmBtn.dataset.orderId = orderId;
+                delete confirmBtn.dataset.itemId; // Clear itemId for order-level action
+                document.getElementById('modalMessage').textContent =
+                  'Are you sure you want to accept this order return?';
+                modalReturnReasonText.textContent = returnReason;
+                modalReturnReason.classList.toggle('hidden', returnReason === 'Not Specified');
+              }
+              // Handle Accept Item Return
+              else if (event.target.classList.contains('accept-return-item')) {
+                const orderId = event.target.dataset.orderId;
+                const itemId = event.target.dataset.itemId;
+                const returnReason = event.target.dataset.returnReason || 'Not Specified';
+                confirmModal.classList.remove('hidden');
+                confirmBtn.dataset.orderId = orderId;
+                confirmBtn.dataset.itemId = itemId;
+                document.getElementById('modalMessage').textContent =
+                  'Are you sure you want to accept this item return?';
+                modalReturnReasonText.textContent = returnReason;
+                modalReturnReason.classList.toggle('hidden', returnReason === 'Not Specified');
+              }
+              // Handle Reject Order Return
+              else if (event.target.classList.contains('reject-return')) {
+                const orderId = event.target.dataset.orderId;
+                rejectModal.classList.remove('hidden');
+                rejectOrderIdElement.textContent = orderId;
+                submitRejectReason.dataset.orderId = orderId;
+                delete submitRejectReason.dataset.itemId; // Clear itemId for order-level action
+              }
+              // Handle Reject Item Return
+              else if (event.target.classList.contains('reject-return-item')) {
+                const orderId = event.target.dataset.orderId;
+                const itemId = event.target.dataset.itemId;
+                rejectModal.classList.remove('hidden');
+                rejectOrderIdElement.textContent = orderId;
+                submitRejectReason.dataset.orderId = orderId;
+                submitRejectReason.dataset.itemId = itemId;
+              }
             });
 
             // Cancel button for confirm modal
             cancelBtn.addEventListener('click', () => {
-                confirmModal.classList.add('hidden');
-                delete confirmBtn.dataset.orderId;
-                delete confirmBtn.dataset.itemId;
-                modalReturnReason.classList.add('hidden');
+              confirmModal.classList.add('hidden');
+              delete confirmBtn.dataset.orderId;
+              delete confirmBtn.dataset.itemId;
+              modalReturnReason.classList.add('hidden');
             });
 
             // Close reject modal
             closeRejectModal.addEventListener('click', () => {
-                rejectModal.classList.add('hidden');
-                rejectReason.value = '';
-                delete submitRejectReason.dataset.orderId;
-                delete submitRejectReason.dataset.itemId;
+              rejectModal.classList.add('hidden');
+              rejectReason.value = '';
+              delete submitRejectReason.dataset.orderId;
+              delete submitRejectReason.dataset.itemId;
             });
 
             // Confirm button for accept actions
             confirmBtn.addEventListener('click', () => {
-                const orderId = confirmBtn.dataset.orderId;
-                const itemId = confirmBtn.dataset.itemId;
+              const orderId = confirmBtn.dataset.orderId;
+              const itemId = confirmBtn.dataset.itemId;
 
-                async function acceptReturn(orderId, itemId = null) {
-                    try {
-                        const url = itemId
-                            ? `/admin/return/accept-item/${orderId}/${itemId}`
-                            : `/admin/return/accept/${orderId}`;
-                        const response = await fetch(url, {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            }
-                        });
+              async function acceptReturn(orderId, itemId = null) {
+                try {
+                  const url = itemId
+                    ? `/admin/return/accept-item/${orderId}/${itemId}`
+                    : `/admin/return/accept/${orderId}`;
+                  console.log('Sending request to:', url);
+                  const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json',
+                    },
+                    credentials: 'include',
+                  });
 
-                        const result = await response.json();
+                  if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                  }
 
-                        if (result.success) {
-                            showToast(`Return ${itemId ? 'for item' : 'for order'} #${orderId} accepted successfully`);
-                            setTimeout(() => location.reload(), 1500);
-                        } else {
-                            showToast(result.message || 'Server error', 'error');
-                        }
-                    } catch (error) {
-                        console.error('Fetch error:', error);
-                        showToast('Something went wrong', 'error');
-                    }
+                  const result = await response.json();
+                  console.log('Server response:', result); // Log the response for debugging
+
+                  if (result.success) {
+                    showToast(
+                      `Return ${itemId ? 'for item' : 'for order'} #${orderId} accepted successfully`
+                    );
+                    setTimeout(() => location.reload(), 1500);
+                  } else {
+                    showToast(result.message || 'Server error', 'error');
+                  }
+                } catch (error) {
+                  console.error('Fetch error:', error); // Log the error
+                  showToast(`Error: ${error.message}`, 'error');
                 }
+              }
 
-                confirmModal.classList.add('hidden');
-                modalReturnReason.classList.add('hidden');
-                acceptReturn(orderId, itemId);
+              confirmModal.classList.add('hidden');
+              modalReturnReason.classList.add('hidden');
+              acceptReturn(orderId, itemId);
             });
 
             // Submit reject reason
             submitRejectReason.addEventListener('click', () => {
-                const orderId = submitRejectReason.dataset.orderId;
-                const itemId = submitRejectReason.dataset.itemId;
-                const reason = rejectReason.value.trim();
+              const orderId = submitRejectReason.dataset.orderId;
+              const itemId = submitRejectReason.dataset.itemId;
+              const reason = rejectReason.value.trim();
 
-                if (!reason) {
-                    showToast('Please provide a reason for rejection', 'error');
-                    return;
+              if (!reason) {
+                showToast('Please provide a reason for rejection', 'error');
+                return;
+              }
+
+              async function rejectReturn(orderId, itemId = null) {
+                try {
+                  const url = itemId
+                    ? `/admin/return/reject-item/${orderId}/${itemId}`
+                    : `/admin/return/reject/${orderId}`;
+                  console.log('Sending reject request to:', url); // Log the URL for debugging
+                  const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json',
+                      // Add CSRF token if required by your server
+                      // 'X-CSRF-Token': 'your-csrf-token-here'
+                    },
+                    credentials: 'include', // Include cookies for authentication
+                    body: JSON.stringify({ reason }),
+                  });
+
+                  if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                  }
+
+                  const result = await response.json();
+                  console.log('Server response:', result); // Log the response for debugging
+
+                  if (result.success) {
+                    showToast(
+                      `Return ${itemId ? 'for item' : 'for order'} #${orderId} rejected successfully`
+                    );
+                    setTimeout(() => location.reload(), 1500);
+                  } else {
+                    showToast(result.message || 'Server error', 'error');
+                  }
+                } catch (error) {
+                  console.error('Fetch error:', error); // Log the error
+                  showToast(`Error: ${error.message}`, 'error');
                 }
+              }
 
-                async function rejectReturn(orderId, itemId = null) {
-                    try {
-                        const url = itemId
-                            ? `/admin/return/reject-item/${orderId}/${itemId}`
-                            : `/admin/return/reject/${orderId}`;
-                        const response = await fetch(url, {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify({ reason })
-                        });
-
-                        const result = await response.json();
-
-                        if (result.success) {
-                            showToast(`Return ${itemId ? 'for item' : 'for order'} #${orderId} rejected successfully`);
-                            setTimeout(() => location.reload(), 1500);
-                        } else {
-                            showToast(result.message || 'Server error', 'error');
-                        }
-                    } catch (error) {
-                        console.error('Fetch error:', error);
-                        showToast('Something went wrong', 'error');
-                    }
-                }
-
-                rejectModal.classList.add('hidden');
-                rejectReason.value = '';
-                rejectReturn(orderId, itemId);
+              rejectModal.classList.add('hidden');
+              rejectReason.value = '';
+              rejectReturn(orderId, itemId);
             });
-        });
-    </script>
-</body>
+          });
+        </script>
+      </div>
+    </main>
+  </body>
 </html>

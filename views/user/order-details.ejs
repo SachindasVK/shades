@@ -4,13 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Order Details</title>
+    <title>SHADES - Order details</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="/script/script.js"></script>
-   <link rel="icon" href="favicon/favicon.ico" type="ico">
+    <link rel="icon" href="/favicon-16x16.png" type="image/png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <style>
-        
         .shop-header {
             background-color: white;
             border-bottom: 1px solid var(--border-color);
@@ -122,7 +121,7 @@
                         order.status.charAt(0).toUpperCase() + order.status.slice(1) %>
                 </span>
                 <%if(order.paymentStatus==='Failed'){%>
-                <span class="ml-3 inline-block  px-3 py-1 text-sm font-semibold rounded-full bg-green-200 text-green-800 hover:bg-green-300">
+                <span class="ml-3 inline-block  px-3 py-1 text-sm font-semibold rounded-full bg-blue-950 text-white transition ease-in hover:bg-blue-900">
                  <button class="btn-primary" id="retryBtn"
                         data-id="<%= order._id %>"
                         data-amount="<%= order.finalAmount * 100 %>">

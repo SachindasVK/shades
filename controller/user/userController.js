@@ -1,29 +1,26 @@
 const User = require('../../models/userSchema');
-const Category = require('../../models/categorySchema')
-const Product = require('../../models/productSchema')
-const Brand = require("../../models/brandSchema")
-const Wallet = require('../../models/walletSchema')
-const logger = require('../../helpers/logger')
+const Category = require('../../models/categorySchema');
+const Product = require('../../models/productSchema');
+const Brand = require('../../models/brandSchema');
+const Wallet = require('../../models/walletSchema');
+const logger = require('../../helpers/logger');
 const nodemailer = require('nodemailer');
 require('dotenv').config();
 const bcrypt = require('bcrypt');
-const mongoose = require('mongoose')
-
+const mongoose = require('mongoose');
 
 const pageNotFound = async (req, res) => {
   try {
     res.render('page-404', {
       isLoggedIn: !!(req.session.user || req.user),
       username: '',
-      message: 'Page not found'
+      message: 'Page not found',
     });
   } catch (error) {
     logger.error('404 page error:', error);
     res.status(500).send('Server error');
   }
 };
-
-
 
 function generateReferralCode(length = 8) {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
@@ -34,14 +31,13 @@ function generateReferralCode(length = 8) {
   return code;
 }
 
-
 // Nodemailer Transporter
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
     user: process.env.NODEMAILER_EMAIL,
-    pass: process.env.NODEMAILER_PASSWORD
-  }
+    pass: process.env.NODEMAILER_PASSWORD,
+  },
 });
 
 // Generate OTP
@@ -56,7 +52,7 @@ const sendVerificationEmail = async (email, otp) => {
       from: process.env.NODEMAILER_EMAIL,
       to: email,
       subject: 'SHADES - Verify Your Email',
-      text: `Your OTP for SHADES registration is: ${otp}`
+      text: `Your OTP for SHADES registration is: ${otp}`,
     };
     await transporter.sendMail(mailOptions);
     return true;
@@ -77,8 +73,6 @@ const securePassword = async (password) => {
   }
 };
 
-
-
 // Load Signup
 const loadSignup = async (req, res) => {
   try {
@@ -88,15 +82,13 @@ const loadSignup = async (req, res) => {
     res.render('signup', {
       isLoggedIn: false,
       username: '',
-      message: null
+      message: null,
     });
   } catch (error) {
     logger.error('Signup page error:', error);
     return res.status(500).render('page-404');
   }
 };
-
-
 
 const signup = async (req, res) => {
   try {
@@ -107,18 +99,18 @@ const signup = async (req, res) => {
     const trimmedPassword = password.trim();
     const trimmedCPassword = cPassword.trim();
 
-    const existingUser = await User.findOne({ email })
+    const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.render('signup', {
-        message: 'Email already exists. Please login instead.'
-      })
+        message: 'Email already exists. Please login instead.',
+      });
     }
 
     if (trimmedPassword !== trimmedCPassword) {
       return res.render('signup', {
         isLoggedIn: false,
         username: '',
-        message: 'Passwords do not match'
+        message: 'Passwords do not match',
       });
     }
 
@@ -127,7 +119,7 @@ const signup = async (req, res) => {
       return res.render('signup', {
         isLoggedIn: false,
         username: '',
-        message: 'Password must be at least 6 characters long'
+        message: 'Password must be at least 6 characters long',
       });
     }
 
@@ -136,7 +128,7 @@ const signup = async (req, res) => {
       return res.render('signup', {
         isLoggedIn: false,
         username: '',
-        message: 'User with this email already exists'
+        message: 'User with this email already exists',
       });
     }
 
@@ -146,7 +138,7 @@ const signup = async (req, res) => {
       return res.render('signup', {
         isLoggedIn: false,
         username: '',
-        message: 'Failed to send OTP. Please try again.'
+        message: 'Failed to send OTP. Please try again.',
       });
     }
 
@@ -166,7 +158,7 @@ const signup = async (req, res) => {
       name: trimmedName,
       email: trimmedEmail,
       password: hashedPassword,
-      referredBy
+      referredBy,
     };
 
     // Force session save before rendering
@@ -176,26 +168,24 @@ const signup = async (req, res) => {
         return res.render('signup', {
           isLoggedIn: false,
           username: '',
-          message: 'Session error. Please try again.'
+          message: 'Session error. Please try again.',
         });
       }
 
       res.render('verify-otp', {
         isLoggedIn: false,
         username: '',
-        email: trimmedEmail
+        email: trimmedEmail,
       });
     });
 
     logger.info(`OTP sent to: ${trimmedEmail}`);
     logger.info(`OTP: ${otp}`);
-
   } catch (error) {
-    logger.error('Signup error:',error);
-   return res.status(500).render('page-404');
+    logger.error('Signup error:', error);
+    return res.status(500).render('page-404');
   }
 };
-
 
 // Verify OTP
 const verifyOtp = async (req, res) => {
@@ -205,7 +195,7 @@ const verifyOtp = async (req, res) => {
     if (!req.session.userOtp || !req.session.userData) {
       return res.status(400).json({
         success: false,
-        message: 'Session expired. Please restart the signup process.'
+        message: 'Session expired. Please restart the signup process.',
       });
     }
 
@@ -248,7 +238,7 @@ const verifyOtp = async (req, res) => {
             amount: 220,
             transactionType: 'credit',
             transactionPurpose: 'referrals',
-            description: `Referral reward from ${savedUser.email}`
+            description: `Referral reward from ${savedUser.email}`,
           });
           await referrerWallet.save();
 
@@ -262,7 +252,7 @@ const verifyOtp = async (req, res) => {
             amount: 100,
             transactionType: 'credit',
             transactionPurpose: 'referrals',
-            description: 'Referral bonus for signing up'
+            description: 'Referral bonus for signing up',
           });
           await referredWallet.save();
 
@@ -273,7 +263,9 @@ const verifyOtp = async (req, res) => {
           savedUser.redeemed = true;
           await savedUser.save();
 
-          logger.info(`Referral success: ${referrer.email} earned ₹220, ${savedUser.email} earned ₹100`);
+          logger.info(
+            `Referral success: ${referrer.email} earned ₹220, ${savedUser.email} earned ₹100`
+          );
         }
       }
       delete req.session.userOtp;
@@ -282,20 +274,17 @@ const verifyOtp = async (req, res) => {
 
       req.session.user = savedUser._id;
       res.json({ success: true, redirectUrl: '/' });
-
     } else {
       res.status(400).json({
         success: false,
-        message: 'Invalid OTP, please try again'
+        message: 'Invalid OTP, please try again',
       });
     }
-
   } catch (error) {
     logger.error('Verify OTP error:', error);
-    return res.status(500).render('page-404')
+    return res.status(500).render('page-404');
   }
 };
-
 
 // Resend OTP with Session Recovery
 const resendOtp = async (req, res) => {
@@ -304,7 +293,7 @@ const resendOtp = async (req, res) => {
       return res.status(400).json({
         success: false,
         message: 'Session expired. Please restart the signup process.',
-        redirect: '/signup'
+        redirect: '/signup',
       });
     }
 
@@ -318,7 +307,7 @@ const resendOtp = async (req, res) => {
           return res.status(400).json({
             success: false,
             message: 'User already exists. Please login instead.',
-            redirect: '/login'
+            redirect: '/login',
           });
         }
 
@@ -337,13 +326,13 @@ const resendOtp = async (req, res) => {
           logger.info(`OTP sent successfully to: ${email}`);
           return res.status(200).json({
             success: true,
-            message: 'OTP sent successfully. Please check your email.'
+            message: 'OTP sent successfully. Please check your email.',
           });
         } else {
           logger.info(`Failed to send email to: ${email}`);
           return res.status(500).json({
             success: false,
-            message: 'Failed to send OTP. Please try again.'
+            message: 'Failed to send OTP. Please try again.',
           });
         }
       }
@@ -351,7 +340,7 @@ const resendOtp = async (req, res) => {
       return res.status(400).json({
         success: false,
         message: 'Session expired. Please restart the signup process.',
-        redirect: '/signup'
+        redirect: '/signup',
       });
     }
 
@@ -362,7 +351,7 @@ const resendOtp = async (req, res) => {
       return res.status(400).json({
         success: false,
         message: 'Email not found in session. Please restart the signup process.',
-        redirect: '/signup'
+        redirect: '/signup',
       });
     }
 
@@ -390,28 +379,26 @@ const resendOtp = async (req, res) => {
 
       res.status(200).json({
         success: true,
-        message: 'OTP resent successfully. Please check your email.'
+        message: 'OTP resent successfully. Please check your email.',
       });
     } else {
       logger.info(`Failed to send email to: ${email}`);
       res.status(500).json({
         success: false,
-        message: 'Failed to resend OTP. Please try again.'
+        message: 'Failed to resend OTP. Please try again.',
       });
     }
-
   } catch (error) {
     logger.error('Error in resendOtp:', error);
-    return res.status(500).render('page-404')
+    return res.status(500).render('page-404');
   }
 };
-
 
 // Load Login
 const loadLogin = async (req, res) => {
   try {
     if (req.session.user || req.user) {
-      const user = req.user || await User.findById(req.session.user);
+      const user = req.user || (await User.findById(req.session.user));
       if (user && !user.isBlocked) {
         return res.redirect('/');
       }
@@ -423,7 +410,7 @@ const loadLogin = async (req, res) => {
     res.render('login', {
       isLoggedIn: false,
       username: '',
-      message
+      message,
     });
   } catch (error) {
     logger.error('Login page error:', error);
@@ -444,7 +431,7 @@ const login = async (req, res) => {
     const trimmedPassword = password.trim();
 
     const findUser = await User.findOne({
-      email: trimmedEmail
+      email: trimmedEmail,
     });
 
     if (findUser && findUser.isAdmin) {
@@ -452,30 +439,29 @@ const login = async (req, res) => {
     }
 
     if (!findUser) {
-      logger.info(`User not found for email: ${trimmedEmail}`)
-      req.session.errorMessage = 'User not found!'
-      return res.redirect('/login')
+      logger.info(`User not found for email: ${trimmedEmail}`);
+      req.session.errorMessage = 'User not found!';
+      return res.redirect('/login');
     }
 
     if (findUser.isBlocked) {
       logger.info(`User is blocked: ${trimmedEmail}`);
-      req.session.errorMessage = 'User blocked by admin!'
-      return res.redirect('/login')
+      req.session.errorMessage = 'User blocked by admin!';
+      return res.redirect('/login');
     }
-
 
     if (!findUser.password) {
-      logger.info(`No password found for user: ${trimmedEmail}`)
-      req.session.errorMessage = 'Account setup incomplete. Please contact support.'
-      return res.redirect('/login')
+      logger.info(`No password found for user: ${trimmedEmail}`);
+      req.session.errorMessage = 'Account setup incomplete. Please contact support.';
+      return res.redirect('/login');
     }
-    const passwordMatch = await bcrypt.compare(trimmedPassword, findUser.password)
-    logger.info(`Password match result: ${passwordMatch}`)
+    const passwordMatch = await bcrypt.compare(trimmedPassword, findUser.password);
+    logger.info(`Password match result: ${passwordMatch}`);
 
     if (!passwordMatch) {
-      logger.info(`Password mismatch for user: ${trimmedEmail}`)
-      req.session.errorMessage = 'Incorrect password'
-      return res.redirect('/login')
+      logger.info(`Password mismatch for user: ${trimmedEmail}`);
+      req.session.errorMessage = 'Incorrect password';
+      return res.redirect('/login');
     }
 
     logger.info(`Login successful for user: ${trimmedEmail}`);
@@ -489,19 +475,14 @@ const login = async (req, res) => {
       }
 
       req.session.user = findUser._id;
-      logger.info('Session regenerated, redirecting to shop');
-      res.redirect('/shop');
+      res.redirect('/');
     });
-
   } catch (error) {
     logger.error('Login error: ', error);
     req.session.errorMessage = 'Login failed. Please try again later.';
-    return res.status(500).render('page-404')
+    return res.status(500).render('page-404');
   }
 };
-
-
-
 
 // Logout
 const logout = async (req, res) => {
@@ -509,7 +490,6 @@ const logout = async (req, res) => {
     logger.info(`Logout initiated for session: ${req.session.user}`);
 
     if (req.user) {
-
       req.logout((error) => {
         if (error) {
           logger.error('Passport logout error: ', error.message);
@@ -537,7 +517,7 @@ const logout = async (req, res) => {
         });
       });
     } else if (req.session.user) {
-      // email/password  
+      // email/password
       const userId = req.session.user;
       req.session.destroy((error) => {
         if (error) {
@@ -558,7 +538,7 @@ const logout = async (req, res) => {
   }
 };
 
-// Load Homepage
+// Homepage
 const loadHomepage = async (req, res) => {
   try {
     const userId = req.session.user || (req.user && req.user._id);
@@ -570,31 +550,36 @@ const loadHomepage = async (req, res) => {
     let newArrivals = await Product.find({
       isDeleted: false,
       isActive: true,
-      category: { $in: categories.map(category => category._id) }
-    }).populate('category').populate('brand');
+      category: { $in: categories.map((category) => category._id) },
+    })
+      .populate('category')
+      .populate('brand');
     newArrivals.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     newArrivals = newArrivals.slice(0, 12);
 
     // Best sellers
     let bestSellerProducts = await Product.find({
       isDeleted: false,
-      category: { $in: categories.map(category => category._id) }
-    }).populate('category').sort({ salesCount: -1 }).populate('brand');
+      category: { $in: categories.map((category) => category._id) },
+    })
+      .populate('category')
+      .sort({ salesCount: -1 })
+      .populate('brand');
 
     if (!bestSellerProducts[0]?.salesCount) {
       bestSellerProducts = await Product.find({
         isDeleted: false,
-        category: { $in: categories.map(category => category._id) }
-      }).populate('category')
+        category: { $in: categories.map((category) => category._id) },
+      }).populate('category');
     } else {
-      bestSellerProducts = bestSellerProducts.slice(0, 4)
+      bestSellerProducts = bestSellerProducts.slice(0, 4);
     }
 
     if (userId) {
       const userData = await User.findOne({ _id: userId });
 
       if (userData?.isBlocked) {
-        req.session.destroy(error => {
+        req.session.destroy((error) => {
           if (error) logger.error('Session destroy error: ', error.message);
           return res.redirect('/login');
         });
@@ -608,7 +593,7 @@ const loadHomepage = async (req, res) => {
         username: userData.name,
         user: userData,
         categories,
-        brands
+        brands,
       });
     }
 
@@ -619,9 +604,8 @@ const loadHomepage = async (req, res) => {
       isLoggedIn: false,
       username: '',
       categories,
-      brands
+      brands,
     });
-
   } catch (error) {
     logger.error('Home page error: ', error);
     return res.status(500).render('page-404');
@@ -630,24 +614,26 @@ const loadHomepage = async (req, res) => {
 
 const loadShoppingPage = async (req, res) => {
   try {
-
     const userId = req.session.user;
     const userData = userId ? await User.findOne({ _id: userId }) : null;
 
-    const categories = await Category.find({ isActive: true, isDeleted: false });
+    const categories = await Category.find({
+      isActive: true,
+      isDeleted: false,
+    });
     const brands = await Brand.find({ isActive: true, isDeleted: false });
 
     const page = parseInt(req.query.page) || 1;
     const searchQuery = req.query.search || '';
     const categoryFilter = req.query.category || 'all';
     const brandFilter = req.query.brand || 'all';
-    const sortOption = req.query.sort || 'new';
+    const sortOption = req.query.sort || '';
     const minPrice = req.query.minPrice ? parseInt(req.query.minPrice) : 0;
     const maxPrice = req.query.maxPrice ? parseInt(req.query.maxPrice) : Number.MAX_SAFE_INTEGER;
 
     const query = {
       isDeleted: false,
-      isActive: true
+      isActive: true,
     };
 
     if (categoryFilter !== 'all') {
@@ -702,7 +688,6 @@ const loadShoppingPage = async (req, res) => {
     const limit = 9;
     const skip = (page - 1) * limit;
 
-
     let aggregatePipeline = [
       { $match: query },
       {
@@ -711,7 +696,9 @@ const loadShoppingPage = async (req, res) => {
             $cond: {
               if: { $gt: ['$salePrice', 0] },
               then: '$salePrice',
-              else: { $cond: { if: { $gt: ['$price', 0] }, then: '$price', else: 0 } },
+              else: {
+                $cond: { if: { $gt: ['$price', 0] }, then: '$price', else: 0 },
+              },
             },
           },
           sortName: {
@@ -729,6 +716,9 @@ const loadShoppingPage = async (req, res) => {
 
     // Apply sort
     switch (sortOption) {
+      case 'new':
+        aggregatePipeline.push({ $sort: { createdAt: -1, _id: 1 } });
+        break;
       case 'price-asc':
         aggregatePipeline.push({ $sort: { displayPrice: 1, _id: 1 } });
         break;
@@ -742,9 +732,8 @@ const loadShoppingPage = async (req, res) => {
         aggregatePipeline.push({ $sort: { sortName: -1, _id: 1 } });
         break;
       default:
-        aggregatePipeline.push({ $sort: { createdAt: -1, _id: 1 } });
+        aggregatePipeline.push({ $sort: { _id: 1 } });
     }
-
     // category lookup
     aggregatePipeline.push(
       {
@@ -797,8 +786,8 @@ const loadShoppingPage = async (req, res) => {
     // wishlist status
     let productsWithWishlistStatus = products;
     if (userData) {
-      const wishlist = userData.wishlist.map(id => id.toString());
-      productsWithWishlistStatus = products.map(product => ({
+      const wishlist = userData.wishlist.map((id) => id.toString());
+      productsWithWishlistStatus = products.map((product) => ({
         ...product,
         inWishlist: wishlist.includes(product._id.toString()),
       }));
@@ -822,7 +811,7 @@ const loadShoppingPage = async (req, res) => {
           'category.isDeleted': false,
         },
       },
-      { $count: 'total' }
+      { $count: 'total' },
     ]);
 
     const totalProducts = totalProductsAgg.length > 0 ? totalProductsAgg[0].total : 0;
@@ -831,18 +820,39 @@ const loadShoppingPage = async (req, res) => {
 
     // Get price range
     const priceStatsPrice = await Product.aggregate([
-      { $match: { isDeleted: false, quantity: { $gt: 0 }, price: { $exists: true } } },
-      { $group: { _id: null, min: { $min: '$price' }, max: { $max: '$price' } } },
+      {
+        $match: {
+          isDeleted: false,
+          quantity: { $gt: 0 },
+          price: { $exists: true },
+        },
+      },
+      {
+        $group: { _id: null, min: { $min: '$price' }, max: { $max: '$price' } },
+      },
     ]);
 
     const priceStatsSalePrice = await Product.aggregate([
-      { $match: { isDeleted: false, quantity: { $gt: 0 }, salePrice: { $exists: true } } },
-      { $group: { _id: null, min: { $min: '$salePrice' }, max: { $max: '$salePrice' } } },
+      {
+        $match: {
+          isDeleted: false,
+          quantity: { $gt: 0 },
+          salePrice: { $exists: true },
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          min: { $min: '$salePrice' },
+          max: { $max: '$salePrice' },
+        },
+      },
     ]);
 
     let minPrice1 = priceStatsPrice.length > 0 ? priceStatsPrice[0].min : Number.MAX_SAFE_INTEGER;
     let maxPrice1 = priceStatsPrice.length > 0 ? priceStatsPrice[0].max : 0;
-    let minPrice2 = priceStatsSalePrice.length > 0 ? priceStatsSalePrice[0].min : Number.MAX_SAFE_INTEGER;
+    let minPrice2 =
+      priceStatsSalePrice.length > 0 ? priceStatsSalePrice[0].min : Number.MAX_SAFE_INTEGER;
     let maxPrice2 = priceStatsSalePrice.length > 0 ? priceStatsSalePrice[0].max : 0;
 
     const priceRange = {
@@ -868,8 +878,8 @@ const loadShoppingPage = async (req, res) => {
     }
 
     if (userData?.isBlocked) {
-      req.session.destroy(error => {
-        if (error) logger.error('Session destroy error:', + error.message);
+      req.session.destroy((error) => {
+        if (error) logger.error('Session destroy error:', +error.message);
         logger.info('User Blocked!');
         return res.redirect('/login');
       });
@@ -897,18 +907,17 @@ const loadShoppingPage = async (req, res) => {
       priceRange: priceRange,
     });
   } catch (error) {
-    logger.error('Error in loadShoppingPage: ', error.message);
-    return res.status(500).render('page-404')
+    logger.error('Error in loadShoppingPage: ', error);
+    return res.status(500).rendirect('/shop');
   }
 };
 
-
 const productDetails = async (req, res) => {
   try {
-    const userId = req.session.user
-    const userData = await User.findById(userId)
-    const productId = req.params.id
-    const product = await Product.findById(productId).populate('category').populate('brand')
+    const userId = req.session.user;
+    const userData = await User.findById(userId);
+    const productId = req.params.id;
+    const product = await Product.findById(productId).populate('category').populate('brand');
 
     if (!product || product.isDeleted) {
       return res.redirect('/shop');
@@ -916,12 +925,12 @@ const productDetails = async (req, res) => {
 
     const recommendations = await Product.find({
       isDeleted: false,
-      category: product.category,
-      _id: { $ne: productId }
-    })
+      brand: product.brand,
+      _id: { $ne: productId },
+    }).populate('brand')
 
     if (userData?.isBlocked) {
-      req.session.destroy(error => {
+      req.session.destroy((error) => {
         if (error) logger.error('Session destroy error:', error.message);
         return res.redirect('/login');
       });
@@ -933,14 +942,13 @@ const productDetails = async (req, res) => {
       username: userData ? userData.name : null,
       product: product,
       quantity: product.quantity,
-      recommendations
-    })
+      recommendations,
+    });
   } catch (error) {
-    logger.error('error for fetching product details ', error.message)
-    return res.status(500).render('page-404')
+    logger.error('error for fetching product details ', error.message);
+    return res.status(500).render('page-404');
   }
-}
-
+};
 
 module.exports = {
   pageNotFound,
@@ -955,4 +963,4 @@ module.exports = {
   loadShoppingPage,
   productDetails,
   generateReferralCode,
-}
+};

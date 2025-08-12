@@ -1,268 +1,312 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>SHADES - Sign up</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link rel="icon" href="/favicon-16x16.png" type="image/png">
     <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@700&display=swap"
-    rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap"
-    rel="stylesheet">
-    <link rel="stylesheet" href="/css/auth.css">
-    <link rel="icon" href="favicon/favicon.ico" type="ico">
-</head>
-<body>    
-<%-include('../../views/partials/user/authHeader')%>
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/css/auth.css" />
+  </head>
+  <body>
+    <%-include('../../views/partials/user/authHeader')%>
     <!-- Main Content -->
     <main class="main-content text-white">
-        <div class="background-text text-white">SHADES</div>
+      <div class="background-text text-white">SHADES</div>
 
-        <div class="glass-effect w-full max-w-xl p-8 md:p-10 lg:p-12 rounded-lg shadow-xl z-10 relative">
-
-            <div class="text-center mb-8">
-                <h2 class="text-3xl font-semibold text-white">SHADES</h2>
-                <div class="gradient-line my-2 mx-auto w-16"></div>
-                <p class="text-sm text-white mt-2">Create an account to discover premium eyewear</p>
-                <p class="text-sm text-white bg-red-600"><%=message%></p>
-            </div>
-            <div>
-                
-            </div>
-
-            <form class="space-y-4 text-sm sm:text-base" method="post" action="/signup" id="signform">
-                <div>
-                    <input type="text" placeholder="Full Name" name="name" id="name"
-                        class="form-input w-full px-4 py-3 bg-black border border-gray-700 rounded-md focus:outline-none text-sm text-white"
-                        required>
-                    <div id="error1" class="error-message"></div>
-                </div>
-                <div>
-                    <input type="email" placeholder="Email Address" name="email" id="email"
-                        class="form-input w-full px-4 py-3 bg-black border border-gray-700 rounded-md focus:outline-none text-sm text-white"
-                        required>
-                    <div id="error2" class="error-message"></div>
-                </div>
-                <div>
-                    <input type="password" placeholder="Password" name="password" id="password"
-                        class="form-input w-full px-4 py-3 bg-black border border-gray-700 rounded-md focus:outline-none text-sm text-white"
-                        required>
-                    <div id="error3" class="error-message"></div>
-                </div>
-                <div>
-                    <input type="password" placeholder="Confirm Password" name="cPassword" id="confirm-Password"
-                        class="form-input w-full px-4 py-3 bg-black border border-gray-700 rounded-md focus:outline-none text-sm text-white"
-                        required>
-                    <div id="error4" class="error-message"></div>
-                </div>
-                <div>
-                    <input type="text" placeholder="Referral Code (Optional)" name="referralCode" id="referralCode"
-                        class="form-input w-full px-4 py-3 bg-black border border-gray-700 rounded-md focus:outline-none text-sm text-white">
-                </div>
-                <div class="flex items-center">
-                    <input id="terms" type="checkbox"
-                        class="h-4 w-4 text-blue-500 focus:ring-blue-500 border-gray-700 rounded bg-black">
-                    <label for="terms" class="ml-2 block text-xs text-gray-400">
-                        I agree to the <a href="#" class="text-blue-500 hover:underline">Terms of Service</a> and <a
-                            href="#" class="text-blue-500 hover:underline">Privacy Policy</a>
-                    </label>
-                </div>
-                <button type="submit"
-                    class="w-full bg-blue-600 text-white py-1.5 px-4 rounded-md hover:bg-blue-500 transition duration-300 text-sm font-medium">
-                    Create Account
-                </button>
-                <div class="relative my-6">
-                    <div class="absolute inset-0 flex items-center">
-                        <div class="w-full border-t border-gray-700"></div>
-                    </div>
-                    <div class="relative flex justify-center text-xs uppercase">
-                        <span class="px-2 bg-gray-900 text-gray-500">or</span>
-                    </div>
-                </div>
-                <a href="/auth/google"
-                    class="w-full flex items-center justify-center bg-black border border-gray-800 rounded-full shadow-sm px-4 py-1.5 text-sm font-medium text-gray-100 hover:bg-gray-800 transition duration-300">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 24 24">
-                        <path
-                            d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                            fill="#4285F4" />
-                        <path
-                            d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                            fill="#34A853" />
-                        <path
-                            d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"
-                            fill="#FBBC05" />
-                        <path
-                            d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-                            fill="#EA4335" />
-                    </svg>
-                    Continue with Google
-                </a>
-            </form>
-
-            <p class="text-center text-xs text-gray-500 mt-8">
-                Already have an account? <a href="/login" class="text-blue-500 font-medium hover:underline">Sign in</a>
-            </p>
+      <div
+        class="glass-effect w-full max-w-xl p-8 md:p-10 lg:p-12 rounded-lg shadow-xl z-10 relative"
+      >
+        <div class="text-center mb-8">
+          <h2 class="text-3xl font-semibold text-white">SHADES</h2>
+          <div class="gradient-line my-2 mx-auto w-16"></div>
+          <p class="text-sm text-white mt-2">Create an account to discover premium eyewear</p>
+          <p class="text-sm text-white bg-red-600"><%=message%></p>
         </div>
+        <div></div>
+
+        <form class="space-y-4 text-sm sm:text-base" method="post" action="/signup" id="signform">
+          <div>
+            <input
+              type="text"
+              placeholder="Full Name"
+              name="name"
+              id="name"
+              class="form-input w-full px-4 py-3 bg-black border border-gray-700 rounded-md focus:outline-none text-sm text-white"
+              required
+            />
+            <div id="error1" class="error-message"></div>
+          </div>
+          <div>
+            <input
+              type="email"
+              placeholder="Email Address"
+              name="email"
+              id="email"
+              class="form-input w-full px-4 py-3 bg-black border border-gray-700 rounded-md focus:outline-none text-sm text-white"
+              required
+            />
+            <div id="error2" class="error-message"></div>
+          </div>
+          <div>
+            <input
+              type="password"
+              placeholder="Password"
+              name="password"
+              id="password"
+              class="form-input w-full px-4 py-3 bg-black border border-gray-700 rounded-md focus:outline-none text-sm text-white"
+              required
+            />
+            <div id="error3" class="error-message"></div>
+          </div>
+          <div>
+            <input
+              type="password"
+              placeholder="Confirm Password"
+              name="cPassword"
+              id="confirm-Password"
+              class="form-input w-full px-4 py-3 bg-black border border-gray-700 rounded-md focus:outline-none text-sm text-white"
+              required
+            />
+            <div id="error4" class="error-message"></div>
+          </div>
+          <div>
+            <input
+              type="text"
+              placeholder="Referral Code (Optional)"
+              name="referralCode"
+              id="referralCode"
+              class="form-input w-full px-4 py-3 bg-black border border-gray-700 rounded-md focus:outline-none text-sm text-white"
+            />
+          </div>
+          <div class="flex items-center">
+            <input
+              id="terms"
+              type="checkbox"
+              class="h-4 w-4 text-blue-500 focus:ring-blue-500 border-gray-700 rounded bg-black"
+            />
+            <label for="terms" class="ml-2 block text-xs text-gray-400">
+              I agree to the
+              <a href="#" class="text-blue-500 hover:underline">Terms of Service</a> and
+              <a href="#" class="text-blue-500 hover:underline">Privacy Policy</a>
+            </label>
+          </div>
+          <button
+            type="submit"
+            class="w-full bg-blue-600 text-white py-1.5 px-4 rounded-md hover:bg-blue-500 transition duration-300 text-sm font-medium"
+          >
+            Create Account
+          </button>
+          <div class="relative my-6">
+            <div class="absolute inset-0 flex items-center">
+              <div class="w-full border-t border-gray-700"></div>
+            </div>
+            <div class="relative flex justify-center text-xs uppercase">
+              <span class="px-2 bg-gray-900 text-gray-500">or</span>
+            </div>
+          </div>
+          <a
+            href="/auth/google"
+            class="w-full flex items-center justify-center bg-black border border-gray-800 rounded-full shadow-sm px-4 py-1.5 text-sm font-medium text-gray-100 hover:bg-gray-800 transition duration-300"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 24 24">
+              <path
+                d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                fill="#4285F4"
+              />
+              <path
+                d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                fill="#34A853"
+              />
+              <path
+                d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"
+                fill="#FBBC05"
+              />
+              <path
+                d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                fill="#EA4335"
+              />
+            </svg>
+            Continue with Google
+          </a>
+        </form>
+
+        <p class="text-center text-xs text-gray-500 mt-8">
+          Already have an account?
+          <a href="/login" class="text-blue-500 font-medium hover:underline">Sign in</a>
+        </p>
+      </div>
     </main>
     <%- include("../../views/partials/user/footer") %>
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-        <script>
-            window.addEventListener('click', function (event) {
-                const dropdowns = document.querySelectorAll('.dropdown-content');
-                dropdowns.forEach(dropdown => {
-                    if (dropdown.classList.contains('show') && !event.target.closest('.dropdown')) {
-                        dropdown.classList.remove('show');
-                    }
-                });
-            });
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+      window.addEventListener('click', function (event) {
+        const dropdowns = document.querySelectorAll('.dropdown-content');
+        dropdowns.forEach((dropdown) => {
+          if (dropdown.classList.contains('show') && !event.target.closest('.dropdown')) {
+            dropdown.classList.remove('show');
+          }
+        });
+      });
 
-            function toggleDropdown(dropdownId) {
-                event.stopPropagation();
+      function toggleDropdown(dropdownId) {
+        event.stopPropagation();
 
-                const dropdowns = document.querySelectorAll('.dropdown-content');
-                dropdowns.forEach(dropdown => {
-                    if (dropdown.id !== dropdownId && dropdown.classList.contains('show')) {
-                        dropdown.classList.remove('show');
-                    }
-                });
+        const dropdowns = document.querySelectorAll('.dropdown-content');
+        dropdowns.forEach((dropdown) => {
+          if (dropdown.id !== dropdownId && dropdown.classList.contains('show')) {
+            dropdown.classList.remove('show');
+          }
+        });
 
-                document.getElementById(dropdownId).classList.toggle('show');
-            }
+        document.getElementById(dropdownId).classList.toggle('show');
+      }
 
-            function toggleMobileMenu() {
-                console.log('Mobile menu toggled');
-            }
+      function toggleMobileMenu() {
+        console.log('Mobile menu toggled');
+      }
 
-            // Form validation functionality
-            const nameid = document.getElementById('name')
-            const emailid = document.getElementById('email')
-            const passwordid = document.getElementById('password')
-            const cPassword = document.getElementById('confirm-Password')
-            const error1 = document.getElementById('error1')
-            const error2 = document.getElementById('error2')
-            const error3 = document.getElementById('error3')
-            const error4 = document.getElementById('error4')
-            const signform = document.getElementById('signform')
-            const termsCheckbox = document.getElementById('terms')
+      // Form validation functionality
+      const nameid = document.getElementById('name');
+      const emailid = document.getElementById('email');
+      const passwordid = document.getElementById('password');
+      const cPassword = document.getElementById('confirm-Password');
+      const error1 = document.getElementById('error1');
+      const error2 = document.getElementById('error2');
+      const error3 = document.getElementById('error3');
+      const error4 = document.getElementById('error4');
+      const signform = document.getElementById('signform');
+      const termsCheckbox = document.getElementById('terms');
 
-            const referralCodeInput = document.getElementById('referralCode');
-            referralCodeInput.addEventListener('blur', () => {
-                const val = referralCodeInput.value.trim();
-                if (val && !/^[A-Z0-9]{6,10}$/i.test(val)) {
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Hold on!',
-                        text: 'Referral code must be 6–10 characters, letters or numbers.',
-                        confirmButtonText: 'OK',
-                        background: '#374151',
-                        color: '#fff',
-                        customClass: {
-                            popup: 'small-swal',
-                            title: 'small-title',
-                            confirmButton: 'small-btn'
-                        }
-                    });
-                }
-            });
+      const referralCodeInput = document.getElementById('referralCode');
+      referralCodeInput.addEventListener('blur', () => {
+        const val = referralCodeInput.value.trim();
+        if (val && !/^[A-Z0-9]{6,10}$/i.test(val)) {
+          Swal.fire({
+            icon: 'warning',
+            title: 'Hold on!',
+            text: 'Referral code must be 6–10 characters, letters or numbers.',
+            confirmButtonText: 'OK',
+            background: '#374151',
+            color: '#fff',
+            customClass: {
+              popup: 'small-swal',
+              title: 'small-title',
+              confirmButton: 'small-btn',
+            },
+          });
+        }
+      });
 
-            function nameValidateChecking() {
-                const namevalue = nameid.value.trim()
-                const namePattern = /^[A-Za-z\s]+$/
-                if (namevalue === '') {
-                    error1.style.display = 'block'
-                    error1.innerHTML = 'Please enter a valid name'
-                    return false
-                } else if (!namePattern.test(namevalue)) {
-                    error1.style.display = 'block'
-                    error1.innerHTML = 'Name can only contain alphabets and spaces'
-                    return false
-                } else {
-                    error1.style.display = 'none'
-                    return true
-                }
-            }
+      function nameValidateChecking() {
+        const namevalue = nameid.value.trim();
+        const namePattern = /^[A-Za-z\s]+$/;
+        if (namevalue === '') {
+          error1.style.display = 'block';
+          error1.innerHTML = 'Please enter a valid name';
+          return false;
+        } else if (!namePattern.test(namevalue)) {
+          error1.style.display = 'block';
+          error1.innerHTML = 'Name can only contain alphabets and spaces';
+          return false;
+        } else {
+          error1.style.display = 'none';
+          return true;
+        }
+      }
 
-            function emailValidateChecking() {
-                const emailvalue = emailid.value.trim()
-                const emailPattern = /^[a-zA-Z0-9._%+-]+@gmail\.com$/
-                if (!emailPattern.test(emailvalue)) {
-                    error2.style.display = 'block'
-                    error2.innerHTML = 'Invalid email format'
-                    return false
-                } else {
-                    error2.style.display = 'none'
-                    return true
-                }
-            }
+      function emailValidateChecking() {
+        const emailvalue = emailid.value.trim();
+        const emailPattern = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+        if (!emailPattern.test(emailvalue)) {
+          error2.style.display = 'block';
+          error2.innerHTML = 'Invalid email format';
+          return false;
+        } else {
+          error2.style.display = 'none';
+          return true;
+        }
+      }
 
-            function passwordValidateChecking() {
-                const passwordValue = passwordid.value
-                const cPassValue = cPassword.value
-                const alpha = /[A-Za-z]/
-                const digit = /\d/
-                let isValid = true
+      function passwordValidateChecking() {
+        const passwordValue = passwordid.value;
+        const cPassValue = cPassword.value;
+        const alpha = /[A-Za-z]/;
+        const digit = /\d/;
+        let isValid = true;
 
-                if (passwordValue.length < 8) {
-                    error3.style.display = 'block'
-                    error3.innerHTML = 'Should contain at least 8 characters'
-                    isValid = false
-                } else if (!alpha.test(passwordValue) || !digit.test(passwordValue)) {
-                    error3.style.display = 'block'
-                    error3.innerHTML = 'Should contain both letters and numbers'
-                    isValid = false
-                } else {
-                    error3.style.display = 'none'
-                }
+        if (passwordValue.length < 8) {
+          error3.style.display = 'block';
+          error3.innerHTML = 'Should contain at least 8 characters';
+          isValid = false;
+        } else if (!alpha.test(passwordValue) || !digit.test(passwordValue)) {
+          error3.style.display = 'block';
+          error3.innerHTML = 'Should contain both letters and numbers';
+          isValid = false;
+        } else {
+          error3.style.display = 'none';
+        }
 
-                if (passwordValue !== cPassValue) {
-                    error4.style.display = 'block'
-                    error4.innerHTML = 'Passwords do not match'
-                    isValid = false
-                } else {
-                    error4.style.display = 'none'
-                }
+        if (passwordValue !== cPassValue) {
+          error4.style.display = 'block';
+          error4.innerHTML = 'Passwords do not match';
+          isValid = false;
+        } else {
+          error4.style.display = 'none';
+        }
 
-                return isValid
-            }
+        return isValid;
+      }
 
-            signform.addEventListener('submit', (e) => {
-                const isNameValid = nameValidateChecking()
-                const isEmailValid = emailValidateChecking()
-                const isPasswordValid = passwordValidateChecking()
+      signform.addEventListener('submit', (e) => {
+        const isNameValid = nameValidateChecking();
+        const isEmailValid = emailValidateChecking();
+        const isPasswordValid = passwordValidateChecking();
 
-                if (!termsCheckbox.checked) {
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Hold on!',
-                        text: 'You must agree to the Terms of Service and Privacy Policy.',
-                        confirmButtonText: 'OK',
-                        background: '#374151',
-                        color: '#fff',
-                        customClass: {
-                            popup: 'small-swal',
-                            title: 'small-title',
-                            confirmButton: 'small-btn'
-                        }
-                    });
+        if (!termsCheckbox.checked) {
+          Swal.fire({
+            icon: 'warning',
+            title: 'Hold on!',
+            text: 'You must agree to the Terms of Service and Privacy Policy.',
+            confirmButtonText: 'OK',
+            background: '#374151',
+            color: '#fff',
+            customClass: {
+              popup: 'small-swal',
+              title: 'small-title',
+              confirmButton: 'small-btn',
+            },
+          });
 
-                    e.preventDefault(); // block form submission
-                    return;
-                }
+          e.preventDefault(); // block form submission
+          return;
+        }
 
-                if (!isNameValid || !isEmailValid || !isPasswordValid) {
-                    e.preventDefault()
-                }
-            })
+        if (!isNameValid || !isEmailValid || !isPasswordValid) {
+          e.preventDefault();
+        }
+      });
 
-            nameid.addEventListener('blur', nameValidateChecking)
-            emailid.addEventListener('blur', emailValidateChecking)
-            passwordid.addEventListener('blur', passwordValidateChecking)
-            cPassword.addEventListener('blur', passwordValidateChecking)
-        </script>
-</body>
-
+      nameid.addEventListener('blur', nameValidateChecking);
+      emailid.addEventListener('blur', emailValidateChecking);
+      passwordid.addEventListener('blur', passwordValidateChecking);
+      cPassword.addEventListener('blur', passwordValidateChecking);
+    </script>
+  </body>
 </html>

@@ -1,21 +1,21 @@
-const express = require('express')
-const router = express.Router()
-const authRoutes = require('./user/authRoutes')
-const profileRoutes = require('./user/profileRoutes')
-const orderRoutes = require('./user/orderRoutes')
-const walletRoutes = require('./user/walletRoutes')
-const wishlistRoutes = require('./user/wishlistRoutes')
-const cartRoutes = require('./user/cartRoutes')
-const addressRoutes = require('./user/addressRoutes')
-const checkoutRoutes = require('./user/checkoutRoutes')
+const express = require('express');
+const router = express.Router();
+const authRoutes = require('./user/authRoutes');
+const profileRoutes = require('./user/profileRoutes');
+const orderRoutes = require('./user/orderRoutes');
+const walletRoutes = require('./user/walletRoutes');
+const wishlistRoutes = require('./user/wishlistRoutes');
+const cartRoutes = require('./user/cartRoutes');
+const addressRoutes = require('./user/addressRoutes');
+const checkoutRoutes = require('./user/checkoutRoutes');
 
-router.use('/', authRoutes)
-router.use('/', profileRoutes)
-router.use('/', orderRoutes)
-router.use('/', walletRoutes)
-router.use('/', wishlistRoutes)
-router.use('/', cartRoutes)
-router.use('/', addressRoutes)
-router.use('/', checkoutRoutes)
+router.use('/', authRoutes);
+router.use('/', profileRoutes);
+router.use('/', orderRoutes);
+router.use('/', walletRoutes);
+router.use('/', wishlistRoutes);
+router.use('/', cartRoutes);
+router.use('/', addressRoutes);
+router.use('/', checkoutRoutes);
 
-module.exports = router
+module.exports = router;

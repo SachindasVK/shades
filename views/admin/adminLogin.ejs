@@ -1,162 +1,196 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SHADES - Admin Portal</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-  <link rel="icon" href="favicon/favicon.ico" type="ico">
-  <style>
-    .error-message{
-            color: rgb(255, 37, 37);
-            font-size: 0.75rem;
-            font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-            display: none;
-        }
-        .error-message {
-  transition: opacity 0.3s ease-in-out;
-  
-}
-
-  </style>
-</head>
-<body class="font-sans bg-gray-300 min-h-screen flex flex-col">
-  <!-- Fixed Header -->
-  <header class="bg-white border-b border-gray-200">
-    <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
-      <div class="flex items-center">
-        <span class="text-2xl font-bold tracking-tight text-gray-900">SHADES</span>
-        <span class="ml-2 text-sm font-medium px-2 py-1 bg-black text-white rounded">Admin</span>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SHADES - Admin Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" href="/favicon-16x16.png" type="image/png">
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      .error-message {
+        color: rgb(255, 37, 37);
+        font-size: 0.75rem;
+        font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+        display: none;
+      }
+      .error-message {
+        transition: opacity 0.3s ease-in-out;
+      }
+    </style>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              'shades-black': '#111111',
+              'shades-gray': '#F5F5F7',
+            },
+          },
+        },
+      };
+    </script>
+  </head>
+  <body class="font-sans bg-shades-black min-h-screen flex flex-col">
+    <!-- Fixed Header -->
+    <header class="bg-black border-b border-gray-200">
+      <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+        <div class="flex items-center">
+          <span class="text-2xl font-bold tracking-tight text-gray-100">SHADES</span>
+          <span class="ml-2 text-sm font-medium px-2 py-1 bg-white text-black rounded">Admin</span>
+        </div>
       </div>
-    </div>
-  </header>
+    </header>
 
-  <!-- Main Content -->
-  <main class="flex-grow flex items-center justify-center p-6">
-    <div class="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden">
-      <!-- Login Header with Brand Design Element -->
-      <div class="bg-black py-6 px-8 text-white relative">
-        <div class="absolute top-0 right-0 h-24 w-24 bg-white opacity-10 rounded-bl-full"></div>
-        <h2 class="text-2xl font-bold mb-1">Welcome Back</h2>
-        <p class="text-gray-300 text-sm">Sign in to your admin dashboard</p>
-      </div>
-      
-      <!-- Login Form -->
-      <div class="px-8 py-8">
-        <form class="space-y-5" action="/admin/login" method="POST">
-          <div>
-            <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email address</label>
-            <div class="relative">
-              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <i class="fas fa-envelope text-gray-400"></i>
-              </div>
-              <input id="email" name="email" type="email" autocomplete="email" required 
-                class="pl-10 block w-full border border-gray-300 rounded-lg py-2.5 text-gray-900 focus:ring-2 focus:ring-black focus:border-black text-sm" 
-                placeholder="admin@shades.com">
-                <div id="error1" class="error-message"></div>
-            </div>
-          </div>
-          
-          <div>
-            <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
-            <div class="relative">
-              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <i class="fas fa-lock text-gray-400"></i>
-              </div>
-              <input id="password" name="password" type="password" autocomplete="current-password" required 
-                class="pl-10 block w-full border border-gray-300 rounded-lg py-2.5 text-gray-900 focus:ring-2 focus:ring-black focus:border-black text-sm" 
-                placeholder="••••••••">
-                <div id="error2" class="error-message"></div>
-            </div>
-          </div>
-           <% if(message) { %>
-                <div class="bg-red-600 border border-gray-700 text-white px-2 py-0.3 rounded text-center">
-                    <%= message %>
+    <!-- Main Content -->
+    <main class="flex-grow flex items-center justify-center p-6">
+      <div class="bg-black rounded-xl shadow-xl w-full max-w-md overflow-hidden">
+        <!-- Login Header with Brand Design Element -->
+        <div class="bg-black py-6 px-8 text-white relative">
+          <div class="absolute top-0 right-0 h-24 w-24 bg-white opacity-10 rounded-bl-full"></div>
+          <h2 class="text-2xl font-bold mb-1">Welcome Back</h2>
+          <p class="text-gray-300 text-sm">Sign in to your admin dashboard</p>
+        </div>
+
+        <!-- Login Form -->
+        <div class="px-8 py-8">
+          <form class="space-y-5" action="/admin/login" method="POST">
+            <div>
+              <label for="email" class="block text-sm font-medium text-gray-300 mb-1"
+                >Email address</label
+              >
+              <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <i class="fas fa-envelope text-gray-500"></i>
                 </div>
-            <% } %>
-          <div class="flex items-center justify-between">
-            <div class="flex items-center">
-              <input id="remember-me" name="remember-me" type="checkbox" 
-                class="h-4 w-4 text-black focus:ring-black border-gray-300 rounded">
-              <label for="remember-me" class="ml-2 block text-sm text-gray-700">
-                Remember me
-              </label>
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  autocomplete="email"
+                  required
+                  class="pl-10 block w-full border border-gray-300 rounded-lg py-2.5 bg-shades-black text-white focus:ring-2 focus:ring-black focus:border-black text-sm"
+                  placeholder="admin@shades.com"
+                />
+                <div id="error1" class="error-message"></div>
+              </div>
             </div>
 
-            <a href="/forgot-password" class="text-sm font-medium text-black hover:underline">
-              Forgot password?
-            </a>
-          </div>
+            <div>
+              <label for="password" class="block text-sm font-medium text-gray-300 mb-1"
+                >Password</label
+              >
+              <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <i class="fas fa-lock text-gray-400"></i>
+                </div>
+                <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  autocomplete="current-password"
+                  required
+                  class="pl-10 block w-full border border-gray-300 rounded-lg py-2.5 bg-shades-black text-white focus:ring-2 focus:ring-black focus:border-black text-sm"
+                  placeholder="••••••••"
+                />
+                <div id="error2" class="error-message"></div>
+              </div>
+            </div>
+            <% if(message) { %>
+            <div
+              class="bg-red-600 border border-gray-700 text-white px-2 py-0.3 rounded text-center"
+            >
+              <%= message %>
+            </div>
+            <% } %>
+            <div class="flex items-center justify-between">
+              <div class="flex items-center">
+                <input
+                  id="remember-me"
+                  name="remember-me"
+                  type="checkbox"
+                  class="h-4 w-4 text-white focus:ring-black border-gray-300 rounded"
+                />
+                <label for="remember-me" class="ml-2 block text-sm text-gray-400">
+                  Remember me
+                </label>
+              </div>
 
-          <button type="submit" 
-            class="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-white bg-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black transition duration-200 ease-in-out">
-            Sign in
-          </button>
-          
-          <div class="text-center mt-6">
-            <a href="#" class="inline-flex items-center text-sm text-gray-600 hover:text-black">
-              <i class="fas fa-headset mr-2"></i> Need help? Contact Support
-            </a>
-          </div>
-        </form>
+              <a href="/forgot-password" class="text-xs text-blue-600 hover:underline">
+                Forgot password?
+              </a>
+            </div>
+
+            <button
+              type="submit"
+              class="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-white bg-gray-800 hover:bg-gray-950 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black transition ease-in"
+            >
+              Sign in
+            </button>
+
+            <div class="text-center mt-6">
+              <a href="#" class="inline-flex items-center text-xs text-gray-400 hover:text-gray-500 transition ease-in">
+                <i class="fas fa-headset mr-2"></i> Need help? Contact Support
+              </a>
+            </div>
+          </form>
+        </div>
       </div>
-    </div>
-  </main>
+    </main>
 
-  <!-- Fixed Footer -->
-  <footer class="bg-white border-t border-gray-200 py-4">
-    <div class="max-w-6xl mx-auto px-4 flex justify-between items-center text-sm text-gray-600">
-      <p>© 2025 SHADES. All Rights Reserved.</p>
-      <p>Admin Portal v2.5.3</p>
-    </div>
-  </footer>
+    <!-- Fixed Footer -->
+    <footer class="bg-black border-t border-gray-200 py-4">
+      <div class="max-w-6xl mx-auto px-4 flex justify-between items-center text-sm text-gray-400">
+        <p>© 2025 SHADES. All Rights Reserved.</p>
+        <p>Admin Portal v2.5.3</p>
+      </div>
+    </footer>
 
+    <script>
+      const emailid = document.getElementById('email');
+      const passwordid = document.getElementById('password');
+      const error1 = document.getElementById('error1');
+      const error2 = document.getElementById('error2');
 
+      function emailValidateChecking() {
+        const emailvalue = emailid.value.trim();
+        const emailPattern = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+        if (!emailPattern.test(emailvalue)) {
+          error1.style.display = 'block';
+          error1.innerHTML = 'Invalid email format';
+          return false;
+        } else {
+          error1.style.display = 'none';
+          return true;
+        }
+      }
 
-  <script>
-    const emailid = document.getElementById('email')
-    const passwordid = document.getElementById('password')
-    const error1 = document.getElementById('error1')
-    const error2 = document.getElementById('error2')
+      function passwordValidateChecking() {
+        const passwordValue = passwordid.value;
+        const alpha = /[A-Za-z]/;
+        const digit = /\d/;
+        let isValid = true;
 
-    function emailValidateChecking() {
-            const emailvalue = emailid.value.trim()
-            const emailPattern = /^[a-zA-Z0-9._%+-]+@gmail\.com$/
-            if (!emailPattern.test(emailvalue)) {
-                error1.style.display = 'block'
-                error1.innerHTML = 'Invalid email format'
-                return false
-            } else {
-                error1.style.display = 'none'
-                return true
-            }
+        if (passwordValue.length < 8) {
+          error2.style.display = 'block';
+          error2.innerHTML = 'Should contain at least 8 characters';
+          isValid = false;
+        } else if (!alpha.test(passwordValue) || !digit.test(passwordValue)) {
+          error2.style.display = 'block';
+          error2.innerHTML = 'Should contain both letters and numbers';
+          isValid = false;
+        } else {
+          error2.style.display = 'none';
         }
 
-        function passwordValidateChecking() {
-            const passwordValue = passwordid.value
-            const alpha = /[A-Za-z]/
-            const digit = /\d/
-            let isValid = true
-    
-            if (passwordValue.length < 8) {
-                error2.style.display = 'block'
-                error2.innerHTML = 'Should contain at least 8 characters'
-                isValid = false
-            } else if (!alpha.test(passwordValue) || !digit.test(passwordValue)) {
-                error2.style.display = 'block'
-                error2.innerHTML = 'Should contain both letters and numbers'
-                isValid = false
-            } else {
-                error2.style.display = 'none'
-            }
-    
-            return isValid
-        }
-    
-        emailid.addEventListener('blur', emailValidateChecking)
-        passwordid.addEventListener('blur', passwordValidateChecking)
-</script>
+        return isValid;
+      }
 
-</body>
+      emailid.addEventListener('blur', emailValidateChecking);
+      passwordid.addEventListener('blur', passwordValidateChecking);
+    </script>
+  </body>
 </html>

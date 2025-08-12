@@ -5,9 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SHADES - <%= product.name || product.productName %> - Your Store</title>
-    <link rel="icon" href="favicon/favicon.ico" type="ico">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="icon" href="/favicon-16x16.png" type="image/png">
     <script defer src="/script/script.js"></script>
     <style>
         :root {
@@ -201,7 +201,7 @@
                                     viewBox="0 0 24 24">
                                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
                                         stroke-width="2" d="m9 5 7 7-7 7"></path>
-                                </svg></i></span><span class="text-gray-500 text-xs">
+                                </svg></span><span class="text-gray-500 text-xs">
                                 <%=product.category.name%>
                             </span></li>
 
@@ -211,9 +211,12 @@
                                     viewBox="0 0 24 24">
                                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
                                         stroke-width="2" d="m9 5 7 7-7 7"></path>
-                                </svg></i></span><span class="text-gray-500 text-xs">
+                                </svg>
+                            </span>
+                            <span class="text-gray-500 text-xs">
                                 <%= product.name || product.productName %>
-                            </span></li>
+                            </span>
+                        </li>
                     </ol>
                 </nav>
             </div>
@@ -301,8 +304,10 @@
                             <div class="flex gap-3 mb-4">
                                 <%if(product.quantity===0){%>
                                     <button class="btn-add-cart add-to-cart flex items-center font-semibold"
-                                        data-product-id="<%= product._id %>" <%=product.quantity===0 ? 'disabled' : ''
-                                        %> aria-label="Add <%= product.name || product.productName %> to cart">
+                                        data-product-id="<%= product._id %>" <%=product.quantity===0
+                                        ? 'disabled="disabled"' : '' %>
+                                        aria-label="Add <%= product.name || product.productName %> to cart"
+                                            >
                                             <i class="fas fa-times-circle mr-2"></i>Out of stock
                                     </button>
                                     <%}else{%>
@@ -404,8 +409,8 @@
                                     A</div>
                                 <div class="flex-1">
                                     <div class="flex justify-between items-center mb-1">
-                                        <span class="font-semibold text-gray-800">Arunima M</span>
-                                        <span class="text-sm text-gray-400">Jul 2, 2025</span>
+                                        <span class="font-semibold text-gray-800">Arunima</span>
+                                        <span class="text-sm text-gray-400">Aug 13, 2025</span>
                                     </div>
                                     <div class="flex text-yellow-500 text-[0.7rem]  mb-2">
                                         <i class="fas fa-star mr-[1px]"></i>
@@ -426,8 +431,8 @@
                                     S</div>
                                 <div class="flex-1">
                                     <div class="flex justify-between items-center mb-1">
-                                        <span class="font-semibold text-gray-800">Sachin VK</span>
-                                        <span class="text-sm text-gray-400">Jun 25, 2025</span>
+                                        <span class="font-semibold text-gray-800">Sachin</span>
+                                        <span class="text-sm text-gray-400">july 27, 2025</span>
                                     </div>
                                     <div class="flex text-yellow-500 text-[0.7rem]  mb-2">
                                         <i class="fas fa-star mr-[1px]"></i>
@@ -469,10 +474,6 @@
                     <% if (recommendations && recommendations.length> 0) { %>
                         <div class="relative mt-8">
                             <h4 class="text-xl font-semibold mb-4">YOU MAY ALSO LIKE</h4>
-
-                            <!-- Scroll Buttons -->
-
-
                             <!-- Recommendations Container -->
                             <div class="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory"
                                 id="recommendationsContainer" style="scrollbar-width: none; -ms-overflow-style: none;">
@@ -498,7 +499,7 @@
                                         <div class="p-3">
                                             <div class="text-sm text-gray-500 mb-1 flex justify-between items-center">
                                                 <span class="uppercase">
-                                                    <%= product.brand ? product.brand.name : 'Eyewear' %>
+                                                    <%= rec.brand.name %>
                                                 </span>
                                                 <div class="text-yellow-500 text-[10px] flex">
                                                     <i class="fas fa-star mr-[1px]"></i>
@@ -511,7 +512,7 @@
 
                                             <a href="/product/details/<%= rec._id%>">
                                                 <h6 class="text-lg font-semibold mb-1 truncate">
-                                                    <%= rec.name || rec.productName %>
+                                                    <%= rec.productName %>
                                                 </h6>
                                                 <div class="flex items-baseline">
                                                     <span class="text-lg font-bold">₹<%= (rec.price ||

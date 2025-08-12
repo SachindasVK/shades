@@ -1,772 +1,802 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Manage Addresses - SHADES</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script defer src="/script/script.js"></script>
-  <link rel="icon" href="favicon/favicon.ico" type="ico">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@700&display=swap"
-    rel="stylesheet" />
-  <style>
-    :root {
-      --primary-color: #191a1d;
-    }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SHADES - Manage addresses</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="/script/script.js"></script>
+    <link rel="icon" href="/favicon-16x16.png" type="image/png">
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --primary-color: #191a1d;
+      }
 
-    body {
-      font-family: "Inter", sans-serif;
-      background-color: #f5f5f5;
-    }
+      body {
+        font-family: 'Inter', sans-serif;
+        background-color: #f5f5f5;
+      }
 
-    .page-body {
-      background-color: #ffffff;
-    }
+      .page-body {
+        background-color: #ffffff;
+      }
 
-    .container {
-      max-width: 95%;
-      margin-left: auto;
-      margin-right: auto;
-      padding: 0.5rem;
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
-
-    .sidebar {
-      width: 100%;
-      background-color: #ffffff;
-      border-radius: 0.5rem;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
-        0 2px 4px -1px rgba(0, 0, 0, 0.06);
-      height: fit-content;
-      display: none;
-    }
-
-    .sidebar.active {
-      display: block;
-    }
-
-    .sidebar-toggle {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 0.5rem;
-      background-color: var(--primary-color);
-      color: white;
-      border-radius: 0.25rem;
-      cursor: pointer;
-      font-size: 0.9rem;
-      touch-action: manipulation;
-    }
-
-    .profile-header {
-      padding: 1rem;
-      border-bottom: 1px solid #e5e7eb;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      position: relative;
-    }
-
-    .profile-icon {
-      width: 2.5rem;
-      height: 2.5rem;
-      background-color: #a1a1a1;
-      border-radius: 9999px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .profile-image {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      border-radius: 9999px;
-    }
-
-    .profile-icon i {
-      color: #ffffff;
-      font-size: 1rem;
-    }
-
-    .greeting {
-      color: #6b7280;
-      font-size: 0.8rem;
-    }
-
-    .username {
-      color: #1f2937;
-      font-weight: 600;
-      font-size: 0.9rem;
-    }
-
-    .menu {
-      padding: 0;
-    }
-
-    .menu-list {
-      margin: 0;
-    }
-
-    .menu-item {
-      border-bottom: 1px solid #f3f4f6;
-    }
-
-    .menu-link {
-      display: flex;
-      align-items: center;
-      padding: 0.8rem 1rem;
-      color: #000000;
-      font-size: 0.8rem;
-      touch-action: manipulation;
-    }
-
-    .menu-link:hover {
-      background-color: #f9fafb;
-    }
-
-    .menu-link.active {
-      background-color: #eff6ff;
-      color: var(--primary-color);
-    }
-
-    .menu-icon {
-      width: 1rem;
-      margin-right: 0.5rem;
-    }
-
-    .logout-link {
-      display: flex;
-      align-items: center;
-      padding: 0.8rem 1rem;
-      color: #dc2626;
-      font-size: 0.8rem;
-      touch-action: manipulation;
-    }
-
-    .logout-link:hover {
-      background-color: #fef2f2;
-    }
-
-    .main-content {
-      flex: 1;
-      background-color: #ffffff;
-      border-radius: 0.5rem;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
-        0 2px 4px -1px rgba(0, 0, 0, 0.06);
-      padding: 1rem;
-    }
-
-    .section-title {
-      font-size: 1rem;
-      font-weight: 600;
-      color: #1f2937;
-      margin-bottom: 1rem;
-    }
-
-    .form-group {
-      margin-bottom: 1rem;
-    }
-
-    .form-label {
-      font-size: 0.8rem;
-      font-weight: 500;
-      color: #1f2937;
-      margin-bottom: 0.25rem;
-    }
-
-    .required {
-      color: #ef4444;
-    }
-
-    .form-input,
-    .form-select {
-      margin-top: 0.25rem;
-      width: 100%;
-      padding: 0.4rem;
-      border: 1px solid #d1d5db;
-      border-radius: 0.5rem;
-      font-size: 0.8rem;
-      transition: all 0.2s ease;
-    }
-
-    .form-input:focus,
-    .form-select:focus {
-      outline: none;
-      border-color: #000000;
-      box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
-    }
-
-    .form-input:invalid:not(:placeholder-shown) {
-      border-color: #ef4444;
-    }
-
-    .radio-group,
-    .checkbox-group {
-      display: flex;
-      gap: 0.75rem;
-      align-items: center;
-      margin-top: 0.5rem;
-    }
-
-    .radio-label,
-    .checkbox-label {
-      font-size: 0.75rem;
-      color: #1f2937;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .form-radio,
-    .form-checkbox {
-      accent-color: #002fff;
-      margin-right: 0.25rem;
-    }
-
-    .form-row {
-      display: flex;
-      gap: 1rem;
-      flex-wrap: wrap;
-    }
-
-    .form-row .form-group {
-      flex: 1;
-      min-width: 160px;
-    }
-
-    .button-group {
-      display: flex;
-      gap: 0.5rem;
-      margin-top: 0.75rem;
-      justify-content: flex-end;
-    }
-
-    .btn {
-      width: auto;
-      padding: 0.6rem 1.2rem;
-      border-radius: 0.25rem;
-      font-size: 0.8rem;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .btn-primary {
-      background-color: #000000;
-      color: white;
-      border: none;
-    }
-
-    .btn-primary:hover {
-      background-color: #272727;
-    }
-
-    .btn-secondary {
-      border: 1px solid #ffffff;
-      color: #ffffff;
-      background-color: gray;
-    }
-
-    .btn-secondary:hover {
-      background-color: #9c9c9c;
-    }
-
-    .btn-danger {
-      background-color: #ef4444;
-      color: white;
-    }
-
-    .btn-danger:hover {
-      background-color: #dc2626;
-    }
-
-    .add-button {
-      color: #006eff;
-      padding: 0.25rem 0.5rem;
-      border-radius: 0.25rem;
-      background-color: transparent;
-      cursor: pointer;
-      font-size: 0.8rem;
-      text-align: center;
-      transition: all 0.2s ease;
-      display: block;
-      margin-bottom: 0.75rem;
-    }
-
-    .address-item {
-      display: flex;
-      align-items: flex-start;
-      background-color: #f9fafb;
-      padding: 0.75rem;
-      border-radius: 0.5rem;
-      margin-bottom: 0.75rem;
-      border: 1px solid #e5e7eb;
-      transition: all 0.3s ease;
-    }
-
-    .address-details {
-      margin-left: 0.5rem;
-      flex: 1;
-    }
-
-    .address-actions {
-      display: flex;
-      gap: 0.5rem;
-    }
-
-    .action-button {
-      color: #000000;
-      text-decoration: none;
-      font-size: 0.8rem;
-      background: none;
-      border: none;
-      cursor: pointer;
-      padding: 0.25rem 0.5rem;
-      border-radius: 0.25rem;
-      transition: all 0.2s ease;
-    }
-
-    .action-button:hover {
-      background-color: #ede9fe;
-    }
-
-    .address-type-badge {
-      font-size: 0.65rem;
-      padding: 0.2rem 0.5rem;
-      border-radius: 0.25rem;
-      margin-left: 0.5rem;
-    }
-
-    .default-badge {
-      font-size: 0.65rem;
-      padding: 0.2rem 0.5rem;
-      border-radius: 0.25rem;
-      margin-left: 0.5rem;
-      background-color: #fef3c7;
-      color: #92400e;
-    }
-
-    .address-radio {
-      margin-top: 0.25rem;
-      accent-color: #1a29ff;
-    }
-
-    .modal-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.5);
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-      display: none;
-    }
-
-    .modal-overlay.modal-visible {
-      display: flex;
-    }
-
-    .modal-content {
-      background-color: white;
-      padding: 1rem;
-      border-radius: 0.75rem;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
-      width: 100%;
-      max-width: 32rem;
-      max-height: 85vh;
-      overflow-y: auto;
-    }
-
-    .modal-header {
-      padding-bottom: 0.75rem;
-      margin-bottom: 1rem;
-    }
-
-    .modal-title {
-      font-size: 1rem;
-      font-weight: 600;
-      color: #1f2937;
-    }
-
-    .error-message {
-      color: #ef4444;
-      font-size: 0.75rem;
-      margin-top: 0.25rem;
-      display: none;
-    }
-
-    .font-playfair {
-      font-family: "Playfair Display", serif;
-    }
-
-    .dropdown-content {
-      display: none;
-    }
-
-    .dropdown-content.show {
-      display: block;
-    }
-
-    .hidden:not(.md\:flex) {
-      display: none !important;
-    }
-
-    @media (min-width: 768px) {
       .container {
-        flex-direction: row;
-        padding: 1rem;
+        max-width: 95%;
+        margin-left: auto;
+        margin-right: auto;
+        padding: 0.5rem;
+        display: flex;
+        flex-direction: column;
         gap: 1rem;
       }
 
       .sidebar {
-        width: 20rem;
+        width: 100%;
+        background-color: #ffffff;
+        border-radius: 0.5rem;
+        box-shadow:
+          0 4px 6px -1px rgba(0, 0, 0, 0.1),
+          0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        height: fit-content;
+        display: none;
+      }
+
+      .sidebar.active {
         display: block;
       }
 
       .sidebar-toggle {
-        display: none;
-      }
-
-      .main-content {
-        padding: 1.5rem;
-      }
-
-      .section-title {
-        font-size: 1.125rem;
-        margin-bottom: 1.25rem;
-      }
-
-      .form-group {
-        margin-bottom: 1.25rem;
-      }
-
-      .form-label {
-        font-size: 0.875rem;
-      }
-
-      .form-input,
-      .form-select {
+        display: flex;
+        align-items: center;
+        justify-content: center;
         padding: 0.5rem;
-        font-size: 0.875rem;
-      }
-
-      .radio-label,
-      .checkbox-label {
-        font-size: 0.875rem;
-      }
-
-      .form-row .form-group {
-        min-width: 180px;
-      }
-
-      .btn {
-        padding: 0.8rem 1.4rem;
-        font-size: 0.875rem;
-      }
-
-      .add-button {
-        font-size: 0.875rem;
-        padding: 0.5rem 1rem;
-      }
-
-      .address-item {
-        padding: 1rem;
-      }
-
-      .address-details {
-        margin-left: 0.75rem;
-      }
-
-      .action-button {
-        font-size: 0.875rem;
-      }
-
-      .address-type-badge {
-        font-size: 0.75rem;
-      }
-
-      .modal-content {
-        padding: 1.5rem;
-        max-width: 40rem;
-      }
-
-      .modal-title {
-        font-size: 1.125rem;
-      }
-
-      .error-message {
-        font-size: 0.875rem;
+        background-color: var(--primary-color);
+        color: white;
+        border-radius: 0.25rem;
+        cursor: pointer;
+        font-size: 0.9rem;
+        touch-action: manipulation;
       }
 
       .profile-header {
-        padding: 1.25rem;
-        gap: 0.75rem;
+        padding: 1rem;
+        border-bottom: 1px solid #e5e7eb;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        position: relative;
       }
 
       .profile-icon {
-        width: 3rem;
-        height: 3rem;
+        width: 2.5rem;
+        height: 2.5rem;
+        background-color: #a1a1a1;
+        border-radius: 9999px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .profile-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 9999px;
       }
 
       .profile-icon i {
-        font-size: 1.125rem;
-      }
-
-      .greeting {
-        font-size: 0.875rem;
-      }
-
-      .username {
+        color: #ffffff;
         font-size: 1rem;
       }
 
-      .menu-link,
-      .logout-link {
-        padding: 1rem 1.25rem;
-        font-size: 0.875rem;
+      .greeting {
+        color: #6b7280;
+        font-size: 0.8rem;
       }
 
-      .menu-icon {
-        width: 1.25rem;
-        margin-right: 0.75rem;
-      }
-
-      .hidden.md\:flex {
-        display: flex !important;
-      }
-    }
-
-    @media (max-width: 479px) {
-      .section-title {
+      .username {
+        color: #1f2937;
+        font-weight: 600;
         font-size: 0.9rem;
       }
 
+      .menu {
+        padding: 0;
+      }
+
+      .menu-list {
+        margin: 0;
+      }
+
+      .menu-item {
+        border-bottom: 1px solid #f3f4f6;
+      }
+
+      .menu-link {
+        display: flex;
+        align-items: center;
+        padding: 0.8rem 1rem;
+        color: #000000;
+        font-size: 0.8rem;
+        touch-action: manipulation;
+      }
+
+      .menu-link:hover {
+        background-color: #f9fafb;
+      }
+
+      .menu-link.active {
+        background-color: #eff6ff;
+        color: var(--primary-color);
+      }
+
+      .menu-icon {
+        width: 1rem;
+        margin-right: 0.5rem;
+      }
+
+      .logout-link {
+        display: flex;
+        align-items: center;
+        padding: 0.8rem 1rem;
+        color: #dc2626;
+        font-size: 0.8rem;
+        touch-action: manipulation;
+      }
+
+      .logout-link:hover {
+        background-color: #fef2f2;
+      }
+
+      .main-content {
+        flex: 1;
+        background-color: #ffffff;
+        border-radius: 0.5rem;
+        box-shadow:
+          0 4px 6px -1px rgba(0, 0, 0, 0.1),
+          0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        padding: 1rem;
+      }
+
+      .section-title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #1f2937;
+        margin-bottom: 1rem;
+      }
+
       .form-group {
-        margin-bottom: 0.75rem;
+        margin-bottom: 1rem;
       }
 
       .form-label {
-        font-size: 0.75rem;
+        font-size: 0.8rem;
+        font-weight: 500;
+        color: #1f2937;
+        margin-bottom: 0.25rem;
+      }
+
+      .required {
+        color: #ef4444;
       }
 
       .form-input,
       .form-select {
-        padding: 0.3rem;
-        font-size: 0.75rem;
+        margin-top: 0.25rem;
+        width: 100%;
+        padding: 0.4rem;
+        border: 1px solid #d1d5db;
+        border-radius: 0.5rem;
+        font-size: 0.8rem;
+        transition: all 0.2s ease;
+      }
+
+      .form-input:focus,
+      .form-select:focus {
+        outline: none;
+        border-color: #000000;
+        box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+      }
+
+      .form-input:invalid:not(:placeholder-shown) {
+        border-color: #ef4444;
+      }
+
+      .radio-group,
+      .checkbox-group {
+        display: flex;
+        gap: 0.75rem;
+        align-items: center;
+        margin-top: 0.5rem;
       }
 
       .radio-label,
       .checkbox-label {
-        font-size: 0.7rem;
+        font-size: 0.75rem;
+        color: #1f2937;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .form-radio,
+      .form-checkbox {
+        accent-color: #002fff;
+        margin-right: 0.25rem;
+      }
+
+      .form-row {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
       }
 
       .form-row .form-group {
-        min-width: 140px;
+        flex: 1;
+        min-width: 160px;
+      }
+
+      .button-group {
+        display: flex;
+        gap: 0.5rem;
+        margin-top: 0.75rem;
+        justify-content: flex-end;
       }
 
       .btn {
-        padding: 0.5rem 1rem;
-        font-size: 0.75rem;
+        width: auto;
+        padding: 0.6rem 1.2rem;
+        border-radius: 0.25rem;
+        font-size: 0.8rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .btn-primary {
+        background-color: #000000;
+        color: white;
+        border: none;
+      }
+
+      .btn-primary:hover {
+        background-color: #272727;
+      }
+
+      .btn-secondary {
+        border: 1px solid #ffffff;
+        color: #ffffff;
+        background-color: gray;
+      }
+
+      .btn-secondary:hover {
+        background-color: #9c9c9c;
+      }
+
+      .btn-danger {
+        background-color: #ef4444;
+        color: white;
+      }
+
+      .btn-danger:hover {
+        background-color: #dc2626;
       }
 
       .add-button {
-        font-size: 0.75rem;
+        color: #006eff;
         padding: 0.25rem 0.5rem;
+        border-radius: 0.25rem;
+        background-color: transparent;
+        cursor: pointer;
+        font-size: 0.8rem;
+        text-align: center;
+        transition: all 0.2s ease;
+        display: block;
+        margin-bottom: 0.75rem;
       }
 
       .address-item {
-        padding: 0.5rem;
+        display: flex;
+        align-items: flex-start;
+        background-color: #f9fafb;
+        padding: 0.75rem;
+        border-radius: 0.5rem;
+        margin-bottom: 0.75rem;
+        border: 1px solid #e5e7eb;
+        transition: all 0.3s ease;
       }
 
       .address-details {
         margin-left: 0.5rem;
+        flex: 1;
+      }
+
+      .address-actions {
+        display: flex;
+        gap: 0.5rem;
       }
 
       .action-button {
-        font-size: 0.75rem;
-        padding: 0.2rem 0.4rem;
+        color: #000000;
+        text-decoration: none;
+        font-size: 0.8rem;
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0.25rem 0.5rem;
+        border-radius: 0.25rem;
+        transition: all 0.2s ease;
+      }
+
+      .action-button:hover {
+        background-color: #ede9fe;
       }
 
       .address-type-badge {
-        font-size: 0.6rem;
-        padding: 0.15rem 0.4rem;
+        font-size: 0.65rem;
+        padding: 0.2rem 0.5rem;
+        border-radius: 0.25rem;
+        margin-left: 0.5rem;
       }
 
       .default-badge {
-        font-size: 0.6rem;
-        padding: 0.15rem 0.4rem;
+        font-size: 0.65rem;
+        padding: 0.2rem 0.5rem;
+        border-radius: 0.25rem;
+        margin-left: 0.5rem;
+        background-color: #fef3c7;
+        color: #92400e;
+      }
+
+      .address-radio {
+        margin-top: 0.25rem;
+        accent-color: #1a29ff;
+      }
+
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        display: none;
+      }
+
+      .modal-overlay.modal-visible {
+        display: flex;
       }
 
       .modal-content {
-        padding: 0.75rem;
-        max-width: 95%;
+        background-color: white;
+        padding: 1rem;
+        border-radius: 0.75rem;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+        width: 100%;
+        max-width: 32rem;
+        max-height: 85vh;
+        overflow-y: auto;
+      }
+
+      .modal-header {
+        padding-bottom: 0.75rem;
+        margin-bottom: 1rem;
       }
 
       .modal-title {
-        font-size: 0.9rem;
+        font-size: 1rem;
+        font-weight: 600;
+        color: #1f2937;
       }
 
       .error-message {
-        font-size: 0.7rem;
-      }
-
-      .profile-header {
-        padding: 0.75rem;
-      }
-
-      .profile-icon {
-        width: 2rem;
-        height: 2rem;
-      }
-
-      .profile-icon i {
-        font-size: 0.9rem;
-      }
-
-      .greeting,
-      .username {
+        color: #ef4444;
         font-size: 0.75rem;
+        margin-top: 0.25rem;
+        display: none;
       }
 
-      .menu-link,
-      .logout-link {
-        padding: 0.6rem 0.8rem;
-        font-size: 0.75rem;
+      .font-playfair {
+        font-family: 'Playfair Display', serif;
       }
 
-      .menu-icon {
-        width: 0.9rem;
-        margin-right: 0.4rem;
+      .dropdown-content {
+        display: none;
       }
-    }
-  </style>
-</head>
-<body class="page-body">
-  <!-- Header Partial -->
-  <%- include("../../views/partials/user/header") %>
 
-  <div class="container">
-    <button class="sidebar-toggle md:hidden" onclick="toggleSidebar()">
-      <i class="fas fa-bars mr-2"></i> Menu
-    </button>
-    <div class="sidebar" id="sidebar">
-      <div class="profile-header">
-        <div class="profile-icon">
-          <% if (user.image) { %>
-            <img src="<%= user.image %>" alt="Profile Image" class="profile-image"
-                 onerror="this.src='https://via.placeholder.com/80?text=Profile'" />
-          <% } else { %>
+      .dropdown-content.show {
+        display: block;
+      }
+
+      .hidden:not(.md\:flex) {
+        display: none !important;
+      }
+
+      @media (min-width: 768px) {
+        .container {
+          flex-direction: row;
+          padding: 1rem;
+          gap: 1rem;
+        }
+
+        .sidebar {
+          width: 20rem;
+          display: block;
+        }
+
+        .sidebar-toggle {
+          display: none;
+        }
+
+        .main-content {
+          padding: 1.5rem;
+        }
+
+        .section-title {
+          font-size: 1.125rem;
+          margin-bottom: 1.25rem;
+        }
+
+        .form-group {
+          margin-bottom: 1.25rem;
+        }
+
+        .form-label {
+          font-size: 0.875rem;
+        }
+
+        .form-input,
+        .form-select {
+          padding: 0.5rem;
+          font-size: 0.875rem;
+        }
+
+        .radio-label,
+        .checkbox-label {
+          font-size: 0.875rem;
+        }
+
+        .form-row .form-group {
+          min-width: 180px;
+        }
+
+        .btn {
+          padding: 0.8rem 1.4rem;
+          font-size: 0.875rem;
+        }
+
+        .add-button {
+          font-size: 0.875rem;
+          padding: 0.5rem 1rem;
+        }
+
+        .address-item {
+          padding: 1rem;
+        }
+
+        .address-details {
+          margin-left: 0.75rem;
+        }
+
+        .action-button {
+          font-size: 0.875rem;
+        }
+
+        .address-type-badge {
+          font-size: 0.75rem;
+        }
+
+        .modal-content {
+          padding: 1.5rem;
+          max-width: 40rem;
+        }
+
+        .modal-title {
+          font-size: 1.125rem;
+        }
+
+        .error-message {
+          font-size: 0.875rem;
+        }
+
+        .profile-header {
+          padding: 1.25rem;
+          gap: 0.75rem;
+        }
+
+        .profile-icon {
+          width: 3rem;
+          height: 3rem;
+        }
+
+        .profile-icon i {
+          font-size: 1.125rem;
+        }
+
+        .greeting {
+          font-size: 0.875rem;
+        }
+
+        .username {
+          font-size: 1rem;
+        }
+
+        .menu-link,
+        .logout-link {
+          padding: 1rem 1.25rem;
+          font-size: 0.875rem;
+        }
+
+        .menu-icon {
+          width: 1.25rem;
+          margin-right: 0.75rem;
+        }
+
+        .hidden.md\:flex {
+          display: flex !important;
+        }
+      }
+
+      @media (max-width: 479px) {
+        .section-title {
+          font-size: 0.9rem;
+        }
+
+        .form-group {
+          margin-bottom: 0.75rem;
+        }
+
+        .form-label {
+          font-size: 0.75rem;
+        }
+
+        .form-input,
+        .form-select {
+          padding: 0.3rem;
+          font-size: 0.75rem;
+        }
+
+        .radio-label,
+        .checkbox-label {
+          font-size: 0.7rem;
+        }
+
+        .form-row .form-group {
+          min-width: 140px;
+        }
+
+        .btn {
+          padding: 0.5rem 1rem;
+          font-size: 0.75rem;
+        }
+
+        .add-button {
+          font-size: 0.75rem;
+          padding: 0.25rem 0.5rem;
+        }
+
+        .address-item {
+          padding: 0.5rem;
+        }
+
+        .address-details {
+          margin-left: 0.5rem;
+        }
+
+        .action-button {
+          font-size: 0.75rem;
+          padding: 0.2rem 0.4rem;
+        }
+
+        .address-type-badge {
+          font-size: 0.6rem;
+          padding: 0.15rem 0.4rem;
+        }
+
+        .default-badge {
+          font-size: 0.6rem;
+          padding: 0.15rem 0.4rem;
+        }
+
+        .modal-content {
+          padding: 0.75rem;
+          max-width: 95%;
+        }
+
+        .modal-title {
+          font-size: 0.9rem;
+        }
+
+        .error-message {
+          font-size: 0.7rem;
+        }
+
+        .profile-header {
+          padding: 0.75rem;
+        }
+
+        .profile-icon {
+          width: 2rem;
+          height: 2rem;
+        }
+
+        .profile-icon i {
+          font-size: 0.9rem;
+        }
+
+        .greeting,
+        .username {
+          font-size: 0.75rem;
+        }
+
+        .menu-link,
+        .logout-link {
+          padding: 0.6rem 0.8rem;
+          font-size: 0.75rem;
+        }
+
+        .menu-icon {
+          width: 0.9rem;
+          margin-right: 0.4rem;
+        }
+      }
+    </style>
+  </head>
+  <body class="page-body">
+    <!-- Header Partial -->
+    <%- include("../../views/partials/user/header") %>
+
+    <div class="container">
+      <button class="sidebar-toggle md:hidden" onclick="toggleSidebar()">
+        <i class="fas fa-bars mr-2"></i> Menu
+      </button>
+      <div class="sidebar" id="sidebar">
+        <div class="profile-header">
+          <div class="profile-icon">
+            <% if (user.image) { %>
+            <img
+              src="<%= user.image %>"
+              alt="Profile Image"
+              class="profile-image"
+              onerror="this.src='https://via.placeholder.com/80?text=Profile'"
+            />
+            <% } else { %>
             <i class="fas fa-user"></i>
-          <% } %>
-        </div>
-        <div>
-          <div class="greeting">Hello,</div>
-          <div class="username">
-            <%= user.name %>
+            <% } %>
+          </div>
+          <div>
+            <div class="greeting">Hello,</div>
+            <div class="username"><%= user.name %></div>
           </div>
         </div>
-      </div>
-      <nav class="menu">
-        <ul class="menu-list">
-          <li class="menu-item">
-            <a href="/profile" class="menu-link">
-              <i class="fas fa-user menu-icon"></i>
-              Profile Information
-            </a>
-          </li>
-          <li class="menu-item">
-            <a href="/orders" class="menu-link">
-              <i class="fas fa-box menu-icon"></i>
-              My Orders
-            </a>
-          </li>
-          <li class="menu-item">
-            <a href="/address" class="menu-link active">
-              <i class="fas fa-home menu-icon"></i>
-              Manage Addresses
-            </a>
-          </li>
-          <li class="menu-item">
-            <a href="/wallet" class="menu-link">
-              <i class="fas fa-wallet menu-icon"></i>
-              My Wallet
-            </a>
-          </li>
-          <li class="menu-item">
-            <a href="/wishlist" class="menu-link">
-              <i class="fas fa-heart menu-icon"></i>
-              My Wishlist
-            </a>
-          </li>
-          <li class="menu-item">
-            <a href="/referrals" class="menu-link">
-              <i class="fas fa-users menu-icon"></i>
-              Refer Friends
-            </a>
-          </li>
-          <li class="menu-item">
-            <a href="/changepassword" class="menu-link">
-              <i class="fas fa-lock menu-icon"></i>
-              Change Password
-            </a>
-          </li>
-          <li class="menu-item">
-            <a href="/logout" class="logout-link">
-              <i class="fas fa-sign-out-alt menu-icon"></i>
-              Log Out
-            </a>
-          </li>
-        </ul>
-      </nav>
-    </div>
-
-    <!-- Main Content -->
-    <div class="main-content">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-        <h2 class="section-title">
-          <i class="fas fa-map-marker-alt mr-2 text-red-600"></i>Manage Addresses
-        </h2>
-        <button class="add-button" onclick="openAddAddressModal()">
-          <i class="fas fa-plus mr-1"></i> Add New Address
-        </button>
+        <nav class="menu">
+          <ul class="menu-list">
+            <li class="menu-item">
+              <a href="/profile" class="menu-link">
+                <i class="fas fa-user menu-icon"></i>
+                Profile Information
+              </a>
+            </li>
+            <li class="menu-item">
+              <a href="/orders" class="menu-link">
+                <i class="fas fa-box menu-icon"></i>
+                My Orders
+              </a>
+            </li>
+            <li class="menu-item">
+              <a href="/address" class="menu-link active">
+                <i class="fas fa-home menu-icon"></i>
+                Manage Addresses
+              </a>
+            </li>
+            <li class="menu-item">
+              <a href="/wallet" class="menu-link">
+                <i class="fas fa-wallet menu-icon"></i>
+                My Wallet
+              </a>
+            </li>
+            <li class="menu-item">
+              <a href="/wishlist" class="menu-link">
+                <i class="fas fa-heart menu-icon"></i>
+                My Wishlist
+              </a>
+            </li>
+            <li class="menu-item">
+              <a href="/referrals" class="menu-link">
+                <i class="fas fa-users menu-icon"></i>
+                Refer Friends
+              </a>
+            </li>
+            <li class="menu-item">
+              <a href="/changepassword" class="menu-link">
+                <i class="fas fa-lock menu-icon"></i>
+                Change Password
+              </a>
+            </li>
+            <li class="menu-item">
+              <a href="/logout" class="logout-link">
+                <i class="fas fa-sign-out-alt menu-icon"></i>
+                Log Out
+              </a>
+            </li>
+          </ul>
+        </nav>
       </div>
 
-      <div id="addressList">
-        <% if (user.addresses && user.addresses.length > 0) { %>
-          <% user.addresses.forEach((address, index) => { %>
-            <div class="address-item" data-id="<%= address._id %>">
-              <div style="display: flex; align-items: flex-start">
-                <div class="address-details">
-                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; flex-wrap: wrap; gap: 0.5rem;">
-                    <div style="display: flex; align-items: center; gap: 0.5rem;">
-                      <span style="font-weight: 600; font-size: 0.9rem; color: #1f2937;">
-                        <%= address.fullName %>
-                      </span>
-                      <% if (address.addressType === 'Home') { %>
-                        <span class="address-type-badge" style="background-color: #dbeafe; color: #1e3a8a;">
-                          <i class="fas fa-home mr-1"></i> HOME
-                        </span>
-                      <% } else { %>
-                        <span class="address-type-badge" style="background-color: #d1fae5; color: #065f46;">
-                          <i class="fas fa-briefcase mr-1"></i> WORK
-                        </span>
-                      <% } %>
-                      <% if (address.isDefault) { %>
-                        <span class="default-badge">
-                          <i class="fas fa-check mr-1"></i> DEFAULT
-                        </span>
-                      <% } %>
-                    </div>
-                    <div class="address-actions">
-                      <button class="action-button" onclick="openEditAddressModal(
+      <!-- Main Content -->
+      <div class="main-content">
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+          "
+        >
+          <h2 class="section-title">
+            <i class="fas fa-map-marker-alt mr-2 text-black"></i>Manage Addresses
+          </h2>
+          <button class="add-button" onclick="openAddAddressModal()">
+            <i class="fas fa-plus mr-1"></i> Add New Address
+          </button>
+        </div>
+
+        <div id="addressList">
+          <% if (user.addresses && user.addresses.length > 0) { %> <%
+          user.addresses.forEach((address, index) => { %>
+          <div class="address-item" data-id="<%= address._id %>">
+            <div style="display: flex; align-items: flex-start">
+              <div class="address-details">
+                <div
+                  style="
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-bottom: 0.5rem;
+                    flex-wrap: wrap;
+                    gap: 0.5rem;
+                  "
+                >
+                  <div style="display: flex; align-items: center; gap: 0.5rem">
+                    <span style="font-weight: 600; font-size: 0.9rem; color: #1f2937">
+                      <%= address.fullName %>
+                    </span>
+                    <% if (address.addressType === 'Home') { %>
+                    <span
+                      class="address-type-badge"
+                      style="background-color: #dbeafe; color: #1e3a8a"
+                    >
+                      <i class="fas fa-home mr-1"></i> HOME
+                    </span>
+                    <% } else { %>
+                    <span
+                      class="address-type-badge"
+                      style="background-color: #d1fae5; color: #065f46"
+                    >
+                      <i class="fas fa-briefcase mr-1"></i> WORK
+                    </span>
+                    <% } %>
+                    <% if (address.isDefault) { %>
+                    <span class="default-badge"> <i class="fas fa-check mr-1"></i> DEFAULT </span>
+                    <% } %>
+                  </div>
+                  <div class="address-actions">
+                    <button
+                      class="action-button"
+                      onclick="openEditAddressModal(
                         '<%= address._id %>', 
                         '<%= address.fullName %>', 
                         '<%= address.phone %>', 
@@ -778,176 +808,258 @@
                         '<%= address.state %>', 
                         '<%= address.addressType %>', 
                         '<%= address.isDefault %>'
-                      )">
-                        <i class="fas fa-edit mr-1"></i> Edit
-                      </button>
-                      <button class="action-button" onclick="openDeleteAddressModal('<%= address._id %>')">
-                        <i class="fas fa-trash-alt mr-1"></i> Delete
-                      </button>
-                    </div>
+                      )"
+                    >
+                      <i class="fas fa-edit mr-1"></i> Edit
+                    </button>
+                    <button
+                      class="action-button"
+                      onclick="openDeleteAddressModal('<%= address._id %>')"
+                    >
+                      <i class="fas fa-trash-alt mr-1"></i> Delete
+                    </button>
                   </div>
-                  <p style="color: #4b5563; font-size: 0.85rem; margin: 0.2rem 0;">
-                    <%= address.flat %>, <%= address.area %>, <%= address.landmark ? address.landmark + ',' : '' %>
-                    <%= address.city %>, <%= address.state %>
-                  </p>
-                  <p style="color: #4b5563; font-size: 0.85rem; margin: 0.2rem 0;">
-                    PIN: <%= address.pincode %>
-                  </p>
-                  <p style="color: #4b5563; font-size: 0.85rem; margin: 0.2rem 0;">
-                    Phone: <%= address.phone %>
-                  </p>
                 </div>
+                <p style="color: #4b5563; font-size: 0.85rem; margin: 0.2rem 0">
+                  <%= address.flat %>, <%= address.area %>, <%= address.landmark ? address.landmark
+                  + ',' : '' %> <%= address.city %>, <%= address.state %>
+                </p>
+                <p style="color: #4b5563; font-size: 0.85rem; margin: 0.2rem 0">
+                  PIN: <%= address.pincode %>
+                </p>
+                <p style="color: #4b5563; font-size: 0.85rem; margin: 0.2rem 0">
+                  Phone: <%= address.phone %>
+                </p>
               </div>
             </div>
+          </div>
           <% }); %>
-        <% } else { %>
-          <p class="text-gray-500 italic">
-            No addresses found. Add a new address to get started.
-          </p>
-        <% } %>
+          <% } else { %>
+          <p class="text-gray-500 italic">No addresses found. Add a new address to get started.</p>
+          <% } %>
+        </div>
       </div>
     </div>
-  </div>
 
-  <!-- Add/Edit Address Modal -->
-  <div id="addressModal" class="modal-overlay">
-    <div class="modal-content">
-      <div class="modal-header">
-        <i class="fas fa-address-card text-blue-600 text-lg mr-2"></i>
-        <h2 class="modal-title" id="addressModalTitle">Add Address</h2>
-      </div>
-      <form id="addressForm" class="space-y-3">
-        <input type="hidden" id="addressId"/>
-        <div class="form-group">
-          <label class="form-label" for="fullName">Full Name <span class="required">*</span></label>
-          <input type="text" id="fullName" name="name" class="form-input" placeholder="Enter your full name" required />
-          <span class="error-message" id="error-fullName"></span>
+    <!-- Add/Edit Address Modal -->
+    <div id="addressModal" class="modal-overlay">
+      <div class="modal-content">
+        <div class="modal-header">
+          <i class="fas fa-address-card text-blue-600 text-lg mr-2"></i>
+          <h2 class="modal-title" id="addressModalTitle">Add Address</h2>
         </div>
-        <div class="form-group">
-          <label class="form-label" for="phone">Phone Number <span class="required">*</span></label>
-          <input type="tel" id="phone" name="phone" class="form-input" placeholder="10 digit mobile number" pattern="\d{10}" title="Please enter a 10-digit mobile number" />
-          <span class="error-message" id="error-phone"></span>
-        </div>
-        <div class="form-group">
-          <label class="form-label" for="flat">Flat, House no., Building, Company <span class="required">*</span></label>
-          <input type="text" id="flat" name="flat" class="form-input" placeholder="Enter house details" required />
-          <span class="error-message" id="error-flat"></span>
-        </div>
-        <div class="form-group">
-          <label class="form-label" for="area">Area, Street, Sector, Village <span class="required">*</span></label>
-          <input type="text" id="area" name="area" class="form-input" placeholder="Enter area details" required />
-          <span class="error-message" id="error-area"></span>
-        </div>
-        <div class="form-row">
+        <form id="addressForm" class="space-y-3">
+          <input type="hidden" id="addressId" />
           <div class="form-group">
-            <label class="form-label" for="pincode">Pincode <span class="required">*</span></label>
-            <input type="text" id="pincode" name="pincode" class="form-input" placeholder="6 digits [0-9] PIN code" required pattern="\d{6}" title="Please enter a 6-digit PIN code" />
-            <span class="error-message" id="error-pincode"></span>
+            <label class="form-label" for="fullName"
+              >Full Name <span class="required">*</span></label
+            >
+            <input
+              type="text"
+              id="fullName"
+              name="name"
+              class="form-input"
+              placeholder="Enter your full name"
+              required
+            />
+            <span class="error-message" id="error-fullName"></span>
           </div>
           <div class="form-group">
-            <label class="form-label" for="landmark">Landmark (optional)</label>
-            <input type="text" id="landmark" name="landmark" class="form-input" placeholder="e.g., near Apollo Hospital" />
-            <span class="error-message" id="error-landmark"></span>
+            <label class="form-label" for="phone"
+              >Phone Number <span class="required">*</span></label
+            >
+            <input
+              type="tel"
+              id="phone"
+              name="phone"
+              class="form-input"
+              placeholder="10 digit mobile number"
+              pattern="\d{10}"
+              title="Please enter a 10-digit mobile number"
+            />
+            <span class="error-message" id="error-phone"></span>
           </div>
-        </div>
-        <div class="form-row">
           <div class="form-group">
-            <label class="form-label" for="city">City/Town <span class="required">*</span></label>
-            <input type="text" id="city" name="city" class="form-input" placeholder="Enter city/town" required />
-            <span class="error-message" id="error-city"></span>
+            <label class="form-label" for="flat"
+              >Flat, House no., Building, Company <span class="required">*</span></label
+            >
+            <input
+              type="text"
+              id="flat"
+              name="flat"
+              class="form-input"
+              placeholder="Enter house details"
+              required
+            />
+            <span class="error-message" id="error-flat"></span>
           </div>
           <div class="form-group">
-            <label class="form-label" for="state">State <span class="required">*</span></label>
-            <select id="state" name="state" class="form-select" required>
-              <option value="">Select your state</option>
-              <option value="Andhra Pradesh">Andhra Pradesh</option>
-              <option value="Arunachal Pradesh">Arunachal Pradesh</option>
-              <option value="Assam">Assam</option>
-              <option value="Bihar">Bihar</option>
-              <option value="Chhattisgarh">Chhattisgarh</option>
-              <option value="Goa">Goa</option>
-              <option value="Gujarat">Gujarat</option>
-              <option value="Haryana">Haryana</option>
-              <option value="Himachal Pradesh">Himachal Pradesh</option>
-              <option value="Jharkhand">Jharkhand</option>
-              <option value="Karnataka">Karnataka</option>
-              <option value="Kerala">Kerala</option>
-              <option value="Madhya Pradesh">Madhya Pradesh</option>
-              <option value="Maharashtra">Maharashtra</option>
-              <option value="Manipur">Manipur</option>
-              <option value="Meghalaya">Meghalaya</option>
-              <option value="Mizoram">Mizoram</option>
-              <option value="Nagaland">Nagaland</option>
-              <option value="Odisha">Odisha</option>
-              <option value="Punjab">Punjab</option>
-              <option value="Rajasthan">Rajasthan</option>
-              <option value="Sikkim">Sikkim</option>
-              <option value="Tamil Nadu">Tamil Nadu</option>
-              <option value="Telangana">Telangana</option>
-              <option value="Tripura">Tripura</option>
-              <option value="Uttar Pradesh">Uttar Pradesh</option>
-              <option value="Uttarakhand">Uttarakhand</option>
-              <option value="West Bengal">West Bengal</option>
-              <option value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</option>
-              <option value="Chandigarh">Chandigarh</option>
-              <option value="Dadra and Nagar Haveli and Daman and Diu">Dadra and Nagar Haveli and Daman and Diu</option>
-              <option value="Delhi">Delhi</option>
-              <option value="Jammu and Kashmir">Jammu and Kashmir</option>
-              <option value="Ladakh">Ladakh</option>
-              <option value="Lakshadweep">Lakshadweep</option>
-              <option value="Puducherry">Puducherry</option>
-            </select>
-            <span class="error-message" id="error-state"></span>
+            <label class="form-label" for="area"
+              >Area, Street, Sector, Village <span class="required">*</span></label
+            >
+            <input
+              type="text"
+              id="area"
+              name="area"
+              class="form-input"
+              placeholder="Enter area details"
+              required
+            />
+            <span class="error-message" id="error-area"></span>
           </div>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Address Type</label>
-          <div class="radio-group">
-            <label class="radio-label">
-              <input type="radio" name="addressType" value="Home" class="form-radio" required />
-              <i class="fas fa-home text-black mr-1"></i> Home
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="pincode"
+                >Pincode <span class="required">*</span></label
+              >
+              <input
+                type="text"
+                id="pincode"
+                name="pincode"
+                class="form-input"
+                placeholder="6 digits [0-9] PIN code"
+                required
+                pattern="\d{6}"
+                title="Please enter a 6-digit PIN code"
+              />
+              <span class="error-message" id="error-pincode"></span>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="landmark">Landmark (optional)</label>
+              <input
+                type="text"
+                id="landmark"
+                name="landmark"
+                class="form-input"
+                placeholder="e.g., near Apollo Hospital"
+              />
+              <span class="error-message" id="error-landmark"></span>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="city">City/Town <span class="required">*</span></label>
+              <input
+                type="text"
+                id="city"
+                name="city"
+                class="form-input"
+                placeholder="Enter city/town"
+                required
+              />
+              <span class="error-message" id="error-city"></span>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="state">State <span class="required">*</span></label>
+              <select id="state" name="state" class="form-select" required>
+                <option value="">Select your state</option>
+                <option value="Andhra Pradesh">Andhra Pradesh</option>
+                <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+                <option value="Assam">Assam</option>
+                <option value="Bihar">Bihar</option>
+                <option value="Chhattisgarh">Chhattisgarh</option>
+                <option value="Goa">Goa</option>
+                <option value="Gujarat">Gujarat</option>
+                <option value="Haryana">Haryana</option>
+                <option value="Himachal Pradesh">Himachal Pradesh</option>
+                <option value="Jharkhand">Jharkhand</option>
+                <option value="Karnataka">Karnataka</option>
+                <option value="Kerala">Kerala</option>
+                <option value="Madhya Pradesh">Madhya Pradesh</option>
+                <option value="Maharashtra">Maharashtra</option>
+                <option value="Manipur">Manipur</option>
+                <option value="Meghalaya">Meghalaya</option>
+                <option value="Mizoram">Mizoram</option>
+                <option value="Nagaland">Nagaland</option>
+                <option value="Odisha">Odisha</option>
+                <option value="Punjab">Punjab</option>
+                <option value="Rajasthan">Rajasthan</option>
+                <option value="Sikkim">Sikkim</option>
+                <option value="Tamil Nadu">Tamil Nadu</option>
+                <option value="Telangana">Telangana</option>
+                <option value="Tripura">Tripura</option>
+                <option value="Uttar Pradesh">Uttar Pradesh</option>
+                <option value="Uttarakhand">Uttarakhand</option>
+                <option value="West Bengal">West Bengal</option>
+                <option value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</option>
+                <option value="Chandigarh">Chandigarh</option>
+                <option value="Dadra and Nagar Haveli and Daman and Diu">
+                  Dadra and Nagar Haveli and Daman and Diu
+                </option>
+                <option value="Delhi">Delhi</option>
+                <option value="Jammu and Kashmir">Jammu and Kashmir</option>
+                <option value="Ladakh">Ladakh</option>
+                <option value="Lakshadweep">Lakshadweep</option>
+                <option value="Puducherry">Puducherry</option>
+              </select>
+              <span class="error-message" id="error-state"></span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Address Type</label>
+            <div class="radio-group">
+              <label class="radio-label">
+                <input type="radio" name="addressType" value="Home" class="form-radio" required />
+                <i class="fas fa-home text-black mr-1"></i> Home
+              </label>
+              <label class="radio-label">
+                <input type="radio" name="addressType" value="Work" class="form-radio" />
+                <i class="fas fa-briefcase text-black mr-1"></i> Work
+              </label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="checkbox-label">
+              <input type="checkbox" id="isDefault" class="form-checkbox" />
+              Make this my default address
             </label>
-            <label class="radio-label">
-              <input type="radio" name="addressType" value="Work" class="form-radio" />
-              <i class="fas fa-briefcase text-black mr-1"></i> Work
-            </label>
           </div>
-        </div>
-        <div class="form-group">
-          <label class="checkbox-label">
-            <input type="checkbox" id="isDefault" class="form-checkbox" />
-            Make this my default address
-          </label>
-        </div>
-        <div class="button-group">
-          <button type="submit" class="btn btn-primary">Save Address</button>
-          <button type="button" onclick="closeAddressModal()" class="btn btn-secondary">Cancel</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- Delete Address Confirmation Modal -->
-  <div id="deleteAddressModal" class="modal-overlay">
-    <div class="modal-content">
-      <div class="modal-header">
-        <i class="fas fa-map-marker-alt text-red-600 mr-2"></i>
-        <h2 class="modal-title">Confirm Deletion</h2>
-      </div>
-      <p class="text-sm text-gray-700 mb-4">Are you sure you want to delete this address?</p>
-      <div class="button-group">
-        <button type="button" class="btn btn-secondary" onclick="closeDeleteAddressModal()">Cancel</button>
-        <button type="button" class="btn btn-danger" onclick="confirmDeleteAddress()">
-          <i class="fas fa-trash-alt mr-2"></i>Confirm
-        </button>
+          <div class="button-group">
+            <button type="submit" class="btn btn-primary">Save Address</button>
+            <button type="button" onclick="closeAddressModal()" class="btn btn-secondary">
+              Cancel
+            </button>
+          </div>
+        </form>
       </div>
     </div>
-  </div>
 
-  <!-- Toast Container -->
-  <div id="toastContainer"></div>
+    <!-- Delete Address Confirmation Modal -->
+    <div
+      id="deleteAddressModal"
+      class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden z-50"
+    >
+      <div class="bg-white rounded-lg p-3 sm:p-4 lg:p-6 w-full max-w-[320px] sm:max-w-md">
+        <div class="flex items-center mb-2 sm:mb-3 lg:mb-4">
+          <i class="fas fa-map-marker-alt text-red-500 mr-2"></i>
+          <h2 class="text-sm sm:text-base lg:text-lg font-semibold">Confirm Deletion</h2>
+        </div>
+        <p class="text-xs sm:text-sm lg:text-base text-gray-700 mb-2 sm:mb-3 lg:mb-4">
+          Are you sure you want to delete this address?
+        </p>
+        <div class="flex justify-end gap-2 sm:gap-3">
+          <button
+            type="button"
+            class="px-2 sm:px-3 lg:px-4 py-1 sm:py-1.5 lg:py-2 bg-gray-300 text-gray-700 rounded text-xs sm:text-sm lg:text-base hover:bg-gray-400"
+            onclick="closeDeleteAddressModal()"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            class="px-2 sm:px-3 lg:px-4 py-1 sm:py-1.5 lg:py-2 bg-red-600 text-white rounded text-xs sm:text-sm lg:text-base hover:bg-red-700 flex items-center"
+            onclick="confirmDeleteAddress()"
+          >
+            <i class="fas fa-trash-alt mr-1"></i>Confirm
+          </button>
+        </div>
+      </div>
+    </div>
 
-  <!-- Footer Partial -->
-  <%- include("../../views/partials/user/footer") %>
-</body>
+    <!-- Toast Container -->
+    <div id="toastContainer"></div>
+
+    <!-- Footer Partial -->
+    <%- include("../../views/partials/user/footer") %>
+  </body>
 </html>

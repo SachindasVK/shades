@@ -1,45 +1,43 @@
-const Wallet = require('../../models/walletSchema')
-const User = require('../../models/userSchema')
-const razorpay = require('../../config/razorpay')
+const Wallet = require('../../models/walletSchema');
+const User = require('../../models/userSchema');
+const razorpay = require('../../config/razorpay');
 const crypto = require('crypto');
-const logger = require('../../helpers/logger')
-
-
-
+const logger = require('../../helpers/logger');
 
 const getWallet = async (req, res) => {
   try {
     const userId = req.session.user;
     const [userDoc, wallet] = await Promise.all([
       User.findById(userId).populate('redeemedUsers'),
-      Wallet.findOne({ userId })
+      Wallet.findOne({ userId }),
     ]);
 
     if (!userDoc) {
       return res.status(404).render('page-404', {
         isLoggedIn: false,
         username: '',
-        message: 'User not found'
+        message: 'User not found',
       });
     }
 
     const totalReferrals = userDoc.redeemedUsers.length;
 
     const totalEarned = wallet?.transactions
-  .filter(txn =>
-    txn.transactionType === 'credit' &&
-    txn.transactionPurpose === 'referrals' &&
-    txn.description.includes('Referral reward')
-  )
-  .reduce((sum, txn) => sum + txn.amount, 0);
+      .filter(
+        (txn) =>
+          txn.transactionType === 'credit' &&
+          txn.transactionPurpose === 'referrals' &&
+          txn.description.includes('Referral reward')
+      )
+      .reduce((sum, txn) => sum + txn.amount, 0);
 
     const user = {
       name: userDoc.name,
       image: userDoc.image || '',
       wallet: {
-        balance: wallet?.balance || 0
+        balance: wallet?.balance || 0,
       },
-      referrals: userDoc.redeemedUsers
+      referrals: userDoc.redeemedUsers,
     };
 
     const transactions = (wallet?.transactions || []).sort(
@@ -51,29 +49,24 @@ const getWallet = async (req, res) => {
       transactions,
       username: user.name,
       isLoggedIn: true,
-      totalReferrals:totalReferrals||0,
-      totalEarned
+      totalReferrals: totalReferrals || 0,
+      totalEarned,
     });
-
   } catch (err) {
     logger.error(err);
-    return res.status(500).render('page-404')
+    return res.status(500).render('page-404');
   }
 };
 
-
-
-
 const createWalletRazorpayOrder = async (req, res) => {
   try {
-    const amount = req.body.amount
+    const amount = req.body.amount;
     const order = await razorpay.orders.create({
       amount: amount * 100, // Razorpay accepts in paise
-      currency: "INR",
-      receipt: "receipt_" + Date.now(),
-      payment_capture: 1
+      currency: 'INR',
+      receipt: 'receipt_' + Date.now(),
+      payment_capture: 1,
     });
-
 
     res.json({
       success: true,
@@ -82,26 +75,26 @@ const createWalletRazorpayOrder = async (req, res) => {
       keyId: process.env.RAZORPAY_KEY_ID,
       user: {
         name: req.user.name,
-        email: req.user.email
-      }
+        email: req.user.email,
+      },
     });
   } catch (err) {
-    logger.error("Create Razorpay order error:", err);
-    return res.status(500).render('page-404')
+    logger.error('Create Razorpay order error:', err);
+    return res.status(500).render('page-404');
   }
-}
-
+};
 
 const verifyWalletPayment = async (req, res) => {
   try {
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature, amount } = req.body;
-    const body = razorpay_order_id + "|" + razorpay_payment_id;
-    const expectedSignature = crypto.createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
+    const body = razorpay_order_id + '|' + razorpay_payment_id;
+    const expectedSignature = crypto
+      .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
       .update(body)
-      .digest("hex");
+      .digest('hex');
 
     if (expectedSignature !== razorpay_signature) {
-      return res.json({ success: false, message: "Signature mismatch" });
+      return res.json({ success: false, message: 'Signature mismatch' });
     }
 
     let wallet = await Wallet.findOne({ userId: req.user._id });
@@ -112,7 +105,7 @@ const verifyWalletPayment = async (req, res) => {
         balance: 0,
         refundAmount: 0,
         totalDebited: 0,
-        transactions: []
+        transactions: [],
       });
     }
 
@@ -122,18 +115,17 @@ const verifyWalletPayment = async (req, res) => {
       transactionType: 'credit',
       transactionPurpose: 'add_money',
       description: `Razorpay Payment ID: ${razorpay_payment_id}`,
-      createdAt: new Date()
+      createdAt: new Date(),
     });
 
     await wallet.save();
 
     res.json({ success: true });
-
   } catch (err) {
-    logger.error("Verify payment error:", err);
-    return res.status(500).render('page-404')
+    logger.error('Verify payment error:', err);
+    return res.status(500).render('page-404');
   }
-}
+};
 
 const getReferrals = async (req, res) => {
   try {
@@ -145,7 +137,7 @@ const getReferrals = async (req, res) => {
       return res.status(404).render('page-404', {
         isLoggedIn: false,
         username: '',
-        message: 'User not found'
+        message: 'User not found',
       });
     }
 
@@ -158,20 +150,17 @@ const getReferrals = async (req, res) => {
       referralCode: user?.referralCode ?? 'N/A',
       totalReferrals,
       totalEarned,
-      referrals: user.redeemedUsers
+      referrals: user.redeemedUsers,
     });
-
   } catch (error) {
-    logger.error("Error in getReferrals:", error);
-    return res.status(500).render('page-404')
+    logger.error('Error in getReferrals:', error);
+    return res.status(500).render('page-404');
   }
 };
-
 
 module.exports = {
   getWallet,
   createWalletRazorpayOrder,
   verifyWalletPayment,
-  getReferrals
-}
-
+  getReferrals,
+};

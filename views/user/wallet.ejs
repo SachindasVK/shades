@@ -3,11 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>My Wallet - SHADES</title>
+    <title>SHADES - My Wallet</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="/script/script.js"></script>
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-    <link rel="icon" href="favicon/favicon.ico" type="ico">
+    <link rel="icon" href="/favicon-16x16.png" type="image/png">
     <link
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
       rel="stylesheet"
@@ -22,7 +22,7 @@
       }
 
       body {
-        font-family: "Inter", sans-serif;
+        font-family: 'Inter', sans-serif;
         background-color: #f5f5f5;
       }
 
@@ -44,7 +44,8 @@
         width: 100%;
         background-color: #ffffff;
         border-radius: 0.5rem;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+        box-shadow:
+          0 4px 6px -1px rgba(0, 0, 0, 0.1),
           0 2px 4px -1px rgba(0, 0, 0, 0.06);
         height: fit-content;
         display: none;
@@ -148,7 +149,8 @@
         flex: 1;
         background-color: #ffffff;
         border-radius: 0.5rem;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+        box-shadow:
+          0 4px 6px -1px rgba(0, 0, 0, 0.1),
           0 2px 4px -1px rgba(0, 0, 0, 0.06);
         padding: 1rem;
       }
@@ -706,10 +708,14 @@
         <div class="profile-header">
           <div class="profile-icon">
             <% if (user.image) { %>
-              <img src="<%= user.image %>" alt="Profile Image" class="profile-image"
-                   onerror="this.src='https://via.placeholder.com/80?text=Profile'" />
+            <img
+              src="<%= user.image %>"
+              alt="Profile Image"
+              class="profile-image"
+              onerror="this.src='https://via.placeholder.com/80?text=Profile'"
+            />
             <% } else { %>
-              <i class="fas fa-user"></i>
+            <i class="fas fa-user"></i>
             <% } %>
           </div>
           <div>
@@ -764,9 +770,7 @@
       </div>
 
       <div class="main-content">
-        <h2 class="section-title">
-          <i class="fas fa-wallet mr-2 text-amber-700"></i> My Wallet
-        </h2>
+        <h2 class="section-title"><i class="fas fa-wallet mr-2 text-black"></i> My Wallet</h2>
 
         <!-- Wallet Balance and Rewards Section -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
@@ -779,15 +783,13 @@
               <i class="fas fa-info-circle"></i>
               You can add up to ₹2.5 lakhs
             </p>
-            <button class="btn btn-primary mt-4" onclick="openAddMoneyModal()">
-              Add Money
-            </button>
+            <button class="btn btn-primary mt-4" onclick="openAddMoneyModal()">Add Money</button>
           </div>
           <div class="stats-card">
             <h3 class="section-title">Rewards</h3>
             <div>
               <h3 class="text-sm text-gray-300">Cashback Earned</h3>
-              <p class="text-lg font-semibold text-white"> ₹<%= totalEarned || 0 %></p>
+              <p class="text-lg font-semibold text-white">₹<%= totalEarned || 0 %></p>
             </div>
             <div class="mt-4">
               <h3 class="text-sm text-gray-300">Total Referrals</h3>
@@ -818,50 +820,44 @@
         </div>
 
         <div id="transactionList">
-          <% if (transactions && transactions.length > 0) { %>
-            <% transactions.forEach((transaction) => { %>
-              <div class="transaction-item">
-                <% if (transaction.transactionType === "credit") { %>
-                  <div class="transaction-details">
-                    <div class="transaction-icon">
-                      <i class="fas fa-arrow-up"></i>
-                    </div>
-                    <div>
-                      <p class="font-medium">
-                        Credited for <%= transaction.transactionPurpose %>
-                      </p>
-                      <p class="transaction-date">
-                        <%= new Date(transaction.createdAt).toLocaleString('en-IN', {
-                            dateStyle: 'medium', timeStyle: 'short' }) %>
-                      </p>
-                    </div>
-                  </div>
-                  <p class="transaction-amount">
-                    + ₹<%= transaction.amount.toLocaleString('en-IN') %>
-                  </p>
-                <% } else { %>
-                  <div class="transaction-details">
-                    <div class="transaction-icon" style="background-color: rgb(255, 136, 0)">
-                      <i class="fas fa-arrow-down"></i>
-                    </div>
-                    <div>
-                      <p class="font-medium">
-                        Debited for <%= transaction.transactionPurpose %>
-                      </p>
-                      <p class="transaction-date">
-                        <%= new Date(transaction.createdAt).toLocaleString('en-IN', {
-                            dateStyle: 'medium', timeStyle: 'short' }) %>
-                      </p>
-                    </div>
-                  </div>
-                  <p class="transaction-amount" style="color: rgb(255, 136, 0)">
-                    - ₹<%= transaction.amount.toLocaleString('en-IN') %>
-                  </p>
-                <% } %>
+          <% if (transactions && transactions.length > 0) { %> <% transactions.forEach((transaction)=> { %>
+          <div class="transaction-item">
+            <% if (transaction.transactionType === "credit") { %>
+            <div class="transaction-details">
+              <div class="transaction-icon">
+                <i class="fas fa-arrow-up"></i>
               </div>
-            <% }); %>
+              <div>
+                <p class="font-medium">Credited for <%= transaction.transactionPurpose %></p>
+                <p class="transaction-date">
+                  <%= new Date(transaction.createdAt).toLocaleString('en-IN', { dateStyle: 'medium',
+                      timeStyle: 'short' }) %>
+
+                </p>
+              </div>
+            </div>
+            <p class="transaction-amount">+ ₹<%= transaction.amount.toLocaleString('en-IN') %></p>
+            <% } else { %>
+            <div class="transaction-details">
+              <div class="transaction-icon" style="background-color: rgb(255, 136, 0)">
+                <i class="fas fa-arrow-down"></i>
+              </div>
+              <div>
+                <p class="font-medium">Debited for <%= transaction.transactionPurpose %></p>
+                <p class="transaction-date">
+                  <%= new Date(transaction.createdAt).toLocaleString('en-IN', { dateStyle: 'medium',
+                  timeStyle: 'short' }) %>
+                </p>
+              </div>
+            </div>
+            <p class="transaction-amount" style="color: rgb(255, 136, 0)">
+              - ₹<%= transaction.amount.toLocaleString('en-IN') %>
+            </p>
+            <% } %>
+          </div>
+          <% }); %>
           <% } else { %>
-            <p class="text-gray-500 italic text-center">No transactions found</p>
+          <p class="text-gray-500 italic text-center">No transactions found</p>
           <% } %>
         </div>
 
@@ -897,7 +893,11 @@
             max="250000"
           />
           <p class="mt-2 text-sm text-gray-600 flex items-center">
-            <img src="https://razorpay.com/assets/razorpay-glyph.svg" alt="Razorpay" class="h-6 w-6 mr-2">
+            <img
+              src="https://razorpay.com/assets/razorpay-glyph.svg"
+              alt="Razorpay"
+              class="h-6 w-6 mr-2"
+            />
             Payment Method: Razorpay
           </p>
         </div>
@@ -1096,7 +1096,7 @@
               email: user.email
             },
             theme: {
-              color: "#4F46E5"
+              color: "#000"
             }
           };
           const rzp = new Razorpay(options);

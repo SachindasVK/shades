@@ -1,20 +1,20 @@
-const User = require('../../models/userSchema')
-const Order = require('../../models/orderSchema')
-const Product = require('../../models/productSchema')
-const Coupon = require('../../models/couponSchema')
-const bcrypt = require('bcrypt')
-const logger = require('../../helpers/logger')
+const User = require('../../models/userSchema');
+const Order = require('../../models/orderSchema');
+const Product = require('../../models/productSchema');
+const Coupon = require('../../models/couponSchema');
+const bcrypt = require('bcrypt');
+const logger = require('../../helpers/logger');
 
 const logout = async (req, res) => {
   try {
-    req.session.destroy(err => {
+    req.session.destroy((err) => {
       if (err) {
         logger.error('Error destroying session:', err);
         return res.redirect('/error');
       }
 
-      res.clearCookie('connect.sid'); 
-      logger.info('logout success')
+      res.clearCookie('connect.sid');
+      logger.info('logout success');
 
       res.redirect('/admin/login');
     });
@@ -24,23 +24,23 @@ const logout = async (req, res) => {
   }
 };
 
-
 const error = async (req, res) => {
   try {
-    res.render('error', { message: 'An error occurred while processing your request.' });
+    res.render('error', {
+      message: 'An error occurred while processing your request.',
+    });
   } catch (error) {
     logger.error('Error rendering the error page:', error);
     res.status(500).send('An error occurred while rendering the error page');
   }
-}
-
+};
 
 const loadLogin = (req, res) => {
   if (req.session.admin) {
-    return res.redirect('/admin/dashboard')
+    return res.redirect('/admin/dashboard');
   }
-  res.render('adminLogin', { message: '' })
-}
+  res.render('adminLogin', { message: '' });
+};
 
 const login = async (req, res) => {
   try {
@@ -54,7 +54,9 @@ const login = async (req, res) => {
         req.session.admin = admin._id;
         return res.redirect('/admin/dashboard');
       } else {
-        return res.render('adminLogin', { message: 'Invalid email or password' });
+        return res.render('adminLogin', {
+          message: 'Invalid email or password',
+        });
       }
     } else {
       return res.render('adminLogin', { message: 'No admin account found' });
@@ -65,28 +67,25 @@ const login = async (req, res) => {
   }
 };
 
-
-
-
 const loadDashboard = async (req, res) => {
-  if (!req.session.admin) return []
+  if (!req.session.admin) return [];
 
   try {
     const result = await Order.aggregate([
       {
         $match: {
-          status: { $in: ['delivered'] }
-        }
+          status: { $in: ['delivered'] },
+        },
       },
       {
         $group: {
           _id: null,
           totalRevenue: {
-            $sum: '$finalAmount'
-          }
-        }
-      }
-    ])
+            $sum: '$finalAmount',
+          },
+        },
+      },
+    ]);
     const topProducts = await Product.find({ isDeleted: false, isActive: true })
       .sort({ salesCount: -1 })
       .limit(5)
@@ -102,47 +101,63 @@ const loadDashboard = async (req, res) => {
     const totalOrders = await Order.countDocuments({});
     const totalCustomers = await User.countDocuments({ isAdmin: false });
     const totalProducts = await Product.countDocuments({ isDeleted: false });
-    const outOfStock = await Product.countDocuments({ quantity: 0, isDeleted: false });
-    const lowStock = await Product.countDocuments({ quantity: { $gt: 0, $lte: 5 }, isDeleted: false });
-    const inStock = await Product.countDocuments({ quantity: { $gt: 5 }, isDeleted: false });
-
+    const outOfStock = await Product.countDocuments({
+      quantity: 0,
+      isDeleted: false,
+    });
+    const lowStock = await Product.countDocuments({
+      quantity: { $gt: 0, $lte: 5 },
+      isDeleted: false,
+    });
+    const inStock = await Product.countDocuments({
+      quantity: { $gt: 5 },
+      isDeleted: false,
+    });
 
     const recentActivities = [];
 
     const recentOrders = await Order.find().sort({ createdAt: -1 }).limit(1).lean();
-    recentOrders.forEach(order => {
+    recentOrders.forEach((order) => {
       recentActivities.push({
         type: 'order',
         time: order.createdAt,
-        orderId: order.orderId
+        orderId: order.orderId,
       });
     });
 
     const recentUsers = await User.find({ isAdmin: false }).sort({ createdAt: -1 }).limit(1).lean();
-    recentUsers.forEach(user => {
+    recentUsers.forEach((user) => {
       recentActivities.push({
         type: 'user',
         time: user.createdAt,
-        name: user.name
+        name: user.name,
       });
     });
 
-    const lowStockProducts = await Product.find({ quantity: { $lte: 5, $gt: 0 } }).sort({ updatedAt: -1 }).limit(1).lean();
-    lowStockProducts.forEach(product => {
+    const lowStockProducts = await Product.find({
+      quantity: { $lte: 5, $gt: 0 },
+    })
+      .sort({ updatedAt: -1 })
+      .limit(1)
+      .lean();
+    lowStockProducts.forEach((product) => {
       recentActivities.push({
         type: 'lowStock',
         time: product.updatedAt,
         productName: product.productName,
-        quantity: product.quantity
+        quantity: product.quantity,
       });
     });
-    const outOfStockProducts = await Product.find({ quantity: { $eq: 0 } }).sort({ updatedAt: -1 }).limit(1).lean();
-    outOfStockProducts.forEach(product => {
+    const outOfStockProducts = await Product.find({ quantity: { $eq: 0 } })
+      .sort({ updatedAt: -1 })
+      .limit(1)
+      .lean();
+    outOfStockProducts.forEach((product) => {
       recentActivities.push({
         type: 'outOfStock',
         time: product.updatedAt,
         productName: product.productName,
-        quantity: product.quantity
+        quantity: product.quantity,
       });
     });
 
@@ -150,26 +165,28 @@ const loadDashboard = async (req, res) => {
       .sort({ createdAt: -1 })
       .limit(1)
       .lean();
-    stockAddedProducts.forEach(product => {
+    stockAddedProducts.forEach((product) => {
       recentActivities.push({
         type: 'stockAdded',
         time: product.createdAt,
         productName: product.productName,
-        quantity: product.quantity
+        quantity: product.quantity,
       });
     });
 
-    const recentCoupons = await Coupon.find({ isDeleted: false }).sort({ createdOn: -1 }).limit(1).lean();
-    recentCoupons.forEach(coupon => {
+    const recentCoupons = await Coupon.find({ isDeleted: false })
+      .sort({ createdOn: -1 })
+      .limit(1)
+      .lean();
+    recentCoupons.forEach((coupon) => {
       recentActivities.push({
         type: 'coupon',
         time: coupon.createdOn,
-        name: coupon.name
+        name: coupon.name,
       });
     });
 
     recentActivities.sort((a, b) => new Date(b.time) - new Date(a.time));
-
 
     res.render('dashboard', {
       pageTitle: 'Dashboard',
@@ -182,14 +199,13 @@ const loadDashboard = async (req, res) => {
       inStock,
       orders,
       recentActivities,
-      topProducts
-    })
+      topProducts,
+    });
   } catch (error) {
-    logger.error('dashboard error', error)
-    res.redirect('/admin/error')
+    logger.error('dashboard error', error);
+    res.redirect('/admin/error');
   }
-}
-
+};
 
 const viewAllRecentActivities = async (req, res) => {
   try {
@@ -201,49 +217,51 @@ const viewAllRecentActivities = async (req, res) => {
     const recentActivities = [];
 
     const recentOrders = await Order.find().sort({ createdAt: -1 }).lean();
-    recentOrders.forEach(order => {
+    recentOrders.forEach((order) => {
       recentActivities.push({
         type: 'order',
         time: order.createdAt,
-        orderId: order.orderId
+        orderId: order.orderId,
       });
     });
 
     const recentUsers = await User.find({ isAdmin: false }).sort({ createdAt: -1 }).lean();
-    recentUsers.forEach(user => {
+    recentUsers.forEach((user) => {
       recentActivities.push({
         type: 'user',
         time: user.createdAt,
-        name: user.name
+        name: user.name,
       });
     });
 
-    const lowStockProducts = await Product.find({ quantity: { $lte: 5 } }).sort({ updatedAt: -1 }).lean();
-    lowStockProducts.forEach(product => {
+    const lowStockProducts = await Product.find({ quantity: { $lte: 5 } })
+      .sort({ updatedAt: -1 })
+      .lean();
+    lowStockProducts.forEach((product) => {
       recentActivities.push({
         type: 'lowStock',
         time: product.updatedAt,
         productName: product.productName,
-        quantity: product.quantity
+        quantity: product.quantity,
       });
     });
 
     const outOfStockProducts = await Product.find({ quantity: 0 }).sort({ updatedAt: -1 }).lean();
-    outOfStockProducts.forEach(product => {
+    outOfStockProducts.forEach((product) => {
       recentActivities.push({
         type: 'outOfStock',
         time: product.updatedAt,
         productName: product.productName,
-        quantity: product.quantity
+        quantity: product.quantity,
       });
     });
 
     const recentCoupons = await Coupon.find({ isDeleted: false }).sort({ createdOn: -1 }).lean();
-    recentCoupons.forEach(coupon => {
+    recentCoupons.forEach((coupon) => {
       recentActivities.push({
         type: 'coupon',
         time: coupon.createdOn,
-        name: coupon.name
+        name: coupon.name,
       });
     });
 
@@ -258,9 +276,8 @@ const viewAllRecentActivities = async (req, res) => {
       currentPage: page,
       limit,
       totalActivities,
-      search
+      search,
     });
-
   } catch (error) {
     logger.error('Error fetching orders:', error);
     res.status(500).render('error', {
@@ -319,9 +336,6 @@ const getSalesChart = async (req, res) => {
   }
 };
 
-
-
-
 const getTopSalesData = async (req, res) => {
   try {
     const filter = req.query.filter || 'product';
@@ -330,8 +344,8 @@ const getTopSalesData = async (req, res) => {
 
     const matchStage = {
       $match: {
-        status: 'delivered'
-      }
+        status: 'delivered',
+      },
     };
 
     if (filter === 'product') {
@@ -341,38 +355,43 @@ const getTopSalesData = async (req, res) => {
         {
           $group: {
             _id: '$orderedItems.product',
-            totalSold: { $sum: '$orderedItems.quantity' }
-          }
+            totalSold: { $sum: '$orderedItems.quantity' },
+          },
         },
         {
           $lookup: {
             from: 'products',
             localField: '_id',
             foreignField: '_id',
-            as: 'product'
-          }
+            as: 'product',
+          },
         },
         { $unwind: '$product' },
         {
           $match: {
             'product.isDeleted': { $ne: true },
-            'product.isActive': { $ne: false }
-          }
+            'product.isActive': { $ne: false },
+          },
         },
         {
           $project: {
             name: {
               $cond: {
-                if: { $or: [{ $eq: ['$product.productName', null] }, { $eq: ['$product.productName', ''] }] },
+                if: {
+                  $or: [
+                    { $eq: ['$product.productName', null] },
+                    { $eq: ['$product.productName', ''] },
+                  ],
+                },
                 then: 'Unnamed Product',
-                else: '$product.productName'
-              }
+                else: '$product.productName',
+              },
             },
-            totalSold: 1
-          }
+            totalSold: 1,
+          },
         },
         { $sort: { totalSold: -1 } },
-        { $limit: 10 }
+        { $limit: 10 },
       ];
     } else if (filter === 'category') {
       pipeline = [
@@ -383,51 +402,53 @@ const getTopSalesData = async (req, res) => {
             from: 'products',
             localField: 'orderedItems.product',
             foreignField: '_id',
-            as: 'product'
-          }
+            as: 'product',
+          },
         },
         { $unwind: '$product' },
         {
           $match: {
             'product.isDeleted': { $ne: true },
-            'product.isActive': { $ne: false }
-          }
+            'product.isActive': { $ne: false },
+          },
         },
         {
           $group: {
             _id: '$product.category',
-            totalSold: { $sum: '$orderedItems.quantity' }
-          }
+            totalSold: { $sum: '$orderedItems.quantity' },
+          },
         },
         {
           $lookup: {
             from: 'categories',
             localField: '_id',
             foreignField: '_id',
-            as: 'category'
-          }
+            as: 'category',
+          },
         },
         { $unwind: '$category' },
         {
           $match: {
             'category.isDeleted': { $ne: true },
-            'category.isActive': { $ne: false }
-          }
+            'category.isActive': { $ne: false },
+          },
         },
         {
           $project: {
             name: {
               $cond: {
-                if: { $or: [{ $eq: ['$category.name', null] }, { $eq: ['$category.name', ''] }] },
+                if: {
+                  $or: [{ $eq: ['$category.name', null] }, { $eq: ['$category.name', ''] }],
+                },
                 then: 'Unnamed Category',
-                else: '$category.name'
-              }
+                else: '$category.name',
+              },
             },
-            totalSold: 1
-          }
+            totalSold: 1,
+          },
         },
         { $sort: { totalSold: -1 } },
-        { $limit: 10 }
+        { $limit: 10 },
       ];
     } else if (filter === 'brand') {
       pipeline = [
@@ -438,51 +459,53 @@ const getTopSalesData = async (req, res) => {
             from: 'products',
             localField: 'orderedItems.product',
             foreignField: '_id',
-            as: 'product'
-          }
+            as: 'product',
+          },
         },
         { $unwind: '$product' },
         {
           $match: {
             'product.isDeleted': { $ne: true },
-            'product.isActive': { $ne: false }
-          }
+            'product.isActive': { $ne: false },
+          },
         },
         {
           $group: {
             _id: '$product.brand',
-            totalSold: { $sum: '$orderedItems.quantity' }
-          }
+            totalSold: { $sum: '$orderedItems.quantity' },
+          },
         },
         {
           $lookup: {
             from: 'brands',
             localField: '_id',
             foreignField: '_id',
-            as: 'brand'
-          }
+            as: 'brand',
+          },
         },
         { $unwind: '$brand' },
         {
           $match: {
             'brand.isDeleted': { $ne: true },
-            'brand.isActive': { $ne: false }
-          }
+            'brand.isActive': { $ne: false },
+          },
         },
         {
           $project: {
             name: {
               $cond: {
-                if: { $or: [{ $eq: ['$brand.name', null] }, { $eq: ['$brand.name', ''] }] },
+                if: {
+                  $or: [{ $eq: ['$brand.name', null] }, { $eq: ['$brand.name', ''] }],
+                },
                 then: 'Unnamed Brand',
-                else: '$brand.name'
-              }
+                else: '$brand.name',
+              },
             },
-            totalSold: 1
-          }
+            totalSold: 1,
+          },
         },
         { $sort: { totalSold: -1 } },
-        { $limit: 10 }
+        { $limit: 10 },
       ];
     }
 
@@ -492,7 +515,7 @@ const getTopSalesData = async (req, res) => {
       return res.json({
         success: true,
         data: [],
-        message: `No ${filter} sales data found`
+        message: `No ${filter} sales data found`,
       });
     }
 
@@ -502,7 +525,7 @@ const getTopSalesData = async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Chart data error',
-      error: error.message
+      error: error.message,
     });
   }
 };
@@ -514,5 +537,5 @@ module.exports = {
   logout,
   viewAllRecentActivities,
   getSalesChart,
-  getTopSalesData
-}
+  getTopSalesData,
+};

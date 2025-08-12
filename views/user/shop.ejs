@@ -4,12 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shop - Your Store</title>
+    <title>SHADES - Your Store</title>
+    <link rel="icon" href="/favicon-16x16.png" type="image/png">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <script defer src="/script/script.js"></script>
     <link rel="stylesheet" href="/css/user.css">
-    <link rel="icon" href="favicon/favicon.ico" type="ico">
 </head>
 
 <body>
@@ -56,19 +56,23 @@
                     <div class="relative w-full md:w-48">
                         <i
                             class="fas fa-sort-amount-down absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 pointer-events-none"></i>
-                        <select class="sort-select" name="sort" id="sortSelect"
-                            class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm bg-white shadow-sm hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-gray-500 transition">
-                            <option value="" disabled <%=filters.sort==='' ? 'selected' : '' %>>Sort by</option>
-                            <option value="new" <%=filters.sort==='new' ? 'selected' : '' %>>New Arrivals</option>
-                            <option value="price-asc" <%=filters.sort==='price-asc' ? 'selected' : '' %>>Price: Low to
-                                High</option>
-                            <option value="price-desc" <%=filters.sort==='price-desc' ? 'selected' : '' %>>Price: High
-                                to Low</option>
-                            <option value="name-asc" <%=filters.sort==='name-asc' ? 'selected' : '' %>>Name: A to Z
-                            </option>
-                            <option value="name-desc" <%=filters.sort==='name-desc' ? 'selected' : '' %>>Name: Z to A
-                            </option>
-                        </select>
+                        <select class="sort-select w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm bg-white shadow-sm hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-gray-500 transition" name="sort" id="sortSelect">
+
+    <option value="" <%= (!filters.sort || filters.sort === '') ? 'selected disabled' : 'disabled' %>>Sort by</option>
+
+    <option value="new" <%= filters.sort === 'new' ? 'selected' : '' %>>New Arrivals</option>
+
+    <option value="price-asc" <%= filters.sort === 'price-asc' ? 'selected' : '' %>>Price: Low to High</option>
+
+    <option value="price-desc" <%= filters.sort === 'price-desc' ? 'selected' : '' %>>Price: High to Low</option>
+
+    <option value="name-asc" <%= filters.sort === 'name-asc' ? 'selected' : '' %>>Name: A to Z</option>
+
+    <option value="name-desc" <%= filters.sort === 'name-desc' ? 'selected' : '' %>>Name: Z to A</option>
+
+</select>
+
+
                     </div>
                 </div>
             </div>
@@ -103,7 +107,7 @@
                                                 </label>
                                             </div>
                                             <% }); %>
-                                        </div>
+                                    </div>
                                     <!-- Price Range Filter -->
                                     <div class="filter-group">
                                         <h5>Price Range</h5>
@@ -161,18 +165,14 @@
 
                 <!-- Products Section -->
                 <div class="w-full lg:w-9/12 px-3">
-                    <div class="flex justify-between items-center mb-4">
-                        <p class="product-count mb-0">
-                            <%= totalProducts %> products found
-                        </p>
-                    </div>
+                    
                     <% if (products.length===0) { %>
                         <div class="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4">
                             <i class="fas fa-info-circle mr-2"></i>
                             No products found matching your criteria. Try adjusting your filters.
                         </div>
                         <% } else { %>
-                            <div class="product-grid">
+                            <div class="product-grid mb-4">
                                 <% products.forEach(function(product) { %>
                                     <div class="product-card">
                                         <div class="product-img-container">
@@ -266,8 +266,8 @@
                                                                             </span>
                                                                             <% } %>
                                                                 </div>
-                                                                </a>
-                                                            </div>
+                                            </a>
+                                        </div>
                                         <div class="card-footer">
                                             <%if(product.quantity===0){%>
                                                 <button class="btn btn-add-cart add-to-cart"
@@ -372,7 +372,14 @@
                 sortSelect.addEventListener('change', function () {
                     const queryString = buildQueryString(1);
                     const params = new URLSearchParams(queryString);
-                    params.set('sort', this.value);
+
+                    // Only set sort parameter if a valid option is selected
+                    if (this.value && this.value !== '') {
+                        params.set('sort', this.value);
+                    } else {
+                        params.delete('sort'); // Remove sort parameter if "Sort by" is selected
+                    }
+
                     window.location.href = `/shop?${params.toString()}`;
                 });
 

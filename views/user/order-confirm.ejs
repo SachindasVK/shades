@@ -1,251 +1,264 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Order Confirmation</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-    <link rel="icon" href="favicon/favicon.ico" type="ico">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SHADES - Order confirmation</title>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link rel="icon" href="/favicon-16x16.png" type="image/png">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        :root {
-            --primary-color: #1f2937;
-            --success-color: #22c55e;
-            --text-color: #374151;
-            --light-bg: #f9fafb;
-            --border-color: #e5e7eb;
-            --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-        }
+      :root {
+        --primary-color: #1f2937;
+        --success-color: #22c55e;
+        --text-color: #374151;
+        --light-bg: #f9fafb;
+        --border-color: #e5e7eb;
+        --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      }
 
-        body {
-            background-color: var(--light-bg);
-            color: var(--text-color);
-            font-family: 'Inter', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            line-height: 1.6;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-            margin: 0;
-        }
+      body {
+        background-color: var(--light-bg);
+        color: var(--text-color);
+        font-family: 'Inter', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        line-height: 1.6;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        margin: 0;
+      }
 
-        .container {
-            max-width: 1280px;
-            margin: 0 auto;
-            padding: 1.5rem;
-        }
+      .container {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 1.5rem;
+      }
 
+      .main-section {
+        background-color: white;
+        border-radius: 8px;
+        padding: 5rem;
+        margin: 0 auto;
+        position: relative;
+      }
+
+      /* Loading Animation */
+      .loading-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 3rem;
+        text-align: center;
+        margin-bottom: 6.7rem;
+      }
+
+      .loading-spinner {
+        width: 60px;
+        height: 60px;
+        border: 4px solid #e5e7eb;
+        border-top: 4px solid var(--primary-color);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-bottom: 1.5rem;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      .loading-text {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--text-color);
+        margin-bottom: 0.5rem;
+      }
+
+      .loading-subtext {
+        color: #6b7280;
+        font-size: 0.9rem;
+      }
+
+      /* Success State */
+      .success-container {
+        display: none;
+        text-align: center;
+        padding: 2rem;
+        animation: fadeIn 0.5s ease-out;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      .success-icon {
+        width: 64px;
+        height: 64px;
+        background-color: var(--success-color);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+        box-shadow: 0 4px 12px rgba(34, 197, 94, 0.2);
+      }
+
+      .checkmark {
+        font-size: 1.75rem;
+        color: white;
+        animation: checkmarkAnimation 0.5s ease-in-out;
+      }
+
+      @keyframes checkmarkAnimation {
+        0% {
+          transform: scale(0);
+        }
+        50% {
+          transform: scale(1.2);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+
+      .success-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--text-color);
+        margin-bottom: 0.5rem;
+      }
+
+      .success-subtitle {
+        font-size: 1rem;
+        color: #6b7280;
+        margin-bottom: 1.5rem;
+      }
+
+      .action-buttons {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin-top: 2rem;
+      }
+
+      .action-buttons a button {
+        padding: 0.75rem 1.5rem;
+        border-radius: 6px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .btn-primary {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+      }
+
+      .btn-primary:hover {
+        background-color: #111827;
+      }
+
+      .btn-secondary {
+        background-color: transparent;
+        color: var(--primary-color);
+        border: 1px solid var(--primary-color);
+      }
+
+      .btn-secondary:hover {
+        background-color: #f3f4f6;
+      }
+
+      /* Canvas for Confetti */
+      canvas#canvas {
+        height: 100vh;
+        pointer-events: none;
+        position: fixed;
+        width: 100%;
+        z-index: 2;
+        top: 0;
+        left: 0;
+      }
+
+      @media (max-width: 767.98px) {
         .main-section {
-            background-color: white;
-            border-radius: 8px;
-            padding: 5rem;
-            margin: 0 auto;
-            position: relative;
-        }
-
-        /* Loading Animation */
-        .loading-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 3rem;
-            text-align: center;
-            margin-bottom: 6.7rem;
-        }
-
-        .loading-spinner {
-            width: 60px;
-            height: 60px;
-            border: 4px solid #e5e7eb;
-            border-top: 4px solid var(--primary-color);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-bottom: 1.5rem;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .loading-text {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: var(--text-color);
-            margin-bottom: 0.5rem;
-        }
-
-        .loading-subtext {
-            color: #6b7280;
-            font-size: 0.9rem;
-        }
-
-        /* Success State */
-        .success-container {
-            display: none;
-            text-align: center;
-            padding: 2rem;
-            animation: fadeIn 0.5s ease-out;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        .success-icon {
-            width: 64px;
-            height: 64px;
-            background-color: var(--success-color);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 1.5rem;
-            box-shadow: 0 4px 12px rgba(34, 197, 94, 0.2);
-        }
-
-        .checkmark {
-            font-size: 1.75rem;
-            color: white;
-            animation: checkmarkAnimation 0.5s ease-in-out;
-        }
-
-        @keyframes checkmarkAnimation {
-            0% { transform: scale(0); }
-            50% { transform: scale(1.2); }
-            100% { transform: scale(1); }
-        }
-
-        .success-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--text-color);
-            margin-bottom: 0.5rem;
-        }
-
-        .success-subtitle {
-            font-size: 1rem;
-            color: #6b7280;
-            margin-bottom: 1.5rem;
+          padding: 1.5rem;
         }
 
         .action-buttons {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-            margin-top: 2rem;
+          flex-direction: column;
+          gap: 0.75rem;
         }
 
         .action-buttons a button {
-            padding: 0.75rem 1.5rem;
-            border-radius: 6px;
-            font-size: 0.9rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+          width: 100%;
+          justify-content: center;
         }
-
-        .btn-primary {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-        }
-
-        .btn-primary:hover {
-            background-color: #111827;
-        }
-
-        .btn-secondary {
-            background-color: transparent;
-            color: var(--primary-color);
-            border: 1px solid var(--primary-color);
-        }
-
-        .btn-secondary:hover {
-            background-color: #f3f4f6;
-        }
-
-        /* Canvas for Confetti */
-        canvas#canvas {
-            height: 100vh;
-            pointer-events: none;
-            position: fixed;
-            width: 100%;
-            z-index: 2;
-            top: 0;
-            left: 0;
-        }
-
-        @media (max-width: 767.98px) {
-            .main-section {
-                padding: 1.5rem;
-            }
-
-            .action-buttons {
-                flex-direction: column;
-                gap: 0.75rem;
-            }
-
-            .action-buttons a button {
-                width: 100%;
-                justify-content: center;
-            }
-        }
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <%-include("../../views/partials/user/header")%>
 
     <div class="container">
-        <!-- Main Content -->
-        <div class="main-section">
-           
-            <!-- Loading State -->
-            <div id="loadingState" class="loading-container">
-                <div class="loading-spinner"></div>
-                <h2 class="loading-text">Processing Your Order</h2>
-                <p class="loading-subtext">Please wait while we confirm your order...</p>
-            </div>
-            <!-- Success State -->
-            <div id="successState" class="success-container">
-                <div class="success-icon">
-                    <i class="fas fa-check checkmark"></i>
-                </div>
-                <h2 class="success-title">Order Confirmed!</h2>
-                <p class="success-subtitle">Thank you for your purchase. Your order is being processed and will be shipped soon.</p>
-                <p>Expected delivery by <%= expectedDeliveryDate %></p>
-                <div class="action-buttons">
-                    <a href="/orders">
-                        <button class="btn-primary">
-                            View Orders
-                        </button>
-                    </a>
-                    <a href="/shop">
-                        <button class="btn-secondary">
-                            Continue Shopping
-                        </button>
-                    </a>
-                </div>
-            </div>
+      <!-- Main Content -->
+      <div class="main-section">
+        <!-- Loading State -->
+        <div id="loadingState" class="loading-container">
+          <div class="loading-spinner"></div>
+          <h2 class="loading-text">Processing Your Order</h2>
+          <p class="loading-subtext">Please wait while we confirm your order...</p>
         </div>
+        <!-- Success State -->
+        <div id="successState" class="success-container">
+          <div class="success-icon">
+            <i class="fas fa-check checkmark"></i>
+          </div>
+          <h2 class="success-title">Order Confirmed!</h2>
+          <p class="success-subtitle">
+            Thank you for your purchase. Your order is being processed and will be shipped soon.
+          </p>
+          <p>Expected delivery by <%= expectedDeliveryDate %></p>
+          <div class="action-buttons">
+            <a href="/orders">
+              <button class="btn-primary">View Orders</button>
+            </a>
+            <a href="/shop">
+              <button class="btn-secondary">Continue Shopping</button>
+            </a>
+          </div>
+        </div>
+      </div>
     </div>
 
     <script>
-
-        // Page Load Animation
-        document.addEventListener('DOMContentLoaded', () => {
-            const loadingState = document.getElementById('loadingState');
-            const successState = document.getElementById('successState');
-            setTimeout(() => {
-                loadingState.style.display = 'none';
-                successState.style.display = 'block';
-            }, 1000); 
-            render();
-        });
+      // Page Load Animation
+      document.addEventListener('DOMContentLoaded', () => {
+        const loadingState = document.getElementById('loadingState');
+        const successState = document.getElementById('successState');
+        setTimeout(() => {
+          loadingState.style.display = 'none';
+          successState.style.display = 'block';
+        }, 1000);
+        render();
+      });
     </script>
     <%-include("../../views/partials/user/footer")%>
-</body>
+  </body>
 </html>

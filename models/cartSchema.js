@@ -1,60 +1,63 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
-const cartSchema = new Schema({
-  userId: {
-    type: Schema.Types.ObjectId,
-    ref: 'User',
-    required: true
-  },
-  items: [{
-    productId: {
+const cartSchema = new Schema(
+  {
+    userId: {
       type: Schema.Types.ObjectId,
-      ref: 'Product',
-      required: true
-    },
-    quantity: {
-      type: Number,
+      ref: 'User',
       required: true,
-      min: 1,
-      default: 1
     },
-    price: {
-      type: Number,
-      required: true,
-      min: 0
-    },
-    totalPrice: {
-      type: Number,
-      required: true,
-      min: 0
-    },
-    status: {
-      type: String,
-      enum: ['Placed', 'Cancelled', 'Removed'],
-      default: 'Placed'
-    },
-    cancellationReason: {
-      type: String,
-      default: 'none'
-    },
-    addedAt: {
-      type: Date,
-      default: Date.now
-    }
-  }]
-}, {
-  timestamps: true
-});
-
+    items: [
+      {
+        productId: {
+          type: Schema.Types.ObjectId,
+          ref: 'Product',
+          required: true,
+        },
+        quantity: {
+          type: Number,
+          required: true,
+          min: 1,
+          default: 1,
+        },
+        price: {
+          type: Number,
+          required: true,
+          min: 0,
+        },
+        totalPrice: {
+          type: Number,
+          required: true,
+          min: 0,
+        },
+        status: {
+          type: String,
+          enum: ['Placed', 'Cancelled', 'Removed'],
+          default: 'Placed',
+        },
+        cancellationReason: {
+          type: String,
+          default: 'none',
+        },
+        addedAt: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
+  },
+  {
+    timestamps: true,
+  }
+);
 
 cartSchema.pre('save', function (next) {
-  this.items.forEach(item => {
+  this.items.forEach((item) => {
     item.totalPrice = item.price * item.quantity;
   });
   next();
 });
-
 
 cartSchema.methods.getTotalValue = function () {
   return this.items.reduce((total, item) => {
@@ -66,7 +69,7 @@ cartSchema.methods.getTotalValue = function () {
 };
 
 cartSchema.methods.getActiveItemsCount = function () {
-  return this.items.filter(item => item.status === 'Placed').length;
+  return this.items.filter((item) => item.status === 'Placed').length;
 };
 
 const Cart = mongoose.model('Cart', cartSchema);
