@@ -482,18 +482,25 @@
                             <h2>Shipping Address</h2>
                             <a href="/select-address">Change</a>
                         </div>
-                        <p>
-                            <%= address.flat %>, <%= address.area %>, <%= address.city %>, <%= address.state %> - <%= address.pincode %>
-                        </p>
+                        <% if (address) { %>
+    <p>
+        <%= address.flat %>, <%= address.area %>, <%= address.city %>, <%= address.state %> - <%= address.pincode %>
+    </p>
+<% } else { %>
+    <p class="text-red-500">No address selected</p>
+<% } %>
+
                     </div>
 
                     <!-- Section: Contact Details -->
                     <div class="info-section">
-                        <h2>Contact Details</h2>
-                        <p>Email: <%= user.email || "No email found" %><br>
-                           Phone: <%= address.phone || "No phone number found" %>
-                        </p>
-                    </div>
+    <h2>Contact Details</h2>
+    <p>
+        Email: <%= user?.email || "No email found" %><br>
+        Phone: <%= address ? address.phone : "No phone number found" %>
+    </p>
+</div>
+
 
                     <!-- Section: Delivery Date -->
                     <div class="info-section">

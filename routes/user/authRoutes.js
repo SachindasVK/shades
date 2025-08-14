@@ -42,7 +42,7 @@ router.get('/auth/google/callback', (req, res, next) => {
 
       req.session.user = user._id;
       console.log('Google login success:', user.email);
-      return res.redirect('/shop');
+      return res.redirect('/');
     });
   })(req, res, next);
 });

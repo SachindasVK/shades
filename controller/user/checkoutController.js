@@ -147,7 +147,7 @@ const getShipping = async (req, res) => {
     const selectedAddress = req.session.selectedAddress;
     const shippingMethod = req.session.shippingMethod || null;
     if (!selectedAddress) {
-      return res.redirect('/selected-address');
+      return res.redirect('/select-address');
     }
 
     const user = await User.findById(userId);
@@ -191,6 +191,9 @@ const loadPayment = async (req, res) => {
   try {
     const userId = req.session.user;
     const selectedAddress = req.session.selectedAddress;
+    if (!selectedAddress) {
+      return res.redirect('/select-address');
+    }
     const user = await User.findById(userId);
 
     const cart = await Cart.findOne({ userId }).populate('items.productId');
@@ -233,10 +236,10 @@ const loadPayment = async (req, res) => {
     const deliveryDate = shippingDetails.date
       ? new Date(shippingDetails.date)
       : (() => {
-          const date = new Date();
-          date.setDate(date.getDate() + 3);
-          return date;
-        })();
+        const date = new Date();
+        date.setDate(date.getDate() + 3);
+        return date;
+      })();
 
     const expectedDeliveryDate = deliveryDate.toLocaleDateString('en-US', {
       month: 'short',
@@ -284,7 +287,7 @@ const placeOrder = async (req, res) => {
 
     const selectedAddress = req.session.selectedAddress;
     if (!selectedAddress) {
-      return res.status(400).json({ success: false, message: 'No address selected' });
+      return res.redirect('select-address')
     }
 
     const cart = await Cart.findOne({ userId }).populate('items.productId');
@@ -362,10 +365,10 @@ const placeOrder = async (req, res) => {
     const deliveryDate = shippingDetails.date
       ? new Date(shippingDetails.date)
       : (() => {
-          const date = new Date();
-          date.setDate(date.getDate() + 3);
-          return date;
-        })();
+        const date = new Date();
+        date.setDate(date.getDate() + 3);
+        return date;
+      })();
 
     const expectedDelivery = deliveryDate.toLocaleDateString('en-US', {
       month: 'short',
@@ -506,10 +509,10 @@ const confirmOrder = async (req, res) => {
     const deliveryDate = shippingDetails.date
       ? new Date(shippingDetails.date)
       : (() => {
-          const date = new Date();
-          date.setDate(date.getDate() + 3);
-          return date;
-        })();
+        const date = new Date();
+        date.setDate(date.getDate() + 3);
+        return date;
+      })();
 
     const expectedDeliveryDate = deliveryDate.toLocaleDateString('en-US', {
       month: 'short',
